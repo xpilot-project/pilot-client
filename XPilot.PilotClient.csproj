@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CE803EDF-B7D4-4822-B7D2-D59FF58FFB42}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>XPilot.PilotClient</RootNamespace>
+    <AssemblyName>XPilot.PilotClient</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Distribute|AnyCPU'">
+    <OutputPath>bin\Distribute\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Appccelerate.EventBroker, Version=4.0.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <HintPath>packages\Appccelerate.EventBroker.4.0.0\lib\netstandard2.0\Appccelerate.EventBroker.dll</HintPath>
+    </Reference>
+    <Reference Include="AsyncIO, Version=0.1.69.0, Culture=neutral, PublicKeyToken=44a94435bd6f33f8, processorArchitecture=MSIL">
+      <HintPath>packages\AsyncIO.0.1.69\lib\net40\AsyncIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
+    <Reference Include="KeyMouseHook, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\KeyMouseHook.1.0.6\lib\net40\KeyMouseHook.dll</HintPath>
+    </Reference>
+    <Reference Include="NaCl, Version=0.1.13.0, Culture=neutral, PublicKeyToken=827c20e50a9775fa, processorArchitecture=MSIL">
+      <HintPath>packages\NaCl.Net.0.1.13\lib\net472\NaCl.dll</HintPath>
+    </Reference>
+    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="NetMQ, Version=4.0.1.4, Culture=neutral, PublicKeyToken=a6decef4ddc58b3a, processorArchitecture=MSIL">
+      <HintPath>packages\NetMQ.4.0.1.4\lib\net47\NetMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DirectInput, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>packages\SharpDX.DirectInput.4.2.0\lib\net45\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\ComboboxExtensions.cs" />
+    <Compile Include="Common\FileChecksum.cs" />
+    <Compile Include="Common\FlashTaskbar.cs" />
+    <Compile Include="Common\FlightPlan.cs" />
+    <Compile Include="Common\FlightPlanTypeExtensions.cs" />
+    <Compile Include="Common\FrequencyUtils.cs" />
+    <Compile Include="Common\JsonUtils.cs" />
+    <Compile Include="Common\ScreenUtils.cs" />
+    <Compile Include="Common\SerializationUtils.cs" />
+    <Compile Include="Common\StringUtils.cs" />
+    <Compile Include="Common\VoiceType.cs" />
+    <Compile Include="Common\VoiceTypeExtensions.cs" />
+    <Compile Include="Config\PTTConfiguration.cs" />
+    <Compile Include="Config\ToggleDisplayConfiguration.cs" />
+    <Compile Include="ConnectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConnectForm.Designer.cs">
+      <DependentUpon>ConnectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\IPttManager.cs" />
+    <Compile Include="Core\ITabPages.cs" />
+    <Compile Include="Core\IUserInterface.cs" />
+    <Compile Include="Core\PttManager.cs" />
+    <Compile Include="FlightPlanForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FlightPlanForm.Designer.cs">
+      <DependentUpon>FlightPlanForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Network\Aircraft\AircraftConfigurationInfo.cs" />
+    <Compile Include="Network\Aircraft\INetworkAircraftManager.cs" />
+    <Compile Include="Network\Aircraft\LegacyClientConfigFlags.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraft.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraftConfig.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraftManager.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraftState.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraftTransponder.cs" />
+    <Compile Include="Network\Controllers\ControllerAtisManager.cs" />
+    <Compile Include="Network\Controllers\ControllerManager.cs" />
+    <Compile Include="Network\Controllers\IControllerAtisManager.cs" />
+    <Compile Include="Network\Controllers\IControllerManager.cs" />
+    <Compile Include="Network\ISelcalGenerator.cs" />
+    <Compile Include="Network\SelcalGenerator.cs" />
+    <Compile Include="Network\VatsimData.cs" />
+    <Compile Include="XplaneAdapter\IUserAircraftManager.cs" />
+    <Compile Include="XplaneAdapter\UserAircraftData.cs" />
+    <Compile Include="XplaneAdapter\UserAircraftManager.cs" />
+    <Compile Include="XplaneAdapter\UserAircraftRadioStack.cs" />
+    <Compile Include="AudioForVatsim\AfvManager.cs" />
+    <Compile Include="AudioForVatsim\IAfvManager.cs" />
+    <Compile Include="Common\CallsignStringExtensions.cs" />
+    <Compile Include="Common\SingleInstance.cs" />
+    <Compile Include="Common\SystemIdentifier.cs" />
+    <Compile Include="Common\WindowProperties.cs" />
+    <Compile Include="Common\WorldPoint.cs" />
+    <Compile Include="Config\AppConfig.cs" />
+    <Compile Include="Config\IAppConfig.cs" />
+    <Compile Include="Core\EventBus\EventBus.cs" />
+    <Compile Include="Core\EventBus\IEventBus.cs" />
+    <Compile Include="Core\Events\AircraftUpdateReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\ChatSessionStartedEventArgs.cs" />
+    <Compile Include="Core\Events\ClientEventArgs.cs" />
+    <Compile Include="Core\Events\ComFrequencyAliasChangedEventArgs.cs" />
+    <Compile Include="Core\Events\ComRadioTxRxChangedEventArgs.cs" />
+    <Compile Include="Core\Events\ControllerEventArgs.cs" />
+    <Compile Include="Core\Events\ControllerUpdateReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\DataRefEventArgs.cs" />
+    <Compile Include="Core\Events\FlightPlanReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\IsValidAtcReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\MetarRequestedEventArgs.cs" />
+    <Compile Include="Core\Events\NetworkConnectedEventArgs.cs" />
+    <Compile Include="Core\Events\NetworkDataReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\NetworkDisconnectedEventArgs.cs" />
+    <Compile Include="Core\Events\NotificationPostedEventArgs.cs" />
+    <Compile Include="Core\Events\OverrideComStatusEventArgs.cs" />
+    <Compile Include="Core\Events\PlaySoundEventArgs.cs" />
+    <Compile Include="Core\Events\PrivateMessageSentEventArgs.cs" />
+    <Compile Include="Core\Events\PushToTalkStateChangedEventArgs.cs" />
+    <Compile Include="Core\Events\RadioMessageReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\RadioMessageSentEventArgs.cs" />
+    <Compile Include="Core\Events\RadioStackStateChangedEventArgs.cs" />
+    <Compile Include="Core\Events\RadioVolumeChangedEventArgs.cs" />
+    <Compile Include="Core\Events\RealNameRequestedEventArgs.cs" />
+    <Compile Include="Core\Events\RequestControllerAtisEventArgs.cs" />
+    <Compile Include="Core\Events\RequestedAtisReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\SelcalAlertReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\SimulatorMessageEventArgs.cs" />
+    <Compile Include="Core\Events\SquawkingIdentChangedEventArgs.cs" />
+    <Compile Include="Core\Events\UserAircraftDataUpdatedEventArgs.cs" />
+    <Compile Include="Core\Events\WallopReceivedEventArgs.cs" />
+    <Compile Include="Core\EventTopics.cs" />
+    <Compile Include="Core\InjectionModules.cs" />
+    <Compile Include="Core\ISoundManager.cs" />
+    <Compile Include="Core\IVersionCheck.cs" />
+    <Compile Include="Core\SoundManager.cs" />
+    <Compile Include="Core\VersionCheck.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Network\ConnectInfo.cs" />
+    <Compile Include="Network\DisconnectInfo.cs" />
+    <Compile Include="Network\FsdManager.cs" />
+    <Compile Include="Network\IFsdManger.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateForm.Designer.cs">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ChatBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ChatBox.Designer.cs">
+      <DependentUpon>ChatBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TransparentClickLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TransparentClickPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\CustomTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\FlatButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\FlatCheckbox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\LevelMeter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\NotesTab.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\PrivateMessageTab.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TextCommandLine.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Network\Controllers\Controller.cs" />
+    <Compile Include="XplaneAdapter\IXplaneConnectionManager.cs" />
+    <Compile Include="XplaneAdapter\WhosOnlineList.cs" />
+    <Compile Include="XplaneAdapter\XplaneConnect.cs" />
+    <Compile Include="XplaneAdapter\XplaneConnectionManager.cs" />
+    <EmbeddedResource Include="ConnectForm.resx">
+      <DependentUpon>ConnectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FlightPlanForm.resx">
+      <DependentUpon>FlightPlanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateForm.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="PilotClient.licenseheader" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FSD-Connector\Vatsim.Fsd.Connector.csproj">
+      <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
+      <Name>Vatsim.Fsd.Connector</Name>
+    </ProjectReference>
+    <ProjectReference Include="Libraries\GeoVR\GeoVR.Client\GeoVR.Client.csproj">
+      <Project>{D36AF179-EB0E-4CEF-AEE8-68ABD7ABDB38}</Project>
+      <Name>GeoVR.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="Libraries\GeoVR\GeoVR.Connection\GeoVR.Connection.csproj">
+      <Project>{ea90283a-07bf-49aa-b811-f6a8f520baa1}</Project>
+      <Name>GeoVR.Connection</Name>
+    </ProjectReference>
+    <ProjectReference Include="Libraries\GeoVR\GeoVR.Shared\GeoVR.Shared.csproj">
+      <Project>{a9c273a4-5c39-41f2-b8d2-fa1099253eb1}</Project>
+      <Name>GeoVR.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="Libraries\XPlaneConnector\XPlaneConnector.csproj">
+      <Project>{52226AF7-CA8D-43BF-B239-6BA87C526BDB}</Project>
+      <Name>XPlaneConnector</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
