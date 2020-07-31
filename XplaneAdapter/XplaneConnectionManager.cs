@@ -102,6 +102,11 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly UserAircraftData mUserAircraftData;
         private readonly UserAircraftRadioStack mRadioStackState;
 
+        private System.Threading.CancellationTokenSource outboundQueueTokenSource = new System.Threading.CancellationTokenSource();
+        private System.Threading.CancellationToken outboundQueueCancellationToken;
+        private Queue<string> outboundMessageQueue = new Queue<string>();
+        private bool receivedHandshake = false;
+
         private bool mConnected;
         private bool mDisconnectMessageSent;
 
@@ -109,6 +114,8 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             mConfig = config;
             mFsdManager = fsdManager;
+
+            outboundQueueCancellationToken = outboundQueueTokenSource.Token;
 
             mPairSocket = new PairSocket();
             mPairSocket.Options.TcpKeepalive = true;
@@ -127,6 +134,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 mPoller.RunAsync();
             }
+
+            Task.Run(() => ProcessQueuedMessages(), outboundQueueCancellationToken);
 
             mXplaneConnector = new XPlaneConnector.XPlaneConnector();
             mUserAircraftData = new UserAircraftData();
@@ -176,6 +185,20 @@ namespace XPilot.PilotClient.XplaneAdapter
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, string.Format($"PluginLogs/PluginLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log")), false);
         }
 
+        private void ProcessQueuedMessages()
+        {
+            while (true)
+            {
+                if (outboundQueueCancellationToken.IsCancellationRequested)
+                    break;
+
+                if (mPairSocket != null && outboundMessageQueue.Count > 0)
+                {
+                    mPairSocket.SendFrame(outboundMessageQueue.Dequeue());
+                }
+            }
+        }
+
         private void PairSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             string command = e.Socket.ReceiveFrameString();
@@ -195,6 +218,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.PluginVersion:
+                            receivedHandshake = true;
                             int pluginVersion = (int)data.Version;
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
@@ -268,15 +292,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 mRawDataStream.Write($"[{ DateTime.UtcNow:HH:mm:ss.fff}] >>   { msg }\n");
                 mRawDataStream.Flush();
-
-                try
-                {
-                    socket.SendFrame(msg);
-                }
-                catch (Exception ex)
-                {
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"xPilot communication error: { ex.Message }"));
-                }
+                outboundMessageQueue.Enqueue(msg);
             }
         }
 
@@ -317,15 +333,38 @@ namespace XPilot.PilotClient.XplaneAdapter
                 TimeSpan span = DateTime.Now - mConnectionHeartbeats.Last();
                 if (span.TotalMilliseconds < 15000)
                 {
-                    mConnected = true;
-                    SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
-                    mConnectionHeartbeats.RemoveAt(0);
+                    if (!receivedHandshake)
+                    {
+                        SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
+                        ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
+                        mConnected = false;
+
+                        SendMessage(mPairSocket, new XplaneConnect
+                        {
+                            Type = XplaneConnect.MessageType.PluginVersion,
+                            Timestamp = DateTime.Now
+                        }.ToJSON());
+                    }
+                    else
+                    {
+                        mConnected = true;
+                        SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
+                        ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(true));
+                        mConnectionHeartbeats.RemoveAt(0);
+                    }
                 }
                 else
                 {
                     SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
+                    ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
                     mConnected = false;
                 }
+            }
+            else
+            {
+                SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
+                ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
+                mConnected = false;
             }
         }
 
@@ -736,6 +775,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
         public void OnSessionEnded(object sender, EventArgs e)
         {
+            outboundQueueTokenSource.Cancel();
             mPoller.Stop();
             mPairSocket.Close();
         }

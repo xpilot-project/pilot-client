@@ -1087,7 +1087,13 @@ namespace XPilot.PilotClient
         [EventSubscription(EventTopics.ToggleConnectButtonState, typeof(OnUserInterfaceAsync))]
         public void OnDisableConnectButton(object sender, ClientEventArgs<bool> e)
         {
-            if (e.Value == false)
+            if(e.Value)
+            {
+                btnConnect.Enabled = true;
+                btnConnect.ForeColor = Color.FromArgb(230, 230, 230);
+                btnConnect.BackColor = Color.FromArgb(39, 44, 46);
+            }
+            else
             {
                 btnConnect.Enabled = false;
                 btnConnect.ForeColor = Color.FromArgb(100, 100, 100);
@@ -1098,12 +1104,6 @@ namespace XPilot.PilotClient
                         Type = DisconnectType.Intentional
                     });
                 }
-            }
-            else
-            {
-                btnConnect.Enabled = true;
-                btnConnect.ForeColor = Color.FromArgb(230, 230, 230);
-                btnConnect.BackColor = Color.Transparent;
             }
         }
 
