@@ -390,7 +390,14 @@ namespace XPilot.PilotClient.AudioForVatsim
             }
             catch (Exception ex)
             {
-                NotificationPosted(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error connecting to voice server: { ex.Message }"));
+                if (ex.Message == "Connect failed (Forbidden - )")
+                {
+                    NotificationPosted(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error connecting to voice server. Please check your login credentials and try again. If your VATSIM account is new, please allow up to 24-hours for your account to completely synchronize."));
+                }
+                else
+                {
+                    NotificationPosted(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error connecting to voice server: { ex.Message }"));
+                }
             }
         }
 

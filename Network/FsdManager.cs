@@ -123,8 +123,8 @@ namespace XPilot.PilotClient.Network
         [EventPublication(EventTopics.LegacyPlaneInfoReceived)]
         public event EventHandler<NetworkDataReceivedEventArgs> LegacyPlaneInfoReceived;
 
-        public static FSDSession FSD;
         private const string VATSIM_STATUS_FILE_URL = "http://status.vatsim.net";
+        private readonly FSDSession FSD;
         private readonly IAppConfig mConfig;
         private List<NetworkServerInfo> mServerList = new List<NetworkServerInfo>();
         private string mSystemUID;
@@ -139,7 +139,7 @@ namespace XPilot.PilotClient.Network
         private UserAircraftRadioStack mRadioStackData;
         private readonly System.Timers.Timer mPositionUpdateTimer;
         private readonly StreamWriter mRawDataStream;
-        private readonly Version mVersion = new Version("1.1");
+        private readonly Version mVersion = new Version("1.2");
 
         public FsdManager(IEventBroker broker, IAppConfig config) : base(broker)
         {
@@ -169,7 +169,7 @@ namespace XPilot.PilotClient.Network
                 pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), @"Resources\plugins\xPilot\win_x64\xPilot.xpl");
             }
 
-            FSD = new FSDSession(new ClientProperties("xPilot", new Version("1.1"), Assembly.GetEntryAssembly().Location, pluginPath));
+            FSD = new FSDSession(new ClientProperties("xPilot", mVersion, Assembly.GetEntryAssembly().Location, pluginPath));
             FSD.IgnoreUnknownPackets = true;
             FSD.NetworkError += FSD_NetworkError;
             FSD.ProtocolErrorReceived += FSD_ProtocolErrorReceived;
@@ -421,6 +421,10 @@ namespace XPilot.PilotClient.Network
             switch (e.PDU.QueryType)
             {
                 case ClientQueryType.Capabilities:
+                    if (e.PDU.From.ToUpper() != "SERVER")
+                    {
+                        CapabilitiesRequestReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
+                    }
                     SendClientCaps(e.PDU.From);
                     break;
                 case ClientQueryType.COM1Freq:
@@ -861,6 +865,17 @@ namespace XPilot.PilotClient.Network
             }
         }
 
+        private void SendCom1Frequency(string from, string frequency)
+        {
+            if (FSD.Connected)
+            {
+                FSD.SendPDU(new PDUClientQueryResponse(OurCallsign, from, ClientQueryType.COM1Freq, new List<string>
+                {
+                    frequency
+                }));
+            }
+        }
+
         public bool IsConnected
         {
             get
@@ -977,17 +992,6 @@ namespace XPilot.PilotClient.Network
                 FSD.SendPDU(new PDUWallop(OurCallsign, e.Message));
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, string.Format("[WALLOP] {0}: {1}", OurCallsign, e.Message)));
                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Broadcast));
-            }
-        }
-
-        private void SendCom1Frequency(string from, string frequency)
-        {
-            if (FSD.Connected)
-            {
-                FSD.SendPDU(new PDUClientQueryResponse(OurCallsign, from, ClientQueryType.COM1Freq, new List<string>
-                {
-                    frequency
-                }));
             }
         }
     }

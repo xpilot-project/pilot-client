@@ -93,8 +93,9 @@ namespace XPilot.PilotClient
             this.label4 = new System.Windows.Forms.Label();
             this.volumeCom2 = new System.Windows.Forms.TrackBar();
             this.inputVolumeLabel = new System.Windows.Forms.Label();
-            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.button1 = new System.Windows.Forms.Button();
+            this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
+            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.inputVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.volumeCom1)).BeginInit();
@@ -274,9 +275,9 @@ namespace XPilot.PilotClient
             this.groupBox7.Controls.Add(this.btnClearDisplayKey);
             this.groupBox7.Controls.Add(this.btnSetDisplayKey);
             this.groupBox7.Controls.Add(this.label13);
-            this.groupBox7.Location = new System.Drawing.Point(22, 304);
+            this.groupBox7.Location = new System.Drawing.Point(22, 324);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(582, 105);
+            this.groupBox7.Size = new System.Drawing.Size(582, 88);
             this.groupBox7.TabIndex = 4;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "xPilot Toggle";
@@ -284,7 +285,7 @@ namespace XPilot.PilotClient
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(14, 75);
+            this.label15.Location = new System.Drawing.Point(14, 60);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(144, 13);
             this.label15.TabIndex = 6;
@@ -295,7 +296,7 @@ namespace XPilot.PilotClient
             this.lblDisplayShortcut.AutoSize = true;
             this.lblDisplayShortcut.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDisplayShortcut.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(1)))), ((int)(((byte)(100)))), ((int)(((byte)(173)))));
-            this.lblDisplayShortcut.Location = new System.Drawing.Point(164, 75);
+            this.lblDisplayShortcut.Location = new System.Drawing.Point(164, 60);
             this.lblDisplayShortcut.Name = "lblDisplayShortcut";
             this.lblDisplayShortcut.Size = new System.Drawing.Size(37, 13);
             this.lblDisplayShortcut.TabIndex = 16;
@@ -304,7 +305,7 @@ namespace XPilot.PilotClient
             // btnClearDisplayKey
             // 
             this.btnClearDisplayKey.Enabled = false;
-            this.btnClearDisplayKey.Location = new System.Drawing.Point(436, 63);
+            this.btnClearDisplayKey.Location = new System.Drawing.Point(436, 51);
             this.btnClearDisplayKey.Name = "btnClearDisplayKey";
             this.btnClearDisplayKey.Size = new System.Drawing.Size(127, 23);
             this.btnClearDisplayKey.TabIndex = 15;
@@ -315,7 +316,7 @@ namespace XPilot.PilotClient
             // 
             // btnSetDisplayKey
             // 
-            this.btnSetDisplayKey.Location = new System.Drawing.Point(436, 34);
+            this.btnSetDisplayKey.Location = new System.Drawing.Point(436, 21);
             this.btnSetDisplayKey.Name = "btnSetDisplayKey";
             this.btnSetDisplayKey.Size = new System.Drawing.Size(127, 23);
             this.btnSetDisplayKey.TabIndex = 14;
@@ -326,7 +327,7 @@ namespace XPilot.PilotClient
             // 
             // label13
             // 
-            this.label13.Location = new System.Drawing.Point(14, 28);
+            this.label13.Location = new System.Drawing.Point(14, 24);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(404, 29);
             this.label13.TabIndex = 12;
@@ -346,7 +347,7 @@ namespace XPilot.PilotClient
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Location = new System.Drawing.Point(313, 17);
+            this.groupBox3.Location = new System.Drawing.Point(313, 14);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(291, 168);
             this.groupBox3.TabIndex = 2;
@@ -446,9 +447,9 @@ namespace XPilot.PilotClient
             this.groupBox2.Controls.Add(this.chkUpdates);
             this.groupBox2.Controls.Add(this.chkKeepVisible);
             this.groupBox2.Controls.Add(this.chkAutoSquawkModeC);
-            this.groupBox2.Location = new System.Drawing.Point(22, 193);
+            this.groupBox2.Location = new System.Drawing.Point(22, 190);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(285, 105);
+            this.groupBox2.Size = new System.Drawing.Size(285, 128);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Miscellaneous";
@@ -457,7 +458,7 @@ namespace XPilot.PilotClient
             // 
             this.cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUpdateChannel.FormattingEnabled = true;
-            this.cbUpdateChannel.Location = new System.Drawing.Point(211, 45);
+            this.cbUpdateChannel.Location = new System.Drawing.Point(211, 58);
             this.cbUpdateChannel.Name = "cbUpdateChannel";
             this.cbUpdateChannel.Size = new System.Drawing.Size(68, 21);
             this.cbUpdateChannel.TabIndex = 10;
@@ -465,7 +466,7 @@ namespace XPilot.PilotClient
             // chkUpdates
             // 
             this.chkUpdates.AutoSize = true;
-            this.chkUpdates.Location = new System.Drawing.Point(10, 49);
+            this.chkUpdates.Location = new System.Drawing.Point(10, 61);
             this.chkUpdates.Name = "chkUpdates";
             this.chkUpdates.Size = new System.Drawing.Size(205, 17);
             this.chkUpdates.TabIndex = 7;
@@ -476,7 +477,7 @@ namespace XPilot.PilotClient
             // chkKeepVisible
             // 
             this.chkKeepVisible.AutoSize = true;
-            this.chkKeepVisible.Location = new System.Drawing.Point(10, 75);
+            this.chkKeepVisible.Location = new System.Drawing.Point(10, 92);
             this.chkKeepVisible.Name = "chkKeepVisible";
             this.chkKeepVisible.Size = new System.Drawing.Size(150, 17);
             this.chkKeepVisible.TabIndex = 6;
@@ -487,7 +488,7 @@ namespace XPilot.PilotClient
             // chkAutoSquawkModeC
             // 
             this.chkAutoSquawkModeC.AutoSize = true;
-            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(10, 23);
+            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(10, 30);
             this.chkAutoSquawkModeC.Name = "chkAutoSquawkModeC";
             this.chkAutoSquawkModeC.Size = new System.Drawing.Size(218, 17);
             this.chkAutoSquawkModeC.TabIndex = 5;
@@ -503,7 +504,7 @@ namespace XPilot.PilotClient
             this.groupBox1.Controls.Add(this.chkFlashSelcal);
             this.groupBox1.Controls.Add(this.chkFlashRadioMessage);
             this.groupBox1.Controls.Add(this.chkFlashPrivateMessage);
-            this.groupBox1.Location = new System.Drawing.Point(22, 17);
+            this.groupBox1.Location = new System.Drawing.Point(22, 14);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(285, 168);
             this.groupBox1.TabIndex = 0;
@@ -615,21 +616,22 @@ namespace XPilot.PilotClient
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.chkVolumeKnobVolume);
             this.groupBox5.Controls.Add(this.btnBrowseXplane);
             this.groupBox5.Controls.Add(this.label10);
             this.groupBox5.Controls.Add(this.XplanePath);
             this.groupBox5.Controls.Add(this.spinPluginPort);
             this.groupBox5.Controls.Add(this.label3);
-            this.groupBox5.Location = new System.Drawing.Point(319, 193);
+            this.groupBox5.Location = new System.Drawing.Point(319, 190);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(285, 105);
+            this.groupBox5.Size = new System.Drawing.Size(285, 128);
             this.groupBox5.TabIndex = 5;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "X-Plane Configuration";
             // 
             // btnBrowseXplane
             // 
-            this.btnBrowseXplane.Location = new System.Drawing.Point(212, 44);
+            this.btnBrowseXplane.Location = new System.Drawing.Point(212, 41);
             this.btnBrowseXplane.Name = "btnBrowseXplane";
             this.btnBrowseXplane.Size = new System.Drawing.Size(54, 20);
             this.btnBrowseXplane.TabIndex = 12;
@@ -648,15 +650,15 @@ namespace XPilot.PilotClient
             // 
             // XplanePath
             // 
-            this.XplanePath.Location = new System.Drawing.Point(12, 44);
+            this.XplanePath.Location = new System.Drawing.Point(13, 41);
             this.XplanePath.Name = "XplanePath";
             this.XplanePath.ReadOnly = true;
-            this.XplanePath.Size = new System.Drawing.Size(193, 20);
+            this.XplanePath.Size = new System.Drawing.Size(192, 20);
             this.XplanePath.TabIndex = 10;
             // 
             // spinPluginPort
             // 
-            this.spinPluginPort.Location = new System.Drawing.Point(140, 72);
+            this.spinPluginPort.Location = new System.Drawing.Point(140, 70);
             this.spinPluginPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -679,7 +681,7 @@ namespace XPilot.PilotClient
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 76);
+            this.label3.Location = new System.Drawing.Point(12, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(125, 13);
             this.label3.TabIndex = 8;
@@ -748,9 +750,9 @@ namespace XPilot.PilotClient
             this.chkDisableRadioEffects.AutoSize = true;
             this.chkDisableRadioEffects.Location = new System.Drawing.Point(397, 201);
             this.chkDisableRadioEffects.Name = "chkDisableRadioEffects";
-            this.chkDisableRadioEffects.Size = new System.Drawing.Size(171, 17);
+            this.chkDisableRadioEffects.Size = new System.Drawing.Size(160, 17);
             this.chkDisableRadioEffects.TabIndex = 22;
-            this.chkDisableRadioEffects.Text = "Disable Realistic Radio Effects";
+            this.chkDisableRadioEffects.Text = "Disable realistic radio effects";
             this.chkDisableRadioEffects.UseVisualStyleBackColor = true;
             this.chkDisableRadioEffects.CheckedChanged += new System.EventHandler(this.chkDisableRadioEffects_CheckedChanged);
             // 
@@ -794,15 +796,6 @@ namespace XPilot.PilotClient
             this.inputVolumeLabel.TabIndex = 18;
             this.inputVolumeLabel.Text = "0";
             // 
-            // levelMeterInput
-            // 
-            this.levelMeterInput.Location = new System.Drawing.Point(21, 214);
-            this.levelMeterInput.Name = "levelMeterInput";
-            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
-            this.levelMeterInput.TabIndex = 17;
-            this.levelMeterInput.Text = "levelMeter1";
-            this.levelMeterInput.Value = 0F;
-            // 
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -813,6 +806,26 @@ namespace XPilot.PilotClient
             this.button1.TabStop = false;
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
+            // 
+            // chkVolumeKnobVolume
+            // 
+            this.chkVolumeKnobVolume.AutoSize = true;
+            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(14, 100);
+            this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
+            this.chkVolumeKnobVolume.Size = new System.Drawing.Size(226, 17);
+            this.chkVolumeKnobVolume.TabIndex = 13;
+            this.chkVolumeKnobVolume.TabStop = false;
+            this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control radio volume";
+            this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
+            // 
+            // levelMeterInput
+            // 
+            this.levelMeterInput.Location = new System.Drawing.Point(21, 214);
+            this.levelMeterInput.Name = "levelMeterInput";
+            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
+            this.levelMeterInput.TabIndex = 17;
+            this.levelMeterInput.Text = "levelMeter1";
+            this.levelMeterInput.Value = 0F;
             // 
             // SettingsForm
             // 
@@ -927,5 +940,6 @@ namespace XPilot.PilotClient
         private Label label10;
         private TextBox XplanePath;
         private Button button1;
+        private CheckBox chkVolumeKnobVolume;
     }
 }

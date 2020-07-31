@@ -61,5 +61,6 @@ namespace XPilot.PilotClient.Config
         UpdateChannel UpdateChannel { get; set; }
         bool SquawkingModeC { get; set; }
         string XplanePath { get; set; }
+        bool VolumeKnobsControlVolume { get; set; }
     }
 }

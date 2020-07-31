@@ -112,15 +112,21 @@ namespace XPilot.PilotClient
         [EventSubscription(EventTopics.Com1Volume, typeof(OnUserInterfaceAsync))]
         public void OnCom1VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
         {
-            volumeCom1.Value = (int)Math.Round(e.Volume * 100, 2);
-            lblVolumeCom1.Text = Math.Round(e.Volume, 2).ToString("P0");
+            if (mConfig.VolumeKnobsControlVolume)
+            {
+                volumeCom1.Value = (int)Math.Round(e.Volume * 100, 2);
+                lblVolumeCom1.Text = Math.Round(e.Volume, 2).ToString("P0");
+            }
         }
 
         [EventSubscription(EventTopics.Com2Volume, typeof(OnUserInterfaceAsync))]
         public void OnCom2VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
         {
-            volumeCom2.Value = (int)Math.Round(e.Volume * 100, 2);
-            lblVolumeCom2.Text = Math.Round(e.Volume, 2).ToString("P0");
+            if (mConfig.VolumeKnobsControlVolume)
+            {
+                volumeCom2.Value = (int)Math.Round(e.Volume * 100, 2);
+                lblVolumeCom2.Text = Math.Round(e.Volume, 2).ToString("P0");
+            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -157,6 +163,7 @@ namespace XPilot.PilotClient
             cbUpdateChannel.SelectedValue = mConfig.UpdateChannel;
             vhfEqualizer.SelectedValue = mConfig.VhfEqualizer;
             XplanePath.Text = mConfig.XplanePath;
+            chkVolumeKnobVolume.Checked = mConfig.VolumeKnobsControlVolume;
             lblDisplayShortcut.Text = mConfig.ToggleDisplayConfiguration.ToString();
             TogglePTTButtons();
             ToggleDisplayKeyButtons();
@@ -557,6 +564,7 @@ namespace XPilot.PilotClient
                 mConfig.UpdateChannel = (UpdateChannel)cbUpdateChannel.SelectedValue;
                 mConfig.VhfEqualizer = (EqualizerPresets)vhfEqualizer.SelectedValue;
                 mConfig.XplanePath = XplanePath.Text;
+                mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
                 if ((int)spinPluginPort.Value != mConfig.TcpPort)
                 {
                     mConfig.TcpPort = (int)spinPluginPort.Value;

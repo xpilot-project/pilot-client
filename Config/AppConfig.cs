@@ -76,6 +76,7 @@ namespace XPilot.PilotClient.Config
         public bool KeepClientWindowVisible { get; set; }
         public int TcpPort { get; set; } = 45001;
         public string XplanePath { get; set; }
+        public bool VolumeKnobsControlVolume { get; set; } = true;
 
         [JsonIgnore]
         public bool SquawkingModeC { get; set; }
