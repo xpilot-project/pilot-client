@@ -16,59 +16,129 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace XPilot.PilotClient
 {
-    public partial class FlatButton : Button
-    {
-        public FlatButton() : base()
-        {
-            FlatAppearance.BorderSize = 0;
-            FlatStyle = FlatStyle.Flat;
-            FlatAppearance.BorderColor = Color.FromArgb(100, 100, 100);
-            Font = new Font("Consolas", 9f, FontStyle.Regular);
-        }
+	public class FlatButton : Control
+	{
+		private bool mPushed = false;
+		private bool mClicked = false;
+		private Color mPushedColor = Color.FromArgb(0, 120, 206);
+		private Color mClickedColor = Color.FromArgb(0, 120, 206);
+		private Color mBorderColor = Color.FromArgb(100, 100, 100);
+		private Color mDisabledTextColor = Color.FromArgb(100, 100, 100);
 
-        protected override void OnPaint(PaintEventArgs pevent)
-        {
-            base.OnPaint(pevent);
-            Pen pen = new Pen(FlatAppearance.BorderColor, 1);
-            Rectangle rectangle = new Rectangle(0, 0, Size.Width - 1, Size.Height - 1);
-            pevent.Graphics.DrawRectangle(pen, rectangle);
+		public FlatButton()
+		{
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+		}
 
-            if (!Enabled)
-            {
-                TextRenderer.DrawText(pevent.Graphics, this.Text, this.Font, this.ClientRectangle, this.ForeColor, this.BackColor);
-                FlatAppearance.MouseOverBackColor = Color.Transparent;
-                FlatAppearance.MouseDownBackColor = Color.Transparent;
-                Cursor = Cursors.Arrow;
-            }
-            else
-            {
-                FlatAppearance.MouseDownBackColor = this.FlatAppearance.MouseDownBackColor;
-                FlatAppearance.MouseOverBackColor = this.FlatAppearance.MouseOverBackColor;
-                Cursor = this.Cursor;
-            }
-        }
+		public bool Pushed
+		{
+			get { return mPushed; }
+			set { mPushed = value; Invalidate(); }
+		}
 
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            Invalidate();
-            base.OnEnabledChanged(e);
-        }
+		public Color PushedColor
+		{
+			get { return mPushedColor; }
+			set { mPushedColor = value; Invalidate(); }
+		}
 
-        protected override bool ShowFocusCues
-        {
-            get
-            {
-                return false;
-            }
-        }
-    }
+		public bool Clicked
+		{
+			get { return mClicked; }
+			set { mClicked = value; Invalidate(); }
+		}
+
+		public Color ClickedColor
+		{
+			get { return mClickedColor; }
+			set { mClickedColor = value; Invalidate(); }
+		}
+
+		public Color BorderColor
+		{
+			get { return mBorderColor; }
+			set { mBorderColor = value; Invalidate(); }
+		}
+
+		public Color DisabledTextColor
+		{
+			get { return mDisabledTextColor; }
+			set { mDisabledTextColor = value; Invalidate(); }
+		}
+
+		protected override void OnDoubleClick(EventArgs e)
+		{
+			base.OnClick(e);
+		}
+
+        protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				mPushed = true;
+				Focus();
+			}
+			base.OnMouseDown(e);
+			Invalidate();
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				mPushed = false;
+			}
+			base.OnMouseUp(e);
+			Invalidate();
+		}
+
+		protected override void OnTextChanged(EventArgs e)
+		{
+			base.OnTextChanged(e);
+			Invalidate();
+		}
+
+		protected override void OnEnabledChanged(EventArgs e)
+		{
+			base.OnEnabledChanged(e);
+			Invalidate();
+		}
+
+		protected override void OnPaintBackground(PaintEventArgs e)
+		{
+		}
+
+		protected override void OnPaint(PaintEventArgs e)
+		{
+			using (Brush backgroundBrush = new SolidBrush(mPushed ? PushedColor : (mClicked ? mClickedColor : BackColor)))
+			{
+				e.Graphics.FillRectangle(backgroundBrush, 0, 0, ClientSize.Width, ClientSize.Height);
+			}
+
+			Rectangle borderRect = new Rectangle(0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
+			using (Pen borderPen = new Pen(BorderColor))
+			{
+				e.Graphics.DrawRectangle(borderPen, borderRect);
+			}
+
+			if (Text != "")
+			{
+				using (Brush textBrush = new SolidBrush(Enabled ? ForeColor : DisabledTextColor))
+				{
+					StringFormat fmt = new StringFormat
+					{
+						Alignment = StringAlignment.Center,
+						LineAlignment = StringAlignment.Center
+					};
+					e.Graphics.DrawString(Text, Font, textBrush, ClientRectangle, fmt);
+					fmt.Dispose();
+				}
+			}
+		}
+	}
 }

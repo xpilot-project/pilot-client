@@ -48,13 +48,13 @@ namespace XPilot.PilotClient
             this.tabPageMessages = new System.Windows.Forms.TabPage();
             this.ChatMessageBox = new XPilot.PilotClient.ChatBox();
             this.pnlToolbar = new XPilot.PilotClient.TransparentClickPanel();
-            this.btnIdent = new XPilot.PilotClient.FlatCheckbox();
+            this.btnIdent = new XPilot.PilotClient.FlatButton();
+            this.chkModeC = new XPilot.PilotClient.FlatButton();
             this.btnMinimize = new XPilot.PilotClient.FlatButton();
             this.btnClose = new XPilot.PilotClient.FlatButton();
             this.lblCallsign = new XPilot.PilotClient.TransparentClickLabel();
             this.btnSettings = new XPilot.PilotClient.FlatButton();
             this.btnFlightPlan = new XPilot.PilotClient.FlatButton();
-            this.chkModeC = new XPilot.PilotClient.FlatCheckbox();
             this.btnConnect = new XPilot.PilotClient.FlatButton();
             this.pnlSidebar = new XPilot.PilotClient.TransparentClickPanel();
             this.pnlTreeContainer = new XPilot.PilotClient.TransparentClickPanel();
@@ -155,12 +155,12 @@ namespace XPilot.PilotClient
             this.pnlToolbar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
             this.pnlToolbar.BorderColor = System.Drawing.Color.Transparent;
             this.pnlToolbar.Controls.Add(this.btnIdent);
+            this.pnlToolbar.Controls.Add(this.chkModeC);
             this.pnlToolbar.Controls.Add(this.btnMinimize);
             this.pnlToolbar.Controls.Add(this.btnClose);
             this.pnlToolbar.Controls.Add(this.lblCallsign);
             this.pnlToolbar.Controls.Add(this.btnSettings);
             this.pnlToolbar.Controls.Add(this.btnFlightPlan);
-            this.pnlToolbar.Controls.Add(this.chkModeC);
             this.pnlToolbar.Controls.Add(this.btnConnect);
             this.pnlToolbar.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlToolbar.Location = new System.Drawing.Point(201, 1);
@@ -171,53 +171,78 @@ namespace XPilot.PilotClient
             // btnIdent
             // 
             this.btnIdent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnIdent.Checked = false;
-            this.btnIdent.CheckedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.btnIdent.Clicked = false;
+            this.btnIdent.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnIdent.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnIdent.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnIdent.Enabled = false;
             this.btnIdent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnIdent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnIdent.Location = new System.Drawing.Point(176, 19);
+            this.btnIdent.ForeColor = System.Drawing.Color.White;
+            this.btnIdent.Location = new System.Drawing.Point(177, 19);
             this.btnIdent.Name = "btnIdent";
+            this.btnIdent.Pushed = false;
+            this.btnIdent.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnIdent.Size = new System.Drawing.Size(75, 23);
-            this.btnIdent.TabIndex = 7;
+            this.btnIdent.TabIndex = 8;
             this.btnIdent.Text = "Ident";
             this.btnIdent.Click += new System.EventHandler(this.btnIdent_Click);
+            // 
+            // chkModeC
+            // 
+            this.chkModeC.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.chkModeC.Clicked = false;
+            this.chkModeC.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.chkModeC.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.chkModeC.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.chkModeC.Enabled = false;
+            this.chkModeC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkModeC.ForeColor = System.Drawing.Color.White;
+            this.chkModeC.Location = new System.Drawing.Point(93, 19);
+            this.chkModeC.Name = "chkModeC";
+            this.chkModeC.Pushed = false;
+            this.chkModeC.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.chkModeC.Size = new System.Drawing.Size(75, 23);
+            this.chkModeC.TabIndex = 7;
+            this.chkModeC.Text = "Mode C";
+            this.chkModeC.Click += new System.EventHandler(this.chkModeC_Click);
             // 
             // btnMinimize
             // 
             this.btnMinimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMinimize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.btnMinimize.Clicked = false;
+            this.btnMinimize.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnMinimize.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnMinimize.FlatAppearance.BorderSize = 0;
-            this.btnMinimize.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMinimize.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnMinimize.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMinimize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
             this.btnMinimize.Location = new System.Drawing.Point(539, 19);
             this.btnMinimize.Name = "btnMinimize";
+            this.btnMinimize.Pushed = false;
+            this.btnMinimize.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnMinimize.Size = new System.Drawing.Size(20, 23);
             this.btnMinimize.TabIndex = 6;
             this.btnMinimize.Text = "–";
-            this.btnMinimize.UseVisualStyleBackColor = true;
             this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(207)))), ((int)(((byte)(94)))), ((int)(((byte)(57)))));
+            this.btnClose.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
+            this.btnClose.Clicked = false;
+            this.btnClose.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClose.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
-            this.btnClose.FlatAppearance.BorderSize = 0;
-            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.Location = new System.Drawing.Point(564, 19);
             this.btnClose.Name = "btnClose";
+            this.btnClose.Pushed = false;
+            this.btnClose.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
             this.btnClose.Size = new System.Drawing.Size(20, 23);
             this.btnClose.TabIndex = 2;
             this.btnClose.Text = "X";
-            this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // lblCallsign
@@ -237,72 +262,56 @@ namespace XPilot.PilotClient
             // 
             // btnSettings
             // 
+            this.btnSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.btnSettings.Clicked = false;
+            this.btnSettings.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnSettings.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSettings.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnSettings.FlatAppearance.BorderSize = 0;
-            this.btnSettings.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnSettings.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSettings.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSettings.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+            this.btnSettings.ForeColor = System.Drawing.Color.White;
             this.btnSettings.Location = new System.Drawing.Point(340, 19);
             this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Pushed = false;
+            this.btnSettings.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnSettings.Size = new System.Drawing.Size(75, 23);
             this.btnSettings.TabIndex = 4;
             this.btnSettings.Text = "Settings";
-            this.btnSettings.UseVisualStyleBackColor = true;
             this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
             // 
             // btnFlightPlan
             // 
+            this.btnFlightPlan.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.btnFlightPlan.Clicked = false;
+            this.btnFlightPlan.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnFlightPlan.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnFlightPlan.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnFlightPlan.FlatAppearance.BorderSize = 0;
-            this.btnFlightPlan.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnFlightPlan.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnFlightPlan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFlightPlan.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnFlightPlan.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFlightPlan.ForeColor = System.Drawing.Color.White;
             this.btnFlightPlan.Location = new System.Drawing.Point(258, 19);
             this.btnFlightPlan.Name = "btnFlightPlan";
+            this.btnFlightPlan.Pushed = false;
+            this.btnFlightPlan.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnFlightPlan.Size = new System.Drawing.Size(75, 23);
             this.btnFlightPlan.TabIndex = 3;
             this.btnFlightPlan.Text = "Flight Plan";
-            this.btnFlightPlan.UseVisualStyleBackColor = true;
             this.btnFlightPlan.Click += new System.EventHandler(this.btnFlightPlan_Click);
-            // 
-            // chkModeC
-            // 
-            this.chkModeC.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.chkModeC.Checked = false;
-            this.chkModeC.CheckedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.chkModeC.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkModeC.Enabled = false;
-            this.chkModeC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkModeC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.chkModeC.Location = new System.Drawing.Point(94, 19);
-            this.chkModeC.Name = "chkModeC";
-            this.chkModeC.Size = new System.Drawing.Size(75, 23);
-            this.chkModeC.TabIndex = 1;
-            this.chkModeC.Text = "Standby";
-            this.chkModeC.Click += new System.EventHandler(this.chkModeC_Click);
             // 
             // btnConnect
             // 
+            this.btnConnect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.btnConnect.Clicked = false;
+            this.btnConnect.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnConnect.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnConnect.FlatAppearance.BorderSize = 0;
-            this.btnConnect.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnConnect.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnConnect.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnConnect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnConnect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+            this.btnConnect.ForeColor = System.Drawing.Color.White;
             this.btnConnect.Location = new System.Drawing.Point(12, 19);
             this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Pushed = false;
+            this.btnConnect.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.btnConnect.Size = new System.Drawing.Size(75, 23);
             this.btnConnect.TabIndex = 0;
             this.btnConnect.Text = "Connect";
-            this.btnConnect.UseVisualStyleBackColor = true;
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // pnlSidebar
@@ -562,7 +571,6 @@ namespace XPilot.PilotClient
         private TransparentClickLabel lblCallsign;
         private FlatButton btnSettings;
         private FlatButton btnFlightPlan;
-        private FlatCheckbox chkModeC;
         private FlatButton btnConnect;
         private FlatButton btnClose;
         private FlatButton btnMinimize;
@@ -572,7 +580,6 @@ namespace XPilot.PilotClient
         private System.Windows.Forms.ToolStripMenuItem requestControllerInfo;
         private System.Windows.Forms.ToolStripMenuItem startPrivateChat;
         private System.ComponentModel.BackgroundWorker bwVersionCheck;
-        private FlatCheckbox btnIdent;
         private TransparentClickLabel Com2RX;
         private TransparentClickLabel Com2TX;
         private TransparentClickLabel Com2Freq;
@@ -584,5 +591,7 @@ namespace XPilot.PilotClient
         private CustomTabControl tabControl;
         private System.Windows.Forms.TabPage tabPageMessages;
         private System.Windows.Forms.ToolTip hfTooltip;
+        private FlatButton btnIdent;
+        private FlatButton chkModeC;
     }
 }

@@ -15,12 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Appccelerate.EventBroker;
-using Appccelerate.EventBroker.Handlers;
-using NetMQ;
-using NetMQ.Sockets;
-using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -34,6 +30,11 @@ using XPilot.PilotClient.Core.Events;
 using XPilot.PilotClient.Network;
 using XPilot.PilotClient.Network.Controllers;
 using XPlaneConnector;
+using Appccelerate.EventBroker;
+using Appccelerate.EventBroker.Handlers;
+using NetMQ;
+using NetMQ.Sockets;
+using Newtonsoft.Json;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -55,6 +56,9 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         [EventPublication(EventTopics.TransponderModeChanged)]
         public event EventHandler<ClientEventArgs<bool>> TransponderModeChanged;
+
+        [EventPublication(EventTopics.SquawkingIdentChanged)]
+        public event EventHandler<SquawkingIdentChangedEventArgs> SquawkingIdentChanged;
 
         [EventPublication(EventTopics.PlaySoundRequested)]
         public event EventHandler<PlaySoundEventArgs> PlaySoundRequested;
@@ -104,7 +108,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         private System.Threading.CancellationTokenSource outboundQueueTokenSource = new System.Threading.CancellationTokenSource();
         private System.Threading.CancellationToken outboundQueueCancellationToken;
-        private Queue<string> outboundMessageQueue = new Queue<string>();
+        private ConcurrentQueue<string> outboundMessageQueue = new ConcurrentQueue<string>();
         private bool receivedHandshake = false;
 
         private bool mConnected;
@@ -194,7 +198,11 @@ namespace XPilot.PilotClient.XplaneAdapter
 
                 if (mPairSocket != null && outboundMessageQueue.Count > 0)
                 {
-                    mPairSocket.SendFrame(outboundMessageQueue.Dequeue());
+                    outboundMessageQueue.TryDequeue(out string msg);
+                    if (!string.IsNullOrEmpty(msg))
+                    {
+                        mPairSocket.SendFrame(msg);
+                    }
                 }
             }
         }
@@ -236,20 +244,6 @@ namespace XPilot.PilotClient.XplaneAdapter
                                 }
                             }
                             break;
-                        case XplaneConnect.MessageType.PluginDisabled:
-                            if (mFsdManager.IsConnected)
-                            {
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "The xPilot X-Plane plugin has been disabled. Disconnected from the network."));
-                                mFsdManager.Disconnect(new DisconnectInfo
-                                {
-                                    Type = DisconnectType.Intentional
-                                });
-                            }
-                            else
-                            {
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "The xPilot X-Plane plugin has been disabled. You must re-enable the plugin before using xPilot."));
-                            }
-                            break;
                         case XplaneConnect.MessageType.PrivateMessageSent:
                             {
                                 string msg = data.Message;
@@ -286,7 +280,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
         }
 
-        public void SendMessage(PairSocket socket, string msg)
+        public void SendMessage(string msg)
         {
             if (!string.IsNullOrEmpty(msg))
             {
@@ -310,7 +304,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 });
             }
 
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.WhosOnline,
                 Timestamp = DateTime.Now,
@@ -331,15 +325,14 @@ namespace XPilot.PilotClient.XplaneAdapter
             if (mConnectionHeartbeats.Count > 0)
             {
                 TimeSpan span = DateTime.Now - mConnectionHeartbeats.Last();
-                if (span.TotalMilliseconds < 15000)
+                if (span.TotalSeconds < 15)
                 {
                     if (!receivedHandshake)
                     {
+                        mConnected = false;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
                         ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
-                        mConnected = false;
-
-                        SendMessage(mPairSocket, new XplaneConnect
+                        SendMessage(new XplaneConnect
                         {
                             Type = XplaneConnect.MessageType.PluginVersion,
                             Timestamp = DateTime.Now
@@ -350,8 +343,8 @@ namespace XPilot.PilotClient.XplaneAdapter
                         mConnected = true;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
                         ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(true));
-                        mConnectionHeartbeats.RemoveAt(0);
                     }
+                    mConnectionHeartbeats.RemoveAt(0);
                 }
                 else
                 {
@@ -439,7 +432,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             mXplaneConnector.Subscribe(DataRefs.CockpitRadiosTransponderMode, 5, (e, v) => { mUserAircraftData.TransponderMode = Convert.ToInt32(e.Value); });
 
             // transponder ident
-            mXplaneConnector.Subscribe(DataRefs.CockpitRadiosTransponderId, 5, (e, v) => { mUserAircraftData.TransponderIdent = Convert.ToBoolean(e.Value); });
+            mXplaneConnector.Subscribe(DataRefs.CockpitRadiosTransponderId, 5, (e, v) => { mUserAircraftData.TransponderIdent = Convert.ToBoolean(e.Value); SquawkingIdentChanged?.Invoke(this, new SquawkingIdentChangedEventArgs(Convert.ToBoolean(e.Value))); });
 
             // beacon light
             mXplaneConnector.Subscribe(DataRefs.CockpitElectricalBeaconLightsOn, 5, (e, v) => { mUserAircraftData.BeaconLightsOn = Convert.ToBoolean(e.Value); });
@@ -613,13 +606,13 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.XPlaneEventPosted, typeof(OnUserInterfaceAsync))]
         public void OnXplaneEventPosted(object sender, ClientEventArgs<string> e)
         {
-            SendMessage(mPairSocket, e.Value);
+            SendMessage(e.Value);
         }
 
         [EventSubscription(EventTopics.RadioTextMessage, typeof(OnUserInterfaceAsync))]
         public void OnRadioTextMessage(object sender, SimulatorMessageEventArgs e)
         {
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.RadioMessage,
                 Timestamp = DateTime.Now,
@@ -653,7 +646,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             dynamic data = new ExpandoObject();
             data.OurCallsign = e.ConnectInfo.Callsign;
 
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.NetworkConnected,
                 Timestamp = DateTime.Now,
@@ -667,14 +660,14 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.WhosOnline,
                 Timestamp = DateTime.Now,
                 Data = null
             }.ToJSON());
 
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.RemoveAllPlanes,
                 Timestamp = DateTime.Now,
@@ -738,7 +731,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 data.From = e.From.ToUpper();
                 data.Message = e.Data;
 
-                SendMessage(mPairSocket, new XplaneConnect
+                SendMessage(new XplaneConnect
                 {
                     Type = XplaneConnect.MessageType.PrivateMessageReceived,
                     Timestamp = DateTime.Now,
@@ -754,7 +747,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             data.To = e.To.ToUpper();
             data.Message = e.Message;
 
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.PrivateMessageSent,
                 Timestamp = DateTime.Now,
@@ -765,7 +758,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
         public void OnSessionStarted(object sender, EventArgs e)
         {
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.PluginVersion,
                 Timestamp = DateTime.Now
@@ -783,7 +776,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]
         public void OnValidateCslPaths(object sender, EventArgs e)
         {
-            SendMessage(mPairSocket, new XplaneConnect
+            SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.ValidateCslPaths,
                 Timestamp = DateTime.Now

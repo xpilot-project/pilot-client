@@ -712,6 +712,7 @@ namespace XPilot.PilotClient
 
         protected override void OnResize(EventArgs e)
         {
+            base.OnResize(e);
             Invalidate();
         }
 
@@ -795,8 +796,25 @@ namespace XPilot.PilotClient
             TextCommandFocus();
         }
 
+        private void btnIdent_Click(object sender, EventArgs e)
+        {
+            if (mNetworkManager.IsConnected)
+            {
+                mNetworkManager.SquawkIdent();
+            }
+
+            if (mFlightLoaded)
+            {
+                SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderIdent));
+            }
+
+            TextCommandFocus();
+        }
+
         private void chkModeC_Click(object sender, EventArgs e)
         {
+            chkModeC.Clicked = !chkModeC.Clicked;
+
             var laminarB738 = new DataRefElement
             {
                 DataRef = "laminar/B738/knob/transpoder_pos"
@@ -812,7 +830,7 @@ namespace XPilot.PilotClient
 
             if (mFlightLoaded)
             {
-                if (chkModeC.Checked)
+                if (chkModeC.Clicked)
                 {
                     SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Up_Cmd));
                     SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
@@ -837,21 +855,6 @@ namespace XPilot.PilotClient
             {
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "xPilot is unable to connect to X-Plane. Please make sure X-Plane is running and a flight is loaded."));
                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-            }
-
-            TextCommandFocus();
-        }
-
-        private void btnIdent_Click(object sender, EventArgs e)
-        {
-            if (mNetworkManager.IsConnected)
-            {
-                mNetworkManager.SquawkIdent();
-            }
-
-            if (mFlightLoaded)
-            {
-                SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderIdent));
             }
 
             TextCommandFocus();
@@ -1087,16 +1090,13 @@ namespace XPilot.PilotClient
         [EventSubscription(EventTopics.ToggleConnectButtonState, typeof(OnUserInterfaceAsync))]
         public void OnDisableConnectButton(object sender, ClientEventArgs<bool> e)
         {
-            if(e.Value)
+            if (e.Value)
             {
                 btnConnect.Enabled = true;
-                btnConnect.ForeColor = Color.FromArgb(230, 230, 230);
-                btnConnect.BackColor = Color.FromArgb(39, 44, 46);
             }
             else
             {
                 btnConnect.Enabled = false;
-                btnConnect.ForeColor = Color.FromArgb(100, 100, 100);
                 if (mNetworkManager.IsConnected)
                 {
                     mNetworkManager.Disconnect(new DisconnectInfo
@@ -1195,7 +1195,6 @@ namespace XPilot.PilotClient
         {
             mConnected = true;
             btnConnect.Text = "Disconnect";
-            btnConnect.ForeColor = Color.White;
             btnConnect.BackColor = Color.FromArgb(0, 120, 206);
             lblCallsign.Text = e.ConnectInfo.Callsign;
 
@@ -1205,9 +1204,6 @@ namespace XPilot.PilotClient
             {
                 chkModeC.Enabled = mConnectInfo.ObserverMode ? false : true;
                 btnIdent.Enabled = mConnectInfo.ObserverMode ? false : true;
-
-                chkModeC.ForeColor = mConnectInfo.ObserverMode ? Color.FromArgb(100, 100, 100) : Color.White;
-                btnIdent.ForeColor = mConnectInfo.ObserverMode ? Color.FromArgb(100, 100, 100) : Color.White;
             }
 
             SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
@@ -1224,14 +1220,10 @@ namespace XPilot.PilotClient
             chkModeC.Enabled = false;
             btnIdent.Enabled = false;
 
-            chkModeC.ForeColor = Color.FromArgb(100, 100, 100);
-            btnIdent.ForeColor = Color.FromArgb(100, 100, 100);
-
             mConnected = false;
             btnConnect.Text = "Connect";
-            btnConnect.ForeColor = Color.FromArgb(230, 230, 230);
-            btnConnect.BackColor = Color.Transparent;
-            lblCallsign.Text = "----------";
+            btnConnect.BackColor = Color.FromArgb(39, 44, 46);
+            lblCallsign.Text = "-------";
 
             XplaneConnect Data = new XplaneConnect
             {
@@ -1630,7 +1622,7 @@ namespace XPilot.PilotClient
         [EventSubscription(EventTopics.SquawkingIdentChanged, typeof(OnUserInterfaceAsync))]
         public void OnSquawkingIdentChanged(object sender, SquawkingIdentChangedEventArgs e)
         {
-            btnIdent.Checked = e.SquawkingIdent;
+            btnIdent.Clicked = e.SquawkingIdent;
         }
 
         [EventSubscription(EventTopics.TransponderModeChanged, typeof(OnUserInterfaceAsync))]
@@ -1638,13 +1630,13 @@ namespace XPilot.PilotClient
         {
             if (e.Value)
             {
-                chkModeC.Checked = true;
+                chkModeC.Clicked = true;
                 chkModeC.Text = "Mode C";
                 mConfig.SquawkingModeC = true;
             }
             else
             {
-                chkModeC.Checked = false;
+                chkModeC.Clicked = false;
                 chkModeC.Text = "Standby";
                 mConfig.SquawkingModeC = false;
             }
