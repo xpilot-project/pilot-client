@@ -71,8 +71,8 @@ namespace XPilot.PilotClient.Config
         public bool PlayGenericSelCalAlert { get; set; }
         public bool PlayRadioMessageAlert { get; set; }
         public bool AutoSquawkModeC { get; set; }
-        public bool CheckForUpdates { get; set; }
-        public UpdateChannel UpdateChannel { get; set; }
+        public bool CheckForUpdates { get; set; } = true;
+        public UpdateChannel UpdateChannel { get; set; } = UpdateChannel.Stable;
         public bool KeepClientWindowVisible { get; set; }
         public int TcpPort { get; set; } = 45001;
         public string XplanePath { get; set; }
