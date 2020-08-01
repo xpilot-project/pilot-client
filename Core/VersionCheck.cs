@@ -37,7 +37,7 @@ namespace XPilot.PilotClient.Core
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
         private readonly IAppConfig mConfig;
-        private const string ROOT_URL = "http://xpilot.clowd.io";
+        private const string ROOT_URL = "http://xpilot-project.org";
         private const string VERSION_CHECK_ENDPOINT = "api/v2/VersionCheck";
         private const string AIRCRAFT_DB_ENDPOINT = "api/v2/TypeCodes";
 

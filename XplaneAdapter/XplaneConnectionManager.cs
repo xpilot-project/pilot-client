@@ -16,12 +16,10 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
@@ -91,6 +89,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly IAppConfig mConfig;
 
         private readonly NetMQPoller mPoller;
+        private readonly NetMQQueue<string> mMessageQueue;
         private readonly PairSocket mPairSocket;
         private readonly StreamWriter mRawDataStream;
 
@@ -106,11 +105,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly UserAircraftData mUserAircraftData;
         private readonly UserAircraftRadioStack mRadioStackState;
 
-        private System.Threading.CancellationTokenSource outboundQueueTokenSource = new System.Threading.CancellationTokenSource();
-        private System.Threading.CancellationToken outboundQueueCancellationToken;
-        private ConcurrentQueue<string> outboundMessageQueue = new ConcurrentQueue<string>();
         private bool receivedHandshake = false;
-
         private bool mConnected;
         private bool mDisconnectMessageSent;
 
@@ -119,8 +114,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             mConfig = config;
             mFsdManager = fsdManager;
 
-            outboundQueueCancellationToken = outboundQueueTokenSource.Token;
-
+            mMessageQueue = new NetMQQueue<string>();
             mPairSocket = new PairSocket();
             mPairSocket.Options.TcpKeepalive = true;
             mPairSocket.ReceiveReady += PairSocket_ReceiveReady;
@@ -133,13 +127,19 @@ namespace XPilot.PilotClient.XplaneAdapter
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
             }
             mPairSocket.SignalOK();
-            mPoller = new NetMQPoller { mPairSocket };
+            mPoller = new NetMQPoller { mPairSocket, mMessageQueue };
             if (!mPoller.IsRunning)
             {
                 mPoller.RunAsync();
             }
 
-            Task.Run(() => ProcessQueuedMessages(), outboundQueueCancellationToken);
+            mMessageQueue.ReceiveReady += (s, e) =>
+            {
+                if (mMessageQueue.TryDequeue(out string msg, TimeSpan.FromMilliseconds(100)))
+                {
+                    mPairSocket.SendFrame(msg);
+                }
+            };
 
             mXplaneConnector = new XPlaneConnector.XPlaneConnector();
             mUserAircraftData = new UserAircraftData();
@@ -187,24 +187,6 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
 
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, string.Format($"PluginLogs/PluginLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log")), false);
-        }
-
-        private void ProcessQueuedMessages()
-        {
-            while (true)
-            {
-                if (outboundQueueCancellationToken.IsCancellationRequested)
-                    break;
-
-                if (mPairSocket != null && outboundMessageQueue.Count > 0)
-                {
-                    outboundMessageQueue.TryDequeue(out string msg);
-                    if (!string.IsNullOrEmpty(msg))
-                    {
-                        mPairSocket.SendFrame(msg);
-                    }
-                }
-            }
         }
 
         private void PairSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
@@ -286,7 +268,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 mRawDataStream.Write($"[{ DateTime.UtcNow:HH:mm:ss.fff}] >>   { msg }\n");
                 mRawDataStream.Flush();
-                outboundMessageQueue.Enqueue(msg);
+                mMessageQueue.Enqueue(msg);
             }
         }
 
@@ -768,7 +750,6 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
         public void OnSessionEnded(object sender, EventArgs e)
         {
-            outboundQueueTokenSource.Cancel();
             mPoller.Stop();
             mPairSocket.Close();
         }
