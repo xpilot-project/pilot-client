@@ -363,6 +363,7 @@
   <PropertyGroup>
     <PostBuildEvent>if "$(ConfigurationName)" == "Release" (
 "C:\Program Files (x86)\NSIS\makensisw.exe" "$(ProjectDir)..\Installer\Installer.nsi"
-)</PostBuildEvent>
+)
+CertUtil -hashfile "$(TargetDir)$(TargetName)$(TargetExt)" sha512</PostBuildEvent>
   </PropertyGroup>
 </Project>
