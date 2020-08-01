@@ -363,9 +363,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" (
-"C:\Program Files (x86)\NSIS\makensisw.exe" "$(ProjectDir)..\Installer\Installer.nsi"
-)
-CertUtil -hashfile "$(TargetDir)$(TargetName)$(TargetExt)" sha512</PostBuildEvent>
+    <PostBuildEvent>CertUtil -hashfile "$(TargetDir)$(TargetName)$(TargetExt)" sha512</PostBuildEvent>
   </PropertyGroup>
 </Project>

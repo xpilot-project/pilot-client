@@ -45,6 +45,19 @@ namespace XPilot.PilotClient.Config
         [JsonIgnore]
         public string AppPath { get; set; }
 
+        [JsonIgnore]
+        public string FullXplanePath
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(XplanePath))
+                {
+                    return Path.Combine(Path.GetDirectoryName(XplanePath), @"Resources\plugins\xPilot\win_x64\xPilot.xpl");
+                }
+                return "";
+            }
+        }
+
         public List<NetworkServerInfo> CachedServers { get; set; }
         public string VatsimId { get; set; }
         public string VatsimPassword { get; set; }
