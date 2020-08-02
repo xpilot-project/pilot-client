@@ -1641,6 +1641,26 @@ namespace XPilot.PilotClient
                 mConfig.SquawkingModeC = false;
             }
         }
+
+        private void ChatMessageBox_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pnlSidebar_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void treeControllers_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
     }
 
     public class TreeNodeSorter : IComparer
