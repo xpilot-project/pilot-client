@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessagePack.CryptoDto", "Li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NaCl.Core", "Libraries\GeoVR\Libraries\NaCl.Core\NaCl.Core.csproj", "{7C633408-AB95-4778-9D8E-5F4F7AECC90E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XPlaneConnector", "Libraries\XPlaneConnector\XPlaneConnector.csproj", "{52226AF7-CA8D-43BF-B239-6BA87C526BDB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vatsim.Fsd.Connector", "..\FSD-Connector\Vatsim.Fsd.Connector.csproj", "{0375FCFE-1E78-43DA-9865-BDE0F1412598}"
 EndProject
 Global
@@ -49,10 +47,6 @@ Global
 		{7C633408-AB95-4778-9D8E-5F4F7AECC90E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C633408-AB95-4778-9D8E-5F4F7AECC90E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C633408-AB95-4778-9D8E-5F4F7AECC90E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52226AF7-CA8D-43BF-B239-6BA87C526BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52226AF7-CA8D-43BF-B239-6BA87C526BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52226AF7-CA8D-43BF-B239-6BA87C526BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52226AF7-CA8D-43BF-B239-6BA87C526BDB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0375FCFE-1E78-43DA-9865-BDE0F1412598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0375FCFE-1E78-43DA-9865-BDE0F1412598}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0375FCFE-1E78-43DA-9865-BDE0F1412598}.Release|Any CPU.ActiveCfg = Release|Any CPU
