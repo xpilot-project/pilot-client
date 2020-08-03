@@ -110,7 +110,7 @@ namespace XPilot.PilotClient
             this.pnlTabs.Location = new System.Drawing.Point(189, 61);
             this.pnlTabs.Name = "pnlTabs";
             this.pnlTabs.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlTabs.Size = new System.Drawing.Size(540, 143);
+            this.pnlTabs.Size = new System.Drawing.Size(540, 148);
             this.pnlTabs.TabIndex = 2;
             // 
             // tabControl
@@ -124,7 +124,7 @@ namespace XPilot.PilotClient
             this.tabControl.Location = new System.Drawing.Point(10, 10);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(520, 123);
+            this.tabControl.Size = new System.Drawing.Size(520, 128);
             this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl.TabIndex = 1;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
@@ -136,7 +136,7 @@ namespace XPilot.PilotClient
             this.tabPageMessages.ForeColor = System.Drawing.Color.Silver;
             this.tabPageMessages.Location = new System.Drawing.Point(4, 25);
             this.tabPageMessages.Name = "tabPageMessages";
-            this.tabPageMessages.Size = new System.Drawing.Size(512, 94);
+            this.tabPageMessages.Size = new System.Drawing.Size(512, 99);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
             // 
@@ -147,9 +147,8 @@ namespace XPilot.PilotClient
             this.ChatMessageBox.Location = new System.Drawing.Point(0, 0);
             this.ChatMessageBox.Margin = new System.Windows.Forms.Padding(0);
             this.ChatMessageBox.Name = "ChatMessageBox";
-            this.ChatMessageBox.Size = new System.Drawing.Size(512, 94);
+            this.ChatMessageBox.Size = new System.Drawing.Size(512, 99);
             this.ChatMessageBox.TabIndex = 0;
-            this.ChatMessageBox.Load += new System.EventHandler(this.ChatMessageBox_Load);
             // 
             // pnlToolbar
             // 
@@ -326,9 +325,8 @@ namespace XPilot.PilotClient
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Location = new System.Drawing.Point(1, 1);
             this.pnlSidebar.Name = "pnlSidebar";
-            this.pnlSidebar.Size = new System.Drawing.Size(188, 203);
+            this.pnlSidebar.Size = new System.Drawing.Size(188, 208);
             this.pnlSidebar.TabIndex = 0;
-            this.pnlSidebar.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlSidebar_Paint);
             // 
             // pnlTreeContainer
             // 
@@ -339,7 +337,7 @@ namespace XPilot.PilotClient
             this.pnlTreeContainer.Location = new System.Drawing.Point(0, 85);
             this.pnlTreeContainer.Name = "pnlTreeContainer";
             this.pnlTreeContainer.Padding = new System.Windows.Forms.Padding(5);
-            this.pnlTreeContainer.Size = new System.Drawing.Size(188, 118);
+            this.pnlTreeContainer.Size = new System.Drawing.Size(188, 123);
             this.pnlTreeContainer.TabIndex = 3;
             // 
             // treeControllers
@@ -381,14 +379,13 @@ namespace XPilot.PilotClient
             this.treeControllers.ShowNodeToolTips = true;
             this.treeControllers.ShowPlusMinus = false;
             this.treeControllers.ShowRootLines = false;
-            this.treeControllers.Size = new System.Drawing.Size(178, 108);
+            this.treeControllers.Size = new System.Drawing.Size(178, 113);
             this.treeControllers.TabIndex = 5;
             this.treeControllers.TabStop = false;
             this.treeControllers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeControllers_BeforeCollapse);
             this.treeControllers.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeControllers_AfterCollapse);
             this.treeControllers.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeControllers_AfterExpand);
             this.treeControllers.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeControllers_BeforeSelect);
-            this.treeControllers.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeControllers_AfterSelect);
             this.treeControllers.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeControllers_NodeMouseClick);
             this.treeControllers.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeControllers_NodeMouseDoubleClick);
             this.treeControllers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeControllers_MouseUp);
@@ -538,20 +535,19 @@ namespace XPilot.PilotClient
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
-            this.ClientSize = new System.Drawing.Size(730, 205);
+            this.ClientSize = new System.Drawing.Size(730, 210);
             this.Controls.Add(this.pnlTabs);
             this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.pnlSidebar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(730, 205);
+            this.MinimumSize = new System.Drawing.Size(730, 210);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xPilot";
             this.Activated += new System.EventHandler(this.MainForm_Activated);
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
             this.controllerTreeContextMenu.ResumeLayout(false);
             this.pnlTabs.ResumeLayout(false);
