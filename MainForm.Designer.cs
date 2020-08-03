@@ -107,10 +107,10 @@ namespace XPilot.PilotClient
             this.pnlTabs.BorderColor = System.Drawing.Color.Transparent;
             this.pnlTabs.Controls.Add(this.tabControl);
             this.pnlTabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlTabs.Location = new System.Drawing.Point(201, 61);
+            this.pnlTabs.Location = new System.Drawing.Point(189, 61);
             this.pnlTabs.Name = "pnlTabs";
             this.pnlTabs.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlTabs.Size = new System.Drawing.Size(598, 218);
+            this.pnlTabs.Size = new System.Drawing.Size(540, 148);
             this.pnlTabs.TabIndex = 2;
             // 
             // tabControl
@@ -124,7 +124,7 @@ namespace XPilot.PilotClient
             this.tabControl.Location = new System.Drawing.Point(10, 10);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(578, 198);
+            this.tabControl.Size = new System.Drawing.Size(520, 128);
             this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl.TabIndex = 1;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
@@ -136,7 +136,7 @@ namespace XPilot.PilotClient
             this.tabPageMessages.ForeColor = System.Drawing.Color.Silver;
             this.tabPageMessages.Location = new System.Drawing.Point(4, 25);
             this.tabPageMessages.Name = "tabPageMessages";
-            this.tabPageMessages.Size = new System.Drawing.Size(570, 169);
+            this.tabPageMessages.Size = new System.Drawing.Size(512, 99);
             this.tabPageMessages.TabIndex = 0;
             this.tabPageMessages.Text = "Messages";
             // 
@@ -147,7 +147,7 @@ namespace XPilot.PilotClient
             this.ChatMessageBox.Location = new System.Drawing.Point(0, 0);
             this.ChatMessageBox.Margin = new System.Windows.Forms.Padding(0);
             this.ChatMessageBox.Name = "ChatMessageBox";
-            this.ChatMessageBox.Size = new System.Drawing.Size(570, 169);
+            this.ChatMessageBox.Size = new System.Drawing.Size(512, 99);
             this.ChatMessageBox.TabIndex = 0;
             // 
             // pnlToolbar
@@ -163,9 +163,9 @@ namespace XPilot.PilotClient
             this.pnlToolbar.Controls.Add(this.btnFlightPlan);
             this.pnlToolbar.Controls.Add(this.btnConnect);
             this.pnlToolbar.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlToolbar.Location = new System.Drawing.Point(201, 1);
+            this.pnlToolbar.Location = new System.Drawing.Point(189, 1);
             this.pnlToolbar.Name = "pnlToolbar";
-            this.pnlToolbar.Size = new System.Drawing.Size(598, 60);
+            this.pnlToolbar.Size = new System.Drawing.Size(540, 60);
             this.pnlToolbar.TabIndex = 1;
             // 
             // btnIdent
@@ -216,7 +216,7 @@ namespace XPilot.PilotClient
             this.btnMinimize.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnMinimize.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMinimize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.btnMinimize.Location = new System.Drawing.Point(539, 19);
+            this.btnMinimize.Location = new System.Drawing.Point(484, 19);
             this.btnMinimize.Name = "btnMinimize";
             this.btnMinimize.Pushed = false;
             this.btnMinimize.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
@@ -236,7 +236,7 @@ namespace XPilot.PilotClient
             this.btnClose.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(564, 19);
+            this.btnClose.Location = new System.Drawing.Point(510, 19);
             this.btnClose.Name = "btnClose";
             this.btnClose.Pushed = false;
             this.btnClose.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
@@ -269,7 +269,7 @@ namespace XPilot.PilotClient
             this.btnSettings.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSettings.ForeColor = System.Drawing.Color.White;
-            this.btnSettings.Location = new System.Drawing.Point(340, 19);
+            this.btnSettings.Location = new System.Drawing.Point(339, 19);
             this.btnSettings.Name = "btnSettings";
             this.btnSettings.Pushed = false;
             this.btnSettings.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
@@ -305,7 +305,7 @@ namespace XPilot.PilotClient
             this.btnConnect.DisabledTextColor = System.Drawing.Color.DarkGray;
             this.btnConnect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnConnect.ForeColor = System.Drawing.Color.White;
-            this.btnConnect.Location = new System.Drawing.Point(12, 19);
+            this.btnConnect.Location = new System.Drawing.Point(14, 19);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Pushed = false;
             this.btnConnect.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
@@ -316,6 +316,7 @@ namespace XPilot.PilotClient
             // 
             // pnlSidebar
             // 
+            this.pnlSidebar.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pnlSidebar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
             this.pnlSidebar.BorderColor = System.Drawing.Color.Transparent;
             this.pnlSidebar.Controls.Add(this.pnlTreeContainer);
@@ -324,7 +325,7 @@ namespace XPilot.PilotClient
             this.pnlSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlSidebar.Location = new System.Drawing.Point(1, 1);
             this.pnlSidebar.Name = "pnlSidebar";
-            this.pnlSidebar.Size = new System.Drawing.Size(200, 278);
+            this.pnlSidebar.Size = new System.Drawing.Size(188, 208);
             this.pnlSidebar.TabIndex = 0;
             // 
             // pnlTreeContainer
@@ -336,7 +337,7 @@ namespace XPilot.PilotClient
             this.pnlTreeContainer.Location = new System.Drawing.Point(0, 85);
             this.pnlTreeContainer.Name = "pnlTreeContainer";
             this.pnlTreeContainer.Padding = new System.Windows.Forms.Padding(5);
-            this.pnlTreeContainer.Size = new System.Drawing.Size(200, 193);
+            this.pnlTreeContainer.Size = new System.Drawing.Size(188, 123);
             this.pnlTreeContainer.TabIndex = 3;
             // 
             // treeControllers
@@ -346,7 +347,9 @@ namespace XPilot.PilotClient
             this.treeControllers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeControllers.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.treeControllers.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.treeControllers.Indent = 19;
             this.treeControllers.Location = new System.Drawing.Point(5, 5);
+            this.treeControllers.MinimumSize = new System.Drawing.Size(1, 1);
             this.treeControllers.Name = "treeControllers";
             treeNode1.Name = "Center";
             treeNode1.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -376,7 +379,7 @@ namespace XPilot.PilotClient
             this.treeControllers.ShowNodeToolTips = true;
             this.treeControllers.ShowPlusMinus = false;
             this.treeControllers.ShowRootLines = false;
-            this.treeControllers.Size = new System.Drawing.Size(190, 183);
+            this.treeControllers.Size = new System.Drawing.Size(178, 113);
             this.treeControllers.TabIndex = 5;
             this.treeControllers.TabStop = false;
             this.treeControllers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeControllers_BeforeCollapse);
@@ -396,7 +399,7 @@ namespace XPilot.PilotClient
             this.lblControllers.HasBorder = false;
             this.lblControllers.Location = new System.Drawing.Point(0, 60);
             this.lblControllers.Name = "lblControllers";
-            this.lblControllers.Size = new System.Drawing.Size(200, 25);
+            this.lblControllers.Size = new System.Drawing.Size(188, 25);
             this.lblControllers.TabIndex = 2;
             this.lblControllers.Text = "Nearby Controllers:";
             this.lblControllers.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -416,7 +419,7 @@ namespace XPilot.PilotClient
             this.pnlComRadios.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlComRadios.Location = new System.Drawing.Point(0, 0);
             this.pnlComRadios.Name = "pnlComRadios";
-            this.pnlComRadios.Size = new System.Drawing.Size(200, 60);
+            this.pnlComRadios.Size = new System.Drawing.Size(188, 60);
             this.pnlComRadios.TabIndex = 1;
             // 
             // Com2RX
@@ -532,14 +535,14 @@ namespace XPilot.PilotClient
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
-            this.ClientSize = new System.Drawing.Size(800, 280);
+            this.ClientSize = new System.Drawing.Size(730, 210);
             this.Controls.Add(this.pnlTabs);
             this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.pnlSidebar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimumSize = new System.Drawing.Size(800, 280);
+            this.MinimumSize = new System.Drawing.Size(730, 210);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
