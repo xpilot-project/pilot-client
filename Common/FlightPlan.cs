@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
 namespace XPilot.PilotClient.Common
 {
@@ -28,10 +30,14 @@ namespace XPilot.PilotClient.Common
         SVFR
     }
 
+    [Serializable]
     public class FlightPlan
     {
+        [XmlIgnore]
         public string Callsign { get; set; }
+        [XmlAttribute]
         public FlightPlanType FlightType { get; set; }
+        [XmlAttribute]
         public string Equipment
         {
             get
@@ -55,24 +61,43 @@ namespace XPilot.PilotClient.Common
                 this.ExtractEquipmentComponents(value);
             }
         }
+        [XmlAttribute]
         public int CruiseAltitude { get; set; }
+        [XmlAttribute]
         public int CruiseSpeed { get; set; }
+        [XmlAttribute]
         public string DepartureAirport { get; set; }
+        [XmlAttribute]
         public string DestinationAirport { get; set; }
+        [XmlAttribute]
         public string AlternateAirport { get; set; }
+        [XmlAttribute]
         public string Route { get; set; }
+        [XmlAttribute]
         public string Remarks { get; set; }
+        [XmlAttribute]
         public bool IsHeavy { get; set; }
+        [XmlAttribute]
         public string EquipmentPrefix { get; set; }
+        [XmlIgnore]
         public string AircraftType { get; set; }
+        [XmlAttribute]
         public string EquipmentSuffix { get; set; }
+        [XmlAttribute]
         public int DepartureTime { get; set; }
+        [XmlAttribute]
         public int DepartureTimeAct { get; set; }
+        [XmlAttribute]
         public int EnrouteHours { get; set; }
+        [XmlAttribute]
         public int EnrouteMinutes { get; set; }
+        [XmlAttribute]
         public int FuelHours { get; set; }
+        [XmlAttribute]
         public int FuelMinutes { get; set; }
+        [XmlIgnore]
         public VoiceType VoiceType { get; set; }
+
         public string AircraftTypeWithSuffix
         {
             get
