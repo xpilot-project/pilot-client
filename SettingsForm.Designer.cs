@@ -79,6 +79,7 @@ namespace XPilot.PilotClient
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
             this.btnBrowseXplane = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.XplanePath = new System.Windows.Forms.TextBox();
@@ -94,7 +95,6 @@ namespace XPilot.PilotClient
             this.volumeCom2 = new System.Windows.Forms.TrackBar();
             this.inputVolumeLabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
             this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.inputVolume)).BeginInit();
@@ -629,6 +629,17 @@ namespace XPilot.PilotClient
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "X-Plane Configuration";
             // 
+            // chkVolumeKnobVolume
+            // 
+            this.chkVolumeKnobVolume.AutoSize = true;
+            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(14, 100);
+            this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
+            this.chkVolumeKnobVolume.Size = new System.Drawing.Size(226, 17);
+            this.chkVolumeKnobVolume.TabIndex = 13;
+            this.chkVolumeKnobVolume.TabStop = false;
+            this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control radio volume";
+            this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
+            // 
             // btnBrowseXplane
             // 
             this.btnBrowseXplane.Location = new System.Drawing.Point(212, 41);
@@ -691,10 +702,10 @@ namespace XPilot.PilotClient
             // 
             this.tabAudio.Controls.Add(this.groupBox4);
             this.tabAudio.Controls.Add(this.groupBox8);
-            this.tabAudio.Location = new System.Drawing.Point(4, 22);
+            this.tabAudio.Location = new System.Drawing.Point(4, 24);
             this.tabAudio.Name = "tabAudio";
             this.tabAudio.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAudio.Size = new System.Drawing.Size(627, 427);
+            this.tabAudio.Size = new System.Drawing.Size(627, 425);
             this.tabAudio.TabIndex = 1;
             this.tabAudio.Text = "Audio/Push to Talk (PTT)";
             this.tabAudio.UseVisualStyleBackColor = true;
@@ -807,17 +818,6 @@ namespace XPilot.PilotClient
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // chkVolumeKnobVolume
-            // 
-            this.chkVolumeKnobVolume.AutoSize = true;
-            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(14, 100);
-            this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
-            this.chkVolumeKnobVolume.Size = new System.Drawing.Size(226, 17);
-            this.chkVolumeKnobVolume.TabIndex = 13;
-            this.chkVolumeKnobVolume.TabStop = false;
-            this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control radio volume";
-            this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
-            // 
             // levelMeterInput
             // 
             this.levelMeterInput.Location = new System.Drawing.Point(21, 214);
@@ -839,13 +839,14 @@ namespace XPilot.PilotClient
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
-            this.Padding = new System.Windows.Forms.Padding(30);
+            this.Padding = new System.Windows.Forms.Padding(30, 30, 30, 30);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "xPilot Settings";

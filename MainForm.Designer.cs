@@ -109,7 +109,7 @@ namespace XPilot.PilotClient
             this.pnlTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTabs.Location = new System.Drawing.Point(201, 61);
             this.pnlTabs.Name = "pnlTabs";
-            this.pnlTabs.Padding = new System.Windows.Forms.Padding(10);
+            this.pnlTabs.Padding = new System.Windows.Forms.Padding(10, 10, 10, 10);
             this.pnlTabs.Size = new System.Drawing.Size(598, 218);
             this.pnlTabs.TabIndex = 2;
             // 
@@ -335,7 +335,7 @@ namespace XPilot.PilotClient
             this.pnlTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTreeContainer.Location = new System.Drawing.Point(0, 85);
             this.pnlTreeContainer.Name = "pnlTreeContainer";
-            this.pnlTreeContainer.Padding = new System.Windows.Forms.Padding(5);
+            this.pnlTreeContainer.Padding = new System.Windows.Forms.Padding(5, 5, 5, 5);
             this.pnlTreeContainer.Size = new System.Drawing.Size(200, 193);
             this.pnlTreeContainer.TabIndex = 3;
             // 
@@ -536,6 +536,7 @@ namespace XPilot.PilotClient
             this.Controls.Add(this.pnlTabs);
             this.Controls.Add(this.pnlToolbar);
             this.Controls.Add(this.pnlSidebar);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
