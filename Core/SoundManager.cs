@@ -15,12 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Appccelerate.EventBroker;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Media;
+using XPilot.PilotClient.Config;
+using XPilot.PilotClient.Core.Events;
+using Appccelerate.EventBroker;
+using Appccelerate.EventBroker.Handlers;
 
 namespace XPilot.PilotClient.Core
 {
@@ -38,11 +40,63 @@ namespace XPilot.PilotClient.Core
         SelCal
     }
 
-    public class SoundManager : EventBus, ISoundManager
+    public class SoundManager : EventBus, ISoundManager, IDisposable
     {
-        public SoundManager(IEventBroker broker) : base(broker)
-        {
+        private readonly IAppConfig mConfig;
+        private Dictionary<SoundEvent, SoundPlayer> mSounds;
 
+        public SoundManager(IEventBroker broker, IAppConfig config) : base(broker)
+        {
+            mConfig = config;
+            LoadSoundFiles();
+        }
+
+        private void LoadSoundFiles()
+        {
+            mSounds = new Dictionary<SoundEvent, SoundPlayer>();
+            foreach (SoundEvent sound in Enum.GetValues(typeof(SoundEvent)))
+            {
+                if (sound != SoundEvent.None)
+                {
+                    string path = Path.Combine(mConfig.AppPath, Path.Combine("Sounds", $"{sound}.wav"));
+                    if (File.Exists(path))
+                    {
+                        mSounds.Add(sound, new SoundPlayer(path));
+                        try
+                        {
+                            mSounds[sound].Load();
+                        }
+                        catch { }
+                    }
+                }
+            }
+        }
+
+        private void Play(SoundEvent sound)
+        {
+            if (sound != SoundEvent.None)
+            {
+                try
+                {
+                    mSounds[sound].Play();
+                }
+                catch { }
+            }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            foreach (SoundPlayer player in mSounds.Values)
+            {
+                player.Dispose();
+            }
+        }
+
+        [EventSubscription(EventTopics.PlaySoundRequested, typeof(OnUserInterfaceAsync))]
+        public void OnPlaySoundRequested(object sender, PlaySoundEventArgs e)
+        {
+            Play(e.Sound);
         }
     }
 }

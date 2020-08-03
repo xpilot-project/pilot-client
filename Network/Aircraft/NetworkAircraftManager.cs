@@ -37,6 +37,9 @@ namespace XPilot.PilotClient.Network.Aircraft
         [EventPublication(EventTopics.XPlaneEventPosted)]
         public event EventHandler<ClientEventArgs<string>> XPlaneEventPosted;
 
+        [EventPublication(EventTopics.NotificationPosted)]
+        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+
         private const string VATSIM_DATA_URL = "http://cluster.data.vatsim.net/vatsim-data.json";
 
         private readonly List<NetworkAircraft> mNetworkAircraft = new List<NetworkAircraft>();
@@ -69,10 +72,13 @@ namespace XPilot.PilotClient.Network.Aircraft
         {
             try
             {
-                VatsimDatafeed = JsonConvert.DeserializeObject<VatsimData>(
-                    await new WebClient().DownloadStringTaskAsync(new Uri(VATSIM_DATA_URL)));
+                string json = await new WebClient() { Encoding = System.Text.Encoding.UTF8 }.DownloadStringTaskAsync(new Uri(VATSIM_DATA_URL));
+                VatsimDatafeed = JsonConvert.DeserializeObject<VatsimData>(json);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error downloading VATSIM data:" + ex.Message));
+            }
         }
 
         private void RefreshVatsimData_Tick(object sender, EventArgs e)
