@@ -118,6 +118,6 @@ namespace XPilot.PilotClient
         public const string SessionStarted = "SessionStarted";
         public const string SessionEnded = "SessionEnded";
         public const string VoiceServerConnectionLost = "VoiceServerConnectionLost";
-        public const string ToggleConnectButtonState = "ToggleConnectButtonState";
+        public const string EnableConnectButton = "EnableConnectButton";
     }
 }

@@ -73,8 +73,8 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventPublication(EventTopics.RadioTextMessage)]
         public event EventHandler<SimulatorMessageEventArgs> SimulatorTextMessageSent;
 
-        [EventPublication(EventTopics.ToggleConnectButtonState)]
-        public event EventHandler<ClientEventArgs<bool>> ToggleConnectButtonState;
+        [EventPublication(EventTopics.EnableConnectButton)]
+        public event EventHandler<ClientEventArgs<bool>> EnableConnectButton;
 
         [EventPublication(EventTopics.PrivateMessageSent)]
         public event EventHandler<PrivateMessageSentEventArgs> PrivateMessageSent;
@@ -94,7 +94,6 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
-        private readonly Timer mRetryConnectionTimer;
         private readonly Timer mGetXplaneDataTimer;
         private readonly Timer mWhosOnlineListRefresh;
 
@@ -105,9 +104,9 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly UserAircraftData mUserAircraftData;
         private readonly UserAircraftRadioStack mRadioStackState;
 
-        private bool receivedHandshake = false;
-        private bool mConnected;
-        private bool mDisconnectMessageSent;
+        private bool mReceivedInitialHandshake = false;
+        private bool mDisconnectMessageSent = false;
+        private bool mValidCsl = false;
 
         public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
         {
@@ -159,13 +158,6 @@ namespace XPilot.PilotClient.XplaneAdapter
             mConnectionTimer.Tick += ConnectionTimer_Tick;
             mConnectionTimer.Start();
 
-            mRetryConnectionTimer = new Timer
-            {
-                Interval = 5000
-            };
-            mRetryConnectionTimer.Tick += RetryConnectionTimer_Tick;
-            mRetryConnectionTimer.Start();
-
             mWhosOnlineListRefresh = new Timer
             {
                 Interval = 5000
@@ -208,11 +200,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.PluginVersion:
-                            receivedHandshake = true;
+                            mReceivedInitialHandshake = true;
                             int pluginVersion = (int)data.Version;
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
-                                ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
+                                EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
                                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
                             }
@@ -237,10 +229,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.ValidateCslPaths:
+                            mValidCsl = (bool)data.Result;
                             if (data.Result == false)
                             {
-                                ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Models\" section in the xPilot Documentation (https://xpilot.clowd.io/docs). Restart X-Plane and xPilot after you have properly configured your CSL models."));
+                                EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
                                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
                             }
                             break;
@@ -294,14 +287,6 @@ namespace XPilot.PilotClient.XplaneAdapter
             }.ToJSON());
         }
 
-        private void RetryConnectionTimer_Tick(object sender, EventArgs e)
-        {
-            if (!mConnected)
-            {
-                mXplaneConnector.Start();
-            }
-        }
-
         private void ConnectionTimer_Tick(object sender, EventArgs e)
         {
             if (mConnectionHeartbeats.Count > 0)
@@ -309,11 +294,10 @@ namespace XPilot.PilotClient.XplaneAdapter
                 TimeSpan span = DateTime.Now - mConnectionHeartbeats.Last();
                 if (span.TotalSeconds < 15)
                 {
-                    if (!receivedHandshake)
+                    if (!mReceivedInitialHandshake)
                     {
-                        mConnected = false;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                        ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
+                        EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                         SendMessage(new XplaneConnect
                         {
                             Type = XplaneConnect.MessageType.PluginVersion,
@@ -322,24 +306,24 @@ namespace XPilot.PilotClient.XplaneAdapter
                     }
                     else
                     {
-                        mConnected = true;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
-                        ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(true));
+                        if (mValidCsl)
+                        {
+                            EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(true));
+                        }
                     }
                     mConnectionHeartbeats.RemoveAt(0);
                 }
                 else
                 {
                     SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                    ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
-                    mConnected = false;
+                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                 }
             }
             else
             {
                 SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                ToggleConnectButtonState?.Invoke(this, new ClientEventArgs<bool>(false));
-                mConnected = false;
+                EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
             }
         }
 

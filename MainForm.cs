@@ -1087,23 +1087,16 @@ namespace XPilot.PilotClient
             tabControl.Refresh();
         }
 
-        [EventSubscription(EventTopics.ToggleConnectButtonState, typeof(OnUserInterfaceAsync))]
+        [EventSubscription(EventTopics.EnableConnectButton, typeof(OnUserInterfaceAsync))]
         public void OnDisableConnectButton(object sender, ClientEventArgs<bool> e)
         {
-            if (e.Value)
+            btnConnect.Enabled = e.Value;
+            if (e.Value == false && mNetworkManager.IsConnected)
             {
-                btnConnect.Enabled = true;
-            }
-            else
-            {
-                btnConnect.Enabled = false;
-                if (mNetworkManager.IsConnected)
+                mNetworkManager.Disconnect(new DisconnectInfo
                 {
-                    mNetworkManager.Disconnect(new DisconnectInfo
-                    {
-                        Type = DisconnectType.Intentional
-                    });
-                }
+                    Type = DisconnectType.Intentional
+                });
             }
         }
 
