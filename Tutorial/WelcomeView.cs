@@ -24,19 +24,72 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using XPilot.PilotClient.Config;
 
 namespace XPilot.PilotClient
 {
     public partial class WelcomeView : View
     {
-        public WelcomeView(IHost host) : base(host)
+        private IAppConfig mConfig;
+
+        public WelcomeView(IHost host, IAppConfig config) : base(host)
         {
+            mConfig = config;
             InitializeComponent();
         }
 
         private void btnYes_Click(object sender, EventArgs e)
         {
-            Host.SwitchView("XplanePath");
+            int instancesFound = 0;
+            string usablePath = "";
+            var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
+            if (File.Exists(installFile))
+            {
+                using (StreamReader sr = File.OpenText(installFile))
+                {
+                    string xpPath = string.Empty;
+                    while ((xpPath = sr.ReadLine()) != null)
+                    {
+                        if (File.Exists(Path.Combine(xpPath, "X-Plane.exe")))
+                        {
+                            usablePath = Path.Combine(xpPath, "X-Plane.exe");
+                            ++instancesFound;
+                        }
+                    }
+                }
+            }
+            if (instancesFound == 1)
+            {
+                mConfig.XplanePath = usablePath;
+                mConfig.SaveConfig();
+
+                // check for conflicting plugins (XSwiftBus, XSB)
+                bool xsb = false;
+                bool xswiftbus = false;
+                string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), "Resources/plugins");
+                string[] dirs = Directory.GetDirectories(pluginPath);
+                foreach (var dir in dirs)
+                {
+                    if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
+                    {
+                        xsb = true;
+                    }
+                    if (Path.GetFileName(dir).ToLower() == "xswiftbus")
+                    {
+                        xswiftbus = true;
+                    }
+                }
+
+                if (xsb || xswiftbus)
+                {
+                    Host.SwitchView("ConflictingPlugins");
+                }
+            }
+            else
+            {
+                Host.SwitchView("XplanePath");
+            }
         }
     }
 }

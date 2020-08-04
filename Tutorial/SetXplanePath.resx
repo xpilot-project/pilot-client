@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>Close X-Plane if it is open.
+    <value>xPilot found more than one copy of X-Plane installed on your computer.
 
-You need to tell xPilot where X-Plane is installed.
+You need to tell xPilot which X-Plane installation to use — it must be the same installation that the xPilot plugin was installed, otherwise xPilot will not work.
 
-Click the button below and browse to where your X-Plane is installed. When you locate the folder, select "X-Plane.exe" and click "OK".</value>
+Click the button below to select the path to your X-Plane.exe.</value>
   </data>
 </root>

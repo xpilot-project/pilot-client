@@ -61,7 +61,7 @@ namespace XPilot.PilotClient
             {
                 default:
                 case "Welcome":
-                    return new WelcomeView(this);
+                    return new WelcomeView(this, mConfig);
                 case "XplanePath":
                     return new SetXplanePath(this);
                 case "ConflictingPlugins":
@@ -71,7 +71,7 @@ namespace XPilot.PilotClient
 
         public void CloseTutorial()
         {
-            Close();
+            Environment.Exit(0);
         }
 
         public void SetTitle(string title)
