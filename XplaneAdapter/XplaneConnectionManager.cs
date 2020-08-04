@@ -38,7 +38,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 {
     public class XplaneConnectionManager : EventBus, IXplaneConnectionManager
     {
-        const int MIN_PLUGIN_VERSION = 1322; // 1.3.10 = 1310
+        const int MIN_PLUGIN_VERSION = 1323; // 1.3.10 = 1310
 
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
@@ -94,6 +94,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
+        private readonly Timer mRetryConnectionTimer;
         private readonly Timer mGetXplaneDataTimer;
         private readonly Timer mWhosOnlineListRefresh;
 
@@ -104,6 +105,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly UserAircraftData mUserAircraftData;
         private readonly UserAircraftRadioStack mRadioStackState;
 
+        private bool mXplaneConnected = false;
         private bool mReceivedInitialHandshake = false;
         private bool mDisconnectMessageSent = false;
         private bool mValidCsl = false;
@@ -158,6 +160,13 @@ namespace XPilot.PilotClient.XplaneAdapter
             mConnectionTimer.Tick += ConnectionTimer_Tick;
             mConnectionTimer.Start();
 
+            mRetryConnectionTimer = new Timer
+            {
+                Interval = 1000
+            };
+            mRetryConnectionTimer.Tick += RetryConnectionTimer_Tick;
+            mRetryConnectionTimer.Start();
+
             mWhosOnlineListRefresh = new Timer
             {
                 Interval = 5000
@@ -200,13 +209,16 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.PluginVersion:
-                            mReceivedInitialHandshake = true;
                             int pluginVersion = (int)data.Version;
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
                                 EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
                                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                            }
+                            else
+                            {
+                                mReceivedInitialHandshake = true;
                             }
                             break;
                         case XplaneConnect.MessageType.SocketMessage:
@@ -287,6 +299,14 @@ namespace XPilot.PilotClient.XplaneAdapter
             }.ToJSON());
         }
 
+        private void RetryConnectionTimer_Tick(object sender, EventArgs e)
+        {
+            if (!mXplaneConnected)
+            {
+                mXplaneConnector.Start();
+            }
+        }
+
         private void ConnectionTimer_Tick(object sender, EventArgs e)
         {
             if (mConnectionHeartbeats.Count > 0)
@@ -312,16 +332,19 @@ namespace XPilot.PilotClient.XplaneAdapter
                             EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(true));
                         }
                     }
+                    mXplaneConnected = true;
                     mConnectionHeartbeats.RemoveAt(0);
                 }
                 else
                 {
+                    mXplaneConnected = false;
                     SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
                     EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                 }
             }
             else
             {
+                mXplaneConnected = false;
                 SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
                 EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
             }
