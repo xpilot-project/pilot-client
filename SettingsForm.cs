@@ -501,8 +501,11 @@ namespace XPilot.PilotClient
 
         private void Com1Volume_Scroll(object sender, EventArgs e)
         {
+            if(mConfig.VolumeKnobsControlVolume)
+            {
+                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, volumeCom1.Value / 100.0f, false));
+            }
             mAfv.UpdateCom1Volume(volumeCom1.Value / 100.0f);
-            RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, volumeCom1.Value / 100.0f, false));
             lblVolumeCom1.Text = (volumeCom1.Value / 100.0f).ToString("P0");
             mConfig.Com1Volume = volumeCom1.Value / 100.0f;
             mConfig.SaveConfig();
@@ -510,8 +513,11 @@ namespace XPilot.PilotClient
 
         private void Com2Volume_Scroll(object sender, EventArgs e)
         {
+            if (mConfig.VolumeKnobsControlVolume)
+            {
+                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, volumeCom2.Value / 100.0f, false));
+            }
             mAfv.UpdateCom2Volume(volumeCom2.Value / 100.0f);
-            RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, volumeCom2.Value / 100.0f, false));
             lblVolumeCom2.Text = (volumeCom2.Value / 100.0f).ToString("P0");
             mConfig.Com2Volume = volumeCom2.Value / 100.0f;
             mConfig.SaveConfig();
