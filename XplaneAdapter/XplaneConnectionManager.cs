@@ -162,7 +162,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 
             mRetryConnectionTimer = new Timer
             {
-                Interval = 5000
+                Interval = 1000
             };
             mRetryConnectionTimer.Tick += RetryConnectionTimer_Tick;
             mRetryConnectionTimer.Start();
@@ -326,13 +326,13 @@ namespace XPilot.PilotClient.XplaneAdapter
                     }
                     else
                     {
-                        mXplaneConnected = true;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
                         if (mValidCsl)
                         {
                             EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(true));
                         }
                     }
+                    mXplaneConnected = true;
                     mConnectionHeartbeats.RemoveAt(0);
                 }
                 else
