@@ -91,6 +91,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly NetMQPoller mPoller;
         private readonly NetMQQueue<string> mMessageQueue;
         private readonly PairSocket mPairSocket;
+        private readonly PairSocket mVisualPairSocket;
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
@@ -112,8 +113,39 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
         {
+            var simIP = "127.0.0.1";
+
             mConfig = config;
             mFsdManager = fsdManager;
+            mVisualPairSocket = null;
+           
+            if(mConfig.VisualClientIP != "")
+            {
+                mVisualPairSocket = new PairSocket();
+                mVisualPairSocket.Options.TcpKeepalive = true;
+                mVisualPairSocket.ReceiveReady += VisualPairSocket_ReceiveReady;
+                try
+                {
+                    mVisualPairSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
+
+                }
+                catch (AddressAlreadyInUseException)
+                {
+                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
+                }
+
+                mVisualPairSocket.SignalOK();
+
+
+
+
+            }
+
+            if(mConfig.SimClientIP != "")
+            {
+                simIP = mConfig.SimClientIP;
+
+            }
 
             mMessageQueue = new NetMQQueue<string>();
             mPairSocket = new PairSocket();
@@ -121,7 +153,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             mPairSocket.ReceiveReady += PairSocket_ReceiveReady;
             try
             {
-                mPairSocket.Connect("tcp://127.0.0.1:" + mConfig.TcpPort);
+                mPairSocket.Connect("tcp://" + simIP + ":" + mConfig.TcpPort);
+
             }
             catch (AddressAlreadyInUseException)
             {
@@ -139,10 +172,15 @@ namespace XPilot.PilotClient.XplaneAdapter
                 if (mMessageQueue.TryDequeue(out string msg, TimeSpan.FromMilliseconds(100)))
                 {
                     mPairSocket.SendFrame(msg);
+                    if(mVisualPairSocket != null)
+                    {
+                        mVisualPairSocket.SendFrame(msg);
+
+                    }
                 }
             };
 
-            mXplaneConnector = new XPlaneConnector.XPlaneConnector();
+            mXplaneConnector = new XPlaneConnector.XPlaneConnector(simIP);
             mUserAircraftData = new UserAircraftData();
             mRadioStackState = new UserAircraftRadioStack();
 
@@ -190,6 +228,80 @@ namespace XPilot.PilotClient.XplaneAdapter
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, string.Format($"PluginLogs/PluginLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log")), false);
         }
 
+        private void VisualPairSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
+        {
+            string command = e.Socket.ReceiveFrameString();
+            if (!string.IsNullOrEmpty(command))
+            {
+                try
+                {
+                    var json = JsonConvert.DeserializeObject<XplaneConnect>(command);
+                    dynamic data = json.Data;
+                    switch (json.Type)
+                    {
+                        //case XplaneConnect.MessageType.RequestAtis:
+                        //    string callsign = data.Callsign;
+                        //    if (!string.IsNullOrEmpty(callsign))
+                        //    {
+                        //        RequestControllerAtisSent?.Invoke(this, new RequestControllerAtisEventArgs(callsign));
+                        //    }
+                        //    break;
+                        //case XplaneConnect.MessageType.PluginVersion:
+                        //    mReceivedInitialHandshake = true;
+                        //    int pluginVersion = (int)data.Version;
+                        //    if (pluginVersion != MIN_PLUGIN_VERSION)
+                        //    {
+                        //        EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                        //        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
+                        //        PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                        //    }
+                        //    break;
+                        //case XplaneConnect.MessageType.SocketMessage:
+                        //    {
+                        //        string msg = data.Message;
+                        //        if (!string.IsNullOrEmpty(msg))
+                        //        {
+                        //            RaiseSocketMessageReceived?.Invoke(this, new ClientEventArgs<string>(msg));
+                        //        }
+                        //    }
+                        //    break;
+                        //case XplaneConnect.MessageType.PrivateMessageSent:
+                        //    {
+                        //        string msg = data.Message;
+                        //        string to = data.To;
+                        //        if (mFsdManager.IsConnected)
+                        //        {
+                        //            PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mFsdManager.OurCallsign, to, msg));
+                        //        }
+                        //    }
+                        //    break;
+                        //case XplaneConnect.MessageType.ValidateCslPaths:
+                        //    mValidCsl = (bool)data.Result;
+                        //    if (data.Result == false)
+                        //    {
+                        //        EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                        //        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
+                        //        PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                        //    }
+                        //    break;
+                        //case XplaneConnect.MessageType.ForceDisconnect:
+                        //    string reason = data.Reason;
+                        //    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, reason));
+                        //    PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                        //    mFsdManager.Disconnect(new DisconnectInfo
+                        //    {
+                        //        Type = DisconnectType.Intentional
+                        //    });
+                        //    break;
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error deserializing JSON object: " + ex.Message));
+                }
+            }
+        }
+
         private void PairSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             string command = e.Socket.ReceiveFrameString();
@@ -209,6 +321,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.PluginVersion:
+                            mReceivedInitialHandshake = true;
                             int pluginVersion = (int)data.Version;
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
@@ -298,6 +411,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 Data = temp.OrderBy(a => a.Callsign)
             }.ToJSON());
         }
+
 
         private void RetryConnectionTimer_Tick(object sender, EventArgs e)
         {

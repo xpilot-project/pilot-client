@@ -29,6 +29,8 @@ namespace XPilot.PilotClient.Config
         string VatsimId { get; set; }
         string VatsimPassword { get; set; }
         string ServerName { get; set; }
+        string VisualClientIP { get; set; }
+        string SimClientIP { get; set; }
         List<ConnectInfo> RecentConnectionInfo { get; set; }
         FlightPlan LastFlightPlan { get; set; }
         PTTConfiguration PTTConfiguration { get; set; }

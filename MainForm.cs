@@ -178,6 +178,10 @@ namespace XPilot.PilotClient
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, CONFIGURATION_REQUIRED));
                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
             }
+
+            if(mConfig.SimClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimClientIP}."));
+            if(mConfig.VisualClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for Visuals machine at IP {mConfig.VisualClientIP}."));
+
         }
 
         private void ChatMessageBox_KeyDown(object sender, KeyEventArgs e)
@@ -228,6 +232,34 @@ namespace XPilot.PilotClient
                 {
                     switch (split[0].ToLower())
                     {
+                        case ".simip":                          
+                           if (split.Length - 1 < 1)
+                           {
+                                mConfig.SimClientIP = "";
+                                mConfig.SaveConfig();
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Simulator IP reset."));
+                            }
+                           else
+                           {
+                                mConfig.SimClientIP = split[1];
+                                mConfig.SaveConfig();
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Simulator IP set to {split[1]}. Please restart xPilot."));
+                            }                           
+                            break;
+                        case ".visualip":
+                            if (split.Length - 1 < 1)
+                            {
+                                mConfig.VisualClientIP = "";
+                                mConfig.SaveConfig();
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Visual IP reset."));
+                            }
+                            else
+                            {
+                                mConfig.VisualClientIP = split[1];
+                                mConfig.SaveConfig();
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Visual IP set to {split[1]}. Please restart xPilot."));
+                            }
+                            break;
                         case ".copy":
                             if (!string.IsNullOrEmpty(ChatMessageBox.RichTextBox.Text))
                             {
