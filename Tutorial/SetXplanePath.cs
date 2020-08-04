@@ -17,20 +17,36 @@
 */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
+using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient
 {
-    public interface IUserInterface
+    public partial class SetXplanePath : View
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        TutorialForm CreateTutorialForm();
+        public SetXplanePath(IHost host) : base(host)
+        {
+            InitializeComponent();
+            Host.SetTitle("Set X-Plane Path");
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                Host.CloseTutorial();
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            Host.SwitchView("ConflictingPlugins");
+        }
     }
 }

@@ -17,20 +17,29 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
+using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient
 {
-    public interface IUserInterface
+    public class View : UserControl
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        TutorialForm CreateTutorialForm();
+        public virtual IHost Host { get; }
+
+        protected View()
+        {
+
+        }
+
+        protected View(IHost host)
+        {
+            Host = host;
+            Dock = DockStyle.Fill;
+            AutoSize = true;
+            Padding = new Padding(10, 10, 10, 10);
+        }
     }
 }

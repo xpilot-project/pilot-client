@@ -185,6 +185,39 @@
     <Compile Include="Network\ISelcalGenerator.cs" />
     <Compile Include="Network\SelcalGenerator.cs" />
     <Compile Include="Network\VatsimData.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TutorialForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TutorialForm.Designer.cs">
+      <DependentUpon>TutorialForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tutorial\ConflictingPlugins.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tutorial\ConflictingPlugins.Designer.cs">
+      <DependentUpon>ConflictingPlugins.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tutorial\IHost.cs" />
+    <Compile Include="Tutorial\SetXplanePath.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tutorial\SetXplanePath.Designer.cs">
+      <DependentUpon>SetXplanePath.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tutorial\View.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tutorial\WelcomeView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tutorial\WelcomeView.Designer.cs">
+      <DependentUpon>WelcomeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="XplaneAdapter\IUserAircraftManager.cs" />
     <Compile Include="XplaneAdapter\UserAircraftData.cs" />
     <Compile Include="XplaneAdapter\UserAircraftManager.cs" />
@@ -310,16 +343,23 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TutorialForm.resx">
+      <DependentUpon>TutorialForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tutorial\SetXplanePath.resx">
+      <DependentUpon>SetXplanePath.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tutorial\View.resx">
+      <DependentUpon>View.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tutorial\WelcomeView.resx">
+      <DependentUpon>WelcomeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>
@@ -359,7 +399,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\xPilot_Logo.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>CertUtil -hashfile "$(TargetDir)$(TargetName)$(TargetExt)" sha512</PostBuildEvent>

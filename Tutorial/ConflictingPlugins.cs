@@ -17,20 +17,22 @@
 */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
+using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient.Tutorial
 {
-    public interface IUserInterface
+    public partial class ConflictingPlugins : View
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        TutorialForm CreateTutorialForm();
+        public ConflictingPlugins(IHost host) : base(host)
+        {
+            InitializeComponent();
+            Host.SetTitle("Check for conflicting plugins");
+        }
     }
 }

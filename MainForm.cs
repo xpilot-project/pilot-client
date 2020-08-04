@@ -178,6 +178,11 @@ namespace XPilot.PilotClient
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, CONFIGURATION_REQUIRED));
                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
             }
+
+            using (var dlg = mUserInterface.CreateTutorialForm())
+            {
+                dlg.ShowDialog(this);
+            }
         }
 
         private void ChatMessageBox_KeyDown(object sender, KeyEventArgs e)
