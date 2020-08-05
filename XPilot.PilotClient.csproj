@@ -217,6 +217,12 @@
       <DependentUpon>CslConfiguration.cs</DependentUpon>
     </Compile>
     <Compile Include="Tutorial\IHost.cs" />
+    <Compile Include="Tutorial\NetworkCredentials.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tutorial\NetworkCredentials.Designer.cs">
+      <DependentUpon>NetworkCredentials.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tutorial\SetXplanePath.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -371,6 +377,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Tutorial\CslConfiguration.resx">
       <DependentUpon>CslConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tutorial\NetworkCredentials.resx">
+      <DependentUpon>NetworkCredentials.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Tutorial\SetXplanePath.resx">
       <DependentUpon>SetXplanePath.cs</DependentUpon>

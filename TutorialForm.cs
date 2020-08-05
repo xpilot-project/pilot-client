@@ -59,6 +59,8 @@ namespace XPilot.PilotClient
                     return new ConflictingPlugins(this);
                 case "CslConfiguration":
                     return new CslConfiguration(this, mConfig);
+                case "NetworkCredentials":
+                    return new NetworkCredentials(this);
             }
         }
 

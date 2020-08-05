@@ -138,5 +138,10 @@ namespace XPilot.PilotClient.Tutorial
         {
             Host.CloseTutorial();
         }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            Host.SwitchView("NetworkCredentials");
+        }
     }
 }
