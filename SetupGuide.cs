@@ -25,7 +25,7 @@ using XPilot.PilotClient.AudioForVatsim;
 
 namespace XPilot.PilotClient
 {
-    public partial class TutorialForm : Form, ISetup
+    public partial class SetupGuide : Form, ISetup
     {
         private IEventBroker mEventBroker;
         private IFsdManger mNetworkManager;
@@ -35,7 +35,7 @@ namespace XPilot.PilotClient
         public bool XSquawkBox { get; set; }
         public bool XSwiftBus { get; set; }
 
-        public TutorialForm(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
+        public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
         {
             InitializeComponent();
             mConfig = config;
@@ -83,7 +83,12 @@ namespace XPilot.PilotClient
 
         public void ManualSetup()
         {
-            Close();
+            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the guided setup?", "Confirm", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                DialogResult = DialogResult.No;
+                Close();
+            }
         }
 
         private void TutorialForm_KeyDown(object sender, KeyEventArgs e)
@@ -93,7 +98,7 @@ namespace XPilot.PilotClient
 
         public void EndSetup()
         {
-            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
+            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the guided setup?", "Confirm", MessageBoxButtons.YesNo);
             if (dr == DialogResult.Yes)
             {
                 Environment.Exit(0);

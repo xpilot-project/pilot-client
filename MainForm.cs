@@ -175,13 +175,14 @@ namespace XPilot.PilotClient
 
             if (mConfig.ConfigurationRequired)
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, CONFIGURATION_REQUIRED));
-                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-            }
-
-            using (var dlg = mUserInterface.CreateTutorialForm())
-            {
-                dlg.ShowDialog(this);
+                using (var dlg = mUserInterface.CreateSetupGuideForm())
+                {
+                    if (dlg.ShowDialog(this) == DialogResult.No)
+                    {
+                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, CONFIGURATION_REQUIRED));
+                        PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                    }
+                }
             }
         }
 

@@ -81,6 +81,7 @@
             // 
             // btnNext
             // 
+            this.btnNext.Enabled = false;
             this.btnNext.Location = new System.Drawing.Point(332, 3);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(98, 32);

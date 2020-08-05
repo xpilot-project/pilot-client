@@ -31,6 +31,6 @@ namespace XPilot.PilotClient.Core
         SettingsForm CreateSettingsForm();
         ConnectForm CreateConnectForm();
         FlightPlanForm CreateFlightPlanForm();
-        TutorialForm CreateTutorialForm();
+        SetupGuide CreateSetupGuideForm();
     }
 }

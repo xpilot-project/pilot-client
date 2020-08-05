@@ -1,6 +1,6 @@
 ﻿namespace XPilot.PilotClient
 {
-    partial class TutorialForm
+    partial class SetupGuide
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TutorialForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SetupGuide));
             this.SuspendLayout();
             // 
-            // TutorialForm
+            // SetupGuide
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -43,9 +43,9 @@
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "TutorialForm";
+            this.Name = "SetupGuide";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xPilot Guided Setup";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TutorialForm_KeyDown);
             this.ResumeLayout(false);

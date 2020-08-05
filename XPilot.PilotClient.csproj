@@ -195,11 +195,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TutorialForm.cs">
+    <Compile Include="SetupGuide.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TutorialForm.Designer.cs">
-      <DependentUpon>TutorialForm.cs</DependentUpon>
+    <Compile Include="SetupGuide.Designer.cs">
+      <DependentUpon>SetupGuide.cs</DependentUpon>
     </Compile>
     <Compile Include="SetupGuide\AudioConfiguration.cs">
       <SubType>UserControl</SubType>
@@ -382,8 +382,8 @@
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TutorialForm.resx">
-      <DependentUpon>TutorialForm.cs</DependentUpon>
+    <EmbeddedResource Include="SetupGuide.resx">
+      <DependentUpon>SetupGuide.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SetupGuide\AudioConfiguration.resx">
       <DependentUpon>AudioConfiguration.cs</DependentUpon>
