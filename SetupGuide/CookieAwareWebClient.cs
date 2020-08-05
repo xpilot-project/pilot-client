@@ -50,11 +50,5 @@ namespace XPilot.PilotClient.Tutorial
             httpRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             return httpRequest;
         }
-
-        protected override WebResponse GetWebResponse(WebRequest request)
-        {
-            WebResponse response = base.GetWebResponse(request);
-            return response;
-        }
     }
 }

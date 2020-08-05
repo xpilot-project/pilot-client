@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.IO;
 using XPilot.PilotClient.Config;
 using Loamen.KeyMouseHook;
+using System.Diagnostics;
 
 namespace XPilot.PilotClient
 {
@@ -39,6 +40,11 @@ namespace XPilot.PilotClient
 
         private void btnYes_Click(object sender, EventArgs e)
         {
+            if (Process.GetProcessesByName("X-Plane").Any())
+            {
+                MessageBox.Show("You must close X-Plane before continuing with the setup.");
+                return;
+            }
             int instancesFound = 0;
             string usablePath = "";
             var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");

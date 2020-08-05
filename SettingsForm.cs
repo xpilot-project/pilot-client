@@ -28,6 +28,7 @@ using Appccelerate.EventBroker.Handlers;
 using GeoVR.Client;
 using SharpDX.DirectInput;
 using XPilot.PilotClient.Common;
+using XPilot.PilotClient.Core;
 
 namespace XPilot.PilotClient
 {
@@ -52,6 +53,7 @@ namespace XPilot.PilotClient
         private readonly IAppConfig mConfig;
         private readonly IEventBroker mEventBroker;
         private readonly IFsdManger mNetworkManager;
+        private readonly IUserInterface mUserInterface;
         private ToggleDisplayConfiguration mToggleDisplayConfig;
         private bool mRecordDisplayKey;
         private readonly DirectInput mDirectInput;
@@ -64,13 +66,14 @@ namespace XPilot.PilotClient
         [DllImport("user32.dll")]
         private static extern ushort GetAsyncKeyState(int value);
 
-        public SettingsForm(IAppConfig appConfig, IAfvManager audioForVatsim, IEventBroker eventBroker, IFsdManger networkManager)
+        public SettingsForm(IAppConfig appConfig, IAfvManager audioForVatsim, IEventBroker eventBroker, IFsdManger networkManager, IUserInterface userInterface)
         {
             InitializeComponent();
 
             mConfig = appConfig;
             mAfv = audioForVatsim;
             mNetworkManager = networkManager;
+            mUserInterface = userInterface;
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
 
@@ -674,6 +677,14 @@ namespace XPilot.PilotClient
                     mConfig.XplanePath = dlg.FileName;
                     mConfig.SaveConfig();
                 }
+            }
+        }
+
+        private void btnGuidedSetup_Click(object sender, EventArgs e)
+        {
+            using (var dlg = mUserInterface.CreateSetupGuideForm())
+            {
+                dlg.ShowDialog(this);
             }
         }
     }

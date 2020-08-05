@@ -44,43 +44,50 @@ namespace XPilot.PilotClient.Tutorial
         private void btnDownload_Click(object sender, EventArgs e)
         {
             string bluebell = Path.Combine(mConfig.AppPath, "Bluebell.7z");
-            if (File.Exists(bluebell))
+            if (!File.Exists(bluebell))
             {
                 ExtractModels();
             }
             else
             {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                var cookieJar = new CookieContainer();
-                CookieAwareWebClient client = new CookieAwareWebClient(cookieJar);
-                var html = client.DownloadString("https://drive.google.com/uc?export=download&id=1T2TyUuAHtxjh4eFdfzjd2YyhU_hYY-Ts");
-                var confirm = Regex.Match(html, @".*confirm=([0-9A-Za-z_]+).*");
-                if (confirm.Success)
+                try
                 {
-                    string confirmationCode = confirm.Groups[1].Value;
-                    btnDownload.Enabled = false;
-                    Task.Run(() =>
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    CookieAwareWebClient client = new CookieAwareWebClient(new CookieContainer());
+                    var html = client.DownloadString("http://xpilot-project.org/api/v2/CslModelSet");
+                    var confirm = Regex.Match(html, @".*confirm=([0-9A-Za-z_]+).*");
+                    if (confirm.Success)
                     {
-                        string url = $"https://drive.google.com/uc?export=download&confirm={confirmationCode}&id=1T2TyUuAHtxjh4eFdfzjd2YyhU_hYY-Ts";
-                        client.DownloadProgressChanged += (s, evt) =>
+                        string confirmationCode = confirm.Groups[1].Value;
+                        btnDownload.Enabled = false;
+                        Task.Run(() =>
                         {
-                            mSyncContext.Post(o =>
+                            string url = "http://xpilot-project.org/api/v2/CslModelSet/" + confirmationCode;
+                            client.DownloadProgressChanged += (s, evt) =>
                             {
-                                double bytesIn = double.Parse(evt.BytesReceived.ToString());
-                                double pct = (bytesIn / 297044413) * 100;
-                                progressBar1.Value = int.Parse(Math.Truncate(pct).ToString());
-                            }, null);
-                        };
-                        client.DownloadFileCompleted += (s, evt) =>
-                        {
-                            mSyncContext.Post(o =>
+                                mSyncContext.Post(o =>
+                                {
+                                    btnDownload.Text = "Downloading...";
+                                    double bytesIn = double.Parse(evt.BytesReceived.ToString());
+                                    double pct = (bytesIn / 297044413) * 100;
+                                    progressBar1.Value = int.Parse(Math.Truncate(pct).ToString());
+                                }, null);
+                            };
+                            client.DownloadFileCompleted += (s, evt) =>
                             {
-                                progressBar1.Value = 0;
-                            }, null);
-                            ExtractModels();
-                        };
-                        client.DownloadFileAsync(new Uri(url), bluebell);
-                    });
+                                mSyncContext.Post(o =>
+                                {
+                                    progressBar1.Value = 0;
+                                }, null);
+                                ExtractModels();
+                            };
+                            client.DownloadFileAsync(new Uri(url), bluebell);
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error downloading CSL Model Package: " + ex.Message);
                 }
             }
         }
@@ -100,6 +107,7 @@ namespace XPilot.PilotClient.Tutorial
                     {
                         mSyncContext.Post(o =>
                         {
+                            btnDownload.Text = "Installing CSL Models...";
                             btnDownload.Enabled = false;
                             progressBar1.Value = evt.PercentDone;
                         }, null);
@@ -120,6 +128,7 @@ namespace XPilot.PilotClient.Tutorial
                             }));
                         mSyncContext.Post(o =>
                         {
+                            btnDownload.Text = "CSL Models Successfully Installed";
                             btnNext.Enabled = true;
                         }, null);
                     };
@@ -127,7 +136,7 @@ namespace XPilot.PilotClient.Tutorial
                 }
                 else
                 {
-                    MessageBox.Show("Models file not found.");
+                    MessageBox.Show("xPilot is unable to find the models package.");
                 }
             });
         }

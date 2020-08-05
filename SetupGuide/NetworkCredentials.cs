@@ -16,17 +16,9 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Network;
-using Appccelerate.EventBroker;
 
 namespace XPilot.PilotClient.Tutorial
 {
@@ -48,6 +40,7 @@ namespace XPilot.PilotClient.Tutorial
             txtNetworkLogin.Text = mConfig.VatsimId;
             txtNetworkPassword.Text = mConfig.VatsimPassword;
             txtName.Text = mConfig.Name;
+            txtHomeAirport.Text = mConfig.HomeAirport;
             ddlServerName.SelectedIndex = ddlServerName.FindStringExact(mConfig.ServerName);
         }
 
@@ -83,6 +76,7 @@ namespace XPilot.PilotClient.Tutorial
                 mConfig.VatsimId = txtNetworkLogin.Text.Trim();
                 mConfig.VatsimPassword = txtNetworkPassword.Text.Trim();
                 mConfig.Name = txtName.Text.Trim();
+                mConfig.HomeAirport = txtHomeAirport.Text.ToUpper().Trim();
                 mConfig.ServerName = (ddlServerName.SelectedItem as NetworkServerItem).Text;
                 mConfig.SaveConfig();
                 Host.SwitchScreen("AudioConfiguration");
