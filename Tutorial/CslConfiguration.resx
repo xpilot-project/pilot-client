@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>xPilot found more than one copy of X-Plane installed on your computer.
+    <value>Before you can use xPilot on the VATSIM Network, you must install CSL models — without these aircraft models, you wouldn't see any aircraft.
 
-This typically happens if you have two versions of X-Plane installed (for example, a stable version and a beta version).
+The recommended (and most popular) CSL package is Bluebell CSL Models.
 
-Select the X-Plane installation that you want to use. This must be the same version that you installed the xPilot plugin.</value>
+Click the "Download and Install Bluebell CSL Models" button below to automatically download and install the models.</value>
   </data>
 </root>

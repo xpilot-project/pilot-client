@@ -51,9 +51,9 @@ namespace XPilot.PilotClient
                     string xpPath = string.Empty;
                     while ((xpPath = sr.ReadLine()) != null)
                     {
-                        if (File.Exists(Path.Combine(xpPath, "X-Plane.exe")))
+                        if (Directory.Exists(Path.Combine(xpPath, "Resources")))
                         {
-                            usablePath = Path.Combine(xpPath, "X-Plane.exe");
+                            usablePath = xpPath;
                             ++instancesFound;
                         }
                     }
@@ -85,11 +85,20 @@ namespace XPilot.PilotClient
                 {
                     Host.SwitchView("ConflictingPlugins");
                 }
+                else
+                {
+                    Host.SwitchView("CslConfiguration");
+                }
             }
             else
             {
                 Host.SwitchView("XplanePath");
             }
+        }
+
+        private void btnNo_Click(object sender, EventArgs e)
+        {
+            Host.ManualSetup();
         }
     }
 }

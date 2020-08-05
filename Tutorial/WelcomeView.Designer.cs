@@ -135,6 +135,7 @@
             this.btnNo.TabIndex = 1;
             this.btnNo.Text = "No, thanks — I\'ll configure xPilot manually";
             this.btnNo.UseVisualStyleBackColor = true;
+            this.btnNo.Click += new System.EventHandler(this.btnNo_Click);
             // 
             // WelcomeView
             // 

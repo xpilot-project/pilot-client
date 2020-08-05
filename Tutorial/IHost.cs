@@ -28,6 +28,7 @@ namespace XPilot.PilotClient
         void SwitchView(string name);
         void SetTitle(string title);
         void CloseTutorial();
+        void ManualSetup();
         View CurrentView { get; }
     }
 }

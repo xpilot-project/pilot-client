@@ -15,18 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Appccelerate.EventBroker;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Tutorial;
+using Appccelerate.EventBroker;
 
 namespace XPilot.PilotClient
 {
@@ -39,12 +32,10 @@ namespace XPilot.PilotClient
         public TutorialForm(IEventBroker eventBroker, IAppConfig config)
         {
             InitializeComponent();
-
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
             mConfig = config;
-
-            SwitchView("welcome");
+            SwitchView("Welcome");
         }
 
         public void SwitchView(string name)
@@ -63,20 +54,31 @@ namespace XPilot.PilotClient
                 case "Welcome":
                     return new WelcomeView(this, mConfig);
                 case "XplanePath":
-                    return new SetXplanePath(this);
+                    return new SetXplanePath(this, mConfig);
                 case "ConflictingPlugins":
                     return new ConflictingPlugins(this);
+                case "CslConfiguration":
+                    return new CslConfiguration(this, mConfig);
             }
         }
 
         public void CloseTutorial()
         {
-            Environment.Exit(0);
+            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                Environment.Exit(0);
+            }
         }
 
         public void SetTitle(string title)
         {
             Text = "xPilot Guided Setup: " + title;
+        }
+
+        public void ManualSetup()
+        {
+            Close();
         }
     }
 }

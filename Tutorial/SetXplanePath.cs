@@ -16,37 +16,103 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using XPilot.PilotClient.Config;
+using System.Linq;
 
 namespace XPilot.PilotClient
 {
     public partial class SetXplanePath : View
     {
-        public SetXplanePath(IHost host) : base(host)
+        private IAppConfig mConfig;
+
+        public SetXplanePath(IHost host, IAppConfig config) : base(host)
         {
             InitializeComponent();
+
+            mConfig = config;
             Host.SetTitle("Set X-Plane Path");
+
+            bool foundXpilot = false;
+            var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
+            if (File.Exists(installFile))
+            {
+                using (StreamReader sr = File.OpenText(installFile))
+                {
+                    string xpPath = string.Empty;
+                    while ((xpPath = sr.ReadLine()) != null)
+                    {
+                        if (Directory.Exists(Path.Combine(xpPath, "Resources/plugins/xPilot")))
+                        {
+                            foundXpilot = true;
+                            RadioButton btn = new RadioButton
+                            {
+                                Tag = xpPath,
+                                Text = xpPath,
+                                TextAlign = ContentAlignment.MiddleLeft,
+                                AutoSize = true,
+                                Font = new Font(this.Font.FontFamily, 12f, FontStyle.Bold)
+                            };
+                            btn.CheckedChanged += (s, e) =>
+                            {
+                                btnNext.Enabled = true;
+                            };
+                            pathOptions.Controls.Add(btn);
+                        }
+                    }
+                }
+            }
+
+            if (!foundXpilot)
+            {
+                Label l = new Label
+                {
+                    AutoSize = true,
+                    ForeColor = Color.Red,
+                    Text = "The xPilot plugin could not be found in any of the X-Plane instances.\nPlease re-run the xPilot installer."
+                };
+                pathOptions.Controls.Add(l);
+                btnNext.Enabled = false;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
-            if (dr == DialogResult.Yes)
-            {
-                Host.CloseTutorial();
-            }
+            Host.CloseTutorial();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            Host.SwitchView("ConflictingPlugins");
+            var checkedPath = pathOptions.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+            if(checkedPath != null)
+            {
+                bool xsb = false;
+                bool xswiftbus = false;
+                string pluginPath = Path.Combine(checkedPath.Tag.ToString(), "Resources/plugins");
+                string[] dirs = Directory.GetDirectories(pluginPath);
+                foreach (var dir in dirs)
+                {
+                    if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
+                    {
+                        xsb = true;
+                    }
+                    if (Path.GetFileName(dir).ToLower() == "xswiftbus")
+                    {
+                        xswiftbus = true;
+                    }
+                }
+
+                if (xsb || xswiftbus)
+                {
+                    Host.SwitchView("ConflictingPlugins");
+                }
+                else
+                {
+                    Host.SwitchView("CslConfiguration");
+                }
+            }
         }
     }
 }
