@@ -17,29 +17,21 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace XPilot.PilotClient
 {
-    public class View : UserControl
+    public interface ISetup
     {
-        public virtual IHost Host { get; }
-
-        protected View()
-        {
-
-        }
-
-        protected View(IHost host)
-        {
-            Host = host;
-            Dock = DockStyle.Fill;
-            AutoSize = true;
-            Padding = new Padding(10, 10, 10, 10);
-        }
+        void SwitchScreen(string name);
+        void SetTitle(string title);
+        void EndSetup();
+        void ManualSetup();
+        void SetupFinished();
+        bool XSquawkBox { get; set; }
+        bool XSwiftBus { get; set; }
+        SetupScreen CurrentScreen { get; }
     }
 }

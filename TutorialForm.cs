@@ -20,33 +20,41 @@ using System.Windows.Forms;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Tutorial;
 using Appccelerate.EventBroker;
+using XPilot.PilotClient.Network;
+using XPilot.PilotClient.AudioForVatsim;
 
 namespace XPilot.PilotClient
 {
-    public partial class TutorialForm : Form, IHost
+    public partial class TutorialForm : Form, ISetup
     {
         private IEventBroker mEventBroker;
+        private IFsdManger mNetworkManager;
+        private IAfvManager mAfv;
         private IAppConfig mConfig;
-        public View CurrentView { get; private set; }
+        public SetupScreen CurrentScreen { get; private set; }
+        public bool XSquawkBox { get; set; }
+        public bool XSwiftBus { get; set; }
 
-        public TutorialForm(IEventBroker eventBroker, IAppConfig config)
+        public TutorialForm(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
         {
             InitializeComponent();
+            mConfig = config;
+            mNetworkManager = network;
+            mAfv = afv;
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
-            mConfig = config;
-            SwitchView("Welcome");
+            SwitchScreen("Welcome");
         }
 
-        public void SwitchView(string name)
+        public void SwitchScreen(string name)
         {
-            Controls.Remove(CurrentView);
-            CurrentView = CreateViewFromName(name);
-            Controls.Add(CurrentView);
-            CurrentView.Show();
+            Controls.Remove(CurrentScreen);
+            CurrentScreen = CreateViewFromName(name);
+            Controls.Add(CurrentScreen);
+            CurrentScreen.Show();
         }
 
-        private View CreateViewFromName(string name)
+        private SetupScreen CreateViewFromName(string name)
         {
             switch (name)
             {
@@ -56,20 +64,15 @@ namespace XPilot.PilotClient
                 case "XplanePath":
                     return new SetXplanePath(this, mConfig);
                 case "ConflictingPlugins":
-                    return new ConflictingPlugins(this);
+                    return new ConflictingPlugins(this, mConfig);
                 case "CslConfiguration":
                     return new CslConfiguration(this, mConfig);
                 case "NetworkCredentials":
-                    return new NetworkCredentials(this);
-            }
-        }
-
-        public void CloseTutorial()
-        {
-            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
-            if (dr == DialogResult.Yes)
-            {
-                Environment.Exit(0);
+                    return new NetworkCredentials(this, mConfig, mNetworkManager);
+                case "AudioConfiguration":
+                    return new AudioConfiguration(this, mConfig, mAfv, mEventBroker);
+                case "PushToTalk":
+                    return new PushToTalk(this, mConfig);
             }
         }
 
@@ -81,6 +84,29 @@ namespace XPilot.PilotClient
         public void ManualSetup()
         {
             Close();
+        }
+
+        private void TutorialForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            CurrentScreen.KeyDownHandler(e);
+        }
+
+        public void EndSetup()
+        {
+            DialogResult dr = MessageBox.Show("Are you sure you want to cancel the setup?", "Confirm", MessageBoxButtons.YesNo);
+            if (dr == DialogResult.Yes)
+            {
+                Environment.Exit(0);
+            }
+        }
+
+        public void SetupFinished()
+        {
+            DialogResult dr = MessageBox.Show("You have successfully configured xPilot. If you need to adjust any settings, click the \"Settings\" button in the xPilot client.", "Setup Complete", MessageBoxButtons.OK);
+            if (dr == DialogResult.OK)
+            {
+                Close();
+            }
         }
     }
 }

@@ -24,15 +24,11 @@ using System.Linq;
 
 namespace XPilot.PilotClient
 {
-    public partial class SetXplanePath : View
+    public partial class SetXplanePath : SetupScreen, ISetupScreen
     {
-        private IAppConfig mConfig;
-
-        public SetXplanePath(IHost host, IAppConfig config) : base(host)
+        public SetXplanePath(ISetup host, IAppConfig config) : base(host, config)
         {
             InitializeComponent();
-
-            mConfig = config;
             Host.SetTitle("Set X-Plane Path");
 
             bool foundXpilot = false;
@@ -80,37 +76,38 @@ namespace XPilot.PilotClient
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Host.CloseTutorial();
+            Host.EndSetup();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
             var checkedPath = pathOptions.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
-            if(checkedPath != null)
+            if (checkedPath != null)
             {
-                bool xsb = false;
-                bool xswiftbus = false;
+                mConfig.XplanePath = checkedPath.Tag.ToString();
+                mConfig.SaveConfig();
+
                 string pluginPath = Path.Combine(checkedPath.Tag.ToString(), "Resources/plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);
                 foreach (var dir in dirs)
                 {
                     if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
                     {
-                        xsb = true;
+                        Host.XSquawkBox = true;
                     }
                     if (Path.GetFileName(dir).ToLower() == "xswiftbus")
                     {
-                        xswiftbus = true;
+                        Host.XSwiftBus = true;
                     }
                 }
 
-                if (xsb || xswiftbus)
+                if (Host.XSquawkBox || Host.XSwiftBus)
                 {
-                    Host.SwitchView("ConflictingPlugins");
+                    Host.SwitchScreen("ConflictingPlugins");
                 }
                 else
                 {
-                    Host.SwitchView("CslConfiguration");
+                    Host.SwitchScreen("CslConfiguration");
                 }
             }
         }

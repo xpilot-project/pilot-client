@@ -30,15 +30,13 @@ using XPilot.PilotClient.Config;
 
 namespace XPilot.PilotClient.Tutorial
 {
-    public partial class CslConfiguration : View
+    public partial class CslConfiguration : SetupScreen, ISetupScreen
     {
         private readonly SynchronizationContext mSyncContext;
-        private readonly IAppConfig mConfig;
 
-        public CslConfiguration(IHost host, IAppConfig config) : base(host)
+        public CslConfiguration(ISetup host, IAppConfig config) : base(host, config)
         {
             InitializeComponent();
-            mConfig = config;
             mSyncContext = SynchronizationContext.Current;
             Host.SetTitle("CSL Configuration");
         }
@@ -136,12 +134,12 @@ namespace XPilot.PilotClient.Tutorial
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Host.CloseTutorial();
+            Host.EndSetup();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            Host.SwitchView("NetworkCredentials");
+            Host.SwitchScreen("NetworkCredentials");
         }
     }
 }

@@ -201,41 +201,54 @@
     <Compile Include="TutorialForm.Designer.cs">
       <DependentUpon>TutorialForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tutorial\ConflictingPlugins.cs">
+    <Compile Include="SetupGuide\AudioConfiguration.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tutorial\ConflictingPlugins.Designer.cs">
+    <Compile Include="SetupGuide\AudioConfiguration.Designer.cs">
+      <DependentUpon>AudioConfiguration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SetupGuide\ConflictingPlugins.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SetupGuide\ConflictingPlugins.Designer.cs">
       <DependentUpon>ConflictingPlugins.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tutorial\CookieAwareWebClient.cs">
+    <Compile Include="SetupGuide\CookieAwareWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Tutorial\CslConfiguration.cs">
+    <Compile Include="SetupGuide\CslConfiguration.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tutorial\CslConfiguration.Designer.cs">
+    <Compile Include="SetupGuide\CslConfiguration.Designer.cs">
       <DependentUpon>CslConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tutorial\IHost.cs" />
-    <Compile Include="Tutorial\NetworkCredentials.cs">
+    <Compile Include="SetupGuide\ISetup.cs" />
+    <Compile Include="SetupGuide\ISetupScreen.cs" />
+    <Compile Include="SetupGuide\NetworkCredentials.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tutorial\NetworkCredentials.Designer.cs">
+    <Compile Include="SetupGuide\NetworkCredentials.Designer.cs">
       <DependentUpon>NetworkCredentials.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tutorial\SetXplanePath.cs">
+    <Compile Include="SetupGuide\PushToTalk.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tutorial\SetXplanePath.Designer.cs">
+    <Compile Include="SetupGuide\PushToTalk.Designer.cs">
+      <DependentUpon>PushToTalk.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SetupGuide\SetupScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SetupGuide\SetXplanePath.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SetupGuide\SetXplanePath.Designer.cs">
       <DependentUpon>SetXplanePath.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tutorial\View.cs">
+    <Compile Include="SetupGuide\WelcomeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Tutorial\WelcomeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Tutorial\WelcomeView.Designer.cs">
+    <Compile Include="SetupGuide\WelcomeView.Designer.cs">
       <DependentUpon>WelcomeView.cs</DependentUpon>
     </Compile>
     <Compile Include="XplaneAdapter\IUserAircraftManager.cs" />
@@ -372,22 +385,25 @@
     <EmbeddedResource Include="TutorialForm.resx">
       <DependentUpon>TutorialForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\ConflictingPlugins.resx">
+    <EmbeddedResource Include="SetupGuide\AudioConfiguration.resx">
+      <DependentUpon>AudioConfiguration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupGuide\ConflictingPlugins.resx">
       <DependentUpon>ConflictingPlugins.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\CslConfiguration.resx">
+    <EmbeddedResource Include="SetupGuide\CslConfiguration.resx">
       <DependentUpon>CslConfiguration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\NetworkCredentials.resx">
+    <EmbeddedResource Include="SetupGuide\NetworkCredentials.resx">
       <DependentUpon>NetworkCredentials.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\SetXplanePath.resx">
+    <EmbeddedResource Include="SetupGuide\PushToTalk.resx">
+      <DependentUpon>PushToTalk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupGuide\SetXplanePath.resx">
       <DependentUpon>SetXplanePath.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\View.resx">
-      <DependentUpon>View.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tutorial\WelcomeView.resx">
+    <EmbeddedResource Include="SetupGuide\WelcomeView.resx">
       <DependentUpon>WelcomeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">

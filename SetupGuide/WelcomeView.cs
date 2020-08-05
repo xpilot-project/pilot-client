@@ -26,16 +26,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using XPilot.PilotClient.Config;
+using Loamen.KeyMouseHook;
 
 namespace XPilot.PilotClient
 {
-    public partial class WelcomeView : View
+    public partial class WelcomeView : SetupScreen, ISetupScreen
     {
-        private IAppConfig mConfig;
-
-        public WelcomeView(IHost host, IAppConfig config) : base(host)
+        public WelcomeView(ISetup host, IAppConfig config) : base(host, config)
         {
-            mConfig = config;
             InitializeComponent();
         }
 
@@ -53,8 +51,11 @@ namespace XPilot.PilotClient
                     {
                         if (Directory.Exists(Path.Combine(xpPath, "Resources")))
                         {
-                            usablePath = xpPath;
-                            ++instancesFound;
+                            if (Directory.EnumerateFiles(Path.Combine(xpPath, "Resources"), "*", SearchOption.AllDirectories).Count() > 0)
+                            {
+                                usablePath = xpPath;
+                                ++instancesFound;
+                            }
                         }
                     }
                 }
@@ -65,34 +66,32 @@ namespace XPilot.PilotClient
                 mConfig.SaveConfig();
 
                 // check for conflicting plugins (XSwiftBus, XSB)
-                bool xsb = false;
-                bool xswiftbus = false;
                 string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), "Resources/plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);
                 foreach (var dir in dirs)
                 {
                     if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
                     {
-                        xsb = true;
+                        Host.XSquawkBox = true;
                     }
                     if (Path.GetFileName(dir).ToLower() == "xswiftbus")
                     {
-                        xswiftbus = true;
+                        Host.XSwiftBus = true;
                     }
                 }
 
-                if (xsb || xswiftbus)
+                if (Host.XSquawkBox || Host.XSwiftBus)
                 {
-                    Host.SwitchView("ConflictingPlugins");
+                    Host.SwitchScreen("ConflictingPlugins");
                 }
                 else
                 {
-                    Host.SwitchView("CslConfiguration");
+                    Host.SwitchScreen("CslConfiguration");
                 }
             }
             else
             {
-                Host.SwitchView("XplanePath");
+                Host.SwitchScreen("XplanePath");
             }
         }
 

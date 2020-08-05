@@ -20,15 +20,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace XPilot.PilotClient
 {
-    public interface IHost
+    public interface ISetupScreen
     {
-        void SwitchView(string name);
-        void SetTitle(string title);
-        void CloseTutorial();
-        void ManualSetup();
-        View CurrentView { get; }
+        void KeyDownHandler(KeyEventArgs key);
     }
 }

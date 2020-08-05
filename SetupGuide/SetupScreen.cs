@@ -17,26 +17,36 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using XPilot.PilotClient.Config;
+using XPilot.PilotClient.Network;
 
-namespace XPilot.PilotClient.Tutorial
+namespace XPilot.PilotClient
 {
-    public partial class NetworkCredentials : View
+    public class SetupScreen : UserControl
     {
-        public NetworkCredentials(IHost host) : base(host)
+        protected IAppConfig mConfig;
+        public virtual ISetup Host { get; }
+
+        protected SetupScreen()
         {
-            InitializeComponent();
+
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        protected SetupScreen(ISetup host, IAppConfig config)
         {
-            Host.CloseTutorial();
+            Host = host;
+            mConfig = config;
+            Dock = DockStyle.Fill;
+            AutoSize = true;
+        }
+
+        public virtual void KeyDownHandler(KeyEventArgs key)
+        {
+
         }
     }
 }
