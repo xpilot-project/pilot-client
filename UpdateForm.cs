@@ -51,7 +51,7 @@ namespace XPilot.PilotClient
 
             using (WebClient client = new WebClient())
             {
-                txtChangeLog.Text = client.DownloadString("http://xpilot.clowd.io/ChangeLog.txt");
+                txtChangeLog.Text = client.DownloadString("http://xpilot-project.org/ChangeLog.txt");
             }
         }
 
