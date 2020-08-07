@@ -64,6 +64,8 @@ namespace XPilot.PilotClient.Config
         public string Name { get; set; }
         public string HomeAirport { get; set; }
         public string ServerName { get; set; }
+        public string VisualClientIP { get; set; } = "";
+        public string SimClientIP { get; set; } = "";
         public List<ConnectInfo> RecentConnectionInfo { get; set; }
         public PTTConfiguration PTTConfiguration { get; set; }
         public ToggleDisplayConfiguration ToggleDisplayConfiguration { get; set; }

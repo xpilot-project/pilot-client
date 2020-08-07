@@ -91,6 +91,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly NetMQPoller mPoller;
         private readonly NetMQQueue<string> mMessageQueue;
         private readonly PairSocket mPairSocket;
+        private readonly PairSocket mVisualPairSocket;
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
@@ -109,11 +110,34 @@ namespace XPilot.PilotClient.XplaneAdapter
         private bool mReceivedInitialHandshake = false;
         private bool mDisconnectMessageSent = false;
         private bool mValidCsl = false;
+        private string mSimulatorIP = "127.0.0.1";
 
         public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
         {
             mConfig = config;
             mFsdManager = fsdManager;
+            mVisualPairSocket = null;
+           
+            if(mConfig.VisualClientIP != "")
+            {
+                mVisualPairSocket = new PairSocket();
+                mVisualPairSocket.Options.TcpKeepalive = true;
+                try
+                {
+                    mVisualPairSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
+
+                }
+                catch (AddressAlreadyInUseException)
+                {
+                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
+                }
+                mVisualPairSocket.SignalOK();
+            }
+
+            if (!string.IsNullOrEmpty(mConfig.SimClientIP))
+            {
+                mSimulatorIP = mConfig.SimClientIP;
+            }
 
             mMessageQueue = new NetMQQueue<string>();
             mPairSocket = new PairSocket();
@@ -121,7 +145,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             mPairSocket.ReceiveReady += PairSocket_ReceiveReady;
             try
             {
-                mPairSocket.Connect("tcp://127.0.0.1:" + mConfig.TcpPort);
+                mPairSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.TcpPort);
+
             }
             catch (AddressAlreadyInUseException)
             {
@@ -138,11 +163,18 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 if (mMessageQueue.TryDequeue(out string msg, TimeSpan.FromMilliseconds(100)))
                 {
-                    mPairSocket.SendFrame(msg);
+                    if (mPairSocket != null)
+                    {
+                        mPairSocket.SendFrame(msg);
+                    }
+                    if(mVisualPairSocket != null)
+                    {
+                        mVisualPairSocket.SendFrame(msg);
+                    }
                 }
             };
 
-            mXplaneConnector = new XPlaneConnector.XPlaneConnector();
+            mXplaneConnector = new XPlaneConnector.XPlaneConnector(mSimulatorIP);
             mUserAircraftData = new UserAircraftData();
             mRadioStackState = new UserAircraftRadioStack();
 
@@ -209,16 +241,13 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             break;
                         case XplaneConnect.MessageType.PluginVersion:
+                            mReceivedInitialHandshake = true;
                             int pluginVersion = (int)data.Version;
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
                                 EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
                                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-                            }
-                            else
-                            {
-                                mReceivedInitialHandshake = true;
                             }
                             break;
                         case XplaneConnect.MessageType.SocketMessage:
