@@ -51,8 +51,8 @@ namespace XPilot.PilotClient.Aircraft
         public bool InitialConfigurationSet { get; set; }
         public Stack<AircraftConfiguration> PendingAircraftConfiguration { get; set; }
         public NetworkAircraftTransponder Transponder { get; set; }
-        public string OriginAirport { get; set; }
-        public string DestinationAirport { get; set; }
+        public string OriginAirport { get; set; } = "";
+        public string DestinationAirport { get; set; } = "";
         public NetworkAircraftState CurrentPosition
         {
             get
