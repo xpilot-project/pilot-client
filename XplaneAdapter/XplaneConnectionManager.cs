@@ -38,7 +38,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 {
     public class XplaneConnectionManager : EventBus, IXplaneConnectionManager
     {
-        const int MIN_PLUGIN_VERSION = 1323; // 1.3.10 = 1310
+        const int MIN_PLUGIN_VERSION = 1324; // 1.3.10 = 1310
 
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
@@ -106,6 +106,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly UserAircraftData mUserAircraftData;
         private readonly UserAircraftRadioStack mRadioStackState;
 
+        private bool mInvalidPluginVersionShown = false;
         private bool mXplaneConnected = false;
         private bool mReceivedInitialHandshake = false;
         private bool mDisconnectMessageSent = false;
@@ -246,8 +247,12 @@ namespace XPilot.PilotClient.XplaneAdapter
                             if (pluginVersion != MIN_PLUGIN_VERSION)
                             {
                                 EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
-                                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                                if (!mInvalidPluginVersionShown)
+                                {
+                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
+                                    PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                                    mInvalidPluginVersionShown = true;
+                                }
                             }
                             break;
                         case XplaneConnect.MessageType.SocketMessage:
