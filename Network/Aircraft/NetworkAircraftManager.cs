@@ -267,8 +267,8 @@ namespace XPilot.PilotClient.Network.Aircraft
                 var client = VatsimDatafeed.Clients.FirstOrDefault(a => a.Callsign == aircraft.Callsign);
                 if (client != null)
                 {
-                    data.Origin = client.PlannedDepairport;
-                    data.Destination = client.PlannedDestairport;
+                    data.Origin = client.PlannedDepairport ?? "";
+                    data.Destination = client.PlannedDestairport ?? "";
                 }
             }
 
