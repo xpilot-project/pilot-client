@@ -94,8 +94,9 @@ namespace XPilot.PilotClient
             this.label4 = new System.Windows.Forms.Label();
             this.volumeCom2 = new System.Windows.Forms.TrackBar();
             this.inputVolumeLabel = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
+            this.button1 = new System.Windows.Forms.Button();
+            this.btnGuidedSetup = new System.Windows.Forms.Button();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.inputVolume)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.volumeCom1)).BeginInit();
@@ -702,10 +703,10 @@ namespace XPilot.PilotClient
             // 
             this.tabAudio.Controls.Add(this.groupBox4);
             this.tabAudio.Controls.Add(this.groupBox8);
-            this.tabAudio.Location = new System.Drawing.Point(4, 24);
+            this.tabAudio.Location = new System.Drawing.Point(4, 22);
             this.tabAudio.Name = "tabAudio";
             this.tabAudio.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAudio.Size = new System.Drawing.Size(627, 425);
+            this.tabAudio.Size = new System.Drawing.Size(627, 427);
             this.tabAudio.TabIndex = 1;
             this.tabAudio.Text = "Audio/Push to Talk (PTT)";
             this.tabAudio.UseVisualStyleBackColor = true;
@@ -807,6 +808,15 @@ namespace XPilot.PilotClient
             this.inputVolumeLabel.TabIndex = 18;
             this.inputVolumeLabel.Text = "0";
             // 
+            // levelMeterInput
+            // 
+            this.levelMeterInput.Location = new System.Drawing.Point(21, 214);
+            this.levelMeterInput.Name = "levelMeterInput";
+            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
+            this.levelMeterInput.TabIndex = 17;
+            this.levelMeterInput.Text = "levelMeter1";
+            this.levelMeterInput.Value = 0F;
+            // 
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -818,14 +828,17 @@ namespace XPilot.PilotClient
             this.button1.Text = "Cancel";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // levelMeterInput
+            // btnGuidedSetup
             // 
-            this.levelMeterInput.Location = new System.Drawing.Point(21, 214);
-            this.levelMeterInput.Name = "levelMeterInput";
-            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
-            this.levelMeterInput.TabIndex = 17;
-            this.levelMeterInput.Text = "levelMeter1";
-            this.levelMeterInput.Value = 0F;
+            this.btnGuidedSetup.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnGuidedSetup.Location = new System.Drawing.Point(30, 489);
+            this.btnGuidedSetup.Name = "btnGuidedSetup";
+            this.btnGuidedSetup.Size = new System.Drawing.Size(95, 23);
+            this.btnGuidedSetup.TabIndex = 15;
+            this.btnGuidedSetup.TabStop = false;
+            this.btnGuidedSetup.Text = "Guided Setup";
+            this.btnGuidedSetup.UseVisualStyleBackColor = true;
+            this.btnGuidedSetup.Click += new System.EventHandler(this.btnGuidedSetup_Click);
             // 
             // SettingsForm
             // 
@@ -836,6 +849,7 @@ namespace XPilot.PilotClient
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(695, 538);
             this.ControlBox = false;
+            this.Controls.Add(this.btnGuidedSetup);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
@@ -846,7 +860,7 @@ namespace XPilot.PilotClient
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
-            this.Padding = new System.Windows.Forms.Padding(30, 30, 30, 30);
+            this.Padding = new System.Windows.Forms.Padding(30);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "xPilot Settings";
@@ -942,5 +956,6 @@ namespace XPilot.PilotClient
         private TextBox XplanePath;
         private Button button1;
         private CheckBox chkVolumeKnobVolume;
+        private Button btnGuidedSetup;
     }
 }

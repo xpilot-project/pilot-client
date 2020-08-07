@@ -20,17 +20,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
+using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient
 {
-    public interface IUserInterface
+    public interface ISetupScreen
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        SetupGuide CreateSetupGuideForm();
+        void KeyDownHandler(KeyEventArgs key);
     }
 }

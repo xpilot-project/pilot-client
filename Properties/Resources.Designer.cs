@@ -59,5 +59,15 @@ namespace XPilot.PilotClient.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap xPilot_Logo {
+            get {
+                object obj = ResourceManager.GetObject("xPilot_Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

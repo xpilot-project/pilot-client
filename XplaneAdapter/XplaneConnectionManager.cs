@@ -326,6 +326,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                     }
                     else
                     {
+                        mXplaneConnected = true;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
                         if (mValidCsl)
                         {

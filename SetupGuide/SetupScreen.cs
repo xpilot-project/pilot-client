@@ -20,17 +20,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
+using System.Windows.Forms;
+using XPilot.PilotClient.Config;
+using XPilot.PilotClient.Network;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient
 {
-    public interface IUserInterface
+    public class SetupScreen : UserControl
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        SetupGuide CreateSetupGuideForm();
+        protected IAppConfig mConfig;
+        public virtual ISetup Host { get; }
+
+        protected SetupScreen()
+        {
+
+        }
+
+        protected SetupScreen(ISetup host, IAppConfig config)
+        {
+            Host = host;
+            mConfig = config;
+            Dock = DockStyle.Fill;
+            AutoSize = true;
+        }
+
+        public virtual void KeyDownHandler(KeyEventArgs key)
+        {
+
+        }
     }
 }

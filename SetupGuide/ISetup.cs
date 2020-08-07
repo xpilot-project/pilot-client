@@ -20,17 +20,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.Properties;
 
-namespace XPilot.PilotClient.Core
+namespace XPilot.PilotClient
 {
-    public interface IUserInterface
+    public interface ISetup
     {
-        MainForm CreateMainForm();
-        UpdateForm CreateUpdateForm();
-        SettingsForm CreateSettingsForm();
-        ConnectForm CreateConnectForm();
-        FlightPlanForm CreateFlightPlanForm();
-        SetupGuide CreateSetupGuideForm();
+        void SwitchScreen(string name);
+        void SetTitle(string title);
+        void EndSetup();
+        void ManualSetup();
+        void SetupFinished();
+        bool XSquawkBox { get; set; }
+        bool XSwiftBus { get; set; }
+        SetupScreen CurrentScreen { get; }
     }
 }
