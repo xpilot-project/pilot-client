@@ -147,14 +147,7 @@ namespace XPilot.PilotClient.Config
         public void SaveConfig()
         {
             EncryptConfig();
-            using (StreamWriter file = File.CreateText(mPath))
-            {
-                JsonSerializer serializer = new JsonSerializer
-                {
-                    Formatting = Formatting.Indented
-                };
-                serializer.Serialize(file, this);
-            }
+            File.WriteAllText(mPath, JsonConvert.SerializeObject(this, Formatting.Indented));
             DecryptConfig();
         }
 
