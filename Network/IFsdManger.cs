@@ -31,6 +31,7 @@ namespace XPilot.PilotClient.Network
         void RequestClientCapabilities(string callsign);
         void RequestRealName(string callsign);
         void RequestControllerInfo(string callsign);
+        void RequestRemoteFlightPlan(string callsign);
         void CheckIfValidATC(string callsign);
         void SquawkIdent();
         bool IsConnected { get; }

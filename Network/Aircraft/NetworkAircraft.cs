@@ -40,6 +40,7 @@ namespace XPilot.PilotClient.Aircraft
         public string AirlineIcao { get; set; }
         public List<NetworkAircraftState> StateHistory { get; set; }
         public DateTime LastUpdated { get; set; }
+        public DateTime LastFlightPlanFetch { get; set; }
         public int UpdateCount { get; set; }
         public double GroundSpeed { get; set; }
         public int VerticalSpeed { get; set; }

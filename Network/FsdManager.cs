@@ -108,6 +108,9 @@ namespace XPilot.PilotClient.Network
         [EventPublication(EventTopics.FlightPlanReceived)]
         public event EventHandler<FlightPlanReceivedEventArgs> FlightPlanReceived;
 
+        [EventPublication(EventTopics.RemoteFlightPlanReceived)]
+        public event EventHandler<FlightPlanReceivedEventArgs> RemoteFlightPlanReceived;
+
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
@@ -495,6 +498,11 @@ namespace XPilot.PilotClient.Network
                 }
                 FlightPlanReceived?.Invoke(this, new FlightPlanReceivedEventArgs(flightPlan));
             }
+            else
+            {
+                FlightPlan flightPlan = ParseFlightPlan(e.PDU);
+                RemoteFlightPlanReceived?.Invoke(this, new FlightPlanReceivedEventArgs(flightPlan));
+            }
         }
 
         private void FSD_PingReceived(object sender, DataReceivedEventArgs<PDUPing> e)
@@ -558,6 +566,7 @@ namespace XPilot.PilotClient.Network
             int.TryParse(fp.TAS, out int cruiseSpeed);
 
             FlightPlan flightPlan = new FlightPlan();
+            flightPlan.Callsign = fp.From;
             flightPlan.FlightType = flightPlan.FlightType.FromString(fp.Rules.ToString());
             flightPlan.Equipment = fp.Equipment;
             flightPlan.IsHeavy = fp.Equipment.StartsWith("H/");
@@ -657,6 +666,14 @@ namespace XPilot.PilotClient.Network
             if (FSD.Connected)
             {
                 FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { OurCallsign }));
+            }
+        }
+
+        public void RequestRemoteFlightPlan(string callsign)
+        {
+            if (FSD.Connected && !string.IsNullOrEmpty(callsign))
+            {
+                FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { callsign.ToUpper() }));
             }
         }
 

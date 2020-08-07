@@ -37,17 +37,10 @@ namespace XPilot.PilotClient.Network.Aircraft
         [EventPublication(EventTopics.XPlaneEventPosted)]
         public event EventHandler<ClientEventArgs<string>> XPlaneEventPosted;
 
-        [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
-
-        private const string VATSIM_DATA_URL = "http://cluster.data.vatsim.net/vatsim-data.json";
-
         private readonly List<NetworkAircraft> mNetworkAircraft = new List<NetworkAircraft>();
         private readonly IAppConfig mConfig;
         private readonly IFsdManger mFsdManager;
         private readonly Timer mCheckIdleAircraftTimer;
-        private readonly Timer mDownloadDataFeed;
-        private VatsimData VatsimDatafeed;
 
         public NetworkAircraftManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
         {
@@ -59,31 +52,6 @@ namespace XPilot.PilotClient.Network.Aircraft
                 Interval = 500
             };
             mCheckIdleAircraftTimer.Tick += CheckIdleAircraftTimer_Tick;
-
-            mDownloadDataFeed = new Timer
-            {
-                Interval = 60000
-            };
-            mDownloadDataFeed.Tick += RefreshVatsimData_Tick;
-            LoadVatsimData();
-        }
-
-        private async void LoadVatsimData()
-        {
-            try
-            {
-                string json = await new WebClient() { Encoding = System.Text.Encoding.UTF8 }.DownloadStringTaskAsync(new Uri(VATSIM_DATA_URL));
-                VatsimDatafeed = JsonConvert.DeserializeObject<VatsimData>(json);
-            }
-            catch (Exception ex)
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error downloading VATSIM data:" + ex.Message));
-            }
-        }
-
-        private void RefreshVatsimData_Tick(object sender, EventArgs e)
-        {
-            LoadVatsimData();
         }
 
         private void NetworkAircraftUpdateReceived(string from, NetworkAircraftState state)
@@ -134,6 +102,12 @@ namespace XPilot.PilotClient.Network.Aircraft
                         var cfg = aircraft.PendingAircraftConfiguration.Pop();
                         ProcessAircraftConfig(aircraft, cfg);
                     }
+                }
+
+                if ((DateTime.Now - aircraft.LastFlightPlanFetch).TotalMinutes >= 5)
+                {
+                    mFsdManager.RequestRemoteFlightPlan(aircraft.Callsign);
+                    aircraft.LastFlightPlanFetch = DateTime.Now;
                 }
             }
         }
@@ -259,18 +233,8 @@ namespace XPilot.PilotClient.Network.Aircraft
             data.TransponderCode = State.Transponder.TransponderCode;
             data.TransponderModeC = State.Transponder.TransponderModeC;
             data.TransponderIdent = State.Transponder.TransponderIdent;
-            data.Origin = "";
-            data.Destination = "";
-
-            if (VatsimDatafeed.Clients != null)
-            {
-                var client = VatsimDatafeed.Clients.FirstOrDefault(a => a.Callsign == aircraft.Callsign);
-                if (client != null)
-                {
-                    data.Origin = client.PlannedDepairport ?? "";
-                    data.Destination = client.PlannedDestairport ?? "";
-                }
-            }
+            data.Origin = aircraft.OriginAirport;
+            data.Destination = aircraft.DestinationAirport;
 
             XplaneConnect xp = new XplaneConnect
             {
@@ -495,11 +459,20 @@ namespace XPilot.PilotClient.Network.Aircraft
             }
         }
 
+        private void ProcessRemoteFlightPlan(FlightPlan fp)
+        {
+            NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(o => o.Callsign == fp.Callsign);
+            if (aircraft != null)
+            {
+                aircraft.OriginAirport = fp.DepartureAirport;
+                aircraft.DestinationAirport = fp.DestinationAirport;
+            }
+        }
+
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {
             mCheckIdleAircraftTimer.Start();
-            mDownloadDataFeed.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
@@ -507,7 +480,6 @@ namespace XPilot.PilotClient.Network.Aircraft
         {
             mNetworkAircraft.Clear();
             mCheckIdleAircraftTimer.Stop();
-            mDownloadDataFeed.Stop();
         }
 
         [EventSubscription(EventTopics.CapabilitiesRequestReceived, typeof(OnUserInterfaceAsync))]
@@ -666,6 +638,12 @@ namespace XPilot.PilotClient.Network.Aircraft
         public void OnNetworkAircraftUpdateReceived(object sender, AircraftUpdateReceivedEventArgs e)
         {
             NetworkAircraftUpdateReceived(e.From, e.State);
+        }
+
+        [EventSubscription(EventTopics.RemoteFlightPlanReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRemoteFlightPlanReceived(object sender, FlightPlanReceivedEventArgs e)
+        {
+            ProcessRemoteFlightPlan(e.FlightPlan);
         }
     }
 }

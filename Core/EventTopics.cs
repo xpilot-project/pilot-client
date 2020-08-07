@@ -59,6 +59,7 @@ namespace XPilot.PilotClient
         public const string PrivateMessageReceived = "PrivateMessageReceived";
         public const string NoFlightPlanReceived = "NoFlightPlanReceived";
         public const string FlightPlanReceived = "FlightPlanReceived";
+        public const string RemoteFlightPlanReceived = "RemoteFlightPlanReceived";
         public const string RequestFlightPlan = "RequestFlightPlan";
         public const string FileFlightPlan = "FileFlightPlan";
         public const string RealNameRequested = "RealNameRequested";

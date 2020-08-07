@@ -44,7 +44,7 @@ namespace XPilot.PilotClient.Tutorial
         private void btnDownload_Click(object sender, EventArgs e)
         {
             string bluebell = Path.Combine(mConfig.AppPath, "Bluebell.7z");
-            if (!File.Exists(bluebell))
+            if (File.Exists(bluebell))
             {
                 ExtractModels();
             }
