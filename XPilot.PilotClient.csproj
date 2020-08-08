@@ -236,6 +236,12 @@
     <Compile Include="SetupGuide\SetupScreen.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SetupGuide\SetXplanePath.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SetupGuide\SetXplanePath.Designer.cs">
+      <DependentUpon>SetXplanePath.cs</DependentUpon>
+    </Compile>
     <Compile Include="SetupGuide\WelcomeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -390,6 +396,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SetupGuide\PushToTalk.resx">
       <DependentUpon>PushToTalk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetupGuide\SetXplanePath.resx">
+      <DependentUpon>SetXplanePath.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SetupGuide\WelcomeView.resx">
       <DependentUpon>WelcomeView.cs</DependentUpon>

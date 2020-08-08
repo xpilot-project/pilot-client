@@ -16,31 +16,22 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using System.Diagnostics;
 using XPilot.PilotClient.Config;
+using System.Linq;
 
 namespace XPilot.PilotClient
 {
-    public partial class WelcomeView : SetupScreen, ISetupScreen
+    public partial class SetXplanePath : SetupScreen, ISetupScreen
     {
-        public WelcomeView(ISetup host, IAppConfig config) : base(host, config)
+        public SetXplanePath(ISetup host, IAppConfig config) : base(host, config)
         {
             InitializeComponent();
-        }
+            Host.SetTitle("Set X-Plane Path");
 
-        private void btnYes_Click(object sender, EventArgs e)
-        {
-            if (Process.GetProcessesByName("X-Plane").Any())
-            {
-                MessageBox.Show("You must close X-Plane before continuing with the setup.");
-                return;
-            }
-
-            int instancesFound = 0;
-            string usablePath = "";
+            bool foundXpilot = false;
             var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
             if (File.Exists(installFile))
             {
@@ -49,23 +40,53 @@ namespace XPilot.PilotClient
                     string xpPath = string.Empty;
                     while ((xpPath = sr.ReadLine()) != null)
                     {
-                        string p = Path.Combine(xpPath, "Resources");
-                        if (Directory.Exists(p))
+                        if (Directory.Exists(Path.Combine(xpPath, "Resources/plugins/xPilot")))
                         {
-                            DirectoryInfo di = new DirectoryInfo(p);
-                            if (di.EnumerateDirectories().AsParallel().SelectMany(a => a.EnumerateFiles("*.*", SearchOption.AllDirectories)).Count() > 0)
+                            foundXpilot = true;
+                            RadioButton btn = new RadioButton
                             {
-                                usablePath = xpPath;
-                                ++instancesFound;
-                            }
+                                Tag = xpPath,
+                                Text = xpPath,
+                                TextAlign = ContentAlignment.MiddleLeft,
+                                AutoSize = true,
+                                Font = new Font(this.Font.FontFamily, 12f, FontStyle.Bold)
+                            };
+                            btn.CheckedChanged += (s, e) =>
+                            {
+                                btnNext.Enabled = true;
+                            };
+                            pathOptions.Controls.Add(btn);
                         }
                     }
                 }
             }
-            if (instancesFound == 1)
+
+            if (!foundXpilot)
             {
-                // check for conflicting plugins (XSwiftBus, XSB)
-                string pluginPath = Path.Combine(Path.GetDirectoryName(usablePath), "Resources/plugins");
+                Label l = new Label
+                {
+                    AutoSize = true,
+                    ForeColor = Color.Red,
+                    Text = "The xPilot plugin could not be found in any of the X-Plane instances.\nPlease re-run the xPilot installer."
+                };
+                pathOptions.Controls.Add(l);
+                btnNext.Enabled = false;
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Host.EndSetup();
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            var checkedPath = pathOptions.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
+            if (checkedPath != null)
+            {
+                Host.XplanePath = checkedPath.Tag.ToString();
+
+                string pluginPath = Path.Combine(checkedPath.Tag.ToString(), "Resources/plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);
                 foreach (var dir in dirs)
                 {
@@ -79,8 +100,6 @@ namespace XPilot.PilotClient
                     }
                 }
 
-                Host.XplanePath = usablePath;
-
                 if (Host.XSquawkBox || Host.XSwiftBus)
                 {
                     Host.SwitchScreen("ConflictingPlugins");
@@ -90,15 +109,6 @@ namespace XPilot.PilotClient
                     Host.SwitchScreen("CslConfiguration");
                 }
             }
-            else
-            {
-                Host.SwitchScreen("XplanePath");
-            }
-        }
-
-        private void btnNo_Click(object sender, EventArgs e)
-        {
-            Host.ManualSetup();
         }
     }
 }

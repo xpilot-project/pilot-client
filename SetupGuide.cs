@@ -34,6 +34,7 @@ namespace XPilot.PilotClient
         public SetupScreen CurrentScreen { get; private set; }
         public bool XSquawkBox { get; set; }
         public bool XSwiftBus { get; set; }
+        public string XplanePath { get; set; }
 
         public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
         {
@@ -61,6 +62,8 @@ namespace XPilot.PilotClient
                 default:
                 case "Welcome":
                     return new WelcomeView(this, mConfig);
+                case "XplanePath":
+                    return new SetXplanePath(this, mConfig);
                 case "ConflictingPlugins":
                     return new ConflictingPlugins(this, mConfig);
                 case "CslConfiguration":

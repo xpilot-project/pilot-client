@@ -119,7 +119,7 @@ namespace XPilot.PilotClient.Tutorial
                     {
                         mSyncContext.Post(o =>
                         {
-                            File.WriteAllText(Path.Combine(mConfig.XplanePath, @"Resources\plugins\xPilot\Resources\Config.json"),
+                            File.WriteAllText(Path.Combine(Host.XplanePath, @"Resources\plugins\xPilot\Resources\Config.json"),
                             JsonConvert.SerializeObject(new
                             {
                                 CSL = new List<object>
@@ -127,7 +127,7 @@ namespace XPilot.PilotClient.Tutorial
                                     new
                                     {
                                         Enabled = true,
-                                        Path = Path.Combine(mConfig.XplanePath, @"Resources\plugins\xPilot\Resources\CSL\Bluebell\")
+                                        Path = Path.Combine(Host.XplanePath, @"Resources\plugins\xPilot\Resources\CSL\Bluebell\")
                                     }
                                 }
                             }));
@@ -137,7 +137,7 @@ namespace XPilot.PilotClient.Tutorial
                     };
                     try
                     {
-                        file.ExtractArchive(Path.GetDirectoryName(Path.Combine(mConfig.XplanePath, @"Resources\plugins\xPilot\Resources\CSL\")));
+                        file.ExtractArchive(Path.GetDirectoryName(Path.Combine(Host.XplanePath, @"Resources\plugins\xPilot\Resources\CSL\")));
                     }
                     catch { }
                 }
