@@ -38,61 +38,29 @@ namespace XPilot.PilotClient
                 MessageBox.Show("You must close X-Plane before continuing with the setup.");
                 return;
             }
-            int instancesFound = 0;
-            string usablePath = "";
-            var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
-            if (File.Exists(installFile))
+
+            // check for conflicting plugins (XSwiftBus, XSB)
+            string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), @"Resources\plugins");
+            string[] dirs = Directory.GetDirectories(pluginPath);
+            foreach (var dir in dirs)
             {
-                using (StreamReader sr = File.OpenText(installFile))
+                if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
                 {
-                    string xpPath = string.Empty;
-                    while ((xpPath = sr.ReadLine()) != null)
-                    {
-                        string p = Path.Combine(xpPath, "Resources");
-                        if (Directory.Exists(p))
-                        {
-                            DirectoryInfo di = new DirectoryInfo(p);
-                            if (di.EnumerateDirectories().AsParallel().SelectMany(a => a.EnumerateFiles("*.*", SearchOption.AllDirectories)).Count() > 0)
-                            {
-                                usablePath = xpPath;
-                                ++instancesFound;
-                            }
-                        }
-                    }
+                    Host.XSquawkBox = true;
+                }
+                if (Path.GetFileName(dir).ToLower() == "xswiftbus")
+                {
+                    Host.XSwiftBus = true;
                 }
             }
-            if (instancesFound == 1)
+
+            if (Host.XSquawkBox || Host.XSwiftBus)
             {
-                mConfig.XplanePath = usablePath;
-                mConfig.SaveConfig();
-
-                // check for conflicting plugins (XSwiftBus, XSB)
-                string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), "Resources/plugins");
-                string[] dirs = Directory.GetDirectories(pluginPath);
-                foreach (var dir in dirs)
-                {
-                    if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
-                    {
-                        Host.XSquawkBox = true;
-                    }
-                    if (Path.GetFileName(dir).ToLower() == "xswiftbus")
-                    {
-                        Host.XSwiftBus = true;
-                    }
-                }
-
-                if (Host.XSquawkBox || Host.XSwiftBus)
-                {
-                    Host.SwitchScreen("ConflictingPlugins");
-                }
-                else
-                {
-                    Host.SwitchScreen("CslConfiguration");
-                }
+                Host.SwitchScreen("ConflictingPlugins");
             }
             else
             {
-                Host.SwitchScreen("XplanePath");
+                Host.SwitchScreen("CslConfiguration");
             }
         }
 

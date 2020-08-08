@@ -18,7 +18,10 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace XPilot.PilotClient.Common
 {
@@ -48,6 +51,23 @@ namespace XPilot.PilotClient.Common
                 }
             }
             return "";
+        }
+
+        public static string CheckSum(this string filePath)
+        {
+            using (SHA512 crypto = SHA512.Create())
+            {
+                using (FileStream fileStream = File.OpenRead(filePath))
+                    return crypto.ComputeHash(fileStream).ToHex();
+            }
+        }
+
+        public static string ToHex(this byte[] bytes)
+        {
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
+            for (int i = 0; i < bytes.Length; i++)
+                result.Append(bytes[i].ToString("x2"));
+            return result.ToString();
         }
     }
 }

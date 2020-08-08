@@ -38,7 +38,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 {
     public class XplaneConnectionManager : EventBus, IXplaneConnectionManager
     {
-        const int MIN_PLUGIN_VERSION = 1326; // 1.3.10 = 1310
+        const int MIN_PLUGIN_VERSION = 1327; // 1.3.10 = 1310
 
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
@@ -234,6 +234,14 @@ namespace XPilot.PilotClient.XplaneAdapter
                     dynamic data = json.Data;
                     switch (json.Type)
                     {
+                        case XplaneConnect.MessageType.XplanePath:
+                            string path = data.Path;
+                            if (!string.IsNullOrEmpty(path))
+                            {
+                                mConfig.XplanePath = path;
+                                mFsdManager.ClientProperties.Plugin = Path.Combine(path, @"Resources\plugins\xPilot\win_x64\xPilot.xpl").CheckSum();
+                            }
+                            break;
                         case XplaneConnect.MessageType.RequestAtis:
                             string callsign = data.Callsign;
                             if (!string.IsNullOrEmpty(callsign))
@@ -355,6 +363,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                         SendMessage(new XplaneConnect
                         {
                             Type = XplaneConnect.MessageType.PluginVersion,
+                            Timestamp = DateTime.Now
+                        }.ToJSON());
+                        SendMessage(new XplaneConnect
+                        {
+                            Type = XplaneConnect.MessageType.XplanePath,
                             Timestamp = DateTime.Now
                         }.ToJSON());
                     }
@@ -785,6 +798,11 @@ namespace XPilot.PilotClient.XplaneAdapter
             SendMessage(new XplaneConnect
             {
                 Type = XplaneConnect.MessageType.PluginVersion,
+                Timestamp = DateTime.Now
+            }.ToJSON());
+            SendMessage(new XplaneConnect
+            {
+                Type = XplaneConnect.MessageType.XplanePath,
                 Timestamp = DateTime.Now
             }.ToJSON());
         }

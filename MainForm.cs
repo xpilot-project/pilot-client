@@ -186,52 +186,8 @@ namespace XPilot.PilotClient
                 }
             }
 
-            XplanePathValidation();
-
             if(mConfig.SimClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimClientIP}."));
             if(mConfig.VisualClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for Visuals machine at IP {mConfig.VisualClientIP}."));
-        }
-
-        private void XplanePathValidation()
-        {
-            if (string.IsNullOrEmpty(mConfig.XplanePath) || !File.Exists(Path.Combine(mConfig.XplanePath, "X-Plane.exe")))
-            {
-                int instancesFound = 0;
-                string usablePath = "";
-                var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
-                if (File.Exists(installFile))
-                {
-                    using (StreamReader sr = File.OpenText(installFile))
-                    {
-                        string xpPath = string.Empty;
-                        while ((xpPath = sr.ReadLine()) != null)
-                        {
-                            string p = Path.Combine(xpPath, "Resources");
-                            if (Directory.Exists(p))
-                            {
-                                DirectoryInfo di = new DirectoryInfo(p);
-                                if (di.EnumerateDirectories().AsParallel().SelectMany(a => a.EnumerateFiles("*.*", SearchOption.AllDirectories)).Count() > 0)
-                                {
-                                    usablePath = xpPath;
-                                    ++instancesFound;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (instancesFound > 1)
-                {
-                    using (XplanePathValidation dlg = mUserInterface.CreateXplanePathValidationForm())
-                    {
-                        dlg.ShowDialog(this);
-                    }
-                }
-                else
-                {
-                    mConfig.XplanePath = usablePath;
-                    mConfig.SaveConfig();
-                }
-            }
         }
 
         private void ChatMessageBox_KeyDown(object sender, KeyEventArgs e)

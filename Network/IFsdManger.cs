@@ -44,5 +44,6 @@ namespace XPilot.PilotClient.Network
         void SendClientCaps(string from);
         void RequestInfoQuery(string to);
         string SelcalCode { get; }
+        ClientProperties ClientProperties { get; set; }
     }
 }

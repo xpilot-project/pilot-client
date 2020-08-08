@@ -61,8 +61,6 @@ namespace XPilot.PilotClient
                 default:
                 case "Welcome":
                     return new WelcomeView(this, mConfig);
-                case "XplanePath":
-                    return new SetXplanePath(this, mConfig);
                 case "ConflictingPlugins":
                     return new ConflictingPlugins(this, mConfig);
                 case "CslConfiguration":

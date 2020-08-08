@@ -80,9 +80,6 @@ namespace XPilot.PilotClient
             this.tabGeneral = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
-            this.btnBrowseXplane = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.XplanePath = new System.Windows.Forms.TextBox();
             this.spinPluginPort = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.tabAudio = new System.Windows.Forms.TabPage();
@@ -618,9 +615,6 @@ namespace XPilot.PilotClient
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.chkVolumeKnobVolume);
-            this.groupBox5.Controls.Add(this.btnBrowseXplane);
-            this.groupBox5.Controls.Add(this.label10);
-            this.groupBox5.Controls.Add(this.XplanePath);
             this.groupBox5.Controls.Add(this.spinPluginPort);
             this.groupBox5.Controls.Add(this.label3);
             this.groupBox5.Location = new System.Drawing.Point(319, 190);
@@ -633,7 +627,7 @@ namespace XPilot.PilotClient
             // chkVolumeKnobVolume
             // 
             this.chkVolumeKnobVolume.AutoSize = true;
-            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(14, 100);
+            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(15, 72);
             this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
             this.chkVolumeKnobVolume.Size = new System.Drawing.Size(226, 17);
             this.chkVolumeKnobVolume.TabIndex = 13;
@@ -641,36 +635,9 @@ namespace XPilot.PilotClient
             this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control radio volume";
             this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
             // 
-            // btnBrowseXplane
-            // 
-            this.btnBrowseXplane.Location = new System.Drawing.Point(212, 41);
-            this.btnBrowseXplane.Name = "btnBrowseXplane";
-            this.btnBrowseXplane.Size = new System.Drawing.Size(54, 20);
-            this.btnBrowseXplane.TabIndex = 12;
-            this.btnBrowseXplane.Text = "Browse";
-            this.btnBrowseXplane.UseVisualStyleBackColor = true;
-            this.btnBrowseXplane.Click += new System.EventHandler(this.btnBrowseXplane_Click);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(12, 23);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(101, 13);
-            this.label10.TabIndex = 11;
-            this.label10.Text = "Path to X-Plane.exe";
-            // 
-            // XplanePath
-            // 
-            this.XplanePath.Location = new System.Drawing.Point(13, 41);
-            this.XplanePath.Name = "XplanePath";
-            this.XplanePath.ReadOnly = true;
-            this.XplanePath.Size = new System.Drawing.Size(192, 20);
-            this.XplanePath.TabIndex = 10;
-            // 
             // spinPluginPort
             // 
-            this.spinPluginPort.Location = new System.Drawing.Point(140, 70);
+            this.spinPluginPort.Location = new System.Drawing.Point(141, 39);
             this.spinPluginPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -693,7 +660,7 @@ namespace XPilot.PilotClient
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 73);
+            this.label3.Location = new System.Drawing.Point(13, 42);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(125, 13);
             this.label3.TabIndex = 8;
@@ -951,9 +918,6 @@ namespace XPilot.PilotClient
         private GroupBox groupBox5;
         private NumericUpDown spinPluginPort;
         private Label label3;
-        private Button btnBrowseXplane;
-        private Label label10;
-        private TextBox XplanePath;
         private Button button1;
         private CheckBox chkVolumeKnobVolume;
         private Button btnGuidedSetup;

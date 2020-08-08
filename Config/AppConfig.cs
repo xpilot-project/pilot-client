@@ -46,17 +46,7 @@ namespace XPilot.PilotClient.Config
         public string AppPath { get; set; }
 
         [JsonIgnore]
-        public string FullXplanePath
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(XplanePath))
-                {
-                    return Path.Combine(Path.GetDirectoryName(XplanePath), @"Resources\plugins\xPilot\win_x64\xPilot.xpl");
-                }
-                return "";
-            }
-        }
+        public string XplanePath { get; set; }
 
         public List<NetworkServerInfo> CachedServers { get; set; }
         public string VatsimId { get; set; }
@@ -90,7 +80,6 @@ namespace XPilot.PilotClient.Config
         public UpdateChannel UpdateChannel { get; set; } = UpdateChannel.Stable;
         public bool KeepClientWindowVisible { get; set; }
         public int TcpPort { get; set; } = 45001;
-        public string XplanePath { get; set; }
         public bool VolumeKnobsControlVolume { get; set; } = true;
 
         [JsonIgnore]
@@ -114,7 +103,7 @@ namespace XPilot.PilotClient.Config
         {
             get
             {
-                return string.IsNullOrEmpty(VatsimId) || string.IsNullOrEmpty(VatsimPassword) || string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(XplanePath);
+                return string.IsNullOrEmpty(VatsimId) || string.IsNullOrEmpty(VatsimPassword) || string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Name);
             }
         }
 
