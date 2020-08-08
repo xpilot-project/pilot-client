@@ -66,7 +66,7 @@ namespace XPilot.PilotClient.Tutorial
             Host.XSquawkBox = false;
             Host.XSwiftBus = false;
 
-            string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), "Resources/plugins");
+            string pluginPath = Path.Combine(Path.GetDirectoryName(Host.XplanePath), "Resources/plugins");
             string[] dirs = Directory.GetDirectories(pluginPath);
             foreach (var dir in dirs)
             {

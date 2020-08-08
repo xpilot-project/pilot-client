@@ -84,8 +84,7 @@ namespace XPilot.PilotClient
             var checkedPath = pathOptions.Controls.OfType<RadioButton>().FirstOrDefault(r => r.Checked);
             if (checkedPath != null)
             {
-                mConfig.XplanePath = checkedPath.Tag.ToString();
-                mConfig.SaveConfig();
+                Host.XplanePath = checkedPath.Tag.ToString();
 
                 string pluginPath = Path.Combine(checkedPath.Tag.ToString(), "Resources/plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);

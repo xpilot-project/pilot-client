@@ -38,6 +38,7 @@ namespace XPilot.PilotClient
                 MessageBox.Show("You must close X-Plane before continuing with the setup.");
                 return;
             }
+
             int instancesFound = 0;
             string usablePath = "";
             var installFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "x-plane_install_11.txt");
@@ -63,11 +64,8 @@ namespace XPilot.PilotClient
             }
             if (instancesFound == 1)
             {
-                mConfig.XplanePath = usablePath;
-                mConfig.SaveConfig();
-
                 // check for conflicting plugins (XSwiftBus, XSB)
-                string pluginPath = Path.Combine(Path.GetDirectoryName(mConfig.XplanePath), "Resources/plugins");
+                string pluginPath = Path.Combine(Path.GetDirectoryName(usablePath), "Resources/plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);
                 foreach (var dir in dirs)
                 {
@@ -80,6 +78,8 @@ namespace XPilot.PilotClient
                         Host.XSwiftBus = true;
                     }
                 }
+
+                Host.XplanePath = usablePath;
 
                 if (Host.XSquawkBox || Host.XSwiftBus)
                 {

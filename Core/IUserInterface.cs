@@ -32,6 +32,5 @@ namespace XPilot.PilotClient.Core
         ConnectForm CreateConnectForm();
         FlightPlanForm CreateFlightPlanForm();
         SetupGuide CreateSetupGuideForm();
-        XplanePathValidation CreateXplanePathValidationForm();
     }
 }

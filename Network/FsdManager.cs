@@ -164,9 +164,10 @@ namespace XPilot.PilotClient.Network
                 file.Delete();
             }
 
+            ClientProperties = new ClientProperties("xPilot", mVersion, Assembly.GetEntryAssembly().Location.CheckSum(), "");
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, $"NetworkLogs/NetworkLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log"), false);
 
-            FSD = new FSDSession(new ClientProperties("xPilot", mVersion, Assembly.GetEntryAssembly().Location, mConfig.FullXplanePath));
+            FSD = new FSDSession(ClientProperties);
             FSD.IgnoreUnknownPackets = true;
             FSD.NetworkError += FSD_NetworkError;
             FSD.ProtocolErrorReceived += FSD_ProtocolErrorReceived;
@@ -920,6 +921,8 @@ namespace XPilot.PilotClient.Network
             }
         }
 
+        public ClientProperties ClientProperties { get; set; }
+
         [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnUserInterfaceAsync))]
         public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
         {
@@ -1004,12 +1007,6 @@ namespace XPilot.PilotClient.Network
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, string.Format("[WALLOP] {0}: {1}", OurCallsign, e.Message)));
                 PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Broadcast));
             }
-        }
-
-        [EventSubscription(EventTopics.ClientConfigChanged, typeof(OnUserInterfaceAsync))]
-        public void ClientConfigChanged(object sender, EventArgs e)
-        {
-            FSD.ClientProperties.PluginPath = mConfig.FullXplanePath;
         }
     }
 }

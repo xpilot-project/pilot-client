@@ -166,7 +166,6 @@ namespace XPilot.PilotClient
             chkRadioMessageSound.Checked = mConfig.PlayRadioMessageAlert;
             cbUpdateChannel.SelectedValue = mConfig.UpdateChannel;
             vhfEqualizer.SelectedValue = mConfig.VhfEqualizer;
-            XplanePath.Text = mConfig.XplanePath;
             chkVolumeKnobVolume.Checked = mConfig.VolumeKnobsControlVolume;
             lblDisplayShortcut.Text = mConfig.ToggleDisplayConfiguration.ToString();
             TogglePTTButtons();
@@ -549,11 +548,6 @@ namespace XPilot.PilotClient
                 ShowError("Please select a VATSIM server.");
                 ddlServerName.Select();
             }
-            else if(string.IsNullOrEmpty(XplanePath.Text))
-            {
-                ShowError("Path to X-Plane.exe is required.");
-                XplanePath.Select();
-            }
             else
             {
                 mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
@@ -573,7 +567,6 @@ namespace XPilot.PilotClient
                 mConfig.PlayRadioMessageAlert = chkRadioMessageSound.Checked;
                 mConfig.UpdateChannel = (UpdateChannel)cbUpdateChannel.SelectedValue;
                 mConfig.VhfEqualizer = (EqualizerPresets)vhfEqualizer.SelectedValue;
-                mConfig.XplanePath = XplanePath.Text;
                 mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
                 if ((int)spinPluginPort.Value != mConfig.TcpPort)
                 {
@@ -665,26 +658,6 @@ namespace XPilot.PilotClient
             mAfv.SetAudioEffectsDisabled(chkDisableRadioEffects.Checked);
             mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
             mConfig.SaveConfig();
-        }
-
-        private void btnBrowseXplane_Click(object sender, EventArgs e)
-        {
-            using(var dlg = new OpenFileDialog())
-            {
-                dlg.ValidateNames = false;
-                dlg.CheckFileExists = false;
-                dlg.CheckPathExists = true;
-                dlg.Multiselect = false;
-                dlg.Title = "Select X-Plane.exe";
-                dlg.Filter = "X-Plane.exe|X-Plane.exe";
-                DialogResult result = dlg.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    XplanePath.Text = Path.GetDirectoryName(dlg.FileName);
-                    mConfig.XplanePath = Path.GetDirectoryName(dlg.FileName);
-                    mConfig.SaveConfig();
-                }
-            }
         }
 
         private void btnGuidedSetup_Click(object sender, EventArgs e)

@@ -32,6 +32,7 @@ namespace XPilot.PilotClient
         void SetupFinished();
         bool XSquawkBox { get; set; }
         bool XSwiftBus { get; set; }
+        string XplanePath { get; set; }
         SetupScreen CurrentScreen { get; }
     }
 }

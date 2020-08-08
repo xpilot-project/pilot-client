@@ -34,6 +34,7 @@ namespace XPilot.PilotClient
         public SetupScreen CurrentScreen { get; private set; }
         public bool XSquawkBox { get; set; }
         public bool XSwiftBus { get; set; }
+        public string XplanePath { get; set; }
 
         public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
         {
