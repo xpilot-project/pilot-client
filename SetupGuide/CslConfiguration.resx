@@ -118,10 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>Before you can use xPilot on the VATSIM Network, you must install CSL models — without these aircraft models, you wouldn't see any aircraft.
+    <value>Before you can use xPilot on the VATSIM Network, you must install CSL models. Without CSL models, you won’t be able to see any aircraft. The recommended CSL package is “Bluebell”. 
 
-The recommended (and most popular) CSL package is Bluebell CSL Models.
-
-Click the "Download and Install Bluebell CSL Models" button below to automatically download and install the models.</value>
+Click the “Download and Install Bluebell CSL Models” button below to automatically download and install the models.
+</value>
   </data>
 </root>

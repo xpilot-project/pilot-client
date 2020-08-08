@@ -29,6 +29,7 @@ using GeoVR.Client;
 using SharpDX.DirectInput;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Core;
+using System.IO;
 
 namespace XPilot.PilotClient
 {
@@ -674,13 +675,13 @@ namespace XPilot.PilotClient
                 dlg.CheckFileExists = false;
                 dlg.CheckPathExists = true;
                 dlg.Multiselect = false;
-                dlg.Title = "Select X-Plane.exe Location";
+                dlg.Title = "Select X-Plane.exe";
                 dlg.Filter = "X-Plane.exe|X-Plane.exe";
                 DialogResult result = dlg.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    XplanePath.Text = dlg.FileName;
-                    mConfig.XplanePath = dlg.FileName;
+                    XplanePath.Text = Path.GetDirectoryName(dlg.FileName);
+                    mConfig.XplanePath = Path.GetDirectoryName(dlg.FileName);
                     mConfig.SaveConfig();
                 }
             }

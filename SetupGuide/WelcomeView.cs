@@ -16,18 +16,11 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using XPilot.PilotClient.Config;
-using Loamen.KeyMouseHook;
 using System.Diagnostics;
+using XPilot.PilotClient.Config;
 
 namespace XPilot.PilotClient
 {
@@ -55,9 +48,11 @@ namespace XPilot.PilotClient
                     string xpPath = string.Empty;
                     while ((xpPath = sr.ReadLine()) != null)
                     {
-                        if (Directory.Exists(Path.Combine(xpPath, "Resources")))
+                        string p = Path.Combine(xpPath, "Resources");
+                        if (Directory.Exists(p))
                         {
-                            if (Directory.EnumerateFiles(Path.Combine(xpPath, "Resources"), "*", SearchOption.AllDirectories).Count() > 0)
+                            DirectoryInfo di = new DirectoryInfo(p);
+                            if (di.EnumerateDirectories().AsParallel().SelectMany(a => a.EnumerateFiles("*.*", SearchOption.AllDirectories)).Count() > 0)
                             {
                                 usablePath = xpPath;
                                 ++instancesFound;

@@ -63,8 +63,8 @@ namespace XPilot.PilotClient
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(string.Format("The following error occurred while attempting to load the configuration file:\n\n{0}", ex.Message), "Error Loading Config", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-                    return;
+                    config.SaveConfig();
+                    MessageBox.Show("Error loading configuration file. The configuration file has become corrupt and will be reset to the default settings.", "Error Loading Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
                 {
