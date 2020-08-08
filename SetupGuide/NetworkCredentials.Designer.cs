@@ -45,8 +45,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.ddlServerName = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
@@ -150,9 +150,9 @@
             // txtHomeAirport
             // 
             this.txtHomeAirport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtHomeAirport.Location = new System.Drawing.Point(118, 81);
+            this.txtHomeAirport.Location = new System.Drawing.Point(119, 81);
             this.txtHomeAirport.Name = "txtHomeAirport";
-            this.txtHomeAirport.Size = new System.Drawing.Size(294, 22);
+            this.txtHomeAirport.Size = new System.Drawing.Size(293, 22);
             this.txtHomeAirport.TabIndex = 17;
             // 
             // label6
@@ -161,7 +161,7 @@
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label6.Location = new System.Drawing.Point(3, 78);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(109, 25);
+            this.label6.Size = new System.Drawing.Size(110, 25);
             this.label6.TabIndex = 16;
             this.label6.Text = "Home Airport:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -172,7 +172,7 @@
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label5.Location = new System.Drawing.Point(3, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(109, 26);
+            this.label5.Size = new System.Drawing.Size(110, 26);
             this.label5.TabIndex = 1;
             this.label5.Text = "VATSIM ID:*";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -180,9 +180,9 @@
             // txtNetworkLogin
             // 
             this.txtNetworkLogin.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNetworkLogin.Location = new System.Drawing.Point(118, 3);
+            this.txtNetworkLogin.Location = new System.Drawing.Point(119, 3);
             this.txtNetworkLogin.Name = "txtNetworkLogin";
-            this.txtNetworkLogin.Size = new System.Drawing.Size(294, 22);
+            this.txtNetworkLogin.Size = new System.Drawing.Size(293, 22);
             this.txtNetworkLogin.TabIndex = 9;
             // 
             // label1
@@ -191,7 +191,7 @@
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label1.Location = new System.Drawing.Point(3, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(109, 26);
+            this.label1.Size = new System.Drawing.Size(110, 26);
             this.label1.TabIndex = 10;
             this.label1.Text = "VATSIM Password:*";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -199,10 +199,10 @@
             // txtNetworkPassword
             // 
             this.txtNetworkPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNetworkPassword.Location = new System.Drawing.Point(118, 29);
+            this.txtNetworkPassword.Location = new System.Drawing.Point(119, 29);
             this.txtNetworkPassword.Name = "txtNetworkPassword";
             this.txtNetworkPassword.PasswordChar = '*';
-            this.txtNetworkPassword.Size = new System.Drawing.Size(294, 22);
+            this.txtNetworkPassword.Size = new System.Drawing.Size(293, 22);
             this.txtNetworkPassword.TabIndex = 11;
             // 
             // label2
@@ -211,7 +211,7 @@
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Location = new System.Drawing.Point(3, 52);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 26);
+            this.label2.Size = new System.Drawing.Size(110, 26);
             this.label2.TabIndex = 12;
             this.label2.Text = "Name:*";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -219,9 +219,9 @@
             // txtName
             // 
             this.txtName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtName.Location = new System.Drawing.Point(118, 55);
+            this.txtName.Location = new System.Drawing.Point(119, 55);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(294, 22);
+            this.txtName.Size = new System.Drawing.Size(293, 22);
             this.txtName.TabIndex = 13;
             // 
             // label3
@@ -230,7 +230,7 @@
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label3.Location = new System.Drawing.Point(3, 103);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(109, 25);
+            this.label3.Size = new System.Drawing.Size(110, 25);
             this.label3.TabIndex = 14;
             this.label3.Text = "VATSIM Server:*";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -240,9 +240,9 @@
             this.ddlServerName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ddlServerName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddlServerName.FormattingEnabled = true;
-            this.ddlServerName.Location = new System.Drawing.Point(118, 106);
+            this.ddlServerName.Location = new System.Drawing.Point(119, 106);
             this.ddlServerName.Name = "ddlServerName";
-            this.ddlServerName.Size = new System.Drawing.Size(294, 21);
+            this.ddlServerName.Size = new System.Drawing.Size(293, 21);
             this.ddlServerName.TabIndex = 15;
             this.ddlServerName.TabStop = false;
             // 
@@ -250,11 +250,24 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Location = new System.Drawing.Point(118, 128);
+            this.label7.Location = new System.Drawing.Point(119, 128);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(294, 32);
+            this.label7.Size = new System.Drawing.Size(293, 32);
             this.label7.TabIndex = 18;
             this.label7.Text = "Choose a VATSIM Server that is closest to your geographical location.";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(3, 128);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(110, 32);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "* Required";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label4
             // 
@@ -267,18 +280,6 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "VATSIM Login Credentials";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(3, 128);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(109, 32);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "* Required";
-            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // NetworkCredentials
             // 

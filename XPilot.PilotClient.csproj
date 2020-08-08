@@ -213,9 +213,6 @@
     <Compile Include="SetupGuide\ConflictingPlugins.Designer.cs">
       <DependentUpon>ConflictingPlugins.cs</DependentUpon>
     </Compile>
-    <Compile Include="SetupGuide\CookieAwareWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="SetupGuide\CslConfiguration.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -365,6 +362,12 @@
     <Compile Include="XplaneAdapter\WhosOnlineList.cs" />
     <Compile Include="XplaneAdapter\XplaneConnect.cs" />
     <Compile Include="XplaneAdapter\XplaneConnectionManager.cs" />
+    <Compile Include="XplanePathValidation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XplanePathValidation.Designer.cs">
+      <DependentUpon>XplanePathValidation.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="ConnectForm.resx">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -408,6 +411,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XplanePathValidation.resx">
+      <DependentUpon>XplanePathValidation.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="PilotClient.licenseheader" />

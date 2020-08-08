@@ -164,6 +164,7 @@
             this.label20.Size = new System.Drawing.Size(242, 27);
             this.label20.TabIndex = 6;
             this.label20.Text = "Current PTT Assignment:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // lblPTTValue
             // 
@@ -176,6 +177,7 @@
             this.lblPTTValue.Size = new System.Drawing.Size(238, 27);
             this.lblPTTValue.TabIndex = 7;
             this.lblPTTValue.Text = "None";
+            this.lblPTTValue.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnSetNewPTT
             // 
