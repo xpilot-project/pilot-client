@@ -52,6 +52,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             RequestAtis,
             [EnumMember(Value = "PluginVersion")]
             PluginVersion,
+            [EnumMember(Value = "PluginHash")]
+            PluginHash,
             [EnumMember(Value = "SocketMessage")]
             SocketMessage,
             [EnumMember(Value = "RadioMessage")]

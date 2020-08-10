@@ -33,6 +33,7 @@ using Appccelerate.EventBroker.Handlers;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using System.Security.Policy;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -234,12 +235,20 @@ namespace XPilot.PilotClient.XplaneAdapter
                     dynamic data = json.Data;
                     switch (json.Type)
                     {
+
+                        case XplaneConnect.MessageType.PluginHash:
+                            string hash = data.Hash;
+                            if (!string.IsNullOrEmpty(hash))
+                            {
+                                mFsdManager.ClientProperties.Plugin = hash;
+                            }
+                            break;
+
                         case XplaneConnect.MessageType.XplanePath:
                             string path = data.Path;
                             if (!string.IsNullOrEmpty(path))
                             {
                                 mConfig.XplanePath = path;
-                                mFsdManager.ClientProperties.Plugin = Path.Combine(path, @"Resources\plugins\xPilot\win_x64\xPilot.xpl").CheckSum();
                             }
                             break;
                         case XplaneConnect.MessageType.RequestAtis:
@@ -368,6 +377,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                         SendMessage(new XplaneConnect
                         {
                             Type = XplaneConnect.MessageType.XplanePath,
+                            Timestamp = DateTime.Now
+                        }.ToJSON());
+                        SendMessage(new XplaneConnect
+                        {
+                            Type = XplaneConnect.MessageType.PluginHash,
                             Timestamp = DateTime.Now
                         }.ToJSON());
                     }
@@ -805,6 +819,13 @@ namespace XPilot.PilotClient.XplaneAdapter
                 Type = XplaneConnect.MessageType.XplanePath,
                 Timestamp = DateTime.Now
             }.ToJSON());
+            SendMessage(new XplaneConnect
+            {
+                Type = XplaneConnect.MessageType.PluginHash,
+                Timestamp = DateTime.Now
+            }.ToJSON());
+            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Requested Plugin Hash."));
+
         }
 
         [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
