@@ -33,7 +33,6 @@ using Appccelerate.EventBroker.Handlers;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
-using System.Security.Policy;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -127,7 +126,6 @@ namespace XPilot.PilotClient.XplaneAdapter
                 try
                 {
                     mVisualPairSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
-
                 }
                 catch (AddressAlreadyInUseException)
                 {
@@ -235,20 +233,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                     dynamic data = json.Data;
                     switch (json.Type)
                     {
-
                         case XplaneConnect.MessageType.PluginHash:
                             string hash = data.Hash;
                             if (!string.IsNullOrEmpty(hash))
                             {
                                 mFsdManager.ClientProperties.Plugin = hash;
-                            }
-                            break;
-
-                        case XplaneConnect.MessageType.XplanePath:
-                            string path = data.Path;
-                            if (!string.IsNullOrEmpty(path))
-                            {
-                                mConfig.XplanePath = path;
                             }
                             break;
                         case XplaneConnect.MessageType.RequestAtis:
@@ -372,11 +361,6 @@ namespace XPilot.PilotClient.XplaneAdapter
                         SendMessage(new XplaneConnect
                         {
                             Type = XplaneConnect.MessageType.PluginVersion,
-                            Timestamp = DateTime.Now
-                        }.ToJSON());
-                        SendMessage(new XplaneConnect
-                        {
-                            Type = XplaneConnect.MessageType.XplanePath,
                             Timestamp = DateTime.Now
                         }.ToJSON());
                         SendMessage(new XplaneConnect
@@ -816,16 +800,9 @@ namespace XPilot.PilotClient.XplaneAdapter
             }.ToJSON());
             SendMessage(new XplaneConnect
             {
-                Type = XplaneConnect.MessageType.XplanePath,
-                Timestamp = DateTime.Now
-            }.ToJSON());
-            SendMessage(new XplaneConnect
-            {
                 Type = XplaneConnect.MessageType.PluginHash,
                 Timestamp = DateTime.Now
             }.ToJSON());
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Requested Plugin Hash."));
-
         }
 
         [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
@@ -833,6 +810,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             mPoller.Stop();
             mPairSocket.Close();
+            mVisualPairSocket.Close();
         }
 
         [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]

@@ -85,9 +85,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             [EnumMember(Value = "ValidateCslPaths")]
             ValidateCslPaths,
             [EnumMember(Value = "ForceDisconnect")]
-            ForceDisconnect,
-            [EnumMember(Value = "XplanePath")]
-            XplanePath
+            ForceDisconnect
         }
 
         [JsonConverter(typeof(StringEnumConverter)), JsonProperty("Type")]
