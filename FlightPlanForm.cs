@@ -1,4 +1,4 @@
-﻿/*
+/*
  * xPilot: X-Plane pilot client for VATSIM
  * Copyright (C) 2019-2020 Justin Shannon
  *
@@ -102,6 +102,11 @@ namespace XPilot.PilotClient
             if (!rdoVoiceTypeFull.Checked && !rdoVoiceTypeReceiveOnly.Checked && !rdoVoiceTypeTextOnly.Checked)
             {
                 MessageBox.Show(this, "Please indiciate your voice capability.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+            }
+            else if (ddlEquipmentSuffix.SelectedIndex == 0 || ddlEquipmentSuffix.SelectedIndex == -1) // -1 = initial, 0 = changed
+            {
+                MessageBox.Show(this, "Please indicate your equipment suffix.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                return;
             }
             else
             {
@@ -281,6 +286,12 @@ namespace XPilot.PilotClient
             if (!rdoVoiceTypeFull.Checked && !rdoVoiceTypeReceiveOnly.Checked && !rdoVoiceTypeTextOnly.Checked)
             {
                 MessageBox.Show(this, "Please indicate your voice capability.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+                return;
+            }
+            
+            if (ddlEquipmentSuffix.SelectedIndex == 0 || ddlEquipmentSuffix.SelectedIndex == -1) // -1 = initial, 0 = changed
+            {
+                MessageBox.Show(this, "Please indicate your equipment suffix.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
                 return;
             }
             FlightPlan flightPlan = CreateFlightPlan();
