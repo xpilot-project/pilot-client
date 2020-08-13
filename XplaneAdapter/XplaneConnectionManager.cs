@@ -149,7 +149,6 @@ namespace XPilot.PilotClient.XplaneAdapter
             try
             {
                 mDealerSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.TcpPort);
-
             }
             catch (AddressAlreadyInUseException)
             {
@@ -814,6 +813,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             mPoller.Stop();
             mDealerSocket.Close();
+            mVisualDealerSocket.Close();
         }
 
         [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]
