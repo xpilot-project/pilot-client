@@ -33,6 +33,7 @@ using Appccelerate.EventBroker.Handlers;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -90,8 +91,8 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         private readonly NetMQPoller mPoller;
         private readonly NetMQQueue<string> mMessageQueue;
-        private readonly PairSocket mPairSocket;
-        private readonly PairSocket mVisualPairSocket;
+        private readonly DealerSocket mDealerSocket;
+        private readonly DealerSocket mVisualDealerSocket;
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
@@ -117,22 +118,22 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             mConfig = config;
             mFsdManager = fsdManager;
-            mVisualPairSocket = null;
+            mVisualDealerSocket = null;
            
-            if(mConfig.VisualClientIP != "")
+            if(!string.IsNullOrEmpty(mConfig.VisualClientIP))
             {
-                mVisualPairSocket = new PairSocket();
-                mVisualPairSocket.Options.TcpKeepalive = true;
+                mVisualDealerSocket = new DealerSocket();
+                mVisualDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
+                mVisualDealerSocket.Options.TcpKeepalive = true;
                 try
                 {
-                    mVisualPairSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
+                    mVisualDealerSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
 
                 }
                 catch (AddressAlreadyInUseException)
                 {
                     NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
                 }
-                mVisualPairSocket.SignalOK();
             }
 
             if (!string.IsNullOrEmpty(mConfig.SimClientIP))
@@ -141,20 +142,20 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
 
             mMessageQueue = new NetMQQueue<string>();
-            mPairSocket = new PairSocket();
-            mPairSocket.Options.TcpKeepalive = true;
-            mPairSocket.ReceiveReady += PairSocket_ReceiveReady;
+            mDealerSocket = new DealerSocket();
+            mDealerSocket.Options.TcpKeepalive = true;
+            mDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
+            mDealerSocket.ReceiveReady += DealerSocket_ReceiveReady;
             try
             {
-                mPairSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.TcpPort);
+                mDealerSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.TcpPort);
 
             }
             catch (AddressAlreadyInUseException)
             {
                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
             }
-            mPairSocket.SignalOK();
-            mPoller = new NetMQPoller { mPairSocket, mMessageQueue };
+            mPoller = new NetMQPoller { mDealerSocket, mMessageQueue };
             if (!mPoller.IsRunning)
             {
                 mPoller.RunAsync();
@@ -164,13 +165,13 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 if (mMessageQueue.TryDequeue(out string msg, TimeSpan.FromMilliseconds(100)))
                 {
-                    if (mPairSocket != null)
+                    if (mDealerSocket != null)
                     {
-                        mPairSocket.SendFrame(msg);
+                        mDealerSocket.SendFrame(msg);
                     }
-                    if(mVisualPairSocket != null)
+                    if(mVisualDealerSocket != null)
                     {
-                        mVisualPairSocket.SendFrame(msg);
+                        mVisualDealerSocket.SendFrame(msg);
                     }
                 }
             };
@@ -223,7 +224,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, string.Format($"PluginLogs/PluginLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log")), false);
         }
 
-        private void PairSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
+        private void DealerSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             string command = e.Socket.ReceiveFrameString();
             if (!string.IsNullOrEmpty(command))
@@ -375,7 +376,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                     {
                         mXplaneConnected = true;
                         SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
-                        if (mValidCsl)
+                        if (mValidCsl && !mInvalidPluginVersionShown)
                         {
                             EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(true));
                         }
@@ -386,6 +387,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 else
                 {
                     mXplaneConnected = false;
+                    mReceivedInitialHandshake = false;
                     SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
                     EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
                 }
@@ -393,6 +395,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             else
             {
                 mXplaneConnected = false;
+                mReceivedInitialHandshake = false;
                 SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
                 EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
             }
@@ -811,7 +814,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         public void OnSessionEnded(object sender, EventArgs e)
         {
             mPoller.Stop();
-            mPairSocket.Close();
+            mDealerSocket.Close();
         }
 
         [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]
