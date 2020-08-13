@@ -812,8 +812,14 @@ namespace XPilot.PilotClient.XplaneAdapter
         public void OnSessionEnded(object sender, EventArgs e)
         {
             mPoller.Stop();
-            mDealerSocket.Close();
-            mVisualDealerSocket.Close();
+            if (mDealerSocket != null)
+            {
+                mDealerSocket.Close();
+            }
+            if (mVisualDealerSocket != null)
+            {
+                mVisualDealerSocket.Close();
+            }
         }
 
         [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]
