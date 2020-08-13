@@ -19,7 +19,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -126,7 +125,7 @@ namespace XPilot.PilotClient
 
         private readonly List<TreeNode> mControllerNodes = new List<TreeNode>();
 
-        private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided and the path to your X-Plane installation is provided.";
+        private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
 
         public MainForm(IEventBroker eventBroker, IAppConfig appConfig, IFsdManger networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager)
         {
