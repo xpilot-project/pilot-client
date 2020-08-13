@@ -235,12 +235,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                     dynamic data = json.Data;
                     switch (json.Type)
                     {
-                        case XplaneConnect.MessageType.XplanePath:
-                            string path = data.Path;
-                            if (!string.IsNullOrEmpty(path))
+                        case XplaneConnect.MessageType.PluginHash:
+                            string hash = data.Hash;
+                            if (!string.IsNullOrEmpty(hash))
                             {
-                                mConfig.XplanePath = path;
-                                mFsdManager.ClientProperties.Plugin = Path.Combine(path, @"Resources\plugins\xPilot\win_x64\xPilot.xpl").CheckSum();
+                                mFsdManager.ClientProperties.Plugin = hash;
                             }
                             break;
                         case XplaneConnect.MessageType.RequestAtis:
@@ -368,7 +367,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                         }.ToJSON());
                         SendMessage(new XplaneConnect
                         {
-                            Type = XplaneConnect.MessageType.XplanePath,
+                            Type = XplaneConnect.MessageType.PluginHash,
                             Timestamp = DateTime.Now
                         }.ToJSON());
                     }
@@ -805,7 +804,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             }.ToJSON());
             SendMessage(new XplaneConnect
             {
-                Type = XplaneConnect.MessageType.XplanePath,
+                Type = XplaneConnect.MessageType.PluginHash,
                 Timestamp = DateTime.Now
             }.ToJSON());
         }

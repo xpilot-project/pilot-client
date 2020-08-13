@@ -45,9 +45,6 @@ namespace XPilot.PilotClient.Config
         [JsonIgnore]
         public string AppPath { get; set; }
 
-        [JsonIgnore]
-        public string XplanePath { get; set; }
-
         public List<NetworkServerInfo> CachedServers { get; set; }
         public string VatsimId { get; set; }
         public string VatsimPassword { get; set; }
