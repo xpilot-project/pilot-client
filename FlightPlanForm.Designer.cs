@@ -1,4 +1,4 @@
-﻿namespace XPilot.PilotClient
+namespace XPilot.PilotClient
 {
     partial class FlightPlanForm
     {
@@ -75,6 +75,7 @@
             this.saveFlightPlanDialog = new System.Windows.Forms.SaveFileDialog();
             this.openFlightPlanDialog = new System.Windows.Forms.OpenFileDialog();
             this.btnSwap = new System.Windows.Forms.Button();
+            this.label19 = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.spinCruiseSpeed)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spinCruiseAltitude)).BeginInit();
             this.pnlVoiceType.SuspendLayout();
@@ -552,12 +553,25 @@
             this.btnSwap.UseVisualStyleBackColor = true;
             this.btnSwap.Click += new System.EventHandler(this.BtnSwap_Click);
             // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(550, 23);
+            this.label19.Name = "label19";
+            this.label19.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label19.Size = new System.Drawing.Size(65, 13);
+            this.label19.TabIndex = 45;
+            this.label19.TabStop = true;
+            this.label19.Text = "What\'s this?";
+            this.label19.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.label19_clicked);
+            // 
             // FlightPlanForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(659, 361);
             this.ControlBox = false;
+            this.Controls.Add(this.label19);
             this.Controls.Add(this.btnSwap);
             this.Controls.Add(this.pnlVoiceType);
             this.Controls.Add(this.btnClose);
@@ -665,5 +679,16 @@
         private System.Windows.Forms.SaveFileDialog saveFlightPlanDialog;
         private System.Windows.Forms.OpenFileDialog openFlightPlanDialog;
         private System.Windows.Forms.Button btnSwap;
+        private System.Windows.Forms.LinkLabel label19;
+
+
+        private void label19_clicked (object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+        {
+            // Specify that the link was visited.
+            this.label19.LinkVisited = true;
+
+            // Navigate to a URL.
+            System.Diagnostics.Process.Start("https://vats.im/equip");
+        }
     }
 }
