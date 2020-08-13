@@ -79,7 +79,7 @@ namespace XPilot.PilotClient.Config
         public bool CheckForUpdates { get; set; } = true;
         public UpdateChannel UpdateChannel { get; set; } = UpdateChannel.Stable;
         public bool KeepClientWindowVisible { get; set; }
-        public int TcpPort { get; set; } = 45001;
+        public int TcpPort { get; set; } = 43001;
         public bool VolumeKnobsControlVolume { get; set; } = true;
 
         [JsonIgnore]

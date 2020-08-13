@@ -39,7 +39,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 {
     public class XplaneConnectionManager : EventBus, IXplaneConnectionManager
     {
-        const int MIN_PLUGIN_VERSION = 1327; // 1.3.10 = 1310
+        const int MIN_PLUGIN_VERSION = 1328; // 1.3.10 = 1310
 
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
