@@ -92,7 +92,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private readonly NetMQPoller mPoller;
         private readonly NetMQQueue<string> mMessageQueue;
         private readonly DealerSocket mDealerSocket;
-        private readonly DealerSocket mVisualDealerSocket;
+        private readonly List<DealerSocket> mVisualDealerSockets;
         private readonly StreamWriter mRawDataStream;
 
         private readonly Timer mConnectionTimer;
@@ -116,24 +116,29 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
         {
+            DealerSocket visualDealerSocket = null;
+            mVisualDealerSockets = null;
             mConfig = config;
             mFsdManager = fsdManager;
-            mVisualDealerSocket = null;
-           
-            if(!string.IsNullOrEmpty(mConfig.VisualClientIP))
+                       
+            if(mConfig.VisualClientIPs.Count>0)
             {
-                mVisualDealerSocket = new DealerSocket();
-                mVisualDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
-                mVisualDealerSocket.Options.TcpKeepalive = true;
-                try
+                foreach(string mIP in mConfig.VisualClientIPs)
                 {
-                    mVisualDealerSocket.Connect("tcp://" + mConfig.VisualClientIP + ":" + mConfig.TcpPort);
-
-                }
-                catch (AddressAlreadyInUseException)
-                {
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
-                }
+                    visualDealerSocket = new DealerSocket();
+                    visualDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
+                    visualDealerSocket.Options.TcpKeepalive = true;
+                    try
+                    {
+                        visualDealerSocket.Connect("tcp://" + mIP + ":" + mConfig.TcpPort);
+                        if (mVisualDealerSockets == null) mVisualDealerSockets = new List<DealerSocket>();
+                        mVisualDealerSockets.Add(visualDealerSocket);
+                    }
+                    catch (AddressAlreadyInUseException)
+                    {
+                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
+                    }
+                }                
             }
 
             if (!string.IsNullOrEmpty(mConfig.SimClientIP))
@@ -168,9 +173,13 @@ namespace XPilot.PilotClient.XplaneAdapter
                     {
                         mDealerSocket.SendFrame(msg);
                     }
-                    if(mVisualDealerSocket != null)
+                    if(mVisualDealerSockets != null && mVisualDealerSockets.Count>0)
                     {
-                        mVisualDealerSocket.SendFrame(msg);
+                        foreach(DealerSocket socket in mVisualDealerSockets)
+                        {
+                            socket.SendFrame(msg);
+                        }
+                        
                     }
                 }
             };
@@ -816,9 +825,13 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 mDealerSocket.Close();
             }
-            if (mVisualDealerSocket != null)
+            if (mVisualDealerSockets != null && mVisualDealerSockets.Count > 0)
             {
-                mVisualDealerSocket.Close();
+                foreach (DealerSocket socket in mVisualDealerSockets)
+                {
+                    socket.Close();
+                }
+
             }
         }
 

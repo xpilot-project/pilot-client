@@ -51,7 +51,7 @@ namespace XPilot.PilotClient.Config
         public string Name { get; set; }
         public string HomeAirport { get; set; }
         public string ServerName { get; set; }
-        public string VisualClientIP { get; set; } = "";
+        public List<string> VisualClientIPs { get; set; }
         public string SimClientIP { get; set; } = "";
         public List<ConnectInfo> RecentConnectionInfo { get; set; }
         public PTTConfiguration PTTConfiguration { get; set; }
@@ -109,6 +109,7 @@ namespace XPilot.PilotClient.Config
             PTTConfiguration = new PTTConfiguration();
             ToggleDisplayConfiguration = new ToggleDisplayConfiguration();
             RecentConnectionInfo = new List<ConnectInfo>();
+            VisualClientIPs = new List<string>();
             ClientWindowProperties = new WindowProperties();
         }
 

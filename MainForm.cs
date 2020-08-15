@@ -189,7 +189,15 @@ namespace XPilot.PilotClient
             }
 
             if(mConfig.SimClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimClientIP}."));
-            if(mConfig.VisualClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for Visuals machine at IP {mConfig.VisualClientIP}."));
+            if (mConfig.VisualClientIPs.Count > 0)
+            {
+                string tempIPs = "";
+                foreach( string ip in mConfig.VisualClientIPs)
+                {
+                    tempIPs += " " + ip;
+                }
+                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for Visuals machine at IP:{tempIPs}."));
+            }
         }
 
         private void ChatMessageBox_KeyDown(object sender, KeyEventArgs e)
@@ -257,15 +265,24 @@ namespace XPilot.PilotClient
                         case ".visualip":
                             if (split.Length - 1 < 1)
                             {
-                                mConfig.VisualClientIP = "";
+                                mConfig.VisualClientIPs.Clear();
                                 mConfig.SaveConfig();
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Visual IP reset."));
                             }
                             else
                             {
-                                mConfig.VisualClientIP = split[1];
+                                mConfig.VisualClientIPs.Clear();
+                                for(int x= 1; x< split.Length; x++)
+                                {
+                                    mConfig.VisualClientIPs.Add(split[x]);
+                                }                               
                                 mConfig.SaveConfig();
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Visual IP set to {split[1]}. Please restart xPilot."));
+                                string tempIPs = "";
+                                foreach (string ip in mConfig.VisualClientIPs)
+                                {
+                                    tempIPs += " " + ip;
+                                }
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Visual IP set to{tempIPs}. Please restart xPilot."));
                             }
                             break;
                         case ".copy":
