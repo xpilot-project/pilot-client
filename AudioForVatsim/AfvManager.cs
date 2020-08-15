@@ -318,44 +318,16 @@ namespace XPilot.PilotClient.AudioForVatsim
             PrepareTransceivers();
         }
 
-        public void UpdateCom1Volume(float v)
-        {
-            mAfvUserClient.Com1Volume = v;
-        }
-
-        public void UpdateCom2Volume(float v)
-        {
-            mAfvUserClient.Com2Volume = v;
-        }
-
-        public void UpdateInputVolume()
-        {
-            mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb / 4;
-        }
-
         public void SetAudioEffectsDisabled(bool disabled)
         {
             mAfvUserClient.BypassEffects = disabled;
         }
 
-        [EventSubscription(EventTopics.Com1Volume, typeof(OnUserInterfaceAsync))]
-        public void OnCom1VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
+        public void UpdateVolumes()
         {
-            // logarithmic change: https://stackoverflow.com/questions/1165026/what-algorithms-could-i-use-for-audio-volume-level
-            float volume = (float)(1 - Math.Sqrt(1 - (e.Volume * e.Volume)));
-            mAfvUserClient.Com1Volume = (float)volume * 2.0f;
-            mConfig.Com1Volume = (float)volume;
-            mConfig.SaveConfig();
-        }
-
-        [EventSubscription(EventTopics.Com2Volume, typeof(OnUserInterfaceAsync))]
-        public void OnCom2VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
-        {
-            // logarithmic change: https://stackoverflow.com/questions/1165026/what-algorithms-could-i-use-for-audio-volume-level
-            double volume = 1 - Math.Sqrt(1 - (e.Volume * e.Volume));
-            mAfvUserClient.Com2Volume = (float)volume * 2.0f;
-            mConfig.Com2Volume = (float)volume;
-            mConfig.SaveConfig();
+            mAfvUserClient.Com1Volume = mConfig.Com1Volume;
+            mAfvUserClient.Com2Volume = mConfig.Com2Volume;
+            mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb;
         }
 
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]

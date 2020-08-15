@@ -105,7 +105,7 @@ namespace XPilot.PilotClient.Tutorial
         private void inputVolume_Scroll(object sender, EventArgs e)
         {
             mConfig.InputVolumeDb = inputVolume.Value;
-            mAfv.UpdateInputVolume();
+            mAfv.UpdateVolumes();
             mConfig.SaveConfig();
         }
 

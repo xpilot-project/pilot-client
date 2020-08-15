@@ -90,6 +90,9 @@ namespace XPilot.PilotClient
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
+        [EventPublication(EventTopics.RadioVolumeChanged)]
+        public event EventHandler<RadioVolumeChangedEventArgs> RadioVolumeChanged;
+
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
         private readonly IFsdManger mNetworkManager;
@@ -1388,6 +1391,9 @@ namespace XPilot.PilotClient
 
                 if (mFlightLoaded)
                 {
+                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, AudioUtils.ScaleVolumeDb(mConfig.Com1Volume, 0, 1, -72, 72)));
+                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, AudioUtils.ScaleVolumeDb(mConfig.Com2Volume, 0, 1, -72, 72)));
+
                     XPlaneRadioTextMessage?.Invoke(this, new SimulatorMessageEventArgs("xPilot client successfully connected to X-Plane.", 0, 168, 255));
                     NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "X-Plane connection established."));
                     if (mCheckSimConnection != null)

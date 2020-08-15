@@ -19,9 +19,9 @@ using System;
 using System.Windows.Forms;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Tutorial;
-using Appccelerate.EventBroker;
 using XPilot.PilotClient.Network;
 using XPilot.PilotClient.AudioForVatsim;
+using Appccelerate.EventBroker;
 
 namespace XPilot.PilotClient
 {

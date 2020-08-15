@@ -19,9 +19,7 @@ namespace XPilot.PilotClient.AudioForVatsim
 {
     public interface IAfvManager
     {
-        void UpdateCom1Volume(float v);
-        void UpdateCom2Volume(float v);
-        void UpdateInputVolume();
+        void UpdateVolumes();
         void SetAudioEffectsDisabled(bool disabled);
     }
 }

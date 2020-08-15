@@ -35,24 +35,40 @@ namespace GeoVR.Client
 
         public bool BypassEffects { set { if (soundcardSampleProvider != null) soundcardSampleProvider.BypassEffects = value; } }
 
+        private float mCom1Volume = 1.0f;
         public float Com1Volume
         {
-            set
+            get
             {
-                if(soundcardSampleProvider != null)
-                {
-                    soundcardSampleProvider.Com1Volume = value;
-                }
+                return mCom1Volume;
             }
-        }
-
-        public float Com2Volume
-        {
             set
             {
                 if (soundcardSampleProvider != null)
                 {
-                    soundcardSampleProvider.Com2Volume = value;
+                    if (value > 18) { value = 18; }
+                    if (value < -60) { value = -60; }
+                    value = (float)Math.Pow(10, value / 20);
+                    mCom1Volume = soundcardSampleProvider.Com1Volume = value;
+                }
+            }
+        }
+
+        private float mCom2Volume = 1.0f;
+        public float Com2Volume
+        {
+            get
+            {
+                return mCom2Volume;
+            }
+            set
+            {
+                if (soundcardSampleProvider != null)
+                {
+                    if (value > 18) { value = 18; }
+                    if (value < -60) { value = -60; }
+                    value = (float)Math.Pow(10, value / 20);
+                    mCom2Volume = soundcardSampleProvider.Com2Volume = value;
                 }
             }
         }
@@ -77,29 +93,6 @@ namespace GeoVR.Client
             get
             {
                 return inputVolumeDb;
-            }
-        }
-
-        private float outputVolume = 1;
-        public float OutputVolumeDb
-        {
-            set
-            {
-                //if (value > 1.0f) { value = 1.0f; }
-                //if (value < 0.0f) { value = 0.0f; }
-                //outputVolume = value;
-                ///*if (value > 18) { value = 18; }
-                //if (value < -60) { value = -60; }*/
-                ////outputVolume = (float)System.Math.Pow(10, value / 20);
-                //if (outputSampleProvider != null)
-                //    outputSampleProvider.Volume = value;
-
-                //if (value > 18) { value = 18; }
-                //if (value < -60) { value = -60; }
-                //outputVolume = (float)System.Math.Pow(10, value / 20);
-                //Console.WriteLine("Output: " + outputVolume);
-                //if (outputSampleProvider != null)
-                //    outputSampleProvider.Volume = outputVolume;
             }
         }
 
@@ -195,7 +188,6 @@ namespace GeoVR.Client
 
             soundcardSampleProvider = new SoundcardSampleProvider(sampleRate, transceiverIDs, eventHandler);
             outputSampleProvider = new VolumeSampleProvider(soundcardSampleProvider);
-            outputSampleProvider.Volume = outputVolume;
 
             output.Start(outputAudioDevice, outputSampleProvider);
 
@@ -217,7 +209,6 @@ namespace GeoVR.Client
 
             soundcardSampleProvider = new SoundcardSampleProvider(sampleRate, transceiverIDs, eventHandler);
             outputSampleProvider = new VolumeSampleProvider(soundcardSampleProvider);
-            outputSampleProvider.Volume = outputVolume;
 
             output.Start(outputAudioDevice, outputSampleProvider);
 
