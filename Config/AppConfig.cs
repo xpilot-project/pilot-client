@@ -62,9 +62,9 @@ namespace XPilot.PilotClient.Config
         public bool DisableAudioEffects { get; set; }
         public bool HfSquelch { get; set; }
         public EqualizerPresets VhfEqualizer { get; set; } = EqualizerPresets.VHFEmulation2;
-        public float Com1Volume { get; set; } = 1.0f;
-        public float Com2Volume { get; set; } = 1.0f;
-        public float InputVolumeDb { get; set; }
+        public float Com1Volume { get; set; } = 0;
+        public float Com2Volume { get; set; } = 0;
+        public float InputVolumeDb { get; set; } = 0;
         public FlightPlan LastFlightPlan { get; set; }
         public bool FlashTaskbarPrivateMessage { get; set; } = true;
         public bool FlashTaskbarRadioMessage { get; set; }
@@ -77,7 +77,6 @@ namespace XPilot.PilotClient.Config
         public UpdateChannel UpdateChannel { get; set; } = UpdateChannel.Stable;
         public bool KeepClientWindowVisible { get; set; }
         public int TcpPort { get; set; } = 43001;
-        public bool VolumeKnobsControlVolume { get; set; } = true;
 
         [JsonIgnore]
         public bool SquawkingModeC { get; set; }

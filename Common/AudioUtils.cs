@@ -21,17 +21,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPilot.PilotClient.Core.Events
+namespace XPilot.PilotClient.Common
 {
-    public class RadioVolumeChangedEventArgs : EventArgs
+    public static class AudioUtils
     {
-        public int Radio { get; set; }
-        public float Volume { get; set; }
-        public RadioVolumeChangedEventArgs() { }
-        public RadioVolumeChangedEventArgs(int radio, float volume) : this()
+        public static float ScaleVolumeDb(float valueIn, float limitMin, float limitMax, float baseMin, float baseMax)
         {
-            Radio = radio;
-            Volume = volume;
+            return ((limitMax - limitMin) * (valueIn - baseMin) / (baseMax - baseMin)) + limitMin;
         }
     }
 }

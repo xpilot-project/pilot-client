@@ -62,6 +62,5 @@ namespace XPilot.PilotClient.Config
         bool PlayRadioMessageAlert { get; set; }
         UpdateChannel UpdateChannel { get; set; }
         bool SquawkingModeC { get; set; }
-        bool VolumeKnobsControlVolume { get; set; }
     }
 }

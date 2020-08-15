@@ -145,6 +145,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\AudioUtils.cs" />
     <Compile Include="Common\ComboboxExtensions.cs" />
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Common\StringUtils.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
+    <Compile Include="Config\StrictIntConverter.cs" />
     <Compile Include="Config\PTTConfiguration.cs" />
     <Compile Include="Config\ToggleDisplayConfiguration.cs" />
     <Compile Include="ConnectForm.cs">

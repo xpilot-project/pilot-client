@@ -15,11 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Ninject;
 using System;
 using System.Globalization;
 using System.IO;
-using System.Management.Instrumentation;
 using System.Reflection;
 using System.Windows.Forms;
 using XPilot.PilotClient.AudioForVatsim;
@@ -30,6 +28,7 @@ using XPilot.PilotClient.Network;
 using XPilot.PilotClient.Network.Aircraft;
 using XPilot.PilotClient.Network.Controllers;
 using XPilot.PilotClient.XplaneAdapter;
+using Ninject;
 
 namespace XPilot.PilotClient
 {

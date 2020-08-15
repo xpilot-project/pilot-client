@@ -28,8 +28,6 @@ namespace GeoVR.Client
                 var receiver = receiverInputs.FirstOrDefault(r => r.ID == 1);
                 if (receiver != null)
                 {
-                    if (value > 2.0f) value = 2.0f;
-                    if (value < 0.0f) value = 0.0f;
                     receiver.Volume = value;
                 }
             }
@@ -42,8 +40,6 @@ namespace GeoVR.Client
                 var receiver = receiverInputs.FirstOrDefault(r => r.ID == 2);
                 if (receiver != null)
                 {
-                    if (value > 2.0f) value = 2.0f;
-                    if (value < 0.0f) value = 0.0f;
                     receiver.Volume = value;
                 }
             }

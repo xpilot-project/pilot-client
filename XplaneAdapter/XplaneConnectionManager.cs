@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
@@ -33,7 +34,6 @@ using Appccelerate.EventBroker.Handlers;
 using NetMQ;
 using NetMQ.Sockets;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -238,7 +238,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                             string hash = data.Hash;
                             if (!string.IsNullOrEmpty(hash))
                             {
-                                mFsdManager.ClientProperties.Plugin = hash;
+                                mFsdManager.ClientProperties.PluginHash = hash;
                             }
                             break;
                         case XplaneConnect.MessageType.RequestAtis:
@@ -417,7 +417,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 if (e.Value > 1.0f) e.Value = 1.0f;
                 if (e.Value < 0.0f) e.Value = 0.0f;
-                Com1VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, e.Value, true));
+                Com1VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, e.Value));
             });
 
             // com2 frequency
@@ -433,7 +433,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             {
                 if (e.Value > 1.0f) e.Value = 1.0f;
                 if (e.Value < 0.0f) e.Value = 0.0f;
-                Com2VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, e.Value, true));
+                Com2VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, e.Value));
             });
 
             // avionics power
