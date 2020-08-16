@@ -120,10 +120,10 @@ namespace XPilot.PilotClient.XplaneAdapter
             mVisualDealerSockets = null;
             mConfig = config;
             mFsdManager = fsdManager;
-                       
-            if(mConfig.VisualClientIPs.Count>0)
+
+            if (mConfig.VisualClientIPs.Count > 0)
             {
-                foreach(string mIP in mConfig.VisualClientIPs)
+                foreach (string mIP in mConfig.VisualClientIPs)
                 {
                     visualDealerSocket = new DealerSocket();
                     visualDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
@@ -138,7 +138,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                     {
                         NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
                     }
-                }                
+                }
             }
 
             if (!string.IsNullOrEmpty(mConfig.SimClientIP))
@@ -173,13 +173,13 @@ namespace XPilot.PilotClient.XplaneAdapter
                     {
                         mDealerSocket.SendFrame(msg);
                     }
-                    if(mVisualDealerSockets != null && mVisualDealerSockets.Count>0)
+                    if (mVisualDealerSockets != null && mVisualDealerSockets.Count > 0)
                     {
-                        foreach(DealerSocket socket in mVisualDealerSockets)
+                        foreach (DealerSocket socket in mVisualDealerSockets)
                         {
                             socket.SendFrame(msg);
                         }
-                        
+
                     }
                 }
             };

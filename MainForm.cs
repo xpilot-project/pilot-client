@@ -188,11 +188,11 @@ namespace XPilot.PilotClient
                 }
             }
 
-            if(mConfig.SimClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimClientIP}."));
+            if (mConfig.SimClientIP != "") NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimClientIP}."));
             if (mConfig.VisualClientIPs.Count > 0)
             {
                 string tempIPs = "";
-                foreach( string ip in mConfig.VisualClientIPs)
+                foreach (string ip in mConfig.VisualClientIPs)
                 {
                     tempIPs += " " + ip;
                 }
@@ -248,19 +248,19 @@ namespace XPilot.PilotClient
                 {
                     switch (split[0].ToLower())
                     {
-                        case ".simip":                          
-                           if (split.Length - 1 < 1)
-                           {
+                        case ".simip":
+                            if (split.Length - 1 < 1)
+                            {
                                 mConfig.SimClientIP = "";
                                 mConfig.SaveConfig();
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Simulator IP reset."));
                             }
-                           else
-                           {
+                            else
+                            {
                                 mConfig.SimClientIP = split[1];
                                 mConfig.SaveConfig();
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Simulator IP set to {split[1]}. Please restart xPilot."));
-                            }                           
+                            }
                             break;
                         case ".visualip":
                             if (split.Length - 1 < 1)
@@ -272,10 +272,10 @@ namespace XPilot.PilotClient
                             else
                             {
                                 mConfig.VisualClientIPs.Clear();
-                                for(int x= 1; x< split.Length; x++)
+                                for (int x = 1; x < split.Length; x++)
                                 {
                                     mConfig.VisualClientIPs.Add(split[x]);
-                                }                               
+                                }
                                 mConfig.SaveConfig();
                                 string tempIPs = "";
                                 foreach (string ip in mConfig.VisualClientIPs)
