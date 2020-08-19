@@ -65,7 +65,7 @@ namespace XPilot.PilotClient
             if (instancesFound == 1)
             {
                 // check for conflicting plugins (XSwiftBus, XSB)
-                string pluginPath = Path.Combine(Path.GetDirectoryName(usablePath), "Resources/plugins");
+                string pluginPath = Path.Combine(usablePath, @"Resources\plugins");
                 string[] dirs = Directory.GetDirectories(pluginPath);
                 foreach (var dir in dirs)
                 {
