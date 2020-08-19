@@ -26,6 +26,7 @@ using XPilot.PilotClient.Network;
 using GeoVR.Client;
 using Newtonsoft.Json;
 using Vatsim.Fsd.Connector;
+using System.Reflection;
 
 namespace XPilot.PilotClient.Config
 {
@@ -201,6 +202,23 @@ namespace XPilot.PilotClient.Config
             get
             {
                 return SystemIdentifier.GetSystemDriveVolumeId();
+            }
+        }
+
+        [JsonIgnore]
+        public object this[string propertyName]
+        {
+            get
+            {
+                Type mType = GetType();
+                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
+                return mPropInfo.GetValue(this, null);
+            }
+            set
+            {
+                Type mType = GetType();
+                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
+                mPropInfo.SetValue(this, value, null);
             }
         }
     }

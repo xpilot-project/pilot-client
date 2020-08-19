@@ -90,9 +90,8 @@ namespace XPilot.PilotClient
             this.label4 = new System.Windows.Forms.Label();
             this.TrackCom2Volume = new System.Windows.Forms.TrackBar();
             this.inputVolumeLabel = new System.Windows.Forms.Label();
-            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
-            this.button1 = new System.Windows.Forms.Button();
             this.btnGuidedSetup = new System.Windows.Forms.Button();
+            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TrackInputVolumeDb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackCom1Volume)).BeginInit();
@@ -479,6 +478,7 @@ namespace XPilot.PilotClient
             0,
             0,
             0});
+            this.spinPluginPort.ValueChanged += new System.EventHandler(this.spinPluginPort_ValueChanged);
             // 
             // chkVolumeKnobVolume
             // 
@@ -488,8 +488,10 @@ namespace XPilot.PilotClient
             this.chkVolumeKnobVolume.Size = new System.Drawing.Size(200, 17);
             this.chkVolumeKnobVolume.TabIndex = 11;
             this.chkVolumeKnobVolume.TabStop = false;
+            this.chkVolumeKnobVolume.Tag = "VolumeKnobsControlVolume";
             this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control volume";
             this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
+            this.chkVolumeKnobVolume.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // cbUpdateChannel
             // 
@@ -517,8 +519,10 @@ namespace XPilot.PilotClient
             this.chkUpdates.Size = new System.Drawing.Size(205, 17);
             this.chkUpdates.TabIndex = 7;
             this.chkUpdates.TabStop = false;
+            this.chkUpdates.Tag = "CheckForUpdates";
             this.chkUpdates.Text = "Automatically check for xPilot updates";
             this.chkUpdates.UseVisualStyleBackColor = true;
+            this.chkUpdates.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkKeepVisible
             // 
@@ -528,8 +532,10 @@ namespace XPilot.PilotClient
             this.chkKeepVisible.Size = new System.Drawing.Size(150, 17);
             this.chkKeepVisible.TabIndex = 6;
             this.chkKeepVisible.TabStop = false;
+            this.chkKeepVisible.Tag = "KeepClientWindowVisible";
             this.chkKeepVisible.Text = "Keep xPilot window visible";
             this.chkKeepVisible.UseVisualStyleBackColor = true;
+            this.chkKeepVisible.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkAutoSquawkModeC
             // 
@@ -539,8 +545,10 @@ namespace XPilot.PilotClient
             this.chkAutoSquawkModeC.Size = new System.Drawing.Size(218, 17);
             this.chkAutoSquawkModeC.TabIndex = 5;
             this.chkAutoSquawkModeC.TabStop = false;
+            this.chkAutoSquawkModeC.Tag = "AutoSquawkModeC";
             this.chkAutoSquawkModeC.Text = "Automatically squawk mode C on takeoff";
             this.chkAutoSquawkModeC.UseVisualStyleBackColor = true;
+            this.chkAutoSquawkModeC.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // groupBox1
             // 
@@ -565,8 +573,10 @@ namespace XPilot.PilotClient
             this.chkRadioMessageSound.Size = new System.Drawing.Size(275, 17);
             this.chkRadioMessageSound.TabIndex = 6;
             this.chkRadioMessageSound.TabStop = false;
+            this.chkRadioMessageSound.Tag = "PlayRadioMessageAlert";
             this.chkRadioMessageSound.Text = "Play aural notification for all incoming radio messages";
             this.chkRadioMessageSound.UseVisualStyleBackColor = true;
+            this.chkRadioMessageSound.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkSelcalSound
             // 
@@ -576,8 +586,10 @@ namespace XPilot.PilotClient
             this.chkSelcalSound.Size = new System.Drawing.Size(236, 17);
             this.chkSelcalSound.TabIndex = 4;
             this.chkSelcalSound.TabStop = false;
+            this.chkSelcalSound.Tag = "PlayGenericSelCalAlert";
             this.chkSelcalSound.Text = "Play generic SELCAL alert notification sound";
             this.chkSelcalSound.UseVisualStyleBackColor = true;
+            this.chkSelcalSound.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkFlashDisconnect
             // 
@@ -587,8 +599,10 @@ namespace XPilot.PilotClient
             this.chkFlashDisconnect.Size = new System.Drawing.Size(272, 17);
             this.chkFlashDisconnect.TabIndex = 3;
             this.chkFlashDisconnect.TabStop = false;
+            this.chkFlashDisconnect.Tag = "FlashTaskbarDisconnect";
             this.chkFlashDisconnect.Text = "Flash taskbar icon when disconnected from network";
             this.chkFlashDisconnect.UseVisualStyleBackColor = true;
+            this.chkFlashDisconnect.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkFlashSelcal
             // 
@@ -598,8 +612,10 @@ namespace XPilot.PilotClient
             this.chkFlashSelcal.Size = new System.Drawing.Size(215, 17);
             this.chkFlashSelcal.TabIndex = 2;
             this.chkFlashSelcal.TabStop = false;
+            this.chkFlashSelcal.Tag = "FlashTaskbarSelCal";
             this.chkFlashSelcal.Text = "Flash taskbar icon for SELCAL message";
             this.chkFlashSelcal.UseVisualStyleBackColor = true;
+            this.chkFlashSelcal.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkFlashRadioMessage
             // 
@@ -609,8 +625,10 @@ namespace XPilot.PilotClient
             this.chkFlashRadioMessage.Size = new System.Drawing.Size(218, 17);
             this.chkFlashRadioMessage.TabIndex = 1;
             this.chkFlashRadioMessage.TabStop = false;
+            this.chkFlashRadioMessage.Tag = "FlashTaskbarRadioMessage";
             this.chkFlashRadioMessage.Text = "Flash taskbar icon for text radio message";
             this.chkFlashRadioMessage.UseVisualStyleBackColor = true;
+            this.chkFlashRadioMessage.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // chkFlashPrivateMessage
             // 
@@ -620,17 +638,19 @@ namespace XPilot.PilotClient
             this.chkFlashPrivateMessage.Size = new System.Drawing.Size(230, 17);
             this.chkFlashPrivateMessage.TabIndex = 0;
             this.chkFlashPrivateMessage.TabStop = false;
+            this.chkFlashPrivateMessage.Tag = "FlashTaskbarPrivateMessage";
             this.chkFlashPrivateMessage.Text = "Flash taskbar icon for new private message";
             this.chkFlashPrivateMessage.UseVisualStyleBackColor = true;
+            this.chkFlashPrivateMessage.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(565, 489);
+            this.btnCancel.Location = new System.Drawing.Point(577, 489);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(100, 23);
+            this.btnCancel.Size = new System.Drawing.Size(88, 23);
             this.btnCancel.TabIndex = 3;
             this.btnCancel.TabStop = false;
-            this.btnCancel.Text = "Save and Close";
+            this.btnCancel.Text = "Close";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnClose_Click);
             // 
@@ -771,26 +791,6 @@ namespace XPilot.PilotClient
             this.inputVolumeLabel.TabIndex = 18;
             this.inputVolumeLabel.Text = "0";
             // 
-            // levelMeterInput
-            // 
-            this.levelMeterInput.Location = new System.Drawing.Point(24, 214);
-            this.levelMeterInput.Name = "levelMeterInput";
-            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
-            this.levelMeterInput.TabIndex = 17;
-            this.levelMeterInput.Text = "levelMeter1";
-            this.levelMeterInput.Value = 0F;
-            // 
-            // button1
-            // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.button1.Location = new System.Drawing.Point(492, 489);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(67, 23);
-            this.button1.TabIndex = 14;
-            this.button1.TabStop = false;
-            this.button1.Text = "Cancel";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // btnGuidedSetup
             // 
             this.btnGuidedSetup.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -803,6 +803,15 @@ namespace XPilot.PilotClient
             this.btnGuidedSetup.UseVisualStyleBackColor = true;
             this.btnGuidedSetup.Click += new System.EventHandler(this.btnGuidedSetup_Click);
             // 
+            // levelMeterInput
+            // 
+            this.levelMeterInput.Location = new System.Drawing.Point(24, 214);
+            this.levelMeterInput.Name = "levelMeterInput";
+            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
+            this.levelMeterInput.TabIndex = 17;
+            this.levelMeterInput.Text = "levelMeter1";
+            this.levelMeterInput.Value = 0F;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -813,7 +822,6 @@ namespace XPilot.PilotClient
             this.ClientSize = new System.Drawing.Size(695, 538);
             this.ControlBox = false;
             this.Controls.Add(this.btnGuidedSetup);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -910,7 +918,6 @@ namespace XPilot.PilotClient
         private ComboBox vhfEqualizer;
         private NumericUpDown spinPluginPort;
         private Label label3;
-        private Button button1;
         private Button btnGuidedSetup;
         private TrackBar TrackCom1Volume;
         private CheckBox chkVolumeKnobVolume;

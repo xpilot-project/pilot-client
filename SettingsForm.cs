@@ -43,9 +43,6 @@ namespace XPilot.PilotClient
         [EventPublication(EventTopics.SettingsFormShown)]
         public event EventHandler<EventArgs> SettingsFormShown;
 
-        [EventPublication(EventTopics.PluginPortChanged)]
-        public event EventHandler<EventArgs> PluginPortChanged;
-
         [EventPublication(EventTopics.RadioVolumeChanged)]
         public event EventHandler<RadioVolumeChangedEventArgs> RadioVolumeChanged;
 
@@ -486,6 +483,7 @@ namespace XPilot.PilotClient
                 RestartAfvUserClient(this, EventArgs.Empty);
             }
             mConfig.InputDeviceName = device;
+            mConfig.SaveConfig();
         }
 
         private void ddlOutputDeviceName_SelectedIndexChanged(object sender, EventArgs e)
@@ -573,11 +571,7 @@ namespace XPilot.PilotClient
                 mConfig.UpdateChannel = (UpdateChannel)cbUpdateChannel.SelectedValue;
                 mConfig.VhfEqualizer = (EqualizerPresets)vhfEqualizer.SelectedValue;
                 mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
-                if ((int)spinPluginPort.Value != mConfig.TcpPort)
-                {
-                    mConfig.TcpPort = (int)spinPluginPort.Value;
-                    PluginPortChanged(this, EventArgs.Empty);
-                }
+                mConfig.TcpPort = (int)spinPluginPort.Value;
                 if (!mNewPttConfiguration.Equals(mConfig.PTTConfiguration))
                 {
                     mConfig.PTTConfiguration = mNewPttConfiguration;
@@ -671,6 +665,19 @@ namespace XPilot.PilotClient
             {
                 dlg.ShowDialog(this);
             }
+        }
+
+        private void CheckboxCheckedChanged(object sender, EventArgs e)
+        {
+            var checkbox = sender as CheckBox;
+            mConfig[checkbox.Tag.ToString()] = checkbox.Checked;
+            mConfig.SaveConfig();
+        }
+
+        private void spinPluginPort_ValueChanged(object sender, EventArgs e)
+        {
+            mConfig.TcpPort = (int)spinPluginPort.Value;
+            mConfig.SaveConfig();
         }
     }
 

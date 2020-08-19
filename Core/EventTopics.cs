@@ -103,7 +103,6 @@ namespace XPilot.PilotClient
 
         // Settings
         public const string ClientConfigChanged = "ClientConfigChanged";
-        public const string PluginPortChanged = "PluginPortChanged";
 
         // Multiplayer
         public const string NetworkAircraftInfoReceived = "AircraftInfoReceived";

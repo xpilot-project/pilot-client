@@ -63,5 +63,6 @@ namespace XPilot.PilotClient.Config
         bool PlayRadioMessageAlert { get; set; }
         UpdateChannel UpdateChannel { get; set; }
         bool SquawkingModeC { get; set; }
+        object this[string propertyName] { get;set; }
     }
 }
