@@ -488,17 +488,23 @@ namespace XPilot.PilotClient.AudioForVatsim
         [EventSubscription(EventTopics.Com1Volume, typeof(OnUserInterfaceAsync))]
         public void OnCom1VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
         {
-            mConfig.Com1Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
-            UpdateVolumes();
-            mConfig.SaveConfig();
+            if (mConfig.VolumeKnobsControlVolume)
+            {
+                mConfig.Com1Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
+                UpdateVolumes();
+                mConfig.SaveConfig();
+            }
         }
 
         [EventSubscription(EventTopics.Com2Volume, typeof(OnUserInterfaceAsync))]
         public void OnCom2VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
         {
-            mConfig.Com2Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
-            UpdateVolumes();
-            mConfig.SaveConfig();
+            if (mConfig.VolumeKnobsControlVolume)
+            {
+                mConfig.Com2Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
+                UpdateVolumes();
+                mConfig.SaveConfig();
+            }
         }
     }
 }

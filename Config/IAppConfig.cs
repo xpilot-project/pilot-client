@@ -39,6 +39,7 @@ namespace XPilot.PilotClient.Config
         string InputDeviceName { get; set; }
         string OutputDeviceName { get; set; }
         bool DisableAudioEffects { get; set; }
+        bool VolumeKnobsControlVolume { get; set; }
         float Com1Volume { get; set; }
         float Com2Volume { get; set; }
         float InputVolumeDb { get; set; }

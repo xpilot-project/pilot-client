@@ -64,7 +64,10 @@ namespace XPilot.PilotClient
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.spinPluginPort = new System.Windows.Forms.NumericUpDown();
+            this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
             this.cbUpdateChannel = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.chkUpdates = new System.Windows.Forms.CheckBox();
             this.chkKeepVisible = new System.Windows.Forms.CheckBox();
             this.chkAutoSquawkModeC = new System.Windows.Forms.CheckBox();
@@ -78,8 +81,6 @@ namespace XPilot.PilotClient
             this.btnCancel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.spinPluginPort = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
             this.tabAudio = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -89,19 +90,19 @@ namespace XPilot.PilotClient
             this.label4 = new System.Windows.Forms.Label();
             this.TrackCom2Volume = new System.Windows.Forms.TrackBar();
             this.inputVolumeLabel = new System.Windows.Forms.Label();
+            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.button1 = new System.Windows.Forms.Button();
             this.btnGuidedSetup = new System.Windows.Forms.Button();
-            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.groupBox8.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TrackInputVolumeDb)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TrackCom1Volume)).BeginInit();
             this.groupBox7.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).BeginInit();
             this.tabAudio.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TrackCom2Volume)).BeginInit();
@@ -444,6 +445,7 @@ namespace XPilot.PilotClient
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.spinPluginPort);
+            this.groupBox2.Controls.Add(this.chkVolumeKnobVolume);
             this.groupBox2.Controls.Add(this.cbUpdateChannel);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.chkUpdates);
@@ -456,19 +458,61 @@ namespace XPilot.PilotClient
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Miscellaneous";
             // 
+            // spinPluginPort
+            // 
+            this.spinPluginPort.Location = new System.Drawing.Point(135, 100);
+            this.spinPluginPort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.spinPluginPort.Minimum = new decimal(new int[] {
+            1024,
+            0,
+            0,
+            0});
+            this.spinPluginPort.Name = "spinPluginPort";
+            this.spinPluginPort.Size = new System.Drawing.Size(66, 20);
+            this.spinPluginPort.TabIndex = 9;
+            this.spinPluginPort.Value = new decimal(new int[] {
+            45001,
+            0,
+            0,
+            0});
+            // 
+            // chkVolumeKnobVolume
+            // 
+            this.chkVolumeKnobVolume.AutoSize = true;
+            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(10, 83);
+            this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
+            this.chkVolumeKnobVolume.Size = new System.Drawing.Size(200, 17);
+            this.chkVolumeKnobVolume.TabIndex = 11;
+            this.chkVolumeKnobVolume.TabStop = false;
+            this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control volume";
+            this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
+            // 
             // cbUpdateChannel
             // 
             this.cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUpdateChannel.FormattingEnabled = true;
-            this.cbUpdateChannel.Location = new System.Drawing.Point(211, 47);
+            this.cbUpdateChannel.Location = new System.Drawing.Point(211, 38);
             this.cbUpdateChannel.Name = "cbUpdateChannel";
             this.cbUpdateChannel.Size = new System.Drawing.Size(68, 21);
             this.cbUpdateChannel.TabIndex = 10;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 104);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(125, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "X-Plane Plugin TCP Port:";
+            // 
             // chkUpdates
             // 
             this.chkUpdates.AutoSize = true;
-            this.chkUpdates.Location = new System.Drawing.Point(10, 50);
+            this.chkUpdates.Location = new System.Drawing.Point(10, 41);
             this.chkUpdates.Name = "chkUpdates";
             this.chkUpdates.Size = new System.Drawing.Size(205, 17);
             this.chkUpdates.TabIndex = 7;
@@ -479,7 +523,7 @@ namespace XPilot.PilotClient
             // chkKeepVisible
             // 
             this.chkKeepVisible.AutoSize = true;
-            this.chkKeepVisible.Location = new System.Drawing.Point(10, 74);
+            this.chkKeepVisible.Location = new System.Drawing.Point(10, 62);
             this.chkKeepVisible.Name = "chkKeepVisible";
             this.chkKeepVisible.Size = new System.Drawing.Size(150, 17);
             this.chkKeepVisible.TabIndex = 6;
@@ -490,7 +534,7 @@ namespace XPilot.PilotClient
             // chkAutoSquawkModeC
             // 
             this.chkAutoSquawkModeC.AutoSize = true;
-            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(10, 26);
+            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(10, 20);
             this.chkAutoSquawkModeC.Name = "chkAutoSquawkModeC";
             this.chkAutoSquawkModeC.Size = new System.Drawing.Size(218, 17);
             this.chkAutoSquawkModeC.TabIndex = 5;
@@ -615,37 +659,6 @@ namespace XPilot.PilotClient
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
-            // spinPluginPort
-            // 
-            this.spinPluginPort.Location = new System.Drawing.Point(135, 96);
-            this.spinPluginPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.spinPluginPort.Minimum = new decimal(new int[] {
-            1024,
-            0,
-            0,
-            0});
-            this.spinPluginPort.Name = "spinPluginPort";
-            this.spinPluginPort.Size = new System.Drawing.Size(66, 20);
-            this.spinPluginPort.TabIndex = 9;
-            this.spinPluginPort.Value = new decimal(new int[] {
-            45001,
-            0,
-            0,
-            0});
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 100);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "X-Plane Plugin TCP Port:";
-            // 
             // tabAudio
             // 
             this.tabAudio.Controls.Add(this.groupBox4);
@@ -758,6 +771,15 @@ namespace XPilot.PilotClient
             this.inputVolumeLabel.TabIndex = 18;
             this.inputVolumeLabel.Text = "0";
             // 
+            // levelMeterInput
+            // 
+            this.levelMeterInput.Location = new System.Drawing.Point(24, 214);
+            this.levelMeterInput.Name = "levelMeterInput";
+            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
+            this.levelMeterInput.TabIndex = 17;
+            this.levelMeterInput.Text = "levelMeter1";
+            this.levelMeterInput.Value = 0F;
+            // 
             // button1
             // 
             this.button1.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -780,15 +802,6 @@ namespace XPilot.PilotClient
             this.btnGuidedSetup.Text = "Guided Setup";
             this.btnGuidedSetup.UseVisualStyleBackColor = true;
             this.btnGuidedSetup.Click += new System.EventHandler(this.btnGuidedSetup_Click);
-            // 
-            // levelMeterInput
-            // 
-            this.levelMeterInput.Location = new System.Drawing.Point(24, 214);
-            this.levelMeterInput.Name = "levelMeterInput";
-            this.levelMeterInput.Size = new System.Drawing.Size(357, 10);
-            this.levelMeterInput.TabIndex = 17;
-            this.levelMeterInput.Text = "levelMeter1";
-            this.levelMeterInput.Value = 0F;
             // 
             // SettingsForm
             // 
@@ -825,11 +838,11 @@ namespace XPilot.PilotClient
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabGeneral.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).EndInit();
             this.tabAudio.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -900,5 +913,6 @@ namespace XPilot.PilotClient
         private Button button1;
         private Button btnGuidedSetup;
         private TrackBar TrackCom1Volume;
+        private CheckBox chkVolumeKnobVolume;
     }
 }

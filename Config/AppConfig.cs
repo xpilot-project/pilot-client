@@ -62,6 +62,7 @@ namespace XPilot.PilotClient.Config
         public bool DisableAudioEffects { get; set; }
         public bool HfSquelch { get; set; }
         public EqualizerPresets VhfEqualizer { get; set; } = EqualizerPresets.VHFEmulation2;
+        public bool VolumeKnobsControlVolume { get; set; }
         public float Com1Volume { get; set; } = 0;
         public float Com2Volume { get; set; } = 0;
         public float InputVolumeDb { get; set; } = 0;
