@@ -49,7 +49,14 @@ namespace XPilot.PilotClient.Tutorial
 
         private void btnDownload_Click(object sender, EventArgs e)
         {
-            DownloadModels();
+            if (File.Exists(Path.Combine(mConfig.AppPath, "Bluebell.7z")))
+            {
+                ExtractModels();
+            }
+            else
+            {
+                DownloadModels();
+            }
         }
 
         private void DownloadModels()
