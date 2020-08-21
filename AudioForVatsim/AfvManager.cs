@@ -299,7 +299,7 @@ namespace XPilot.PilotClient.AudioForVatsim
                     {
                         mInputDeviceName = mConfig.InputDeviceName;
                         mOutputDeviceName = mConfig.OutputDeviceName;
-                        mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb / 4;
+                        mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb;
                         mAfvUserClient.Com1Volume = mConfig.Com1Volume;
                         mAfvUserClient.Com2Volume = mConfig.Com2Volume;
                         mAfvUserClient.Start(mInputDeviceName, mOutputDeviceName, new List<ushort> { 1, 2 });
@@ -327,6 +327,15 @@ namespace XPilot.PilotClient.AudioForVatsim
 
         public void UpdateVolumes()
         {
+            if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
+            if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
+
+            if (mConfig.Com1Volume > 1.0f) mConfig.Com1Volume = 1.0f;
+            if (mConfig.Com1Volume < 0.0f) mConfig.Com1Volume = 0.0f;
+
+            if (mConfig.Com2Volume > 1.0f) mConfig.Com2Volume = 1.0f;
+            if (mConfig.Com2Volume < 0.0f) mConfig.Com2Volume = 0.0f;
+
             mAfvUserClient.Com1Volume = mConfig.Com1Volume;
             mAfvUserClient.Com2Volume = mConfig.Com2Volume;
             mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb;

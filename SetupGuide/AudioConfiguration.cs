@@ -42,6 +42,9 @@ namespace XPilot.PilotClient.Tutorial
             mEventBroker.Register(this);
             Host.SetTitle("Audio Configuration");
 
+            if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
+            if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
+
             GetAudioDevices();
             audioInputDevice.SelectedItem = mConfig.InputDeviceName;
             audioOutputDevice.SelectedItem = mConfig.OutputDeviceName;
