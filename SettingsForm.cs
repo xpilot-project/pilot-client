@@ -128,7 +128,7 @@ namespace XPilot.PilotClient
             if (mConfig.VolumeKnobsControlVolume)
             {
                 mConfig.Com2Volume = e.Volume;
-                TrackCom2Volume.Value = (int)mConfig.Com2Volume;
+                TrackCom2Volume.Value = (int)AudioUtils.ScaleVolumeDb(e.Volume, 0, 100, 0, 1);
                 lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
                 mAfv.UpdateVolumes();
                 mConfig.SaveConfig();
