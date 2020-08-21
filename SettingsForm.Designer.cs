@@ -187,12 +187,11 @@ namespace XPilot.PilotClient
             this.TrackInputVolumeDb.BackColor = System.Drawing.SystemColors.Window;
             this.TrackInputVolumeDb.LargeChange = 1;
             this.TrackInputVolumeDb.Location = new System.Drawing.Point(72, 161);
-            this.TrackInputVolumeDb.Maximum = 72;
-            this.TrackInputVolumeDb.Minimum = -60;
+            this.TrackInputVolumeDb.Maximum = 18;
+            this.TrackInputVolumeDb.Minimum = -18;
             this.TrackInputVolumeDb.Name = "TrackInputVolumeDb";
             this.TrackInputVolumeDb.Size = new System.Drawing.Size(487, 30);
             this.TrackInputVolumeDb.TabIndex = 13;
-            this.TrackInputVolumeDb.TickFrequency = 8;
             this.TrackInputVolumeDb.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.TrackInputVolumeDb.Scroll += new System.EventHandler(this.TrackInputVolumeDb_Scroll);
             // 
@@ -219,14 +218,12 @@ namespace XPilot.PilotClient
             // 
             this.TrackCom1Volume.AutoSize = false;
             this.TrackCom1Volume.BackColor = System.Drawing.SystemColors.Window;
-            this.TrackCom1Volume.LargeChange = 1;
             this.TrackCom1Volume.Location = new System.Drawing.Point(72, 75);
-            this.TrackCom1Volume.Maximum = 72;
-            this.TrackCom1Volume.Minimum = -60;
+            this.TrackCom1Volume.Maximum = 100;
             this.TrackCom1Volume.Name = "TrackCom1Volume";
             this.TrackCom1Volume.Size = new System.Drawing.Size(487, 30);
             this.TrackCom1Volume.TabIndex = 10;
-            this.TrackCom1Volume.TickFrequency = 8;
+            this.TrackCom1Volume.TickFrequency = 5;
             this.TrackCom1Volume.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.TrackCom1Volume.Scroll += new System.EventHandler(this.Com1Volume_Scroll);
             // 
@@ -771,14 +768,13 @@ namespace XPilot.PilotClient
             // 
             this.TrackCom2Volume.AutoSize = false;
             this.TrackCom2Volume.BackColor = System.Drawing.SystemColors.Window;
-            this.TrackCom2Volume.LargeChange = 1;
+            this.TrackCom2Volume.LargeChange = 10;
             this.TrackCom2Volume.Location = new System.Drawing.Point(72, 118);
-            this.TrackCom2Volume.Maximum = 72;
-            this.TrackCom2Volume.Minimum = -60;
+            this.TrackCom2Volume.Maximum = 100;
             this.TrackCom2Volume.Name = "TrackCom2Volume";
             this.TrackCom2Volume.Size = new System.Drawing.Size(487, 30);
             this.TrackCom2Volume.TabIndex = 19;
-            this.TrackCom2Volume.TickFrequency = 8;
+            this.TrackCom2Volume.TickFrequency = 5;
             this.TrackCom2Volume.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.TrackCom2Volume.Scroll += new System.EventHandler(this.Com2Volume_Scroll);
             // 

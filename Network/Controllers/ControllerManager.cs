@@ -102,6 +102,15 @@ namespace XPilot.PilotClient.Network.Controllers
             }
         }
 
+        public uint GetFrequencyByCallsign(string callsign)
+        {
+            if (mControllers.ContainsKey(callsign))
+            {
+                return mControllers[callsign].NormalizedFrequency;
+            }
+            return 0;
+        }
+
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {

@@ -84,14 +84,14 @@ namespace XPilot.PilotClient
             cbUpdateChannel.BindEnumToCombobox(UpdateChannel.Stable);
             vhfEqualizer.BindEnumToCombobox(EqualizerPresets.VHFEmulation2);
 
-            if (mConfig.InputVolumeDb > 72) mConfig.InputVolumeDb = 72;
-            if (mConfig.InputVolumeDb < -60) mConfig.InputVolumeDb = -60;
+            if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
+            if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
 
-            if (mConfig.Com1Volume > 72) mConfig.Com1Volume = 72;
-            if (mConfig.Com1Volume < -60) mConfig.Com1Volume = -60;
+            if (mConfig.Com1Volume > 1) mConfig.Com1Volume = 1;
+            if (mConfig.Com1Volume < 0) mConfig.Com1Volume = 0;
 
-            if (mConfig.Com2Volume > 72) mConfig.Com2Volume = 72;
-            if (mConfig.Com2Volume < -60) mConfig.Com2Volume = -60;
+            if (mConfig.Com2Volume > 1) mConfig.Com2Volume = 1;
+            if (mConfig.Com2Volume < 0) mConfig.Com2Volume = 0;
 
             GetAudioDevices();
             LoadNetworkServers();
@@ -114,9 +114,9 @@ namespace XPilot.PilotClient
         {
             if (mConfig.VolumeKnobsControlVolume)
             {
-                mConfig.Com1Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
-                TrackCom1Volume.Value = (int)Math.Round(mConfig.Com1Volume);
-                lblVolumeCom1.Text = (mConfig.Com1Volume / 4).ToString("+#;-#;0");
+                mConfig.Com1Volume = e.Volume;
+                TrackCom1Volume.Value = (int)AudioUtils.ScaleVolumeDb(e.Volume, 0, 100, 0, 1);
+                lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
                 mAfv.UpdateVolumes();
                 mConfig.SaveConfig();
             }
@@ -127,9 +127,9 @@ namespace XPilot.PilotClient
         {
             if (mConfig.VolumeKnobsControlVolume)
             {
-                mConfig.Com2Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
-                TrackCom2Volume.Value = (int)Math.Round(mConfig.Com2Volume);
-                lblVolumeCom2.Text = (mConfig.Com2Volume / 4).ToString("+#;-#;0");
+                mConfig.Com2Volume = e.Volume;
+                TrackCom2Volume.Value = (int)mConfig.Com2Volume;
+                lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
                 mAfv.UpdateVolumes();
                 mConfig.SaveConfig();
             }
@@ -150,12 +150,12 @@ namespace XPilot.PilotClient
             spinPluginPort.Value = mConfig.TcpPort;
             audioInputDevice.SelectedItem = mConfig.InputDeviceName;
             audioOutputDevice.SelectedItem = mConfig.OutputDeviceName;
-            TrackCom1Volume.Value = (int)(mConfig.Com1Volume);
-            TrackCom2Volume.Value = (int)(mConfig.Com2Volume);
-            lblVolumeCom1.Text = (mConfig.Com1Volume / 4).ToString("+#;-#;0");
-            lblVolumeCom2.Text = (mConfig.Com2Volume / 4).ToString("+#;-#;0");
-            TrackInputVolumeDb.Value = (int)(mConfig.InputVolumeDb);
-            inputVolumeLabel.Text = (mConfig.InputVolumeDb / 4).ToString("+#;-#;0");
+            TrackCom1Volume.Value = (int)AudioUtils.ScaleVolumeDb(mConfig.Com1Volume, 0, 100, 0, 1);
+            TrackCom2Volume.Value = (int)AudioUtils.ScaleVolumeDb(mConfig.Com2Volume, 0, 100, 0, 1);
+            lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
+            lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
+            TrackInputVolumeDb.Value = (int)mConfig.InputVolumeDb;
+            inputVolumeLabel.Text = mConfig.InputVolumeDb.ToString("+#;-#;0");
             chkDisableRadioEffects.Checked = mConfig.DisableAudioEffects;
             chkFlashPrivateMessage.Checked = mConfig.FlashTaskbarPrivateMessage;
             chkFlashRadioMessage.Checked = mConfig.FlashTaskbarRadioMessage;
@@ -500,32 +500,32 @@ namespace XPilot.PilotClient
         private void TrackInputVolumeDb_Scroll(object sender, EventArgs e)
         {
             mConfig.InputVolumeDb = TrackInputVolumeDb.Value;
-            inputVolumeLabel.Text = (mConfig.InputVolumeDb / 4).ToString("+#;-#;0");
+            inputVolumeLabel.Text = mConfig.InputVolumeDb.ToString("+#;-#;0");
             mConfig.SaveConfig();
             mAfv.UpdateVolumes();
         }
 
         private void Com1Volume_Scroll(object sender, EventArgs e)
         {
-            mConfig.Com1Volume = TrackCom1Volume.Value;
-            lblVolumeCom1.Text = (mConfig.Com1Volume / 4).ToString("+#;-#;0");
+            mConfig.Com1Volume = AudioUtils.ScaleVolumeDb(TrackCom1Volume.Value, 0, 1, 0, 100);
+            lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
             mConfig.SaveConfig();
             mAfv.UpdateVolumes();
             if (mConfig.VolumeKnobsControlVolume)
             {
-                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, AudioUtils.ScaleVolumeDb(mConfig.Com1Volume, 0, 1, -60, 72)));
+                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, mConfig.Com1Volume));
             }
         }
 
         private void Com2Volume_Scroll(object sender, EventArgs e)
         {
-            mConfig.Com2Volume = TrackCom2Volume.Value;
-            lblVolumeCom2.Text = (mConfig.Com2Volume / 4).ToString("+#;-#;0");
+            mConfig.Com2Volume = AudioUtils.ScaleVolumeDb(TrackCom2Volume.Value, 0, 1, 0, 100);
+            lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
             mConfig.SaveConfig();
             mAfv.UpdateVolumes();
             if (mConfig.VolumeKnobsControlVolume)
             {
-                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, AudioUtils.ScaleVolumeDb(mConfig.Com2Volume, 0, 1, -60, 72)));
+                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, mConfig.Com2Volume));
             }
         }
 

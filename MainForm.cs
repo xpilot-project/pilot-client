@@ -99,6 +99,7 @@ namespace XPilot.PilotClient
         private readonly IUserInterface mUserInterface;
         private readonly ITabPages mTabPages;
         private readonly IControllerAtisManager mAtisManager;
+        private readonly IControllerManager mControllerManager;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -130,7 +131,7 @@ namespace XPilot.PilotClient
 
         private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
 
-        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, IFsdManger networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager)
+        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, IFsdManger networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IControllerManager controllerManager)
         {
             InitializeComponent();
 
@@ -140,6 +141,7 @@ namespace XPilot.PilotClient
             mUserInterface = userInterface;
             mTabPages = tabPages;
             mAtisManager = atisManager;
+            mControllerManager = controllerManager;
 
             mCheckSimConnection = new Timer
             {
@@ -1020,6 +1022,7 @@ namespace XPilot.PilotClient
         {
             startPrivateChat.Tag = name;
             requestControllerInfo.Tag = name;
+            tuneCom1Frequency.Tag = name;
             controllerTreeContextMenu.Show(treeControllers, point);
         }
 
@@ -1033,6 +1036,19 @@ namespace XPilot.PilotClient
         {
             ToolStripMenuItem item = (sender as ToolStripMenuItem);
             mAtisManager.RequestControllerAtis(item.Tag.ToString());
+        }
+
+        private void tuneCom1Frequency_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (sender as ToolStripMenuItem);
+            if (!string.IsNullOrEmpty(item.Tag.ToString()))
+            {
+                uint freq = mControllerManager.GetFrequencyByCallsign(item.Tag.ToString()).FsdFrequencyToHertz() / 1000;
+                SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                {
+                    DataRef = $"sim/cockpit2/radios/actuators/com1_frequency_hz_833"
+                }, freq));
+            }
         }
 
         private void treeControllers_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
@@ -1408,8 +1424,11 @@ namespace XPilot.PilotClient
 
                 if (mFlightLoaded)
                 {
-                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, AudioUtils.ScaleVolumeDb(mConfig.Com1Volume, 0, 1, -72, 72)));
-                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, AudioUtils.ScaleVolumeDb(mConfig.Com2Volume, 0, 1, -72, 72)));
+                    if (mConfig.VolumeKnobsControlVolume)
+                    {
+                        RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, mConfig.Com1Volume));
+                        RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, mConfig.Com2Volume));
+                    }
 
                     XPlaneRadioTextMessage?.Invoke(this, new SimulatorMessageEventArgs("xPilot client successfully connected to X-Plane.", 0, 168, 255));
                     NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "X-Plane connection established."));

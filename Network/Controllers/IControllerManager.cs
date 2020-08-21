@@ -19,5 +19,6 @@ namespace XPilot.PilotClient.Network.Controllers
 {
     public interface IControllerManager
     {
+        uint GetFrequencyByCallsign(string callsign);
     }
 }

@@ -69,6 +69,7 @@ namespace XPilot.PilotClient
             this.Com1TX = new XPilot.PilotClient.TransparentClickLabel();
             this.Com1Freq = new XPilot.PilotClient.TransparentClickLabel();
             this.lblCom1 = new XPilot.PilotClient.TransparentClickLabel();
+            this.tuneCom1Frequency = new System.Windows.Forms.ToolStripMenuItem();
             this.controllerTreeContextMenu.SuspendLayout();
             this.pnlTabs.SuspendLayout();
             this.tabControl.SuspendLayout();
@@ -83,9 +84,10 @@ namespace XPilot.PilotClient
             // 
             this.controllerTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.requestControllerInfo,
-            this.startPrivateChat});
+            this.startPrivateChat,
+            this.tuneCom1Frequency});
             this.controllerTreeContextMenu.Name = "contextMenuStrip1";
-            this.controllerTreeContextMenu.Size = new System.Drawing.Size(197, 48);
+            this.controllerTreeContextMenu.Size = new System.Drawing.Size(197, 92);
             // 
             // requestControllerInfo
             // 
@@ -530,6 +532,13 @@ namespace XPilot.PilotClient
             this.lblCom1.TabIndex = 9;
             this.lblCom1.Text = "COM1:";
             // 
+            // tuneCom1Frequency
+            // 
+            this.tuneCom1Frequency.Name = "tuneCom1Frequency";
+            this.tuneCom1Frequency.Size = new System.Drawing.Size(196, 22);
+            this.tuneCom1Frequency.Text = "Tune COM1 Frequency";
+            this.tuneCom1Frequency.Click += new System.EventHandler(this.tuneCom1Frequency_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -596,5 +605,6 @@ namespace XPilot.PilotClient
         private System.Windows.Forms.ToolTip hfTooltip;
         private FlatButton btnIdent;
         private FlatButton chkModeC;
+        private System.Windows.Forms.ToolStripMenuItem tuneCom1Frequency;
     }
 }

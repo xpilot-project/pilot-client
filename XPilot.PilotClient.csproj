@@ -428,16 +428,16 @@
       <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
       <Name>Vatsim.Fsd.Connector</Name>
     </ProjectReference>
-    <ProjectReference Include="Libraries\GeoVR\GeoVR.Client\GeoVR.Client.csproj">
-      <Project>{D36AF179-EB0E-4CEF-AEE8-68ABD7ABDB38}</Project>
+    <ProjectReference Include="..\GeoVR\source\GeoVR.Client\GeoVR.Client.csproj">
+      <Project>{d36af179-eb0e-4cef-aee8-68abd7abdb38}</Project>
       <Name>GeoVR.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="Libraries\GeoVR\GeoVR.Connection\GeoVR.Connection.csproj">
-      <Project>{ea90283a-07bf-49aa-b811-f6a8f520baa1}</Project>
+    <ProjectReference Include="..\GeoVR\source\GeoVR.Connection\GeoVR.Connection.csproj">
+      <Project>{a72246a0-e5cf-49f7-b2c7-8d13d455e09e}</Project>
       <Name>GeoVR.Connection</Name>
     </ProjectReference>
-    <ProjectReference Include="Libraries\GeoVR\GeoVR.Shared\GeoVR.Shared.csproj">
-      <Project>{a9c273a4-5c39-41f2-b8d2-fa1099253eb1}</Project>
+    <ProjectReference Include="..\GeoVR\source\GeoVR.Shared\GeoVR.Shared.csproj">
+      <Project>{2c4fb517-fabb-4edc-bd79-b10ddd330cff}</Project>
       <Name>GeoVR.Shared</Name>
     </ProjectReference>
   </ItemGroup>

@@ -93,6 +93,8 @@ namespace XPilot.PilotClient.AudioForVatsim
             mAfvUserClient.Connected += AfvUserClient_Connected;
             mAfvUserClient.Disconnected += AfvUserClient_Disconnected;
             mAfvUserClient.InputVolumeStream += AfvUserClient_InputVolumeStream;
+
+            UpdateVolumes();
         }
 
         private void AfvUserClient_Connected(object sender, ConnectedEventArgs e)
@@ -490,7 +492,7 @@ namespace XPilot.PilotClient.AudioForVatsim
         {
             if (mConfig.VolumeKnobsControlVolume)
             {
-                mConfig.Com1Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
+                mConfig.Com1Volume = e.Volume;
                 UpdateVolumes();
                 mConfig.SaveConfig();
             }
@@ -501,7 +503,7 @@ namespace XPilot.PilotClient.AudioForVatsim
         {
             if (mConfig.VolumeKnobsControlVolume)
             {
-                mConfig.Com2Volume = (int)AudioUtils.ScaleVolumeDb(e.Volume, -60, 72, 0, 1);
+                mConfig.Com2Volume = e.Volume;
                 UpdateVolumes();
                 mConfig.SaveConfig();
             }
