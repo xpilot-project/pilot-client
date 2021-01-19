@@ -424,7 +424,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FSD-Connector\Vatsim.Fsd.Connector.csproj">
+    <ProjectReference Include="..\FsdWrapper-Legacy\Vatsim.Fsd.Connector.csproj">
       <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
       <Name>Vatsim.Fsd.Connector</Name>
     </ProjectReference>
