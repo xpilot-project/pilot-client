@@ -47,7 +47,7 @@ namespace XPilot.PilotClient.Tutorial
 
             GetAudioDevices();
             audioInputDevice.SelectedItem = mConfig.InputDeviceName;
-            audioOutputDevice.SelectedItem = mConfig.OutputDeviceName;
+            audioOutputDevice.SelectedItem = mConfig.ListenDeviceName;
             inputVolume.Value = (int)mConfig.InputVolumeDb;
         }
 
@@ -92,11 +92,11 @@ namespace XPilot.PilotClient.Tutorial
         private void audioOutputDevice_SelectedIndexChanged(object sender, EventArgs e)
         {
             var device = audioOutputDevice.SelectedItem.ToString();
-            if (mConfig.OutputDeviceName != device)
+            if (mConfig.ListenDeviceName != device)
             {
                 RestartAfvUserClient(this, EventArgs.Empty);
             }
-            mConfig.OutputDeviceName = device;
+            mConfig.ListenDeviceName = device;
             mConfig.SaveConfig();
         }
 

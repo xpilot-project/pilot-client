@@ -133,6 +133,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AudioForVatsim\AFVBindings.cs" />
+    <Compile Include="AudioForVatsim\AFVEvents.cs" />
+    <Compile Include="AudioForVatsim\AFVManaged.cs" />
+    <Compile Include="AudioForVatsim\IAFVManaged.cs" />
+    <Compile Include="AudioForVatsim\Station.cs" />
     <Compile Include="Common\AudioUtils.cs" />
     <Compile Include="Common\ComboboxExtensions.cs" />
     <Compile Include="Common\FileChecksum.cs" />
@@ -147,9 +152,6 @@
     <Compile Include="Common\StringUtils.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
-    <Compile Include="Config\StrictIntConverter.cs" />
-    <Compile Include="Config\PTTConfiguration.cs" />
-    <Compile Include="Config\ToggleDisplayConfiguration.cs" />
     <Compile Include="ConnectForm.cs">
       <SubType>Form</SubType>
     </Compile>

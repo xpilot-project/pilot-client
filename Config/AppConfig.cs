@@ -23,21 +23,12 @@ using System.Security.Cryptography;
 using System.Text;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Network;
-using GeoVR.Client;
 using Newtonsoft.Json;
 using Vatsim.Fsd.Connector;
 using System.Reflection;
 
 namespace XPilot.PilotClient.Config
 {
-    public enum UpdateChannel
-    {
-        [Description("Stable")]
-        Stable,
-        [Description("Beta")]
-        Beta
-    }
-
     public class AppConfig : IAppConfig
     {
         [JsonIgnore]
@@ -46,43 +37,46 @@ namespace XPilot.PilotClient.Config
         [JsonIgnore]
         public string AppPath { get; set; }
 
-        public List<NetworkServerInfo> CachedServers { get; set; }
-        public string VatsimId { get; set; }
-        public string VatsimPassword { get; set; }
-        public string Name { get; set; }
-        public string HomeAirport { get; set; }
-        public string ServerName { get; set; }
-        public List<string> VisualClientIPs { get; set; }
-        public string SimClientIP { get; set; } = "";
-        public List<ConnectInfo> RecentConnectionInfo { get; set; }
-        public PTTConfiguration PTTConfiguration { get; set; }
-        public ToggleDisplayConfiguration ToggleDisplayConfiguration { get; set; }
-        public WindowProperties ClientWindowProperties { get; set; }
-        public string InputDeviceName { get; set; }
-        public string OutputDeviceName { get; set; }
-        public bool DisableAudioEffects { get; set; }
-        public bool HfSquelch { get; set; }
-        public EqualizerPresets VhfEqualizer { get; set; } = EqualizerPresets.VHFEmulation2;
-        public bool VolumeKnobsControlVolume { get; set; }
-        public float Com1Volume { get; set; } = 1.0f;
-        public float Com2Volume { get; set; } = 1.0f;
-        public float InputVolumeDb { get; set; } = 0;
-        public FlightPlan LastFlightPlan { get; set; }
-        public bool FlashTaskbarPrivateMessage { get; set; } = true;
-        public bool FlashTaskbarRadioMessage { get; set; }
-        public bool FlashTaskbarSelCal { get; set; } = true;
-        public bool FlashTaskbarDisconnect { get; set; } = true;
-        public bool PlayGenericSelCalAlert { get; set; }
-        public bool PlayRadioMessageAlert { get; set; }
-        public bool AutoSquawkModeC { get; set; }
-        public bool CheckForUpdates { get; set; } = true;
-        public UpdateChannel UpdateChannel { get; set; } = UpdateChannel.Stable;
-        public bool KeepClientWindowVisible { get; set; }
-        public int TcpPort { get; set; } = 45001;
+        [JsonIgnore]
+        public string AfvResourcePath => Path.Combine(AppPath, "afv");
+
+        [JsonIgnore]
+        public Dictionary<int, string> AudioApis { get; set; }
+
+        [JsonIgnore]
+        public Dictionary<int, string> OutputDevices { get; set; }
+
+        [JsonIgnore]
+        public Dictionary<int, string> InputDevices { get; set; }
 
         [JsonIgnore]
         public bool SquawkingModeC { get; set; }
 
+        [JsonIgnore]
+        public bool ConfigurationRequired
+        {
+            get
+            {
+                return string.IsNullOrEmpty(VatsimId) || string.IsNullOrEmpty(VatsimPasswordDecrypted) || string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Name);
+            }
+        }
+
+        public List<NetworkServerInfo> CachedServers { get; set; }
+        public string VatsimId { get; set; }
+        public string VatsimPassword { get; set; }
+        [JsonIgnore]
+        public string VatsimPasswordDecrypted
+        {
+            get
+            {
+                return Decrypt(VatsimPassword);
+            }
+            set
+            {
+                VatsimPassword = Encrypt(value);
+            }
+        }
+        public string Name { get; set; }
         [JsonIgnore]
         public string NameWithAirport
         {
@@ -90,41 +84,69 @@ namespace XPilot.PilotClient.Config
             {
                 if (!string.IsNullOrEmpty(HomeAirport))
                 {
-                    return $"{Name} {HomeAirport}";
+                    return $"{Name} ({HomeAirport})";
                 }
                 return Name;
             }
         }
-
-        [JsonIgnore]
-        public bool ConfigurationRequired
-        {
-            get
-            {
-                return string.IsNullOrEmpty(VatsimId) || string.IsNullOrEmpty(VatsimPassword) || string.IsNullOrEmpty(ServerName) || string.IsNullOrEmpty(Name);
-            }
-        }
+        public string HomeAirport { get; set; }
+        public string ServerName { get; set; }
+        public bool AutoSquawkModeC { get; set; }
+        public string AudioDriver { get; set; }
+        public string InputDeviceName { get; set; }
+        public string ListenDeviceName { get; set; }
+        public bool DisableAudioEffects { get; set; }
+        public bool EnableHfSquelch { get; set; }
+        public bool EnableNotificationSounds { get; set; }
+        public int Com1Volume { get; set; } = 100;
+        public int Com2Volume { get; set; } = 100;
+        public FlightPlan LastFlightPlan { get; set; }
+        public List<ConnectInfo> RecentConnectionInfo { get; set; }
+        public string SimulatorIP { get; set; } = "127.0.0.1";
+        public string SimulatorPort { get; set; } = "52300";
 
         public AppConfig()
         {
             CachedServers = new List<NetworkServerInfo>();
-            PTTConfiguration = new PTTConfiguration();
-            ToggleDisplayConfiguration = new ToggleDisplayConfiguration();
+            OutputDevices = new Dictionary<int, string>();
+            InputDevices = new Dictionary<int, string>();
             RecentConnectionInfo = new List<ConnectInfo>();
-            VisualClientIPs = new List<string>();
-            ClientWindowProperties = new WindowProperties();
+            AudioApis = new Dictionary<int, string>();
+
+            string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string configFilePath = Path.Combine(appPath, "AppConfig.json");
+
+            try
+            {
+                LoadConfig(configFilePath);
+            }
+            catch (FileNotFoundException)
+            {
+                SaveConfig();
+            }
+            catch (Exception)
+            {
+                SaveConfig();
+            }
+            finally
+            {
+                AppPath = appPath;
+            }
         }
 
         public void LoadConfig(string path)
         {
             try
             {
-                JsonConvert.PopulateObject(File.ReadAllText(path), this);
-                DecryptConfig();
+                var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (var sr = new StreamReader(fs))
+                {
+                    JsonConvert.PopulateObject(sr.ReadToEnd(), this);
+                }
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
-                throw ex;
+                throw;
             }
             finally
             {
@@ -134,27 +156,7 @@ namespace XPilot.PilotClient.Config
 
         public void SaveConfig()
         {
-            EncryptConfig();
             File.WriteAllText(mPath, JsonConvert.SerializeObject(this, Formatting.Indented));
-            DecryptConfig();
-        }
-
-        private void EncryptConfig()
-        {
-            try
-            {
-                VatsimPassword = Encrypt(VatsimPassword);
-            }
-            catch { }
-        }
-
-        private void DecryptConfig()
-        {
-            try
-            {
-                VatsimPassword = Decrypt(VatsimPassword);
-            }
-            catch { }
         }
 
         private string Encrypt(string value)
@@ -201,24 +203,7 @@ namespace XPilot.PilotClient.Config
         {
             get
             {
-                return SystemIdentifier.GetSystemDriveVolumeId();
-            }
-        }
-
-        [JsonIgnore]
-        public object this[string propertyName]
-        {
-            get
-            {
-                Type mType = GetType();
-                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
-                return mPropInfo.GetValue(this, null);
-            }
-            set
-            {
-                Type mType = GetType();
-                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
-                mPropInfo.SetValue(this, value, null);
+                return new Guid(0xa1afdec5, 0x1f5c, 0x498b, 0xb4, 0xf1, 0x83, 0x49, 0x50, 0xfb, 0xea, 0xf0).ToString();
             }
         }
     }

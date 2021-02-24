@@ -16,14 +16,11 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using XPilot.PilotClient.AudioForVatsim;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Core.Events;
 using XPilot.PilotClient.Network;
-using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Core;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
@@ -62,16 +59,10 @@ namespace XPilot.PilotClient
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
 
-            cbUpdateChannel.BindEnumToCombobox(UpdateChannel.Stable);
-
-            if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
-            if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
-
-            if (mConfig.Com1Volume > 1) mConfig.Com1Volume = 1;
-            if (mConfig.Com1Volume < 0) mConfig.Com1Volume = 0;
-
-            if (mConfig.Com2Volume > 1) mConfig.Com2Volume = 1;
-            if (mConfig.Com2Volume < 0) mConfig.Com2Volume = 0;
+            //if (mConfig.Com1Volume > 1) mConfig.Com1Volume = 1;
+            //if (mConfig.Com1Volume < 0) mConfig.Com1Volume = 0;
+            //if (mConfig.Com2Volume > 1) mConfig.Com2Volume = 1;
+            //if (mConfig.Com2Volume < 0) mConfig.Com2Volume = 0;
 
             GetAudioDevices();
             LoadNetworkServers();
@@ -86,33 +77,7 @@ namespace XPilot.PilotClient
         [EventSubscription(EventTopics.MicrophoneInputLevelChanged, typeof(OnUserInterfaceAsync))]
         public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)
         {
-            levelMeterInput.Value = e.Value;
-        }
-
-        [EventSubscription(EventTopics.Com1Volume, typeof(OnUserInterfaceAsync))]
-        public void OnCom1VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
-        {
-            if (mConfig.VolumeKnobsControlVolume)
-            {
-                mConfig.Com1Volume = e.Volume;
-                TrackCom1Volume.Value = (int)AudioUtils.ScaleVolumeDb(e.Volume, 0, 100, 0, 1);
-                lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
-                mAfv.UpdateVolumes();
-                mConfig.SaveConfig();
-            }
-        }
-
-        [EventSubscription(EventTopics.Com2Volume, typeof(OnUserInterfaceAsync))]
-        public void OnCom2VolumeChanged(object sender, RadioVolumeChangedEventArgs e)
-        {
-            if (mConfig.VolumeKnobsControlVolume)
-            {
-                mConfig.Com2Volume = e.Volume;
-                TrackCom2Volume.Value = (int)AudioUtils.ScaleVolumeDb(e.Volume, 0, 100, 0, 1);
-                lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
-                mAfv.UpdateVolumes();
-                mConfig.SaveConfig();
-            }
+            vuMeter.Value = e.Value;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -120,31 +85,26 @@ namespace XPilot.PilotClient
             base.OnLoad(e);
             SettingsFormShown(this, EventArgs.Empty);
             txtNetworkLogin.Text = mConfig.VatsimId;
-            txtNetworkPassword.Text = mConfig.VatsimPassword;
+            txtNetworkPassword.Text = mConfig.VatsimPasswordDecrypted;
             txtFullName.Text = mConfig.Name;
             txtHomeAirport.Text = mConfig.HomeAirport;
-            ddlServerName.SelectedIndex = ddlServerName.FindStringExact(mConfig.ServerName);
-            spinPluginPort.Value = mConfig.TcpPort;
-            audioInputDevice.SelectedItem = mConfig.InputDeviceName;
-            audioOutputDevice.SelectedItem = mConfig.OutputDeviceName;
-            TrackCom1Volume.Value = (int)AudioUtils.ScaleVolumeDb(mConfig.Com1Volume, 0, 100, 0, 1);
-            TrackCom2Volume.Value = (int)AudioUtils.ScaleVolumeDb(mConfig.Com2Volume, 0, 100, 0, 1);
-            lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
-            lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
-            TrackInputVolumeDb.Value = (int)mConfig.InputVolumeDb;
-            inputVolumeLabel.Text = mConfig.InputVolumeDb.ToString("+#;-#;0");
-            chkDisableRadioEffects.Checked = mConfig.DisableAudioEffects;
+            lstServerName.SelectedIndex = lstServerName.FindStringExact(mConfig.ServerName);
+            lstAudioDriver.SelectedItem = mConfig.AudioDriver;
+            lstInputDevice.SelectedItem = mConfig.InputDeviceName;
+            lstListenDevice.SelectedItem = mConfig.ListenDeviceName;
+            trackCom1.Value = mConfig.Com1Volume;
+            trackCom2.Value = mConfig.Com2Volume;
+            volCom1.Text = mConfig.Com1Volume.ToString("0%");
+            volCom2.Text = mConfig.Com2Volume.ToString("0%");
+            chkRadioEffects.Checked = mConfig.DisableAudioEffects;
+            chkHfSquelch.Checked = mConfig.EnableHfSquelch;
             chkFlashPrivateMessage.Checked = mConfig.FlashTaskbarPrivateMessage;
             chkFlashRadioMessage.Checked = mConfig.FlashTaskbarRadioMessage;
             chkFlashSelcal.Checked = mConfig.FlashTaskbarSelCal;
             chkFlashDisconnect.Checked = mConfig.FlashTaskbarDisconnect;
             chkAutoSquawkModeC.Checked = mConfig.AutoSquawkModeC;
             chkKeepVisible.Checked = mConfig.KeepClientWindowVisible;
-            chkUpdates.Checked = mConfig.CheckForUpdates;
-            chkSelcalSound.Checked = mConfig.PlayGenericSelCalAlert;
-            chkRadioMessageSound.Checked = mConfig.PlayRadioMessageAlert;
-            cbUpdateChannel.SelectedValue = mConfig.UpdateChannel;
-            chkVolumeKnobVolume.Checked = mConfig.VolumeKnobsControlVolume;
+            chkEnableNotificationSounds.Checked = mConfig.EnableNotificationSounds;
         }
 
         private void LoadNetworkServers()
@@ -156,7 +116,7 @@ namespace XPilot.PilotClient
                     NetworkServerItem item = new NetworkServerItem();
                     item.Text = x.Name;
                     item.Value = x.Address;
-                    ddlServerName.Items.Add(item);
+                    lstServerName.Items.Add(item);
                 }
             }
             else
@@ -183,60 +143,6 @@ namespace XPilot.PilotClient
             MessageBox.Show(this, message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
         }
 
-        private void ddlInputDeviceName_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var device = audioInputDevice.SelectedItem.ToString();
-            if (mConfig.InputDeviceName != device)
-            {
-                RestartAfvUserClient(this, EventArgs.Empty);
-            }
-            mConfig.InputDeviceName = device;
-            mConfig.SaveConfig();
-        }
-
-        private void ddlOutputDeviceName_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var device = audioOutputDevice.SelectedItem.ToString();
-            if (mConfig.OutputDeviceName != device)
-            {
-                RestartAfvUserClient(this, EventArgs.Empty);
-            }
-            mConfig.OutputDeviceName = device;
-            mConfig.SaveConfig();
-        }
-
-        private void TrackInputVolumeDb_Scroll(object sender, EventArgs e)
-        {
-            mConfig.InputVolumeDb = TrackInputVolumeDb.Value;
-            inputVolumeLabel.Text = mConfig.InputVolumeDb.ToString("+#;-#;0");
-            mConfig.SaveConfig();
-            mAfv.UpdateVolumes();
-        }
-
-        private void Com1Volume_Scroll(object sender, EventArgs e)
-        {
-            mConfig.Com1Volume = AudioUtils.ScaleVolumeDb(TrackCom1Volume.Value, 0, 1, 0, 100);
-            lblVolumeCom1.Text = mConfig.Com1Volume.ToString("0%");
-            mConfig.SaveConfig();
-            mAfv.UpdateVolumes();
-            if (mConfig.VolumeKnobsControlVolume)
-            {
-                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, mConfig.Com1Volume));
-            }
-        }
-
-        private void Com2Volume_Scroll(object sender, EventArgs e)
-        {
-            mConfig.Com2Volume = AudioUtils.ScaleVolumeDb(TrackCom2Volume.Value, 0, 1, 0, 100);
-            lblVolumeCom2.Text = mConfig.Com2Volume.ToString("0%");
-            mConfig.SaveConfig();
-            mAfv.UpdateVolumes();
-            if (mConfig.VolumeKnobsControlVolume)
-            {
-                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, mConfig.Com2Volume));
-            }
-        }
-
         private void BtnClose_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtNetworkLogin.Text))
@@ -254,31 +160,29 @@ namespace XPilot.PilotClient
                 ShowError("Name is required.");
                 txtFullName.Select();
             }
-            else if (ddlServerName.SelectedIndex == -1)
+            else if (lstServerName.SelectedIndex == -1)
             {
                 ShowError("Please select a VATSIM server.");
-                ddlServerName.Select();
+                lstServerName.Select();
             }
             else
             {
                 mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
                 mConfig.VatsimId = txtNetworkLogin.Text.Trim();
-                mConfig.VatsimPassword = txtNetworkPassword.Text.Trim();
+                mConfig.VatsimPasswordDecrypted = txtNetworkPassword.Text.Trim();
                 mConfig.Name = txtFullName.Text;
                 mConfig.HomeAirport = txtHomeAirport.Text;
-                mConfig.ServerName = (ddlServerName.SelectedItem as NetworkServerItem).Text;
-                mConfig.FlashTaskbarPrivateMessage = chkFlashPrivateMessage.Checked;
-                mConfig.FlashTaskbarRadioMessage = chkFlashRadioMessage.Checked;
-                mConfig.FlashTaskbarSelCal = chkFlashSelcal.Checked;
-                mConfig.FlashTaskbarDisconnect = chkFlashDisconnect.Checked;
+                mConfig.ServerName = (lstServerName.SelectedItem as NetworkServerItem).Text;
+                //mConfig.FlashTaskbarPrivateMessage = chkFlashPrivateMessage.Checked;
+                //mConfig.FlashTaskbarRadioMessage = chkFlashRadioMessage.Checked;
+                //mConfig.FlashTaskbarSelCal = chkFlashSelcal.Checked;
+                //mConfig.FlashTaskbarDisconnect = chkFlashDisconnect.Checked;
                 mConfig.AutoSquawkModeC = chkAutoSquawkModeC.Checked;
-                mConfig.KeepClientWindowVisible = chkKeepVisible.Checked;
-                mConfig.CheckForUpdates = chkUpdates.Checked;
+                //mConfig.KeepClientWindowVisible = chkKeepVisible.Checked;
                 mConfig.PlayGenericSelCalAlert = chkSelcalSound.Checked;
-                mConfig.PlayRadioMessageAlert = chkRadioMessageSound.Checked;
-                mConfig.UpdateChannel = (UpdateChannel)cbUpdateChannel.SelectedValue;
+                mConfig.PlayRadioMessageAlert = chkEnableNotificationSounds.Checked;
                 mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
-                mConfig.TcpPort = (int)spinPluginPort.Value;
+                mConfig.SimulatorPort = txtSimulatorPort.Text;
                 mConfig.SaveConfig();
                 ClientConfigChanged?.Invoke(this, EventArgs.Empty);
                 Close();
@@ -317,12 +221,6 @@ namespace XPilot.PilotClient
         {
             var checkbox = sender as CheckBox;
             mConfig[checkbox.Tag.ToString()] = checkbox.Checked;
-            mConfig.SaveConfig();
-        }
-
-        private void spinPluginPort_ValueChanged(object sender, EventArgs e)
-        {
-            mConfig.TcpPort = (int)spinPluginPort.Value;
             mConfig.SaveConfig();
         }
     }

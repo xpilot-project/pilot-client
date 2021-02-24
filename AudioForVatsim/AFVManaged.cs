@@ -45,7 +45,6 @@ namespace XPilot.PilotClient.AudioForVatsim
 
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
-        private readonly ILog mLog;
         private bool mPttActive = false;
         private Timer mRxTimer;
         private Timer mUpdateTransceiversTimer;
@@ -55,11 +54,10 @@ namespace XPilot.PilotClient.AudioForVatsim
         private List<Station> mAliasStations = new List<Station>();
         private Dictionary<string, Controller> mControllers = new Dictionary<string, Controller>();
 
-        public AFVManaged(IEventBroker eventBroker, IAppConfig config, ILog log)
+        public AFVManaged(IEventBroker eventBroker, IAppConfig config)
         {
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
-            mLog = log;
             mConfig = config;
 
             AFVBindings.initialize(mConfig.AppPath, 2, "xPilot");
@@ -80,8 +78,6 @@ namespace XPilot.PilotClient.AudioForVatsim
             mStationCallback = new AFVBindings.AfvStationCallback(StationCallbackHandler);
             mEventCalllback = new AFVBindings.EventCallback(ClientEventHandler);
             AFVBindings.RaiseClientEvent(mEventCalllback);
-
-            mLog.Info("AFV-Native Initialized");
         }
 
         private void UpdateTransceiversTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -125,9 +121,9 @@ namespace XPilot.PilotClient.AudioForVatsim
 
             AFVBindings.getAudioApis(mConfig.AudioApis.SafeAdd);
 
-            if (!string.IsNullOrEmpty(mConfig.AudioApi))
+            if (!string.IsNullOrEmpty(mConfig.AudioDriver))
             {
-                AFVBindings.setAudioApi(mConfig.AudioApi);
+                AFVBindings.setAudioApi(mConfig.AudioDriver);
                 AFVBindings.getOutputDevices(mConfig.OutputDevices.SafeAdd);
                 AFVBindings.getInputDevices(mConfig.InputDevices.SafeAdd);
             }
@@ -147,9 +143,9 @@ namespace XPilot.PilotClient.AudioForVatsim
         private void ConfigureAudioDevices()
         {
             AFVBindings.setAudioDevice();
-            if (!string.IsNullOrEmpty(mConfig.OutputDeviceName))
+            if (!string.IsNullOrEmpty(mConfig.ListenDeviceName))
             {
-                AFVBindings.setAudioOutputDevice(mConfig.OutputDeviceName);
+                AFVBindings.setAudioOutputDevice(mConfig.ListenDeviceName);
             }
             if (!string.IsNullOrEmpty(mConfig.InputDeviceName))
             {

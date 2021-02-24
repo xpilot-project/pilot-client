@@ -89,8 +89,7 @@ namespace XPilot.PilotClient
 
         // Audio for Vatsim
         public const string PushToTalkStateChanged = "PushToTalkStateChanged";
-        public const string Com1FrequencyAliasChanged = "Com1FrequencyAliasChanged";
-        public const string Com2FrequencyAliasChanged = "Com2FrequencyAliasChanged";
+        public const string ComFrequencyAliasChanged = "ComFrequencyAliasChanged";
         public const string ComRadioTransmittingChanged = "ComRadioTransmittingChanged";
         public const string ComRadioReceivingChanged = "ComRadioReceivingChanged";
         public const string MicrophoneInputLevelChanged = "MicrophoneInputLevelChanged";

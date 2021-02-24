@@ -25,44 +25,34 @@ namespace XPilot.PilotClient.Config
 {
     public interface IAppConfig
     {
+        Dictionary<int, string> AudioApis { get; set; }
+        Dictionary<int, string> OutputDevices { get; set; }
+        Dictionary<int, string> InputDevices { get; set; }
+        string AppPath { get; set; }
+        string AfvResourcePath { get; }
+        bool ConfigurationRequired { get; }
+        bool SquawkingModeC { get; set; }
         List<NetworkServerInfo> CachedServers { get; set; }
         string VatsimId { get; set; }
-        string VatsimPassword { get; set; }
-        string ServerName { get; set; }
-        List<string> VisualClientIPs { get; set; }
-        string SimClientIP { get; set; }
-        List<ConnectInfo> RecentConnectionInfo { get; set; }
-        FlightPlan LastFlightPlan { get; set; }
-        PTTConfiguration PTTConfiguration { get; set; }
-        WindowProperties ClientWindowProperties { get; set; }
-        ToggleDisplayConfiguration ToggleDisplayConfiguration { get; set; }
-        string InputDeviceName { get; set; }
-        string OutputDeviceName { get; set; }
-        bool DisableAudioEffects { get; set; }
-        bool VolumeKnobsControlVolume { get; set; }
-        float Com1Volume { get; set; }
-        float Com2Volume { get; set; }
-        float InputVolumeDb { get; set; }
-        EqualizerPresets VhfEqualizer { get; set; }
+        string VatsimPasswordDecrypted { get; set; }
         string Name { get; set; }
-        string HomeAirport { get; set; }
-        void SaveConfig();
-        void LoadConfig(string path);
-        string AppPath { get; set; }
-        bool FlashTaskbarPrivateMessage { get; set; }
-        bool FlashTaskbarRadioMessage { get; set; }
-        bool FlashTaskbarSelCal { get; set; }
-        bool FlashTaskbarDisconnect { get; set; }
-        bool AutoSquawkModeC { get; set; }
-        bool KeepClientWindowVisible { get; set; }
-        bool CheckForUpdates { get; set; }
         string NameWithAirport { get; }
-        bool ConfigurationRequired { get; }
-        int TcpPort { get; set; }
-        bool PlayGenericSelCalAlert { get; set; }
-        bool PlayRadioMessageAlert { get; set; }
-        UpdateChannel UpdateChannel { get; set; }
-        bool SquawkingModeC { get; set; }
-        object this[string propertyName] { get;set; }
+        string HomeAirport { get; set; }
+        string ServerName { get; set; }
+        bool AutoSquawkModeC { get; set; }
+        string AudioDriver { get; set; }
+        string InputDeviceName { get; set; }
+        string ListenDeviceName { get; set; }
+        bool DisableAudioEffects { get; set; }
+        bool EnableNotificationSounds { get; set; }
+        bool EnableHfSquelch { get; set; }
+        int Com1Volume { get; set; }
+        int Com2Volume { get; set; }
+        FlightPlan LastFlightPlan { get; set; }
+        List<ConnectInfo> RecentConnectionInfo { get; set; }
+        string SimulatorIP { get; set; }
+        string SimulatorPort { get; set; }
+        void LoadConfig(string path);
+        void SaveConfig();
     }
 }

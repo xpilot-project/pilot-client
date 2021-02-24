@@ -289,7 +289,7 @@ namespace XPilot.PilotClient.AudioForVatsim
                 {
                     if (!ClientAudioUtilities.IsInputDevicePresent())
                     {
-                        mOutputDeviceName = mConfig.OutputDeviceName;
+                        mOutputDeviceName = mConfig.ListenDeviceName;
                         mAfvUserClient.Com1Volume = mConfig.Com1Volume;
                         mAfvUserClient.Com2Volume = mConfig.Com2Volume;
                         mAfvUserClient.Start(mOutputDeviceName, new List<ushort> { 1, 2 });
@@ -298,7 +298,7 @@ namespace XPilot.PilotClient.AudioForVatsim
                     else
                     {
                         mInputDeviceName = mConfig.InputDeviceName;
-                        mOutputDeviceName = mConfig.OutputDeviceName;
+                        mOutputDeviceName = mConfig.ListenDeviceName;
                         mAfvUserClient.InputVolumeDb = mConfig.InputVolumeDb;
                         mAfvUserClient.Com1Volume = mConfig.Com1Volume;
                         mAfvUserClient.Com2Volume = mConfig.Com2Volume;

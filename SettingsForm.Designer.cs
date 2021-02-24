@@ -31,236 +31,91 @@ namespace XPilot.PilotClient
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            this.lblAudioHelp = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.TrackInputVolumeDb = new System.Windows.Forms.TrackBar();
-            this.lblVolumeCom1 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.TrackCom1Volume = new System.Windows.Forms.TrackBar();
-            this.audioInputDevice = new System.Windows.Forms.ComboBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.audioOutputDevice = new System.Windows.Forms.ComboBox();
-            this.label18 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtNetworkPassword = new System.Windows.Forms.TextBox();
             this.txtNetworkLogin = new System.Windows.Forms.TextBox();
             this.txtHomeAirport = new System.Windows.Forms.TextBox();
             this.txtFullName = new System.Windows.Forms.TextBox();
-            this.ddlServerName = new System.Windows.Forms.ComboBox();
+            this.lstServerName = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.spinPluginPort = new System.Windows.Forms.NumericUpDown();
-            this.chkVolumeKnobVolume = new System.Windows.Forms.CheckBox();
-            this.cbUpdateChannel = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.chkUpdates = new System.Windows.Forms.CheckBox();
             this.chkKeepVisible = new System.Windows.Forms.CheckBox();
             this.chkAutoSquawkModeC = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.chkRadioMessageSound = new System.Windows.Forms.CheckBox();
-            this.chkSelcalSound = new System.Windows.Forms.CheckBox();
-            this.chkFlashDisconnect = new System.Windows.Forms.CheckBox();
-            this.chkFlashSelcal = new System.Windows.Forms.CheckBox();
-            this.chkFlashRadioMessage = new System.Windows.Forms.CheckBox();
-            this.chkFlashPrivateMessage = new System.Windows.Forms.CheckBox();
+            this.chkEnableNotificationSounds = new System.Windows.Forms.CheckBox();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.tabAudio = new System.Windows.Forms.TabPage();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.chkDisableRadioEffects = new System.Windows.Forms.CheckBox();
-            this.lblVolumeCom2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.TrackCom2Volume = new System.Windows.Forms.TrackBar();
-            this.inputVolumeLabel = new System.Windows.Forms.Label();
-            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
             this.btnGuidedSetup = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.TrackInputVolumeDb)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrackCom1Volume)).BeginInit();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabGeneral.SuspendLayout();
-            this.tabAudio.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TrackCom2Volume)).BeginInit();
+            this.lstAudioDriver = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lstInputDevice = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lstListenDevice = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.vuMeter = new XPilot.PilotClient.LevelMeter();
+            this.label12 = new System.Windows.Forms.Label();
+            this.trackCom2 = new System.Windows.Forms.TrackBar();
+            this.label13 = new System.Windows.Forms.Label();
+            this.trackCom1 = new System.Windows.Forms.TrackBar();
+            this.chkHfSquelch = new System.Windows.Forms.CheckBox();
+            this.chkRadioEffects = new System.Windows.Forms.CheckBox();
+            this.chkFlashPrivateMessage = new System.Windows.Forms.CheckBox();
+            this.chkFlashSelcal = new System.Windows.Forms.CheckBox();
+            this.chkFlashDisconnect = new System.Windows.Forms.CheckBox();
+            this.volCom1 = new System.Windows.Forms.Label();
+            this.volCom2 = new System.Windows.Forms.Label();
+            this.chkFlashRadioMessage = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.trackCom2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackCom1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // lblAudioHelp
-            // 
-            this.lblAudioHelp.Location = new System.Drawing.Point(23, 246);
-            this.lblAudioHelp.Name = "lblAudioHelp";
-            this.lblAudioHelp.Size = new System.Drawing.Size(359, 35);
-            this.lblAudioHelp.TabIndex = 16;
-            this.lblAudioHelp.Text = "Adjust the mic volume slider so that the peak level indicator remains in the gree" +
-    "n band while speaking normally.";
-            this.lblAudioHelp.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(23, 189);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(42, 26);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Mic\r\nVolume";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // TrackInputVolumeDb
-            // 
-            this.TrackInputVolumeDb.AutoSize = false;
-            this.TrackInputVolumeDb.BackColor = System.Drawing.SystemColors.Window;
-            this.TrackInputVolumeDb.LargeChange = 1;
-            this.TrackInputVolumeDb.Location = new System.Drawing.Point(70, 188);
-            this.TrackInputVolumeDb.Maximum = 18;
-            this.TrackInputVolumeDb.Minimum = -18;
-            this.TrackInputVolumeDb.Name = "TrackInputVolumeDb";
-            this.TrackInputVolumeDb.Size = new System.Drawing.Size(487, 30);
-            this.TrackInputVolumeDb.TabIndex = 13;
-            this.TrackInputVolumeDb.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this.TrackInputVolumeDb.Scroll += new System.EventHandler(this.TrackInputVolumeDb_Scroll);
-            // 
-            // lblVolumeCom1
-            // 
-            this.lblVolumeCom1.AutoSize = true;
-            this.lblVolumeCom1.Location = new System.Drawing.Point(560, 97);
-            this.lblVolumeCom1.Name = "lblVolumeCom1";
-            this.lblVolumeCom1.Size = new System.Drawing.Size(13, 13);
-            this.lblVolumeCom1.TabIndex = 12;
-            this.lblVolumeCom1.Text = "0";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(23, 90);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(42, 26);
-            this.label16.TabIndex = 11;
-            this.label16.Text = "COM1\r\nVolume";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // TrackCom1Volume
-            // 
-            this.TrackCom1Volume.AutoSize = false;
-            this.TrackCom1Volume.BackColor = System.Drawing.SystemColors.Window;
-            this.TrackCom1Volume.Location = new System.Drawing.Point(70, 88);
-            this.TrackCom1Volume.Maximum = 100;
-            this.TrackCom1Volume.Name = "TrackCom1Volume";
-            this.TrackCom1Volume.Size = new System.Drawing.Size(487, 30);
-            this.TrackCom1Volume.TabIndex = 10;
-            this.TrackCom1Volume.TickFrequency = 5;
-            this.TrackCom1Volume.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this.TrackCom1Volume.Scroll += new System.EventHandler(this.Com1Volume_Scroll);
-            // 
-            // audioInputDevice
-            // 
-            this.audioInputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.audioInputDevice.FormattingEnabled = true;
-            this.audioInputDevice.Location = new System.Drawing.Point(23, 51);
-            this.audioInputDevice.Name = "audioInputDevice";
-            this.audioInputDevice.Size = new System.Drawing.Size(266, 21);
-            this.audioInputDevice.TabIndex = 7;
-            this.audioInputDevice.SelectedIndexChanged += new System.EventHandler(this.ddlInputDeviceName_SelectedIndexChanged);
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(23, 32);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(103, 13);
-            this.label17.TabIndex = 0;
-            this.label17.Text = "Microphone Device:";
-            // 
-            // audioOutputDevice
-            // 
-            this.audioOutputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.audioOutputDevice.FormattingEnabled = true;
-            this.audioOutputDevice.Location = new System.Drawing.Point(307, 51);
-            this.audioOutputDevice.Name = "audioOutputDevice";
-            this.audioOutputDevice.Size = new System.Drawing.Size(266, 21);
-            this.audioOutputDevice.TabIndex = 8;
-            this.audioOutputDevice.SelectedIndexChanged += new System.EventHandler(this.ddlOutputDeviceName_SelectedIndexChanged);
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(305, 32);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(75, 13);
-            this.label18.TabIndex = 1;
-            this.label18.Text = "Listen Device:";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.txtNetworkPassword);
-            this.groupBox3.Controls.Add(this.txtNetworkLogin);
-            this.groupBox3.Controls.Add(this.txtHomeAirport);
-            this.groupBox3.Controls.Add(this.txtFullName);
-            this.groupBox3.Controls.Add(this.ddlServerName);
-            this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Location = new System.Drawing.Point(313, 14);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(291, 304);
-            this.groupBox3.TabIndex = 2;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Network Connection";
             // 
             // txtNetworkPassword
             // 
-            this.txtNetworkPassword.Location = new System.Drawing.Point(19, 100);
+            this.txtNetworkPassword.Location = new System.Drawing.Point(17, 82);
             this.txtNetworkPassword.Name = "txtNetworkPassword";
             this.txtNetworkPassword.PasswordChar = '●';
-            this.txtNetworkPassword.Size = new System.Drawing.Size(253, 20);
+            this.txtNetworkPassword.Size = new System.Drawing.Size(283, 20);
             this.txtNetworkPassword.TabIndex = 9;
             // 
             // txtNetworkLogin
             // 
-            this.txtNetworkLogin.Location = new System.Drawing.Point(19, 47);
+            this.txtNetworkLogin.Location = new System.Drawing.Point(17, 33);
             this.txtNetworkLogin.Name = "txtNetworkLogin";
-            this.txtNetworkLogin.Size = new System.Drawing.Size(253, 20);
+            this.txtNetworkLogin.Size = new System.Drawing.Size(283, 20);
             this.txtNetworkLogin.TabIndex = 8;
             // 
             // txtHomeAirport
             // 
             this.txtHomeAirport.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtHomeAirport.Location = new System.Drawing.Point(19, 206);
+            this.txtHomeAirport.Location = new System.Drawing.Point(17, 180);
             this.txtHomeAirport.MaxLength = 4;
             this.txtHomeAirport.Name = "txtHomeAirport";
-            this.txtHomeAirport.Size = new System.Drawing.Size(250, 20);
+            this.txtHomeAirport.Size = new System.Drawing.Size(283, 20);
             this.txtHomeAirport.TabIndex = 11;
             this.txtHomeAirport.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHomeAirport_KeyDown);
             // 
             // txtFullName
             // 
-            this.txtFullName.Location = new System.Drawing.Point(19, 153);
+            this.txtFullName.Location = new System.Drawing.Point(17, 131);
             this.txtFullName.Name = "txtFullName";
-            this.txtFullName.Size = new System.Drawing.Size(253, 20);
+            this.txtFullName.Size = new System.Drawing.Size(283, 20);
             this.txtFullName.TabIndex = 10;
             // 
-            // ddlServerName
+            // lstServerName
             // 
-            this.ddlServerName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddlServerName.FormattingEnabled = true;
-            this.ddlServerName.Location = new System.Drawing.Point(19, 259);
-            this.ddlServerName.Name = "ddlServerName";
-            this.ddlServerName.Size = new System.Drawing.Size(253, 21);
-            this.ddlServerName.TabIndex = 5;
-            this.ddlServerName.TabStop = false;
+            this.lstServerName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstServerName.FormattingEnabled = true;
+            this.lstServerName.Location = new System.Drawing.Point(17, 229);
+            this.lstServerName.Name = "lstServerName";
+            this.lstServerName.Size = new System.Drawing.Size(283, 21);
+            this.lstServerName.TabIndex = 5;
+            this.lstServerName.TabStop = false;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(19, 242);
+            this.label9.Location = new System.Drawing.Point(17, 213);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(84, 13);
             this.label9.TabIndex = 4;
@@ -269,7 +124,7 @@ namespace XPilot.PilotClient
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(19, 189);
+            this.label8.Location = new System.Drawing.Point(17, 164);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(71, 13);
             this.label8.TabIndex = 3;
@@ -278,16 +133,16 @@ namespace XPilot.PilotClient
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(19, 136);
+            this.label7.Location = new System.Drawing.Point(17, 117);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.Size = new System.Drawing.Size(60, 13);
             this.label7.TabIndex = 2;
-            this.label7.Text = "Name";
+            this.label7.Text = "Your Name";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 83);
+            this.label6.Location = new System.Drawing.Point(17, 66);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(99, 13);
             this.label6.TabIndex = 1;
@@ -296,99 +151,16 @@ namespace XPilot.PilotClient
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(19, 30);
+            this.label5.Location = new System.Drawing.Point(17, 17);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(64, 13);
             this.label5.TabIndex = 0;
             this.label5.Text = "VATSIM ID:";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.spinPluginPort);
-            this.groupBox2.Controls.Add(this.chkVolumeKnobVolume);
-            this.groupBox2.Controls.Add(this.cbUpdateChannel);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.chkUpdates);
-            this.groupBox2.Controls.Add(this.chkKeepVisible);
-            this.groupBox2.Controls.Add(this.chkAutoSquawkModeC);
-            this.groupBox2.Location = new System.Drawing.Point(22, 190);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(285, 128);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Miscellaneous";
-            // 
-            // spinPluginPort
-            // 
-            this.spinPluginPort.Location = new System.Drawing.Point(135, 100);
-            this.spinPluginPort.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.spinPluginPort.Minimum = new decimal(new int[] {
-            1024,
-            0,
-            0,
-            0});
-            this.spinPluginPort.Name = "spinPluginPort";
-            this.spinPluginPort.Size = new System.Drawing.Size(66, 20);
-            this.spinPluginPort.TabIndex = 9;
-            this.spinPluginPort.Value = new decimal(new int[] {
-            45001,
-            0,
-            0,
-            0});
-            this.spinPluginPort.ValueChanged += new System.EventHandler(this.spinPluginPort_ValueChanged);
-            // 
-            // chkVolumeKnobVolume
-            // 
-            this.chkVolumeKnobVolume.AutoSize = true;
-            this.chkVolumeKnobVolume.Location = new System.Drawing.Point(10, 83);
-            this.chkVolumeKnobVolume.Name = "chkVolumeKnobVolume";
-            this.chkVolumeKnobVolume.Size = new System.Drawing.Size(200, 17);
-            this.chkVolumeKnobVolume.TabIndex = 11;
-            this.chkVolumeKnobVolume.TabStop = false;
-            this.chkVolumeKnobVolume.Tag = "VolumeKnobsControlVolume";
-            this.chkVolumeKnobVolume.Text = "Aircraft volume knobs control volume";
-            this.chkVolumeKnobVolume.UseVisualStyleBackColor = true;
-            this.chkVolumeKnobVolume.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // cbUpdateChannel
-            // 
-            this.cbUpdateChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbUpdateChannel.FormattingEnabled = true;
-            this.cbUpdateChannel.Location = new System.Drawing.Point(211, 38);
-            this.cbUpdateChannel.Name = "cbUpdateChannel";
-            this.cbUpdateChannel.Size = new System.Drawing.Size(68, 21);
-            this.cbUpdateChannel.TabIndex = 10;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 104);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "X-Plane Plugin TCP Port:";
-            // 
-            // chkUpdates
-            // 
-            this.chkUpdates.AutoSize = true;
-            this.chkUpdates.Location = new System.Drawing.Point(10, 41);
-            this.chkUpdates.Name = "chkUpdates";
-            this.chkUpdates.Size = new System.Drawing.Size(205, 17);
-            this.chkUpdates.TabIndex = 7;
-            this.chkUpdates.TabStop = false;
-            this.chkUpdates.Tag = "CheckForUpdates";
-            this.chkUpdates.Text = "Automatically check for xPilot updates";
-            this.chkUpdates.UseVisualStyleBackColor = true;
-            this.chkUpdates.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
             // chkKeepVisible
             // 
             this.chkKeepVisible.AutoSize = true;
-            this.chkKeepVisible.Location = new System.Drawing.Point(10, 62);
+            this.chkKeepVisible.Location = new System.Drawing.Point(318, 66);
             this.chkKeepVisible.Name = "chkKeepVisible";
             this.chkKeepVisible.Size = new System.Drawing.Size(150, 17);
             this.chkKeepVisible.TabIndex = 6;
@@ -401,7 +173,7 @@ namespace XPilot.PilotClient
             // chkAutoSquawkModeC
             // 
             this.chkAutoSquawkModeC.AutoSize = true;
-            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(10, 20);
+            this.chkAutoSquawkModeC.Location = new System.Drawing.Point(318, 33);
             this.chkAutoSquawkModeC.Name = "chkAutoSquawkModeC";
             this.chkAutoSquawkModeC.Size = new System.Drawing.Size(218, 17);
             this.chkAutoSquawkModeC.TabIndex = 5;
@@ -411,102 +183,22 @@ namespace XPilot.PilotClient
             this.chkAutoSquawkModeC.UseVisualStyleBackColor = true;
             this.chkAutoSquawkModeC.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
-            // groupBox1
+            // chkEnableNotificationSounds
             // 
-            this.groupBox1.Controls.Add(this.chkRadioMessageSound);
-            this.groupBox1.Controls.Add(this.chkSelcalSound);
-            this.groupBox1.Controls.Add(this.chkFlashDisconnect);
-            this.groupBox1.Controls.Add(this.chkFlashSelcal);
-            this.groupBox1.Controls.Add(this.chkFlashRadioMessage);
-            this.groupBox1.Controls.Add(this.chkFlashPrivateMessage);
-            this.groupBox1.Location = new System.Drawing.Point(22, 14);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(285, 168);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Notifications";
-            // 
-            // chkRadioMessageSound
-            // 
-            this.chkRadioMessageSound.AutoSize = true;
-            this.chkRadioMessageSound.Location = new System.Drawing.Point(10, 138);
-            this.chkRadioMessageSound.Name = "chkRadioMessageSound";
-            this.chkRadioMessageSound.Size = new System.Drawing.Size(275, 17);
-            this.chkRadioMessageSound.TabIndex = 6;
-            this.chkRadioMessageSound.TabStop = false;
-            this.chkRadioMessageSound.Tag = "PlayRadioMessageAlert";
-            this.chkRadioMessageSound.Text = "Play aural notification for all incoming radio messages";
-            this.chkRadioMessageSound.UseVisualStyleBackColor = true;
-            this.chkRadioMessageSound.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // chkSelcalSound
-            // 
-            this.chkSelcalSound.AutoSize = true;
-            this.chkSelcalSound.Location = new System.Drawing.Point(10, 115);
-            this.chkSelcalSound.Name = "chkSelcalSound";
-            this.chkSelcalSound.Size = new System.Drawing.Size(236, 17);
-            this.chkSelcalSound.TabIndex = 4;
-            this.chkSelcalSound.TabStop = false;
-            this.chkSelcalSound.Tag = "PlayGenericSelCalAlert";
-            this.chkSelcalSound.Text = "Play generic SELCAL alert notification sound";
-            this.chkSelcalSound.UseVisualStyleBackColor = true;
-            this.chkSelcalSound.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // chkFlashDisconnect
-            // 
-            this.chkFlashDisconnect.AutoSize = true;
-            this.chkFlashDisconnect.Location = new System.Drawing.Point(10, 92);
-            this.chkFlashDisconnect.Name = "chkFlashDisconnect";
-            this.chkFlashDisconnect.Size = new System.Drawing.Size(272, 17);
-            this.chkFlashDisconnect.TabIndex = 3;
-            this.chkFlashDisconnect.TabStop = false;
-            this.chkFlashDisconnect.Tag = "FlashTaskbarDisconnect";
-            this.chkFlashDisconnect.Text = "Flash taskbar icon when disconnected from network";
-            this.chkFlashDisconnect.UseVisualStyleBackColor = true;
-            this.chkFlashDisconnect.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // chkFlashSelcal
-            // 
-            this.chkFlashSelcal.AutoSize = true;
-            this.chkFlashSelcal.Location = new System.Drawing.Point(10, 69);
-            this.chkFlashSelcal.Name = "chkFlashSelcal";
-            this.chkFlashSelcal.Size = new System.Drawing.Size(215, 17);
-            this.chkFlashSelcal.TabIndex = 2;
-            this.chkFlashSelcal.TabStop = false;
-            this.chkFlashSelcal.Tag = "FlashTaskbarSelCal";
-            this.chkFlashSelcal.Text = "Flash taskbar icon for SELCAL message";
-            this.chkFlashSelcal.UseVisualStyleBackColor = true;
-            this.chkFlashSelcal.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // chkFlashRadioMessage
-            // 
-            this.chkFlashRadioMessage.AutoSize = true;
-            this.chkFlashRadioMessage.Location = new System.Drawing.Point(10, 46);
-            this.chkFlashRadioMessage.Name = "chkFlashRadioMessage";
-            this.chkFlashRadioMessage.Size = new System.Drawing.Size(218, 17);
-            this.chkFlashRadioMessage.TabIndex = 1;
-            this.chkFlashRadioMessage.TabStop = false;
-            this.chkFlashRadioMessage.Tag = "FlashTaskbarRadioMessage";
-            this.chkFlashRadioMessage.Text = "Flash taskbar icon for text radio message";
-            this.chkFlashRadioMessage.UseVisualStyleBackColor = true;
-            this.chkFlashRadioMessage.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
-            // 
-            // chkFlashPrivateMessage
-            // 
-            this.chkFlashPrivateMessage.AutoSize = true;
-            this.chkFlashPrivateMessage.Location = new System.Drawing.Point(10, 23);
-            this.chkFlashPrivateMessage.Name = "chkFlashPrivateMessage";
-            this.chkFlashPrivateMessage.Size = new System.Drawing.Size(230, 17);
-            this.chkFlashPrivateMessage.TabIndex = 0;
-            this.chkFlashPrivateMessage.TabStop = false;
-            this.chkFlashPrivateMessage.Tag = "FlashTaskbarPrivateMessage";
-            this.chkFlashPrivateMessage.Text = "Flash taskbar icon for new private message";
-            this.chkFlashPrivateMessage.UseVisualStyleBackColor = true;
-            this.chkFlashPrivateMessage.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
+            this.chkEnableNotificationSounds.AutoSize = true;
+            this.chkEnableNotificationSounds.Location = new System.Drawing.Point(318, 99);
+            this.chkEnableNotificationSounds.Name = "chkEnableNotificationSounds";
+            this.chkEnableNotificationSounds.Size = new System.Drawing.Size(150, 17);
+            this.chkEnableNotificationSounds.TabIndex = 6;
+            this.chkEnableNotificationSounds.TabStop = false;
+            this.chkEnableNotificationSounds.Tag = "PlayRadioMessageAlert";
+            this.chkEnableNotificationSounds.Text = "Enable notification sounds";
+            this.chkEnableNotificationSounds.UseVisualStyleBackColor = true;
+            this.chkEnableNotificationSounds.CheckedChanged += new System.EventHandler(this.CheckboxCheckedChanged);
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(577, 405);
+            this.btnCancel.Location = new System.Drawing.Point(524, 503);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(88, 23);
             this.btnCancel.TabIndex = 3;
@@ -515,132 +207,10 @@ namespace XPilot.PilotClient
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tabGeneral);
-            this.tabControl1.Controls.Add(this.tabAudio);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl1.Location = new System.Drawing.Point(30, 30);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(634, 363);
-            this.tabControl1.TabIndex = 13;
-            // 
-            // tabGeneral
-            // 
-            this.tabGeneral.Controls.Add(this.groupBox2);
-            this.tabGeneral.Controls.Add(this.groupBox3);
-            this.tabGeneral.Controls.Add(this.groupBox1);
-            this.tabGeneral.Location = new System.Drawing.Point(4, 22);
-            this.tabGeneral.Name = "tabGeneral";
-            this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGeneral.Size = new System.Drawing.Size(627, 337);
-            this.tabGeneral.TabIndex = 0;
-            this.tabGeneral.Text = "General";
-            this.tabGeneral.UseVisualStyleBackColor = true;
-            // 
-            // tabAudio
-            // 
-            this.tabAudio.Controls.Add(this.groupBox4);
-            this.tabAudio.Location = new System.Drawing.Point(4, 22);
-            this.tabAudio.Name = "tabAudio";
-            this.tabAudio.Padding = new System.Windows.Forms.Padding(3);
-            this.tabAudio.Size = new System.Drawing.Size(626, 337);
-            this.tabAudio.TabIndex = 1;
-            this.tabAudio.Text = "Audio";
-            this.tabAudio.UseVisualStyleBackColor = true;
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.chkDisableRadioEffects);
-            this.groupBox4.Controls.Add(this.lblVolumeCom2);
-            this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.TrackCom2Volume);
-            this.groupBox4.Controls.Add(this.lblVolumeCom1);
-            this.groupBox4.Controls.Add(this.inputVolumeLabel);
-            this.groupBox4.Controls.Add(this.label16);
-            this.groupBox4.Controls.Add(this.audioInputDevice);
-            this.groupBox4.Controls.Add(this.TrackCom1Volume);
-            this.groupBox4.Controls.Add(this.lblAudioHelp);
-            this.groupBox4.Controls.Add(this.label18);
-            this.groupBox4.Controls.Add(this.levelMeterInput);
-            this.groupBox4.Controls.Add(this.audioOutputDevice);
-            this.groupBox4.Controls.Add(this.label2);
-            this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.TrackInputVolumeDb);
-            this.groupBox4.Location = new System.Drawing.Point(15, 16);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(596, 302);
-            this.groupBox4.TabIndex = 14;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Audio Configuration";
-            // 
-            // chkDisableRadioEffects
-            // 
-            this.chkDisableRadioEffects.AutoSize = true;
-            this.chkDisableRadioEffects.Location = new System.Drawing.Point(413, 249);
-            this.chkDisableRadioEffects.Name = "chkDisableRadioEffects";
-            this.chkDisableRadioEffects.Size = new System.Drawing.Size(160, 17);
-            this.chkDisableRadioEffects.TabIndex = 22;
-            this.chkDisableRadioEffects.Text = "Disable realistic radio effects";
-            this.chkDisableRadioEffects.UseVisualStyleBackColor = true;
-            this.chkDisableRadioEffects.CheckedChanged += new System.EventHandler(this.chkDisableRadioEffects_CheckedChanged);
-            // 
-            // lblVolumeCom2
-            // 
-            this.lblVolumeCom2.AutoSize = true;
-            this.lblVolumeCom2.Location = new System.Drawing.Point(560, 148);
-            this.lblVolumeCom2.Name = "lblVolumeCom2";
-            this.lblVolumeCom2.Size = new System.Drawing.Size(13, 13);
-            this.lblVolumeCom2.TabIndex = 21;
-            this.lblVolumeCom2.Text = "0";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(23, 141);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(42, 26);
-            this.label4.TabIndex = 20;
-            this.label4.Text = "COM2\r\nVolume";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // TrackCom2Volume
-            // 
-            this.TrackCom2Volume.AutoSize = false;
-            this.TrackCom2Volume.BackColor = System.Drawing.SystemColors.Window;
-            this.TrackCom2Volume.LargeChange = 10;
-            this.TrackCom2Volume.Location = new System.Drawing.Point(71, 137);
-            this.TrackCom2Volume.Maximum = 100;
-            this.TrackCom2Volume.Name = "TrackCom2Volume";
-            this.TrackCom2Volume.Size = new System.Drawing.Size(487, 30);
-            this.TrackCom2Volume.TabIndex = 19;
-            this.TrackCom2Volume.TickFrequency = 5;
-            this.TrackCom2Volume.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            this.TrackCom2Volume.Scroll += new System.EventHandler(this.Com2Volume_Scroll);
-            // 
-            // inputVolumeLabel
-            // 
-            this.inputVolumeLabel.AutoSize = true;
-            this.inputVolumeLabel.Location = new System.Drawing.Point(560, 196);
-            this.inputVolumeLabel.Name = "inputVolumeLabel";
-            this.inputVolumeLabel.Size = new System.Drawing.Size(13, 13);
-            this.inputVolumeLabel.TabIndex = 18;
-            this.inputVolumeLabel.Text = "0";
-            // 
-            // levelMeterInput
-            // 
-            this.levelMeterInput.Location = new System.Drawing.Point(23, 236);
-            this.levelMeterInput.Name = "levelMeterInput";
-            this.levelMeterInput.Size = new System.Drawing.Size(359, 10);
-            this.levelMeterInput.TabIndex = 17;
-            this.levelMeterInput.Text = "levelMeter1";
-            this.levelMeterInput.Value = 0F;
-            // 
             // btnGuidedSetup
             // 
             this.btnGuidedSetup.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnGuidedSetup.Location = new System.Drawing.Point(30, 405);
+            this.btnGuidedSetup.Location = new System.Drawing.Point(17, 503);
             this.btnGuidedSetup.Name = "btnGuidedSetup";
             this.btnGuidedSetup.Size = new System.Drawing.Size(95, 23);
             this.btnGuidedSetup.TabIndex = 15;
@@ -649,6 +219,216 @@ namespace XPilot.PilotClient
             this.btnGuidedSetup.UseVisualStyleBackColor = true;
             this.btnGuidedSetup.Click += new System.EventHandler(this.btnGuidedSetup_Click);
             // 
+            // lstAudioDriver
+            // 
+            this.lstAudioDriver.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstAudioDriver.FormattingEnabled = true;
+            this.lstAudioDriver.Location = new System.Drawing.Point(18, 290);
+            this.lstAudioDriver.Name = "lstAudioDriver";
+            this.lstAudioDriver.Size = new System.Drawing.Size(594, 21);
+            this.lstAudioDriver.TabIndex = 14;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(17, 271);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Audio Driver";
+            // 
+            // lstInputDevice
+            // 
+            this.lstInputDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstInputDevice.FormattingEnabled = true;
+            this.lstInputDevice.Location = new System.Drawing.Point(17, 344);
+            this.lstInputDevice.Name = "lstInputDevice";
+            this.lstInputDevice.Size = new System.Drawing.Size(284, 21);
+            this.lstInputDevice.TabIndex = 16;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(17, 328);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(103, 13);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Microphone Device:";
+            // 
+            // lstListenDevice
+            // 
+            this.lstListenDevice.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.lstListenDevice.FormattingEnabled = true;
+            this.lstListenDevice.Location = new System.Drawing.Point(328, 344);
+            this.lstListenDevice.Name = "lstListenDevice";
+            this.lstListenDevice.Size = new System.Drawing.Size(284, 21);
+            this.lstListenDevice.TabIndex = 18;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(325, 325);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(75, 13);
+            this.label10.TabIndex = 17;
+            this.label10.Text = "Listen Device:";
+            // 
+            // label11
+            // 
+            this.label11.Location = new System.Drawing.Point(17, 396);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(283, 35);
+            this.label11.TabIndex = 19;
+            this.label11.Text = "Adjust your system\'s microphone level so the volume peak indicator remains green " +
+    "when speaking normally.";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // vuMeter
+            // 
+            this.vuMeter.Location = new System.Drawing.Point(17, 383);
+            this.vuMeter.Name = "vuMeter";
+            this.vuMeter.Size = new System.Drawing.Size(283, 10);
+            this.vuMeter.TabIndex = 20;
+            this.vuMeter.Text = "levelMeter1";
+            this.vuMeter.Value = 0F;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(324, 441);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(37, 13);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "COM2";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // trackCom2
+            // 
+            this.trackCom2.AutoSize = false;
+            this.trackCom2.BackColor = System.Drawing.SystemColors.Window;
+            this.trackCom2.LargeChange = 10;
+            this.trackCom2.Location = new System.Drawing.Point(368, 432);
+            this.trackCom2.Maximum = 150;
+            this.trackCom2.Name = "trackCom2";
+            this.trackCom2.Size = new System.Drawing.Size(212, 30);
+            this.trackCom2.TabIndex = 23;
+            this.trackCom2.TickFrequency = 10;
+            this.trackCom2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(325, 396);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(37, 13);
+            this.label13.TabIndex = 22;
+            this.label13.Text = "COM1\r\n";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // trackCom1
+            // 
+            this.trackCom1.AutoSize = false;
+            this.trackCom1.BackColor = System.Drawing.SystemColors.Window;
+            this.trackCom1.Location = new System.Drawing.Point(368, 383);
+            this.trackCom1.Maximum = 150;
+            this.trackCom1.Name = "trackCom1";
+            this.trackCom1.Size = new System.Drawing.Size(212, 30);
+            this.trackCom1.TabIndex = 21;
+            this.trackCom1.TickFrequency = 10;
+            this.trackCom1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            // 
+            // chkHfSquelch
+            // 
+            this.chkHfSquelch.AutoSize = true;
+            this.chkHfSquelch.Location = new System.Drawing.Point(17, 441);
+            this.chkHfSquelch.Name = "chkHfSquelch";
+            this.chkHfSquelch.Size = new System.Drawing.Size(118, 17);
+            this.chkHfSquelch.TabIndex = 25;
+            this.chkHfSquelch.TabStop = false;
+            this.chkHfSquelch.Tag = "KeepClientWindowVisible";
+            this.chkHfSquelch.Text = "Enable HF Squelch";
+            this.chkHfSquelch.UseVisualStyleBackColor = true;
+            // 
+            // chkRadioEffects
+            // 
+            this.chkRadioEffects.AutoSize = true;
+            this.chkRadioEffects.Location = new System.Drawing.Point(17, 469);
+            this.chkRadioEffects.Name = "chkRadioEffects";
+            this.chkRadioEffects.Size = new System.Drawing.Size(128, 17);
+            this.chkRadioEffects.TabIndex = 26;
+            this.chkRadioEffects.TabStop = false;
+            this.chkRadioEffects.Tag = "KeepClientWindowVisible";
+            this.chkRadioEffects.Text = "Disable Radio Effects";
+            this.chkRadioEffects.UseVisualStyleBackColor = true;
+            // 
+            // chkFlashPrivateMessage
+            // 
+            this.chkFlashPrivateMessage.AutoSize = true;
+            this.chkFlashPrivateMessage.Location = new System.Drawing.Point(318, 132);
+            this.chkFlashPrivateMessage.Name = "chkFlashPrivateMessage";
+            this.chkFlashPrivateMessage.Size = new System.Drawing.Size(230, 17);
+            this.chkFlashPrivateMessage.TabIndex = 27;
+            this.chkFlashPrivateMessage.TabStop = false;
+            this.chkFlashPrivateMessage.Tag = "KeepClientWindowVisible";
+            this.chkFlashPrivateMessage.Text = "Flash taskbar icon for new private message";
+            this.chkFlashPrivateMessage.UseVisualStyleBackColor = true;
+            // 
+            // chkFlashSelcal
+            // 
+            this.chkFlashSelcal.AutoSize = true;
+            this.chkFlashSelcal.Location = new System.Drawing.Point(318, 198);
+            this.chkFlashSelcal.Name = "chkFlashSelcal";
+            this.chkFlashSelcal.Size = new System.Drawing.Size(193, 17);
+            this.chkFlashSelcal.TabIndex = 28;
+            this.chkFlashSelcal.TabStop = false;
+            this.chkFlashSelcal.Tag = "KeepClientWindowVisible";
+            this.chkFlashSelcal.Text = "Flash taskbar icon for SELCAL alert";
+            this.chkFlashSelcal.UseVisualStyleBackColor = true;
+            // 
+            // chkFlashDisconnect
+            // 
+            this.chkFlashDisconnect.AutoSize = true;
+            this.chkFlashDisconnect.Location = new System.Drawing.Point(318, 231);
+            this.chkFlashDisconnect.Name = "chkFlashDisconnect";
+            this.chkFlashDisconnect.Size = new System.Drawing.Size(290, 17);
+            this.chkFlashDisconnect.TabIndex = 29;
+            this.chkFlashDisconnect.TabStop = false;
+            this.chkFlashDisconnect.Tag = "KeepClientWindowVisible";
+            this.chkFlashDisconnect.Text = "Flash taskbar icon when disconnected from the network";
+            this.chkFlashDisconnect.UseVisualStyleBackColor = true;
+            // 
+            // volCom1
+            // 
+            this.volCom1.AutoSize = true;
+            this.volCom1.Location = new System.Drawing.Point(584, 396);
+            this.volCom1.Name = "volCom1";
+            this.volCom1.Size = new System.Drawing.Size(21, 13);
+            this.volCom1.TabIndex = 30;
+            this.volCom1.Text = "0%";
+            this.volCom1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // volCom2
+            // 
+            this.volCom2.AutoSize = true;
+            this.volCom2.Location = new System.Drawing.Point(584, 441);
+            this.volCom2.Name = "volCom2";
+            this.volCom2.Size = new System.Drawing.Size(21, 13);
+            this.volCom2.TabIndex = 31;
+            this.volCom2.Text = "0%";
+            this.volCom2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // chkFlashRadioMessage
+            // 
+            this.chkFlashRadioMessage.AutoSize = true;
+            this.chkFlashRadioMessage.Location = new System.Drawing.Point(318, 165);
+            this.chkFlashRadioMessage.Name = "chkFlashRadioMessage";
+            this.chkFlashRadioMessage.Size = new System.Drawing.Size(221, 17);
+            this.chkFlashRadioMessage.TabIndex = 32;
+            this.chkFlashRadioMessage.TabStop = false;
+            this.chkFlashRadioMessage.Tag = "KeepClientWindowVisible";
+            this.chkFlashRadioMessage.Text = "Flash taskbar icon for new radio message";
+            this.chkFlashRadioMessage.UseVisualStyleBackColor = true;
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -656,11 +436,43 @@ namespace XPilot.PilotClient
             this.AutoScrollMargin = new System.Drawing.Size(6, 13);
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(694, 456);
+            this.ClientSize = new System.Drawing.Size(629, 543);
             this.ControlBox = false;
+            this.Controls.Add(this.chkFlashRadioMessage);
+            this.Controls.Add(this.volCom2);
+            this.Controls.Add(this.volCom1);
+            this.Controls.Add(this.chkFlashDisconnect);
+            this.Controls.Add(this.chkFlashSelcal);
+            this.Controls.Add(this.chkFlashPrivateMessage);
+            this.Controls.Add(this.chkRadioEffects);
             this.Controls.Add(this.btnGuidedSetup);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.chkHfSquelch);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.trackCom2);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.trackCom1);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label11);
+            this.Controls.Add(this.txtNetworkLogin);
+            this.Controls.Add(this.vuMeter);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.lstListenDevice);
+            this.Controls.Add(this.chkAutoSquawkModeC);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.txtFullName);
+            this.Controls.Add(this.lstInputDevice);
+            this.Controls.Add(this.txtNetworkPassword);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.lstAudioDriver);
+            this.Controls.Add(this.chkKeepVisible);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtHomeAirport);
+            this.Controls.Add(this.chkEnableNotificationSounds);
+            this.Controls.Add(this.lstServerName);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -668,77 +480,51 @@ namespace XPilot.PilotClient
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingsForm";
-            this.Padding = new System.Windows.Forms.Padding(30);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Settings";
-            ((System.ComponentModel.ISupportInitialize)(this.TrackInputVolumeDb)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TrackCom1Volume)).EndInit();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.spinPluginPort)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
-            this.tabGeneral.ResumeLayout(false);
-            this.tabAudio.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.TrackCom2Volume)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackCom2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackCom1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox txtNetworkPassword;
         private System.Windows.Forms.TextBox txtNetworkLogin;
         private System.Windows.Forms.TextBox txtHomeAirport;
         private System.Windows.Forms.TextBox txtFullName;
-        private System.Windows.Forms.ComboBox ddlServerName;
+        private System.Windows.Forms.ComboBox lstServerName;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox chkUpdates;
         private System.Windows.Forms.CheckBox chkKeepVisible;
         private System.Windows.Forms.CheckBox chkAutoSquawkModeC;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox chkFlashDisconnect;
-        private System.Windows.Forms.CheckBox chkFlashSelcal;
-        private System.Windows.Forms.CheckBox chkFlashRadioMessage;
-        private System.Windows.Forms.CheckBox chkFlashPrivateMessage;
-        private System.Windows.Forms.Label lblVolumeCom1;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.ComboBox audioInputDevice;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.ComboBox audioOutputDevice;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TrackBar TrackInputVolumeDb;
-        private System.Windows.Forms.Label lblAudioHelp;
-        private LevelMeter levelMeterInput;
-        private System.Windows.Forms.CheckBox chkSelcalSound;
-        private System.Windows.Forms.CheckBox chkRadioMessageSound;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabGeneral;
-        private System.Windows.Forms.TabPage tabAudio;
-        private ComboBox cbUpdateChannel;
-        private Label inputVolumeLabel;
-        private GroupBox groupBox4;
-        private Label lblVolumeCom2;
-        private Label label4;
-        private TrackBar TrackCom2Volume;
-        private CheckBox chkDisableRadioEffects;
-        private NumericUpDown spinPluginPort;
-        private Label label3;
+        private System.Windows.Forms.CheckBox chkEnableNotificationSounds;
         private Button btnGuidedSetup;
-        private TrackBar TrackCom1Volume;
-        private CheckBox chkVolumeKnobVolume;
+        private ComboBox lstAudioDriver;
+        private Label label1;
+        private ComboBox lstInputDevice;
+        private Label label2;
+        private ComboBox lstListenDevice;
+        private Label label10;
+        private Label label11;
+        private LevelMeter vuMeter;
+        private Label label12;
+        private TrackBar trackCom2;
+        private Label label13;
+        private TrackBar trackCom1;
+        private CheckBox chkHfSquelch;
+        private CheckBox chkRadioEffects;
+        private CheckBox chkFlashPrivateMessage;
+        private CheckBox chkFlashSelcal;
+        private CheckBox chkFlashDisconnect;
+        private Label volCom1;
+        private Label volCom2;
+        private CheckBox chkFlashRadioMessage;
     }
 }
