@@ -129,18 +129,18 @@ namespace XPilot.PilotClient.AudioForVatsim
             switch (e.TransceiverID)
             {
                 case 1:
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new XPlaneConnector.DataRefElement
-                    {
-                        DataRef = "xpilot/audio/com1_rx"
-                    }, e.ReceivingCallsigns.Count > 0 ? 1 : 0));
-                    ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, e.ReceivingCallsigns.Count > 0));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new XPlaneConnector.DataRefElement
+                    //{
+                    //    DataRef = "xpilot/audio/com1_rx"
+                    //}, e.ReceivingCallsigns.Count > 0 ? 1 : 0));
+                    //ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, e.ReceivingCallsigns.Count > 0));
                     break;
                 case 2:
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new XPlaneConnector.DataRefElement
-                    {
-                        DataRef = "xpilot/audio/com2_rx"
-                    }, e.ReceivingCallsigns.Count > 0 ? 1 : 0));
-                    ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(2, e.ReceivingCallsigns.Count > 0));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new XPlaneConnector.DataRefElement
+                    //{
+                    //    DataRef = "xpilot/audio/com2_rx"
+                    //}, e.ReceivingCallsigns.Count > 0 ? 1 : 0));
+                    //ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(2, e.ReceivingCallsigns.Count > 0));
                     break;
             }
         }

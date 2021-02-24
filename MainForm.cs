@@ -24,7 +24,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using Gma.System.MouseKeyHook;
 using Vatsim.Fsd.Connector;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
@@ -33,7 +32,6 @@ using XPilot.PilotClient.Core.Events;
 using XPilot.PilotClient.Network;
 using XPilot.PilotClient.Network.Controllers;
 using XPilot.PilotClient.XplaneAdapter;
-using XPlaneConnector;
 
 namespace XPilot.PilotClient
 {
@@ -63,8 +61,8 @@ namespace XPilot.PilotClient
         [EventPublication(EventTopics.SetXplaneDataRefValue)]
         public event EventHandler<DataRefEventArgs> SetXplaneDataRefValue;
 
-        [EventPublication(EventTopics.SendXplaneCommand)]
-        public event EventHandler<ClientEventArgs<XPlaneCommand>> SendXplaneCommand;
+        //[EventPublication(EventTopics.SendXplaneCommand)]
+        //public event EventHandler<ClientEventArgs<XPlaneCommand>> SendXplaneCommand;
 
         [EventPublication(EventTopics.WallopRequestSent)]
         public event EventHandler<WallopReceivedEventArgs> WallopRequestSent;
@@ -108,8 +106,6 @@ namespace XPilot.PilotClient
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-
-        private IKeyboardMouseEvents mGlobalHook;
 
         private bool mWaitingForConnection = true;
         private bool mInitializing = true;
@@ -164,7 +160,6 @@ namespace XPilot.PilotClient
             tabNotes.Text = "Notes";
             tabControl.TabPages.Add(tabNotes);
 
-            GlobalHookSubscribe();
             mEventBroker.Register(this);
         }
 
@@ -213,36 +208,9 @@ namespace XPilot.PilotClient
             }
         }
 
-        public void GlobalHookSubscribe()
-        {
-            mGlobalHook = Hook.GlobalEvents();
-            mGlobalHook.KeyDown += MGlobalHook_KeyDown;
-        }
-
-        public void GlobalHookUnsubscribe()
-        {
-            if (mGlobalHook == null) return;
-            mGlobalHook.KeyDown -= MGlobalHook_KeyDown;
-            mGlobalHook.Dispose();
-            mGlobalHook = null;
-        }
-
-        private void MGlobalHook_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (mConfig.ToggleDisplayConfiguration != null)
-            {
-                if (e.KeyCode == (Keys)mConfig.ToggleDisplayConfiguration.KeyCode)
-                {
-                    ScreenUtils.ToggleVisibility(mConfig.ClientWindowProperties, this);
-                }
-            }
-        }
-
         private void MainForm_TextCommandReceived(object sender, ClientEventArgs<string> e)
         {
             string[] split = e.Value.Split(new char[] { ' ' });
-
-            XPlaneConnector.XPlaneConnector xp = new XPlaneConnector.XPlaneConnector();
 
             try
             {
@@ -356,10 +324,10 @@ namespace XPilot.PilotClient
                                 }
                                 int code = Convert.ToInt32(split[1]);
 
-                                SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                {
-                                    DataRef = "sim/cockpit/radios/transponder_code"
-                                }, code));
+                                //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                //{
+                                //    DataRef = "sim/cockpit/radios/transponder_code"
+                                //}, code));
 
                                 NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Transponder code set to {code:0000}."));
                             }
@@ -387,10 +355,10 @@ namespace XPilot.PilotClient
 
                                 int com = (split[0].ToLower() == ".com1") ? 1 : 2;
 
-                                SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                {
-                                    DataRef = $"sim/cockpit2/radios/actuators/{ (com == 1 ? "com1" : "com2") }_frequency_hz"
-                                }, (f + 100000) / 10));
+                                //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                //{
+                                //    DataRef = $"sim/cockpit2/radios/actuators/{ (com == 1 ? "com1" : "com2") }_frequency_hz"
+                                //}, (f + 100000) / 10));
                             }
                             break;
                         case ".tx":
@@ -408,19 +376,19 @@ namespace XPilot.PilotClient
                                 switch (radio)
                                 {
                                     case 1:
-                                        SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                        {
-                                            DataRef = "sim/cockpit2/radios/actuators/audio_com_selection"
-                                        }, 6));
+                                        //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                        //{
+                                        //    DataRef = "sim/cockpit2/radios/actuators/audio_com_selection"
+                                        //}, 6));
                                         mForceCom1Tx = true;
                                         mForceCom2Tx = false;
                                         NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} transmit enabled."));
                                         break;
                                     case 2:
-                                        SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                        {
-                                            DataRef = "sim/cockpit2/radios/actuators/audio_com_selection"
-                                        }, 7));
+                                        //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                        //{
+                                        //    DataRef = "sim/cockpit2/radios/actuators/audio_com_selection"
+                                        //}, 7));
                                         mForceCom2Tx = true;
                                         mForceCom1Tx = false;
                                         NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} transmit enabled."));
@@ -452,26 +420,26 @@ namespace XPilot.PilotClient
                                     switch (radio)
                                     {
                                         case 1:
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
-                                            }, 1));
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
-                                            }, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
+                                            //}, 1));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
+                                            //}, 0));
                                             mForceCom1Rx = true;
                                             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} receiver on."));
                                             break;
                                         case 2:
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
-                                            }, 0));
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
-                                            }, 1));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
+                                            //}, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
+                                            //}, 1));
                                             mForceCom2Rx = true;
                                             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} receiver on."));
                                             break;
@@ -482,26 +450,26 @@ namespace XPilot.PilotClient
                                     switch (radio)
                                     {
                                         case 1:
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
-                                            }, 0));
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
-                                            }, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
+                                            //}, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
+                                            //}, 0));
                                             mForceCom1Rx = false;
                                             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} receiver off."));
                                             break;
                                         case 2:
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
-                                            }, 0));
-                                            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                                            {
-                                                DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
-                                            }, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com1"
+                                            //}, 0));
+                                            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                                            //{
+                                            //    DataRef = "sim/cockpit2/radios/actuators/audio_selection_com2"
+                                            //}, 0));
                                             mForceCom2Rx = false;
                                             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"COM{radio} receiver off."));
                                             break;
@@ -862,10 +830,10 @@ namespace XPilot.PilotClient
                 mNetworkManager.SquawkIdent();
             }
 
-            if (mFlightLoaded)
-            {
-                SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderIdent));
-            }
+            //if (mFlightLoaded)
+            //{
+            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderIdent));
+            //}
 
             TextCommandFocus();
         }
@@ -874,39 +842,39 @@ namespace XPilot.PilotClient
         {
             chkModeC.Clicked = !chkModeC.Clicked;
 
-            var laminarB738 = new DataRefElement
-            {
-                DataRef = "laminar/B738/knob/transpoder_pos"
-            };
+            //var laminarB738 = new DataRefElement
+            //{
+            //    DataRef = "laminar/B738/knob/transpoder_pos"
+            //};
 
-            var tolis = new DataRefElement
-            {
-                DataRef = "ckpt/transponder/mode/anim"
-            };
+            //var tolis = new DataRefElement
+            //{
+            //    DataRef = "ckpt/transponder/mode/anim"
+            //};
 
-            var laminarB738_Dn_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
-            var laminarB738_Up_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
+            //var laminarB738_Dn_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
+            //var laminarB738_Up_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
 
             if (mFlightLoaded)
             {
                 if (chkModeC.Clicked)
                 {
-                    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Up_Cmd));
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
-                    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderAlt));
+                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Up_Cmd));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
+                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderAlt));
 
                     // tolis a319
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 0));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 0));
                     mConfig.SquawkingModeC = true;
                 }
                 else
                 {
-                    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Dn_Cmd));
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 1));
-                    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderOff));
+                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Dn_Cmd));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 1));
+                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderOff));
 
                     // tolis a319
-                    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 4));
+                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 4));
                     mConfig.SquawkingModeC = false;
                 }
             }
@@ -1044,10 +1012,10 @@ namespace XPilot.PilotClient
             if (!string.IsNullOrEmpty(item.Tag.ToString()))
             {
                 uint freq = mControllerManager.GetFrequencyByCallsign(item.Tag.ToString()).FsdFrequencyToHertz() / 1000;
-                SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-                {
-                    DataRef = $"sim/cockpit2/radios/actuators/com1_frequency_hz_833"
-                }, freq));
+                //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+                //{
+                //    DataRef = $"sim/cockpit2/radios/actuators/com1_frequency_hz_833"
+                //}, freq));
             }
         }
 
@@ -1080,7 +1048,6 @@ namespace XPilot.PilotClient
             SessionEnded?.Invoke(this, new EventArgs());
             mConfig.SaveConfig();
             mEventBroker.Unregister(this);
-            GlobalHookUnsubscribe();
         }
 
         private void MainForm_MouseDown(object sender, MouseEventArgs e)
@@ -1272,10 +1239,10 @@ namespace XPilot.PilotClient
                 btnIdent.Enabled = mConnectInfo.ObserverMode ? false : true;
             }
 
-            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-            {
-                DataRef = "xpilot/login/status"
-            }, 1));
+            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+            //{
+            //    DataRef = "xpilot/login/status"
+            //}, 1));
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
@@ -1305,10 +1272,10 @@ namespace XPilot.PilotClient
             };
             XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(Data.ToJSON()));
 
-            SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
-            {
-                DataRef = "xpilot/login/status"
-            }, 0));
+            //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(new DataRefElement
+            //{
+            //    DataRef = "xpilot/login/status"
+            //}, 0));
 
             if (mConfig.FlashTaskbarDisconnect && (e.Info != null && e.Info.Type != DisconnectType.Intentional))
             {

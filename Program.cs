@@ -79,7 +79,6 @@ namespace XPilot.PilotClient
                 (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
                 (kernel.Get<ISelcalGenerator>() as IEventBus).Register();
                 (kernel.Get<INetworkAircraftManager>() as IEventBus).Register();
-                (kernel.Get<IPttManager>() as IEventBus).Register();
                 (kernel.Get<IControllerManager>() as IEventBus).Register();
                 (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
                 Application.Run(mainForm);

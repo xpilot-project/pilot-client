@@ -20,19 +20,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPlaneConnector;
 
 namespace XPilot.PilotClient.Core.Events
 {
     public class DataRefEventArgs : EventArgs
     {
-        public XPlaneConnector.DataRefElement DataRef { get; set; }
-        public float Value { get; set; }
-        public DataRefEventArgs() { }
-        public DataRefEventArgs(XPlaneConnector.DataRefElement dataRef, float value)
-        {
-            DataRef = dataRef;
-            Value = value;
-        }
+        //public XPlaneConnector.DataRefElement DataRef { get; set; }
+        //public float Value { get; set; }
+        //public DataRefEventArgs() { }
+        //public DataRefEventArgs(XPlaneConnector.DataRefElement dataRef, float value)
+        //{
+        //    DataRef = dataRef;
+        //    Value = value;
+        //}
     }
 }

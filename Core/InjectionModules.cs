@@ -43,7 +43,6 @@ namespace XPilot.PilotClient.Core
             Bind<IUserAircraftManager>().To(typeof(UserAircraftManager)).InSingletonScope();
             Bind<ISelcalGenerator>().To(typeof(SelcalGenerator)).InSingletonScope();
             Bind<INetworkAircraftManager>().To(typeof(NetworkAircraftManager)).InSingletonScope();
-            Bind<IPttManager>().To(typeof(PttManager)).InSingletonScope();
             Bind<IControllerManager>().To(typeof(ControllerManager)).InSingletonScope();
             Bind<IControllerAtisManager>().To(typeof(ControllerAtisManager)).InSingletonScope();
         }

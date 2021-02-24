@@ -28,7 +28,6 @@ using XPilot.PilotClient.Core;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using GeoVR.Client;
-using SharpDX.DirectInput;
 
 namespace XPilot.PilotClient
 {
@@ -51,17 +50,6 @@ namespace XPilot.PilotClient
         private readonly IEventBroker mEventBroker;
         private readonly IFsdManger mNetworkManager;
         private readonly IUserInterface mUserInterface;
-        private ToggleDisplayConfiguration mToggleDisplayConfig;
-        private bool mRecordDisplayKey;
-        private readonly DirectInput mDirectInput;
-        private readonly List<Joystick> mPttDevices = new List<Joystick>();
-        private readonly Timer mPttDevicePollTimer;
-        private readonly List<PTTConfiguration> mIgnoreList = new List<PTTConfiguration>();
-        private PTTConfiguration mNewPttConfiguration;
-        private bool mScanning;
-
-        [DllImport("user32.dll")]
-        private static extern ushort GetAsyncKeyState(int value);
 
         public SettingsForm(IAppConfig appConfig, IAfvManager audioForVatsim, IEventBroker eventBroker, IFsdManger networkManager, IUserInterface userInterface)
         {
@@ -74,15 +62,7 @@ namespace XPilot.PilotClient
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
 
-            mDirectInput = new DirectInput();
-            mPttDevicePollTimer = new Timer
-            {
-                Interval = 50
-            };
-            mPttDevicePollTimer.Tick += PttDevicePollTimer_Tick;
-
             cbUpdateChannel.BindEnumToCombobox(UpdateChannel.Stable);
-            vhfEqualizer.BindEnumToCombobox(EqualizerPresets.VHFEmulation2);
 
             if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
             if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
@@ -144,9 +124,6 @@ namespace XPilot.PilotClient
             txtFullName.Text = mConfig.Name;
             txtHomeAirport.Text = mConfig.HomeAirport;
             ddlServerName.SelectedIndex = ddlServerName.FindStringExact(mConfig.ServerName);
-            lblPTTValue.Text = mConfig.PTTConfiguration.ToString();
-            mNewPttConfiguration = mConfig.PTTConfiguration;
-            mToggleDisplayConfig = mConfig.ToggleDisplayConfiguration;
             spinPluginPort.Value = mConfig.TcpPort;
             audioInputDevice.SelectedItem = mConfig.InputDeviceName;
             audioOutputDevice.SelectedItem = mConfig.OutputDeviceName;
@@ -167,11 +144,7 @@ namespace XPilot.PilotClient
             chkSelcalSound.Checked = mConfig.PlayGenericSelCalAlert;
             chkRadioMessageSound.Checked = mConfig.PlayRadioMessageAlert;
             cbUpdateChannel.SelectedValue = mConfig.UpdateChannel;
-            vhfEqualizer.SelectedValue = mConfig.VhfEqualizer;
             chkVolumeKnobVolume.Checked = mConfig.VolumeKnobsControlVolume;
-            lblDisplayShortcut.Text = mConfig.ToggleDisplayConfiguration.ToString();
-            TogglePTTButtons();
-            ToggleDisplayKeyButtons();
         }
 
         private void LoadNetworkServers()
@@ -203,271 +176,6 @@ namespace XPilot.PilotClient
             {
                 audioOutputDevice.Items.Add(outputDevice);
             }
-        }
-
-        private void btnSetNewPTT_Click(object sender, EventArgs e)
-        {
-            if (mScanning)
-            {
-                StopScanning();
-            }
-            else
-            {
-                if (mNewPttConfiguration != null)
-                {
-                    mIgnoreList.Add(mNewPttConfiguration);
-                }
-                StartScanning();
-            }
-        }
-
-        private void StartScanning()
-        {
-            mScanning = true;
-            UpdateControls();
-            AcquireDevices();
-            IdentifyPressedButtons();
-            mPttDevicePollTimer.Start();
-        }
-
-        private void StopScanning()
-        {
-            mPttDevicePollTimer.Stop();
-            mScanning = false;
-            UpdateControls();
-            DisposeDevices();
-        }
-
-        private void DisposeDevices()
-        {
-            if (mPttDevices != null)
-            {
-                foreach (Joystick device in mPttDevices)
-                {
-                    device.Dispose();
-                }
-                mPttDevices.Clear();
-            }
-        }
-        private void UpdateControls()
-        {
-            if (mScanning)
-            {
-                btnSetNewPTT.Text = "Cancel";
-                lblPTTValue.Text = "Waiting for button or key press...";
-                btnClearPTT.Enabled = false;
-            }
-            else
-            {
-                btnClearPTT.Enabled = true;
-                if (mNewPttConfiguration != null)
-                {
-                    btnSetNewPTT.Text = "Set a Different PTT Key or Button";
-                    btnClearPTT.Enabled = mNewPttConfiguration.DeviceType != PTTDeviceType.None;
-                    lblPTTValue.Text = mNewPttConfiguration.ToString();
-                }
-                else
-                {
-                    btnSetNewPTT.Text = "Set New PTT Key or Button";
-                    btnClearPTT.Enabled = mConfig.PTTConfiguration.DeviceType != PTTDeviceType.None;
-                    lblPTTValue.Text = mConfig.PTTConfiguration.ToString();
-                }
-            }
-            Application.DoEvents();
-        }
-
-        private void TogglePTTButtons()
-        {
-            if (mPttDevicePollTimer.Enabled)
-            {
-                btnClearPTT.Enabled = false;
-            }
-            else if (mNewPttConfiguration != null)
-            {
-                btnClearPTT.Enabled = (mNewPttConfiguration.DeviceType > PTTDeviceType.None);
-            }
-            else
-            {
-                btnClearPTT.Enabled = (mConfig.PTTConfiguration.DeviceType > PTTDeviceType.None);
-            }
-        }
-
-        private void PttDevicePollTimer_Tick(object sender, EventArgs e)
-        {
-            ScanDevices();
-        }
-
-        private void AcquireDevices()
-        {
-            mPttDevices.Clear();
-            foreach (var deviceInstance in mDirectInput.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices))
-            {
-                if (mDirectInput.IsDeviceAttached(deviceInstance.InstanceGuid))
-                {
-                    Joystick device = new Joystick(mDirectInput, deviceInstance.InstanceGuid);
-                    try
-                    {
-                        device.Acquire();
-                        mPttDevices.Add(device);
-                    }
-                    catch { }
-                }
-            }
-        }
-
-        private void IdentifyPressedButtons()
-        {
-            foreach (Joystick device in mPttDevices)
-            {
-                try
-                {
-                    JoystickState state = device.GetCurrentState();
-                    bool[] buttons = state.Buttons;
-                    for (int i = 0; i < buttons.Length; i++)
-                    {
-                        if (buttons[i])
-                        {
-                            mIgnoreList.Add(new PTTConfiguration()
-                            {
-                                DeviceType = PTTDeviceType.Joystick,
-                                JoystickGuidString = device.Information.InstanceGuid.ToString(),
-                                ButtonOrKey = i,
-                                Name = device.Information.InstanceName
-                            });
-                        }
-                    }
-                }
-                catch (SharpDX.SharpDXException) { }
-            }
-        }
-
-        private void ScanDevices()
-        {
-            foreach (Joystick device in mPttDevices)
-            {
-                ScanDevice(device, out bool buttonPressDetected);
-                if (buttonPressDetected)
-                {
-                    break;
-                }
-            }
-        }
-
-        private void ScanDevice(Joystick device, out bool buttonPressDetected)
-        {
-            buttonPressDetected = false;
-            try
-            {
-                JoystickState state = device.GetCurrentState();
-                bool[] buttons = state.Buttons;
-                for (int i = 0; i < buttons.Length; i++)
-                {
-                    if (buttons[i])
-                    {
-                        PTTConfiguration config = new PTTConfiguration()
-                        {
-                            DeviceType = PTTDeviceType.Joystick,
-                            JoystickGuidString = device.Information.InstanceGuid.ToString(),
-                            ButtonOrKey = i,
-                            Name = device.Information.InstanceName
-                        };
-                        if (mIgnoreList.Contains(config))
-                        {
-                            continue;
-                        }
-                        mNewPttConfiguration = config;
-                        buttonPressDetected = true;
-                        StopScanning();
-                        break;
-                    }
-                }
-            }
-            catch (SharpDX.SharpDXException) { }
-        }
-
-        private void SettingsForm_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (mRecordDisplayKey)
-            {
-                mToggleDisplayConfig = new ToggleDisplayConfiguration();
-                mToggleDisplayConfig.ShortcutType = ShortcutType.Keyboard;
-                mToggleDisplayConfig.KeyCode = (int)GetVirtualKey(e.KeyCode);
-                btnSetDisplayKey.Text = "Set New Display Key";
-                lblDisplayShortcut.Text = mToggleDisplayConfig.ToString();
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-                mRecordDisplayKey = false;
-                ToggleDisplayKeyButtons();
-            }
-            else
-            {
-                if (!mScanning)
-                    return;
-
-                var config = new PTTConfiguration
-                {
-                    DeviceType = PTTDeviceType.Keyboard,
-                    ButtonOrKey = (int)GetVirtualKey(e.KeyCode),
-                    Name = "Keyboard"
-                };
-
-                if (mIgnoreList.Contains(config))
-                    return;
-
-                mNewPttConfiguration = config;
-                StopScanning();
-
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        private Keys GetVirtualKey(Keys keyCode)
-        {
-            Keys key = Keys.Add;
-            switch (keyCode)
-            {
-                case Keys.ControlKey:
-                    if (0 != (GetAsyncKeyState((int)Keys.RControlKey) & 0x8000))
-                    {
-                        key = Keys.RControlKey;
-                    }
-                    else if (0 != (GetAsyncKeyState((int)Keys.LControlKey) & 0x8000))
-                    {
-                        key = Keys.LControlKey;
-                    }
-                    break;
-                case Keys.Menu:
-                    if (0 != (GetAsyncKeyState((int)Keys.RMenu) & 0x8000))
-                    {
-                        key = Keys.RMenu;
-                    }
-                    else if (0 != (GetAsyncKeyState((int)Keys.LMenu) & 0x8000))
-                    {
-                        key = Keys.LMenu;
-                    }
-                    break;
-                case Keys.ShiftKey:
-                    if (0 != (GetAsyncKeyState((int)Keys.RShiftKey) & 0x8000))
-                    {
-                        key = Keys.RShiftKey;
-                    }
-                    else if (0 != (GetAsyncKeyState((int)Keys.LShiftKey) & 0x8000))
-                    {
-                        key = Keys.LShiftKey;
-                    }
-                    break;
-                default:
-                    key = keyCode;
-                    break;
-            }
-            return key;
-        }
-
-        private void BtnClearPTT_Click(object sender, EventArgs e)
-        {
-            mNewPttConfiguration = new PTTConfiguration();
-            UpdateControls();
         }
 
         private void ShowError(string message)
@@ -569,17 +277,8 @@ namespace XPilot.PilotClient
                 mConfig.PlayGenericSelCalAlert = chkSelcalSound.Checked;
                 mConfig.PlayRadioMessageAlert = chkRadioMessageSound.Checked;
                 mConfig.UpdateChannel = (UpdateChannel)cbUpdateChannel.SelectedValue;
-                mConfig.VhfEqualizer = (EqualizerPresets)vhfEqualizer.SelectedValue;
                 mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
                 mConfig.TcpPort = (int)spinPluginPort.Value;
-                if (!mNewPttConfiguration.Equals(mConfig.PTTConfiguration))
-                {
-                    mConfig.PTTConfiguration = mNewPttConfiguration;
-                }
-                if (!mToggleDisplayConfig.Equals(mConfig.ToggleDisplayConfiguration))
-                {
-                    mConfig.ToggleDisplayConfiguration = mToggleDisplayConfig;
-                }
                 mConfig.SaveConfig();
                 ClientConfigChanged?.Invoke(this, EventArgs.Empty);
                 Close();
@@ -596,59 +295,6 @@ namespace XPilot.PilotClient
             else if (e.KeyCode != Keys.Back && e.KeyCode != Keys.Delete && e.KeyCode != Keys.Left && e.KeyCode != Keys.Right && e.KeyCode != Keys.Up && e.KeyCode != Keys.Down && e.KeyCode != Keys.Home && e.KeyCode != Keys.End && (e.KeyCode < Keys.A || e.KeyCode > Keys.Z) && (e.Modifiers != Keys.None || e.KeyValue < 48 || e.KeyValue > 57) && (e.Modifiers != Keys.None || e.KeyValue < 96 || e.KeyValue > 105))
             {
                 e.SuppressKeyPress = true;
-            }
-        }
-
-        private void BtnSetToggleKey_Click(object sender, EventArgs e)
-        {
-            if (mRecordDisplayKey)
-            {
-                btnSetDisplayKey.Text = "Set New Display Key";
-                ToggleDisplayKeyButtons();
-                mRecordDisplayKey = false;
-            }
-            else
-            {
-                btnSetDisplayKey.Text = "Cancel";
-                ToggleDisplayKeyButtons();
-                mRecordDisplayKey = true;
-            }
-        }
-
-        private void ToggleDisplayKeyButtons()
-        {
-            if (mRecordDisplayKey)
-            {
-                btnClearDisplayKey.Enabled = false;
-            }
-            else if (mToggleDisplayConfig != null)
-            {
-                btnClearDisplayKey.Enabled = (mToggleDisplayConfig.ShortcutType == ShortcutType.Keyboard);
-            }
-            else
-            {
-                btnClearDisplayKey.Enabled = (mConfig.ToggleDisplayConfiguration.ShortcutType == ShortcutType.Keyboard);
-            }
-        }
-
-        private void BtnClearToggle_Click(object sender, EventArgs e)
-        {
-            mRecordDisplayKey = false;
-            mToggleDisplayConfig = new ToggleDisplayConfiguration();
-            lblDisplayShortcut.Text = mToggleDisplayConfig.ToString();
-            ToggleDisplayKeyButtons();
-        }
-
-        private void vhfEqualizer_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            if (vhfEqualizer.Items.Count > 0)
-            {
-                if (mConfig.VhfEqualizer != (EqualizerPresets)vhfEqualizer.SelectedValue)
-                {
-                    RestartAfvUserClient(this, EventArgs.Empty);
-                    mConfig.VhfEqualizer = (EqualizerPresets)vhfEqualizer.SelectedValue;
-                    mConfig.SaveConfig();
-                }
             }
         }
 

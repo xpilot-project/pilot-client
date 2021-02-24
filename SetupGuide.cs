@@ -72,8 +72,6 @@ namespace XPilot.PilotClient
                     return new NetworkCredentials(this, mConfig, mNetworkManager);
                 case "AudioConfiguration":
                     return new AudioConfiguration(this, mConfig, mAfv, mEventBroker);
-                case "PushToTalk":
-                    return new PushToTalk(this, mConfig);
             }
         }
 

@@ -31,8 +31,8 @@ namespace XPilot.PilotClient.XplaneAdapter
         [EventPublication(EventTopics.SetXplaneDataRefValue)]
         public event EventHandler<DataRefEventArgs> SetXplaneDataRefValue;
 
-        [EventPublication(EventTopics.SendXplaneCommand)]
-        public event EventHandler<ClientEventArgs<XPlaneConnector.XPlaneCommand>> SendXplaneCommand;
+        //[EventPublication(EventTopics.SendXplaneCommand)]
+        //public event EventHandler<ClientEventArgs<XPlaneConnector.XPlaneCommand>> SendXplaneCommand;
 
         private const int ACCONFIG_TOKEN_REFRESH_INTERVAL = 5000;
         private const int ACCONFIG_MAX_TOKENS = 10;
@@ -134,20 +134,20 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
             bool wasAirborne = mAirborne;
             mAirborne = !UserAircraftData.OnGround;
-            if (mInitialAircraftDataReceived && !wasAirborne && mAirborne && !mConfig.SquawkingModeC && mConfig.AutoSquawkModeC)
-            {
-                var laminarB738 = new XPlaneConnector.DataRefElement
-                {
-                    DataRef = "laminar/B738/knob/transpoder_pos"
-                };
+            //if (mInitialAircraftDataReceived && !wasAirborne && mAirborne && !mConfig.SquawkingModeC && mConfig.AutoSquawkModeC)
+            //{
+            //    var laminarB738 = new XPlaneConnector.DataRefElement
+            //    {
+            //        DataRef = "laminar/B738/knob/transpoder_pos"
+            //    };
 
-                var laminarB738_Dn_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
-                var laminarB738_Up_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
+            //    var laminarB738_Dn_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
+            //    var laminarB738_Up_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
 
-                SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(laminarB738_Up_Cmd));
-                SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
-                SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(XPlaneConnector.Commands.TransponderTransponderAlt));
-            }
+            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(laminarB738_Up_Cmd));
+            //    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
+            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(XPlaneConnector.Commands.TransponderTransponderAlt));
+            //}
             mInitialAircraftDataReceived = true;
         }
     }
