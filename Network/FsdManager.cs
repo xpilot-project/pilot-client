@@ -538,7 +538,7 @@ namespace XPilot.PilotClient.Network
                     }
                     if (mUserAircraftData != null)
                     {
-                        FSD.SendPDU(new PDUPilotPosition(OurCallsign, mUserAircraftData.TransponderCode, mUserAircraftData.TransponderMode >= 2, mIsIdenting || mUserAircraftData.TransponderIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMsl * 3.28084), Convert.ToInt32(mUserAircraftData.PressureAltitude), Convert.ToInt32(mUserAircraftData.GroundSpeed), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Bank), Convert.ToInt32(mUserAircraftData.Heading)));
+                        FSD.SendPDU(new PDUPilotPosition(OurCallsign, mUserAircraftData.TransponderCode, mUserAircraftData.TransponderMode >= 2, mIsIdenting || mUserAircraftData.TransponderIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMsl * 3.28084), Convert.ToInt32(mUserAircraftData.PressureAltitude), Convert.ToInt32(mUserAircraftData.GroundSpeed), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Roll), Convert.ToInt32(mUserAircraftData.Yaw)));
                     }
                 }
             }

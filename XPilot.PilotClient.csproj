@@ -72,6 +72,9 @@
     <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
+    <Reference Include="Google.Protobuf, Version=3.15.2.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>packages\Google.Protobuf.3.15.2\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="KeyMouseHook, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\KeyMouseHook.1.0.6\lib\net40\KeyMouseHook.dll</HintPath>
     </Reference>
@@ -140,9 +143,6 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="XPlaneConnector, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\XPlaneConnector.1.2.0\lib\net46\XPlaneConnector.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AudioUtils.cs" />
@@ -153,6 +153,7 @@
     <Compile Include="Common\FlightPlanTypeExtensions.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
     <Compile Include="Common\JsonUtils.cs" />
+    <Compile Include="Common\ProtobufUtils.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
     <Compile Include="Common\SerializationUtils.cs" />
     <Compile Include="Common\StringUtils.cs" />
@@ -250,7 +251,10 @@
     <Compile Include="SetupGuide\WelcomeView.Designer.cs">
       <DependentUpon>WelcomeView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Protobuf\CslValidatePb.cs" />
     <Compile Include="XplaneAdapter\IUserAircraftManager.cs" />
+    <Compile Include="Protobuf\PluginHashPb.cs" />
+    <Compile Include="Protobuf\PluginVersionPb.cs" />
     <Compile Include="XplaneAdapter\UserAircraftData.cs" />
     <Compile Include="XplaneAdapter\UserAircraftManager.cs" />
     <Compile Include="XplaneAdapter\UserAircraftRadioStack.cs" />
@@ -362,8 +366,10 @@
     <Compile Include="Network\Controllers\Controller.cs" />
     <Compile Include="XplaneAdapter\IXplaneConnectionManager.cs" />
     <Compile Include="XplaneAdapter\WhosOnlineList.cs" />
+    <Compile Include="Protobuf\WrapperPb.cs" />
     <Compile Include="XplaneAdapter\XplaneConnect.cs" />
     <Compile Include="XplaneAdapter\XplaneConnectionManager.cs" />
+    <Compile Include="Protobuf\XplaneDataPb.cs" />
     <EmbeddedResource Include="ConnectForm.resx">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </EmbeddedResource>

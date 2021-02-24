@@ -27,14 +27,14 @@ namespace XPilot.PilotClient.XplaneAdapter
     {
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public double Heading { get; set; }
-        public double Bank { get; set; }
+        public double Yaw { get; set; }
+        public double Roll { get; set; }
         public double Pitch { get; set; }
         public double AltitudeMsl { get; set; }
         public double PressureAltitude { get; set; }
         public double GroundSpeed { get; set; }
         public bool OnGround { get; set; }
-        public float FlapsPercentage { get; set; }
+        public double Flaps { get; set; }
         public bool SpeedBrakeDeployed { get; set; }
         public bool GearDown { get; set; }
         public bool StrobeLightsOn { get; set; }
@@ -61,14 +61,14 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             return Latitude == other.Latitude &&
                 Longitude == other.Longitude &&
-                Heading == other.Heading &&
-                Bank == other.Bank &&
+                Yaw == other.Yaw &&
+                Roll == other.Roll &&
                 Pitch == other.Pitch &&
                 AltitudeMsl == other.AltitudeMsl &&
                 PressureAltitude == other.PressureAltitude &&
                 GroundSpeed == other.GroundSpeed &&
                 OnGround == other.OnGround &&
-                FlapsPercentage == other.FlapsPercentage &&
+                Flaps == other.Flaps &&
                 SpeedBrakeDeployed == other.SpeedBrakeDeployed &&
                 GearDown == other.GearDown &&
                 StrobeLightsOn == other.StrobeLightsOn &&

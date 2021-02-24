@@ -128,7 +128,7 @@ namespace XPilot.PilotClient.Aircraft
                 Lights = AircraftConfigurationLights.FromUserAircraftData(uad),
                 Engines = AircraftConfigurationEngines.FromUserAircraftData(uad),
                 GearDown = uad.GearDown,
-                FlapsPercent = RoundUpToNearest5(uad.FlapsPercentage),
+                FlapsPercent = RoundUpToNearest5(uad.Flaps),
                 SpoilersDeployed = uad.SpeedBrakeDeployed,
                 OnGround = uad.OnGround
             };
