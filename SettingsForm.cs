@@ -41,10 +41,7 @@ namespace XPilot.PilotClient
         private readonly IEventBroker mEventBroker;
         private readonly IFsdManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
-
-        private List<string> mAudioDrivers = new List<string>();
-        private List<string> mListenDevices = new List<string>();
-        private List<string> mInputDevices = new List<string>();
+        private Timer mVuTimer;
 
         public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, IFsdManager networkManager, IUserInterface userInterface)
         {
@@ -57,9 +54,11 @@ namespace XPilot.PilotClient
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
 
+            mVuTimer = new Timer() { Interval = 50 };
+            mVuTimer.Tick += VuTimer_Tick;
+
             LoadNetworkServers();
 
-            mAudioDrivers.Clear();
             foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
             {
                 ComboboxItem item = new ComboboxItem();
@@ -67,6 +66,12 @@ namespace XPilot.PilotClient
                 item.Value = driver.Value;
                 lstAudioDriver.Items.Add(item);
             }
+        }
+
+        private void VuTimer_Tick(object sender, EventArgs e)
+        {
+            float v = (float)ScaleVu(AFVBindings.getInputPeak());
+            vuMeter.Value = v;
         }
 
         [EventSubscription(EventTopics.NetworkServerListUpdated, typeof(OnUserInterfaceAsync))]
@@ -79,6 +84,12 @@ namespace XPilot.PilotClient
         public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)
         {
             vuMeter.Value = e.Value;
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            mVuTimer.Stop();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -105,6 +116,7 @@ namespace XPilot.PilotClient
             chkFlashRadioMessage.Checked = mConfig.FlashTaskbarRadioMessage;
             chkFlashSelcal.Checked = mConfig.FlashTaskbarSelcal;
             chkKeepVisible.Checked = mConfig.KeepWindowVisible;
+            mVuTimer.Start();
         }
 
         private void LoadNetworkServers()
@@ -237,6 +249,8 @@ namespace XPilot.PilotClient
                 };
                 lstInputDevice.Items.Add(item);
             }
+
+            mAudio.ConfigureAudioDevices();
         }
 
         private void lstInputDevice_SelectedValueChanged(object sender, EventArgs e)
@@ -265,6 +279,15 @@ namespace XPilot.PilotClient
                     mAudio.ConfigureAudioDevices();
                 }
             }
+        }
+
+        private double ScaleVu(double v)
+        {
+            int limitMin = 0;
+            int limitMax = 1;
+            int baseMin = -40;
+            int baseMax = 0;
+            return ((limitMax - limitMin) * (v - baseMin)) / (baseMax - baseMin) + limitMin;
         }
     }
 
