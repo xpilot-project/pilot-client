@@ -27,32 +27,32 @@ namespace XPilot.PilotClient.Network.Controllers
 {
     public class ControllerManager : EventBus, IControllerManager
     {
-        [EventPublication(EventTopics.ControllerAdded)]
-        public event EventHandler<ControllerEventArgs> ControllerAdded;
+        [EventPublication(EventTopics.AddControllerRequestReceived)]
+        public event EventHandler<ControllerUpdateReceived> RaiseAddControllerRequestReceived;
 
-        [EventPublication(EventTopics.ControllerDeleted)]
-        public event EventHandler<ControllerEventArgs> ControllerDeleted;
+        [EventPublication(EventTopics.DeleteControllerRequestReceived)]
+        public event EventHandler<ControllerUpdateReceived> RaiseDeleteControllerRequestReceived;
 
         [EventPublication(EventTopics.ControllerFrequencyChanged)]
-        public event EventHandler<ControllerEventArgs> ControllerFrequencyChanged;
+        public event EventHandler<ControllerUpdateReceived> ControllerFrequencyChanged;
 
         [EventPublication(EventTopics.ControllerLocationChanged)]
-        public event EventHandler<ControllerEventArgs> ControllerLocationChanged;
+        public event EventHandler<ControllerUpdateReceived> ControllerLocationChanged;
 
         [EventPublication(EventTopics.ControllerSupportsNewInfoChanged)]
-        public event EventHandler<ControllerEventArgs> ControllerSupportsNewInfoChanged;
+        public event EventHandler<ControllerUpdateReceived> ControllerSupportsNewInfoChanged;
 
         private readonly Dictionary<string, Controller> mControllers = new Dictionary<string, Controller>();
         private readonly System.Windows.Forms.Timer mControllerUpdate;
-        private readonly IFsdManger mFsdManager;
+        private readonly IFsdManager mFsdManager;
 
-        public ControllerManager(IEventBroker broker, IFsdManger fsdManager) : base(broker)
+        public ControllerManager(IEventBroker broker, IFsdManager fsdManager) : base(broker)
         {
             mFsdManager = fsdManager;
 
             mControllerUpdate = new System.Windows.Forms.Timer
             {
-                Interval = 45000
+                Interval = 15000
             };
             mControllerUpdate.Tick += ControllerUpdateTick;
         }
@@ -67,21 +67,20 @@ namespace XPilot.PilotClient.Network.Controllers
                 if (controller.IsValid)
                 {
                     controller.IsValid = false;
-                    ControllerDeleted?.Invoke(this, new ControllerEventArgs(controller));
+                    RaiseDeleteControllerRequestReceived?.Invoke(this, new ControllerUpdateReceived(controller));
                 }
             }
         }
 
         private void RemoveAll()
         {
-            List<Controller> temp = new List<Controller>();
-            temp = mControllers.Values.ToList();
+            List<Controller> temp = mControllers.Values.ToList();
             foreach (Controller controller in temp)
             {
                 if (controller.IsValid)
                 {
                     controller.IsValid = false;
-                    ControllerDeleted?.Invoke(this, new ControllerEventArgs(controller));
+                    RaiseDeleteControllerRequestReceived?.Invoke(this, new ControllerUpdateReceived(controller));
                 }
             }
             mControllers.Clear();
@@ -94,11 +93,11 @@ namespace XPilot.PilotClient.Network.Controllers
             if (isValid && !controller.IsValid)
             {
 
-                ControllerDeleted?.Invoke(this, new ControllerEventArgs(controller));
+                RaiseDeleteControllerRequestReceived?.Invoke(this, new ControllerUpdateReceived(controller));
             }
             else if (!isValid && controller.IsValid)
             {
-                ControllerAdded?.Invoke(this, new ControllerEventArgs(controller));
+                RaiseAddControllerRequestReceived?.Invoke(this, new ControllerUpdateReceived(controller));
             }
         }
 
@@ -111,21 +110,26 @@ namespace XPilot.PilotClient.Network.Controllers
             return 0;
         }
 
+        public Dictionary<string, Controller> GetControllers()
+        {
+            return mControllers;
+        }
+
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        public void OnNetworkConnected(object sender, NetworkConnected e)
         {
             mControllerUpdate.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
+        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
         {
             mControllerUpdate.Stop();
             RemoveAll();
         }
 
         [EventSubscription(EventTopics.DeleteControllerReceived, typeof(OnUserInterfaceAsync))]
-        public void OnDeleteControllerReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnDeleteControllerReceived(object sender, NetworkDataReceived e)
         {
             if (mControllers.ContainsKey(e.From))
             {
@@ -133,34 +137,34 @@ namespace XPilot.PilotClient.Network.Controllers
                 mControllers.Remove(controller.Callsign);
                 if (controller.IsValid)
                 {
-                    ControllerDeleted?.Invoke(this, new ControllerEventArgs(controller));
+                    RaiseDeleteControllerRequestReceived?.Invoke(this, new ControllerUpdateReceived(controller));
                 }
             }
         }
 
         [EventSubscription(EventTopics.ControllerUpdateReceived, typeof(OnUserInterfaceAsync))]
-        public void OnControllerUpdated(object sender, ControllerUpdateReceivedEventArgs e)
+        public void OnControllerUpdated(object sender, ControllerUpdateReceived e)
         {
-            if (mControllers.ContainsKey(e.From))
+            if (mControllers.ContainsKey(e.Controller.Callsign))
             {
-                Controller controller = mControllers[e.From];
+                Controller controller = mControllers[e.Controller.Callsign];
                 bool isValid = controller.IsValid;
-                bool isFrequencyChanged = e.Frequency != controller.Frequency;
-                bool isLocationChanged = !e.Location.Equals(controller.Location);
-                controller.Frequency = e.Frequency;
-                controller.NormalizedFrequency = e.Frequency.Normalize25KhzFsdFrequency();
-                controller.Location = e.Location;
+                bool isFrequencyChanged = e.Controller.Frequency != controller.Frequency;
+                bool isLocationChanged = !e.Controller.Location.Equals(controller.Location);
+                controller.Frequency = e.Controller.Frequency;
+                controller.NormalizedFrequency = e.Controller.Frequency.Normalize25KhzFsdFrequency();
+                controller.Location = e.Controller.Location;
                 controller.LastUpdate = DateTime.Now;
                 ValidateController(controller);
                 if (isValid && controller.IsValid)
                 {
                     if (isFrequencyChanged)
                     {
-                        ControllerFrequencyChanged?.Invoke(this, new ControllerEventArgs(controller));
+                        ControllerFrequencyChanged?.Invoke(this, new ControllerUpdateReceived(controller));
                     }
                     if (isLocationChanged)
                     {
-                        ControllerLocationChanged?.Invoke(this, new ControllerEventArgs(controller));
+                        ControllerLocationChanged?.Invoke(this, new ControllerUpdateReceived(controller));
                     }
                 }
             }
@@ -168,10 +172,10 @@ namespace XPilot.PilotClient.Network.Controllers
             {
                 Controller controller = new Controller
                 {
-                    Callsign = e.From,
-                    Frequency = e.Frequency,
-                    NormalizedFrequency = e.Frequency.Normalize25KhzFsdFrequency(),
-                    Location = e.Location,
+                    Callsign = e.Controller.Callsign,
+                    Frequency = e.Controller.Frequency,
+                    NormalizedFrequency = e.Controller.Frequency.Normalize25KhzFsdFrequency(),
+                    Location = e.Controller.Location,
                     LastUpdate = DateTime.Now,
                     RealName = "Unknown"
                 };
@@ -183,22 +187,22 @@ namespace XPilot.PilotClient.Network.Controllers
             }
         }
 
-        [EventSubscription(EventTopics.IsValidAtcReceived, typeof(OnUserInterfaceAsync))]
-        public void OnIsValidAtcReceived(object sender, IsValidAtcReceivedEventArgs e)
+        [EventSubscription(EventTopics.IsValidAtcReceived, typeof(OnPublisher))]
+        public void OnIsValidAtcReceived(object sender, IsValidATCReceived e)
         {
             if (mControllers.ContainsKey(e.From))
             {
                 Controller controller = mControllers[e.From];
-                if (controller.IsValidATC != e.IsValidAtc)
+                if (controller.IsValidATC != e.IsValidATC)
                 {
-                    controller.IsValidATC = e.IsValidAtc;
+                    controller.IsValidATC = e.IsValidATC;
                     ValidateController(controller);
                 }
             }
         }
 
-        [EventSubscription(EventTopics.CapabilitiesResponseReceived, typeof(OnUserInterfaceAsync))]
-        public void OnCapabilitiesResponseReceived(object sender, NetworkDataReceivedEventArgs e)
+        [EventSubscription(EventTopics.CapabilitiesResponseReceived, typeof(OnPublisher))]
+        public void OnCapabilitiesResponseReceived(object sender, NetworkDataReceived e)
         {
             if (mControllers.ContainsKey(e.From) && e.Data.ToUpper().Contains("NEWINFO=1"))
             {
@@ -206,13 +210,13 @@ namespace XPilot.PilotClient.Network.Controllers
                 if (controller.IsValid && !controller.SupportsNewInfo)
                 {
                     controller.SupportsNewInfo = true;
-                    ControllerSupportsNewInfoChanged?.Invoke(this, new ControllerEventArgs(controller));
+                    ControllerSupportsNewInfoChanged?.Invoke(this, new ControllerUpdateReceived(controller));
                 }
             }
         }
 
-        [EventSubscription(EventTopics.RealNameReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRealNameReceived(object sender, NetworkDataReceivedEventArgs e)
+        [EventSubscription(EventTopics.RealNameReceived, typeof(OnPublisher))]
+        public void OnRealNameReceived(object sender, NetworkDataReceived e)
         {
             if (mControllers.ContainsKey(e.From))
             {

@@ -17,7 +17,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Linq;
 using System.Windows.Forms;
 using XPilot.PilotClient.Aircraft;
@@ -27,34 +26,31 @@ using XPilot.PilotClient.Core.Events;
 using XPilot.PilotClient.XplaneAdapter;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace XPilot.PilotClient.Network.Aircraft
 {
     public class NetworkAircraftManager : EventBus, INetworkAircraftManager
     {
-        [EventPublication(EventTopics.XPlaneEventPosted)]
-        public event EventHandler<ClientEventArgs<string>> XPlaneEventPosted;
-
         private readonly List<NetworkAircraft> mNetworkAircraft = new List<NetworkAircraft>();
         private readonly IAppConfig mConfig;
-        private readonly IFsdManger mFsdManager;
+        private readonly IFsdManager mFsdManager;
+        private readonly IXplaneConnectionManager mXplane;
         private readonly Timer mCheckIdleAircraftTimer;
 
-        public NetworkAircraftManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
+        public NetworkAircraftManager(IEventBroker broker, IAppConfig config, IFsdManager fsdManager, IXplaneConnectionManager xplane) : base(broker)
         {
             mConfig = config;
             mFsdManager = fsdManager;
+            mXplane = xplane;
 
             mCheckIdleAircraftTimer = new Timer
             {
-                Interval = 500
+                Interval = 1000
             };
             mCheckIdleAircraftTimer.Tick += CheckIdleAircraftTimer_Tick;
         }
 
-        private void NetworkAircraftUpdateReceived(string from, NetworkAircraftState state)
+        private void NetworkAircraftUpdateReceived(string from, NetworkAircraftPose state)
         {
             NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(a => a.Callsign == from);
             if (aircraft == null)
@@ -67,9 +63,9 @@ namespace XPilot.PilotClient.Network.Aircraft
             }
         }
 
-        private void UpdateExistingNetworkAircraft(NetworkAircraft aircraft, NetworkAircraftState state)
+        private void UpdateExistingNetworkAircraft(NetworkAircraft aircraft, NetworkAircraftPose state)
         {
-            if (aircraft != null && aircraft.UpdateCount >= 2 && string.IsNullOrEmpty(aircraft.TypeCode))
+            if (aircraft != null && aircraft.UpdateCount >= 2 && string.IsNullOrEmpty(aircraft.Equipment))
             {
                 Console.WriteLine($"Still no type code received for {aircraft.Callsign} after position update #{aircraft.UpdateCount} - requesting aircraft info");
                 mFsdManager.RequestPlaneInformation(aircraft.Callsign);
@@ -106,13 +102,13 @@ namespace XPilot.PilotClient.Network.Aircraft
 
                 if ((DateTime.Now - aircraft.LastFlightPlanFetch).TotalMinutes >= 5)
                 {
-                    mFsdManager.RequestRemoteFlightPlan(aircraft.Callsign);
+                    mFsdManager.RequestClientFlightPlan(aircraft.Callsign);
                     aircraft.LastFlightPlanFetch = DateTime.Now;
                 }
             }
         }
 
-        private void ProcessNewAircraft(string from, NetworkAircraftState state)
+        private void ProcessNewAircraft(string from, NetworkAircraftPose state)
         {
             NetworkAircraft aircraft = new NetworkAircraft
             {
@@ -133,22 +129,7 @@ namespace XPilot.PilotClient.Network.Aircraft
         private void AddAircraftToSim(NetworkAircraft aircraft)
         {
             aircraft.Status = AircraftStatus.Active;
-
-            dynamic data = new ExpandoObject();
-            data.Callsign = aircraft.Callsign;
-            data.TypeCode = aircraft.TypeCode.Substring(0, Math.Min(4, aircraft.TypeCode.Length));
-            if (aircraft.Callsign.Length >= 3)
-            {
-                data.Airline = aircraft.Callsign.Substring(0, 3);
-            }
-
-            XplaneConnect xp = new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.AddPlane,
-                Timestamp = DateTime.Now,
-                Data = data
-            };
-            XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(xp.ToJSON()));
+            mXplane.AddPlane(aircraft);
         }
 
         private void CheckIdleAircraftTimer_Tick(object sender, EventArgs e)
@@ -219,30 +200,9 @@ namespace XPilot.PilotClient.Network.Aircraft
             return false;
         }
 
-        private void UpdateNetworkAircraftInSim(NetworkAircraft aircraft, NetworkAircraftState State)
+        private void UpdateNetworkAircraftInSim(NetworkAircraft aircraft, NetworkAircraftPose pose)
         {
-            dynamic data = new ExpandoObject();
-            data.Callsign = aircraft.Callsign;
-            data.Latitude = State.Location.Lat;
-            data.Longitude = State.Location.Lon;
-            data.Altitude = State.Altitude;
-            data.Bank = State.Bank;
-            data.Pitch = State.Pitch;
-            data.Heading = State.Heading;
-            data.GroundSpeed = State.GroundSpeed;
-            data.TransponderCode = State.Transponder.TransponderCode;
-            data.TransponderModeC = State.Transponder.TransponderModeC;
-            data.TransponderIdent = State.Transponder.TransponderIdent;
-            data.Origin = aircraft.OriginAirport;
-            data.Destination = aircraft.DestinationAirport;
-
-            XplaneConnect xp = new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.PositionUpdate,
-                Timestamp = DateTime.Now,
-                Data = data
-            };
-            XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(xp.ToJSON()));
+            mXplane.PlanePoseChanged(aircraft, pose);
         }
 
         private void UpdateLegacyAircraftConfig(NetworkAircraft aircraft, LegacyClientConfigFlags flags)
@@ -300,35 +260,18 @@ namespace XPilot.PilotClient.Network.Aircraft
 
             if (temp.HasConfig)
             {
-                XplaneConnect msg = new XplaneConnect
-                {
-                    Type = XplaneConnect.MessageType.SurfaceUpdate,
-                    Timestamp = DateTime.Now,
-                    Data = temp
-                };
-                XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(msg.ToJSON()));
-                Console.WriteLine($"Sending Legacy Config to the sim for: {aircraft.Callsign} - {msg.ToJSON()}");
+                mXplane.PlaneConfigChanged(aircraft, temp);
             }
         }
 
         private void DeleteNetworkAircraft(NetworkAircraft aircraft)
         {
-            dynamic data = new ExpandoObject();
-            data.Callsign = aircraft.Callsign;
-
-            XplaneConnect xp = new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.RemovePlane,
-                Timestamp = DateTime.Now,
-                Data = data
-            };
-            XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(xp.ToJSON()));
-            mNetworkAircraft.Remove(aircraft);
+            mXplane.RemovePlane(aircraft);
         }
 
         private void ProcessAircraftConfig(NetworkAircraft aircraft, AircraftConfiguration config)
         {
-            NetworkAircraftConfig cfgInterop = new NetworkAircraftConfig
+            NetworkAircraftConfig cfg = new NetworkAircraftConfig
             {
                 Callsign = aircraft.Callsign,
                 Timestamp = DateTime.Now
@@ -353,43 +296,43 @@ namespace XPilot.PilotClient.Network.Aircraft
             {
                 if (aircraft.Configuration.Lights.StrobesOn.HasValue)
                 {
-                    cfgInterop.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
+                    cfg.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
                 }
                 if (aircraft.Configuration.Lights.LandingOn.HasValue)
                 {
-                    cfgInterop.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
+                    cfg.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
                 }
                 if (aircraft.Configuration.Lights.TaxiOn.HasValue)
                 {
-                    cfgInterop.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
+                    cfg.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
                 }
                 if (aircraft.Configuration.Lights.BeaconOn.HasValue)
                 {
-                    cfgInterop.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
+                    cfg.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
                 }
                 if (aircraft.Configuration.Lights.NavOn.HasValue)
                 {
-                    cfgInterop.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
+                    cfg.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
                 }
                 if (aircraft.Configuration.OnGround.HasValue)
                 {
-                    cfgInterop.OnGround = aircraft.Configuration.OnGround.Value;
+                    cfg.OnGround = aircraft.Configuration.OnGround.Value;
                 }
                 if (aircraft.Configuration.FlapsPercent.HasValue)
                 {
-                    cfgInterop.Flaps = aircraft.Configuration.FlapsPercent.Value / 100.0f;
+                    cfg.Flaps = aircraft.Configuration.FlapsPercent.Value / 100.0f;
                 }
                 if (aircraft.Configuration.GearDown.HasValue)
                 {
-                    cfgInterop.GearDown = aircraft.Configuration.GearDown.Value;
+                    cfg.GearDown = aircraft.Configuration.GearDown.Value;
                 }
                 if (aircraft.Configuration.Engines.IsAnyEngineRunning)
                 {
-                    cfgInterop.EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning;
+                    cfg.EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning;
                 }
                 if (aircraft.Configuration.SpoilersDeployed.HasValue)
                 {
-                    cfgInterop.SpoilersDeployed = aircraft.Configuration.SpoilersDeployed.Value;
+                    cfg.SpoilersDeployed = aircraft.Configuration.SpoilersDeployed.Value;
                 }
                 aircraft.InitialConfigurationSet = true;
             }
@@ -398,64 +341,56 @@ namespace XPilot.PilotClient.Network.Aircraft
                 if (aircraft.LastAppliedConfiguration == null)
                 {
                     aircraft.InitialConfigurationSet = false;
-                    Console.WriteLine($"LastAppliedConfiguration null; Requesting full ACCONFIG for: {aircraft.Callsign}");
                     mFsdManager.RequestFullAircraftConfiguration(aircraft.Callsign);
                     return;
                 }
 
                 if (aircraft.Configuration.Lights.StrobesOn.HasValue && aircraft.Configuration.Lights.StrobesOn.Value != aircraft.LastAppliedConfiguration.Lights.StrobesOn.Value)
                 {
-                    cfgInterop.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
+                    cfg.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
                 }
                 if (aircraft.Configuration.Lights.NavOn.HasValue && aircraft.Configuration.Lights.NavOn.Value != aircraft.LastAppliedConfiguration.Lights.NavOn.Value)
                 {
-                    cfgInterop.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
+                    cfg.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
                 }
                 if (aircraft.Configuration.Lights.BeaconOn.HasValue && aircraft.Configuration.Lights.BeaconOn.Value != aircraft.LastAppliedConfiguration.Lights.BeaconOn.Value)
                 {
-                    cfgInterop.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
+                    cfg.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
                 }
                 if (aircraft.Configuration.Lights.LandingOn.HasValue && aircraft.Configuration.Lights.LandingOn.Value != aircraft.LastAppliedConfiguration.Lights.LandingOn.Value)
                 {
-                    cfgInterop.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
+                    cfg.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
                 }
                 if (aircraft.Configuration.Lights.TaxiOn.HasValue && aircraft.Configuration.Lights.TaxiOn.Value != aircraft.LastAppliedConfiguration.Lights.TaxiOn.Value)
                 {
-                    cfgInterop.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
+                    cfg.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
                 }
                 if (aircraft.Configuration.GearDown.HasValue && aircraft.Configuration.GearDown.Value != aircraft.LastAppliedConfiguration.GearDown.Value)
                 {
-                    cfgInterop.GearDown = aircraft.Configuration.GearDown.Value;
+                    cfg.GearDown = aircraft.Configuration.GearDown.Value;
                 }
                 if (aircraft.Configuration.OnGround.HasValue && aircraft.Configuration.OnGround.Value != aircraft.LastAppliedConfiguration.OnGround.Value)
                 {
-                    cfgInterop.OnGround = aircraft.Configuration.OnGround.Value;
+                    cfg.OnGround = aircraft.Configuration.OnGround.Value;
                 }
                 if (aircraft.Configuration.FlapsPercent.HasValue && aircraft.Configuration.FlapsPercent.Value != aircraft.LastAppliedConfiguration.FlapsPercent.Value)
                 {
-                    cfgInterop.Flaps = aircraft.Configuration.FlapsPercent.Value / 100.0f;
+                    cfg.Flaps = aircraft.Configuration.FlapsPercent.Value / 100.0f;
                 }
                 if (aircraft.Configuration.SpoilersDeployed.HasValue && aircraft.Configuration.SpoilersDeployed.Value != aircraft.LastAppliedConfiguration.SpoilersDeployed.Value)
                 {
-                    cfgInterop.SpoilersDeployed = aircraft.Configuration.SpoilersDeployed.Value;
+                    cfg.SpoilersDeployed = aircraft.Configuration.SpoilersDeployed.Value;
                 }
                 if (aircraft.Configuration.Engines.IsAnyEngineRunning != aircraft.LastAppliedConfiguration.Engines.IsAnyEngineRunning)
                 {
-                    cfgInterop.EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning;
+                    cfg.EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning;
                 }
             }
             aircraft.LastAppliedConfiguration = aircraft.Configuration.Clone();
 
-            if (cfgInterop.HasConfig)
+            if (cfg.HasConfig)
             {
-                XplaneConnect xp = new XplaneConnect
-                {
-                    Type = XplaneConnect.MessageType.SurfaceUpdate,
-                    Timestamp = DateTime.Now,
-                    Data = cfgInterop
-                };
-                XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(xp.ToJSON()));
-                Console.WriteLine($"Sending ACCONFIG to the sim for: {aircraft.Callsign} - {xp.ToJSON()}");
+                mXplane.PlaneConfigChanged(aircraft, cfg);
             }
         }
 
@@ -470,20 +405,20 @@ namespace XPilot.PilotClient.Network.Aircraft
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        public void OnNetworkConnected(object sender, NetworkConnected e)
         {
             mCheckIdleAircraftTimer.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
+        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
         {
             mNetworkAircraft.Clear();
             mCheckIdleAircraftTimer.Stop();
         }
 
         [EventSubscription(EventTopics.CapabilitiesRequestReceived, typeof(OnUserInterfaceAsync))]
-        public void OnCapabilitiesRequestReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnCapabilitiesRequestReceived(object sender, NetworkDataReceived e)
         {
             if (mNetworkAircraft.Any(a => a.Callsign == e.From))
             {
@@ -497,7 +432,7 @@ namespace XPilot.PilotClient.Network.Aircraft
         }
 
         [EventSubscription(EventTopics.CapabilitiesResponseReceived, typeof(OnUserInterfaceAsync))]
-        public void OnCapabilitiesResponseReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnCapabilitiesResponseReceived(object sender, NetworkDataReceived e)
         {
             Console.WriteLine($"Received capabilities list from: {e.From} - {e.Data}");
             if (e.Data.Contains("ACCONFIG=1"))
@@ -514,52 +449,32 @@ namespace XPilot.PilotClient.Network.Aircraft
             }
         }
 
-        [EventSubscription(EventTopics.NetworkAircraftInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkAircraftInfoReceived(object sender, NetworkDataReceivedEventArgs e)
+        [EventSubscription(EventTopics.PlaneInfoReceived, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkAircraftInfoReceived(object sender, PlaneInfoReceived e)
         {
-            NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(o => o.Callsign == e.From);
+            NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(o => o.Callsign == e.Callsign);
             if (aircraft == null)
             {
-                Console.WriteLine($"Received aircraft info for an unknown aircraft: {e.From}");
+                Console.WriteLine($"Received aircraft info for an unknown aircraft: {e.Callsign}");
+            }
+            else if (!string.IsNullOrEmpty(aircraft.Equipment))
+            {
+                if (aircraft.Equipment != e.Equipment)
+                {
+                    // change model
+                    aircraft.Equipment = e.Equipment;
+                }
             }
             else
             {
-                if (!string.IsNullOrEmpty(aircraft.TypeCode))
-                {
-                    if (aircraft.TypeCode != e.Data)
-                    {
-                        Console.WriteLine($"Received new aircraft info for {e.From} - changing model");
-
-                        aircraft.TypeCode = e.Data.IndexOf("-") > -1 ? e.Data.Substring(0, e.Data.IndexOf("-")) : e.Data;
-
-                        dynamic data = new ExpandoObject();
-                        data.Callsign = aircraft.Callsign;
-                        data.TypeCode = aircraft.TypeCode.Substring(0, Math.Min(4, aircraft.TypeCode.Length));
-                        data.Airline = aircraft.AirlineIcao;
-
-                        XplaneConnect xp = new XplaneConnect
-                        {
-                            Type = XplaneConnect.MessageType.ChangeModel,
-                            Timestamp = DateTime.Now,
-                            Data = data
-                        };
-                        XPlaneEventPosted?.Invoke(this, new ClientEventArgs<string>(xp.ToJSON()));
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Received unchanged aircraft info for {e.From} - already have a model selected");
-                    }
-                }
-                else
-                {
-                    aircraft.TypeCode = e.Data.IndexOf("-") > -1 ? e.Data.Substring(0, e.Data.IndexOf("-")) : e.Data;
-                    AddAircraftToSim(aircraft);
-                }
+                aircraft.Equipment = e.Equipment;
+                aircraft.Airline = e.Airline;
+                AddAircraftToSim(aircraft);
             }
         }
 
         [EventSubscription(EventTopics.AircraftConfigurationInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceived e)
         {
             AircraftConfigurationInfo aircraftConfigurationInfo;
             try
@@ -595,17 +510,17 @@ namespace XPilot.PilotClient.Network.Aircraft
         }
 
         [EventSubscription(EventTopics.LegacyPlaneInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnLegacyPlaneInfoReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnLegacyPlaneInfoReceived(object sender, NetworkDataReceived e)
         {
             NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(a => a.Callsign == e.From);
             if (aircraft != null)
             {
                 if (aircraft.UpdateCount >= 3)
                 {
-                    if (string.IsNullOrEmpty(aircraft.TypeCode))
+                    if (string.IsNullOrEmpty(aircraft.Equipment))
                     {
                         Console.WriteLine($"Received legacy aircraft info for {e.From} after {aircraft.UpdateCount} updates with no modern plane info packet received, selecting model based on legacy info.");
-                        aircraft.TypeCode = e.Data.IndexOf("-") > -1 ? e.Data.Substring(0, e.Data.IndexOf("-")) : e.Data;
+                        aircraft.Equipment = e.Data.IndexOf("-") > -1 ? e.Data.Substring(0, e.Data.IndexOf("-")) : e.Data;
                         AddAircraftToSim(aircraft);
                     }
                     else
@@ -625,7 +540,7 @@ namespace XPilot.PilotClient.Network.Aircraft
         }
 
         [EventSubscription(EventTopics.DeletePilotReceived, typeof(OnUserInterfaceAsync))]
-        public void OnDeletePilotReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnDeletePilotReceived(object sender, NetworkDataReceived e)
         {
             NetworkAircraft aircraft = mNetworkAircraft.FirstOrDefault(o => o.Callsign == e.From);
             if (aircraft != null)
@@ -634,14 +549,14 @@ namespace XPilot.PilotClient.Network.Aircraft
             }
         }
 
-        [EventSubscription(EventTopics.NetworkAircraftUpdateReceived, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkAircraftUpdateReceived(object sender, AircraftUpdateReceivedEventArgs e)
+        [EventSubscription(EventTopics.PilotPositionReceived, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkAircraftUpdateReceived(object sender, NetworkAircraftUpdateReceived e)
         {
             NetworkAircraftUpdateReceived(e.From, e.State);
         }
 
         [EventSubscription(EventTopics.RemoteFlightPlanReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRemoteFlightPlanReceived(object sender, FlightPlanReceivedEventArgs e)
+        public void OnRemoteFlightPlanReceived(object sender, FlightPlanReceived e)
         {
             ProcessRemoteFlightPlan(e.FlightPlan);
         }

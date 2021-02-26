@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPilot.PilotClient.Network.Aircraft
+namespace XPilot.PilotClient.Aircraft
 {
     [Serializable]
     public class NetworkAircraftConfig

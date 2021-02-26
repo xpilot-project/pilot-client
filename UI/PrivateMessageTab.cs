@@ -29,16 +29,16 @@ namespace XPilot.PilotClient
     public class PrivateMessageTab : TabPage
     {
         [EventPublication(EventTopics.PrivateMessageSent)]
-        public event EventHandler<PrivateMessageSentEventArgs> PrivateMessageSent;
+        public event EventHandler<PrivateMessageSent> RaisePrivateMessageSent;
 
-        [EventPublication(EventTopics.PlaySoundRequested)]
-        public event EventHandler<PlaySoundEventArgs> PlaySoundRequested;
+        [EventPublication(EventTopics.PlayNotificationSound)]
+        public event EventHandler<PlayNotificationSound> RaisePlayNotificationSound;
 
         [EventPublication(EventTopics.RealNameRequested)]
-        public event EventHandler<RealNameRequestedEventArgs> RequestRealName;
+        public event EventHandler<ClientEventArgs<string>> RaiseRequestRealName;
 
         private readonly ChatBox mChatBox;
-        private readonly IFsdManger mNetworkManager;
+        private readonly IFsdManager mNetworkManager;
         private readonly IEventBroker mEventBroker;
         private string tabIdentifier;
         private string realName = null;
@@ -59,7 +59,7 @@ namespace XPilot.PilotClient
             }
         }
 
-        public PrivateMessageTab(string tabName, string initialMessage, bool isOurMessage, string ourCallsign, IEventBroker eventBroker, IFsdManger networkManager)
+        public PrivateMessageTab(string tabName, string initialMessage, bool isOurMessage, string ourCallsign, IEventBroker eventBroker, IFsdManager networkManager)
         {
             tabIdentifier = tabName;
             Name = tabName;
@@ -88,11 +88,11 @@ namespace XPilot.PilotClient
                 else
                 {
                     WriteMessage(Color.White, $"{ tabIdentifier }: { initialMessage }");
-                    PlaySoundRequested(this, new PlaySoundEventArgs(SoundEvent.NewMessage));
+                    RaisePlayNotificationSound(this, new PlayNotificationSound(SoundEvent.NewMessage));
                     ForeColor = Color.Yellow;
                 }
             }
-            RequestRealName(this, new RealNameRequestedEventArgs(tabIdentifier));
+            RaiseRequestRealName(this, new ClientEventArgs<string>(tabIdentifier));
         }
 
         private void PrivateMessageTab_TextCommandReceived(object sender, ClientEventArgs<string> e)
@@ -117,7 +117,7 @@ namespace XPilot.PilotClient
                             }
                             break;
                         case ".showname":
-                            RequestRealName(this, new RealNameRequestedEventArgs(tabIdentifier));
+                            RaiseRequestRealName(this, new ClientEventArgs<string>(tabIdentifier));
                             break;
                         case ".atis":
                             WriteMessage(Color.Yellow, $"Requesting ATIS for { tabIdentifier }");
@@ -133,18 +133,18 @@ namespace XPilot.PilotClient
                 }
                 else
                 {
-                    PrivateMessageSent(this, new PrivateMessageSentEventArgs(mNetworkManager.OurCallsign, tabIdentifier, e.Value));
+                    RaisePrivateMessageSent(this, new PrivateMessageSent(mNetworkManager.OurCallsign, tabIdentifier, e.Value));
                 }
             }
             catch (Exception ex)
             {
                 WriteMessage(Color.Red, $"Error processing text command: { ex.Message }");
-                PlaySoundRequested(this, new PlaySoundEventArgs(SoundEvent.Error));
+                RaisePlayNotificationSound(this, new PlayNotificationSound(SoundEvent.Error));
             }
         }
 
         [EventSubscription(EventTopics.RealNameReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRealNameReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnRealNameReceived(object sender, NetworkDataReceived e)
         {
             if (e.From == tabIdentifier)
             {
@@ -153,12 +153,12 @@ namespace XPilot.PilotClient
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnPrivateMessageReceived(object sender, PrivateMessageReceived e)
         {
             if (e.From == tabIdentifier)
             {
-                WriteIncomingMessage(e.Data);
-                PlaySoundRequested(this, new PlaySoundEventArgs(SoundEvent.PrivateMessage));
+                WriteIncomingMessage(e.Message);
+                RaisePlayNotificationSound(this, new PlayNotificationSound(SoundEvent.PrivateMessage));
                 if ((Parent as TabControl).SelectedTab != this)
                 {
                     ForeColor = Color.Yellow;
@@ -168,7 +168,7 @@ namespace XPilot.PilotClient
         }
 
         [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
+        public void OnPrivateMessageSent(object sender, PrivateMessageSent e)
         {
             if (tabIdentifier == e.To)
             {
@@ -176,8 +176,8 @@ namespace XPilot.PilotClient
             }
         }
 
-        [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRequestedAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
+        [EventSubscription(EventTopics.AcarsResponseReceived, typeof(OnUserInterfaceAsync))]
+        public void OnAcarsResponseReceived(object sender, AcarsResponseReceived e)
         {
             if (e.From == tabIdentifier)
             {

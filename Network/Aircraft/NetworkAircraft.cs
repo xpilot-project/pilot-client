@@ -36,9 +36,9 @@ namespace XPilot.PilotClient.Aircraft
     {
         public AircraftStatus Status { get; set; }
         public string Callsign { get; set; }
-        public string TypeCode { get; set; }
-        public string AirlineIcao { get; set; }
-        public List<NetworkAircraftState> StateHistory { get; set; }
+        public string Equipment { get; set; }
+        public string Airline { get; set; }
+        public List<NetworkAircraftPose> StateHistory { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastFlightPlanFetch { get; set; }
         public int UpdateCount { get; set; }
@@ -53,14 +53,14 @@ namespace XPilot.PilotClient.Aircraft
         public NetworkAircraftTransponder Transponder { get; set; }
         public string OriginAirport { get; set; } = "";
         public string DestinationAirport { get; set; } = "";
-        public NetworkAircraftState CurrentPosition
+        public NetworkAircraftPose CurrentPosition
         {
             get
             {
                 return StateHistory.Last();
             }
         }
-        public NetworkAircraftState PreviousPosition
+        public NetworkAircraftPose PreviousPosition
         {
             get
             {
@@ -83,7 +83,7 @@ namespace XPilot.PilotClient.Aircraft
         }
         public NetworkAircraft()
         {
-            StateHistory = new List<NetworkAircraftState>();
+            StateHistory = new List<NetworkAircraftPose>();
             LastAppliedConfigFlags = new LegacyClientConfigFlags();
             PendingAircraftConfiguration = new Stack<AircraftConfiguration>();
             Transponder = new NetworkAircraftTransponder();

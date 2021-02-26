@@ -22,8 +22,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Timers;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using Vatsim.Fsd.Connector;
@@ -33,409 +33,224 @@ using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Core;
 using XPilot.PilotClient.Core.Events;
+using XPilot.PilotClient.Network.Controllers;
 using XPilot.PilotClient.XplaneAdapter;
 
 namespace XPilot.PilotClient.Network
 {
-    public class FsdManager : EventBus, IFsdManger
+    public class FsdManager : EventBus, IFsdManager
     {
+        [EventPublication(EventTopics.NotificationPosted)]
+        public event EventHandler<NotificationPosted> RaiseNotificationPosted;
+
         [EventPublication(EventTopics.NetworkConnected)]
-        public event EventHandler<NetworkConnectedEventArgs> NetworkConnected;
+        public event EventHandler<NetworkConnected> RaiseNetworkConnected;
 
         [EventPublication(EventTopics.NetworkDisconnected)]
-        public event EventHandler<NetworkDisconnectedEventArgs> NetworkDisconnected;
-
-        [EventPublication(EventTopics.NetworkServerListUpdated)]
-        public event EventHandler<EventArgs> NetworkServerListUpdated;
+        public event EventHandler<NetworkDisconnected> RaiseNetworkDisconnected;
 
         [EventPublication(EventTopics.RadioMessageReceived)]
-        public event EventHandler<RadioMessageReceivedEventArgs> RadioMessageReceived;
+        public event EventHandler<RadioMessageReceived> RaiseRadioMessageReceived;
 
         [EventPublication(EventTopics.BroadcastMessageReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> BroadcastMessageReceived;
+        public event EventHandler<NetworkDataReceived> RaiseBroadcastMessageReceived;
 
         [EventPublication(EventTopics.PrivateMessageReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> PrivateMessageReceived;
+        public event EventHandler<PrivateMessageReceived> RaisePrivateMessageReceived;
 
         [EventPublication(EventTopics.ServerMessageReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> ServerMessageReceived;
+        public event EventHandler<NetworkDataReceived> RaiseServerMessageReceived;
 
         [EventPublication(EventTopics.DeletePilotReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> DeletePilotReceived;
+        public event EventHandler<NetworkDataReceived> RaiseDeletePilotReceived;
 
-        [EventPublication(EventTopics.NetworkAircraftUpdateReceived)]
-        public event EventHandler<AircraftUpdateReceivedEventArgs> AircraftUpdateReceived;
+        [EventPublication(EventTopics.PilotPositionReceived)]
+        public event EventHandler<NetworkAircraftUpdateReceived> RaisePilotPositionReceived;
 
         [EventPublication(EventTopics.ControllerUpdateReceived)]
-        public event EventHandler<ControllerUpdateReceivedEventArgs> ControllerUpdateReceived;
+        public event EventHandler<ControllerUpdateReceived> RaiseControllerUpdateReceived;
 
         [EventPublication(EventTopics.DeleteControllerReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> DeleteControllerReceived;
+        public event EventHandler<NetworkDataReceived> RaiseDeleteControllerReceived;
 
         [EventPublication(EventTopics.CapabilitiesRequestReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> CapabilitiesRequestReceived;
+        public event EventHandler<NetworkDataReceived> RaiseCapabilitiesRequestReceived;
 
         [EventPublication(EventTopics.AircraftConfigurationInfoReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> AircraftConfigurationInfoReceived;
+        public event EventHandler<NetworkDataReceived> RaiseAircraftConfigurationInfoReceived;
 
         [EventPublication(EventTopics.RealNameReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> RealNameReceived;
+        public event EventHandler<NetworkDataReceived> RaiseRealNameReceived;
 
         [EventPublication(EventTopics.IsValidAtcReceived)]
-        public event EventHandler<IsValidAtcReceivedEventArgs> IsValidATCReceived;
+        public event EventHandler<IsValidATCReceived> RaiseIsValidATCReceived;
 
         [EventPublication(EventTopics.AtisLinesReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> AtisLinesReceived;
+        public event EventHandler<NetworkDataReceived> RaiseAtisLinesReceived;
 
         [EventPublication(EventTopics.AtisEndReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> AtisEndReceived;
+        public event EventHandler<NetworkDataReceived> RaiseAtisEndReceived;
 
         [EventPublication(EventTopics.CapabilitiesResponseReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> CapabilitiesResponseReceived;
+        public event EventHandler<NetworkDataReceived> RaisCapabilitiesResponseReceived;
 
-        [EventPublication(EventTopics.NetworkAircraftInfoReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> AircraftInfoReceived;
+        [EventPublication(EventTopics.PlaneInfoReceived)]
+        public event EventHandler<PlaneInfoReceived> RaisePlaneInfoReceived;
 
         [EventPublication(EventTopics.MetarReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> MetarReceived;
+        public event EventHandler<NetworkDataReceived> RaiseMetarReceived;
 
         [EventPublication(EventTopics.SelcalAlertReceived)]
-        public event EventHandler<SelcalAlertReceivedEventArgs> SelcalAlertReceived;
-
-        [EventPublication(EventTopics.NoFlightPlanReceived)]
-        public event EventHandler<EventArgs> NoFlightPlanReceived;
+        public event EventHandler<SelcalAlertReceived> RaiseSelcalAlertReceived;
 
         [EventPublication(EventTopics.FlightPlanReceived)]
-        public event EventHandler<FlightPlanReceivedEventArgs> FlightPlanReceived;
+        public event EventHandler<FlightPlanReceived> RaiseFlightPlanReceived;
 
         [EventPublication(EventTopics.RemoteFlightPlanReceived)]
-        public event EventHandler<FlightPlanReceivedEventArgs> RemoteFlightPlanReceived;
+        public event EventHandler<FlightPlanReceived> RaiseRemoteFlightPlanReceived;
 
-        [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+        [EventPublication(EventTopics.TransponderIdentStateChanged)]
+        public event EventHandler<TransponderIdentStateChanged> RaiseTransponderIdentChanged;
 
-        [EventPublication(EventTopics.SquawkingIdentChanged)]
-        public event EventHandler<SquawkingIdentChangedEventArgs> SquawkingIdentChanged;
-
-        [EventPublication(EventTopics.PlaySoundRequested)]
-        public event EventHandler<PlaySoundEventArgs> PlaySoundRequested;
+        [EventPublication(EventTopics.PlayNotificationSound)]
+        public event EventHandler<PlayNotificationSound> RaisePlayNotificationSound;
 
         [EventPublication(EventTopics.ControllerInfoReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> ControllerInfoReceived;
+        public event EventHandler<NetworkDataReceived> RaiseControllerInfoReceived;
 
         [EventPublication(EventTopics.LegacyPlaneInfoReceived)]
-        public event EventHandler<NetworkDataReceivedEventArgs> LegacyPlaneInfoReceived;
+        public event EventHandler<NetworkDataReceived> RaiseLegacyPlaneInfoReceived;
 
-        private const string VATSIM_STATUS_FILE_URL = "http://status.vatsim.net";
-        private readonly FSDSession FSD;
-        private readonly IAppConfig mConfig;
-        private List<NetworkServerInfo> mServerList = new List<NetworkServerInfo>();
-        private string mSystemUID;
-        private string mPublicIP;
+        [EventPublication(EventTopics.NetworkServerListUpdated)]
+        public event EventHandler<EventArgs> RaiseNetworkServerListUpdated;
+
+        private const string STATUS_FILE_URL = "http://status.vatsim.net";
+        private IAppConfig mConfig;
+        private FSDSession mFsd;
+        private Version mFsdClientVersion;
+        private Timer mPositionUpdateTimer;
         private ConnectInfo mConnectInfo;
+        private string mPublicIP;
+        private string mSystemUID;
         private bool mForcedDisconnect;
-        private bool mIntentialDisconnect;
+        private bool mIntentionalDisconnect;
         private string mKillReason;
-        private bool mIsIdenting = false;
-        private bool mIsIdentPressed = false;
+        private bool mIsIdenting;
+        private bool mIsIdentPressed;
+        private ClientProperties mClientProperties;
         private UserAircraftData mUserAircraftData;
-        private UserAircraftRadioStack mRadioStackData;
-        private readonly System.Timers.Timer mPositionUpdateTimer;
-        private readonly StreamWriter mRawDataStream;
-        private readonly Version mVersion = new Version("1.2");
+        private UserAircraftRadioStack mRadioStackState;
+        private List<NetworkServerInfo> mServerList = new List<NetworkServerInfo>();
 
         public FsdManager(IEventBroker broker, IAppConfig config) : base(broker)
         {
             mConfig = config;
-            mSystemUID = SystemIdentifier.GetSystemDriveVolumeId();
 
-            mPositionUpdateTimer = new System.Timers.Timer();
+            mFsdClientVersion = new Version("1.2");
+            mPositionUpdateTimer = new Timer { Interval = 5000 };
             mPositionUpdateTimer.Elapsed += PositionUpdateTimer_Elapsed;
 
-            if (!Directory.Exists(Path.Combine(mConfig.AppPath, "NetworkLogs")))
+            mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, "", "");
+            mFsd = new FSDSession(mClientProperties)
             {
-                Directory.CreateDirectory(Path.Combine(mConfig.AppPath, "NetworkLogs"));
-            }
-
-            var directory = new DirectoryInfo(Path.Combine(mConfig.AppPath, "NetworkLogs"));
-            var query = directory.GetFiles("*", SearchOption.AllDirectories);
-            foreach (var file in query.OrderByDescending(file => file.CreationTime).Skip(10))
-            {
-                file.Delete();
-            }
-
-            ClientProperties = new ClientProperties("xPilot", mVersion, Assembly.GetEntryAssembly().Location.CheckSum(), "");
-            mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, $"NetworkLogs/NetworkLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log"), false);
-
-            FSD = new FSDSession(ClientProperties);
-            FSD.IgnoreUnknownPackets = true;
-            FSD.NetworkError += FSD_NetworkError;
-            FSD.ProtocolErrorReceived += FSD_ProtocolErrorReceived;
-            FSD.RawDataReceived += FSD_RawDataReceived;
-            FSD.RawDataSent += FSD_RawDataSent;
-            FSD.NetworkConnected += FSD_NetworkConnected;
-            FSD.NetworkDisconnected += FSD_NetworkDisconnected;
-            FSD.ServerIdentificationReceived += FSD_ServerIdentificationReceived;
-            FSD.KillRequestReceived += FSD_KillRequestReceived;
-            FSD.AcarsResponseReceived += FSD_AcarsResponseReceived;
-            FSD.RadioMessageReceived += FSD_RadioMessageReceived;
-            FSD.TextMessageReceived += FSD_TextMessageReceived;
-            FSD.BroadcastMessageReceived += FSD_BroadcastMessageReceived;
-            FSD.PilotPositionReceived += FSD_PilotPositionReceived;
-            FSD.ATCPositionReceived += FSD_ATCPositionReceived;
-            FSD.ClientQueryResponseReceived += FSD_ClientQueryResponseReceived;
-            FSD.ClientQueryReceived += FSD_ClientQueryReceived;
-            FSD.PlaneInfoRequestReceived += FSD_PlaneInfoRequestReceived;
-            FSD.PlaneInfoResponseReceived += FSD_PlaneInfoResponseReceived;
-            FSD.LegacyPlaneInfoResponseReceived += FSD_LegacyPlaneInfoResponseReceived;
-            FSD.DeletePilotReceived += FSD_DeletePilotReceived;
-            FSD.DeleteATCReceived += FSD_DeleteATCReceived;
-            FSD.FlightPlanReceived += FSD_FlightPlanReceived;
-            FSD.PingReceived += FSD_PingReceived;
-        }
-
-        private void FSD_NetworkError(object sender, NetworkErrorEventArgs e)
-        {
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, e.Error));
-        }
-
-        private void FSD_ProtocolErrorReceived(object sender, DataReceivedEventArgs<PDUProtocolError> e)
-        {
-            if (e.PDU.ErrorType == NetworkError.NoFlightPlan)
-            {
-                NoFlightPlanReceived?.Invoke(this, EventArgs.Empty);
-            }
-            else
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Network error: { e.PDU.Message }"));
-            }
-        }
-
-        private void FSD_RawDataSent(object sender, RawDataEventArgs e)
-        {
-            mRawDataStream.Write("[{0}] >>>     {1}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), e.Data.Replace(mConfig.VatsimPassword, "XXXXXX"));
-            mRawDataStream.Flush();
-        }
-
-        private void FSD_RawDataReceived(object sender, RawDataEventArgs e)
-        {
-            mRawDataStream.Write("[{0}]     <<< {1}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), e.Data);
-            mRawDataStream.Flush();
-        }
-
-        private void FSD_NetworkConnected(object sender, NetworkEventArgs e)
-        {
-            mForcedDisconnect = false;
-            mIntentialDisconnect = false;
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, mConnectInfo.ObserverMode ? "Connected to network in observer mode" : "Connected to network"));
-            NetworkConnected?.Invoke(this, new NetworkConnectedEventArgs(mConnectInfo));
-        }
-
-        private void FSD_NetworkDisconnected(object sender, NetworkEventArgs e)
-        {
-            mPositionUpdateTimer.Stop();
-            DisconnectInfo disconnectInfo = new DisconnectInfo
-            {
-                Type = (mForcedDisconnect ? DisconnectType.Forcible : (mIntentialDisconnect ? DisconnectType.Intentional : DisconnectType.Other)),
-                Reason = (mForcedDisconnect ? mKillReason : string.Empty)
+                IgnoreUnknownPackets = true
             };
-            NetworkDisconnected?.Invoke(this, new NetworkDisconnectedEventArgs(disconnectInfo));
-            mIntentialDisconnect = false;
-            mForcedDisconnect = false;
-            mIsIdenting = false;
-            mIsIdentPressed = false;
-            if (disconnectInfo.Type == DisconnectType.Forcible)
+            mFsd.NetworkError += Fsd_NetworkError;
+            mFsd.ProtocolErrorReceived += Fsd_ProtocolErrorReceived;
+            mFsd.RawDataReceived += Fsd_RawDataReceived;
+            mFsd.RawDataSent += Fsd_RawDataSent;
+            mFsd.NetworkConnected += Fsd_NetworkConnected;
+            mFsd.NetworkDisconnected += Fsd_NetworkDisconnected;
+            mFsd.ServerIdentificationReceived += Fsd_ServerIdentificationReceived;
+            mFsd.KillRequestReceived += Fsd_KillRequestReceived;
+            mFsd.AcarsResponseReceived += Fsd_AcarsResponseReceived;
+            mFsd.RadioMessageReceived += Fsd_RadioMessageReceived;
+            mFsd.TextMessageReceived += Fsd_TextMessageReceived;
+            mFsd.BroadcastMessageReceived += Fsd_BroadcastMessageReceived;
+            mFsd.PilotPositionReceived += Fsd_PilotPositionReceived;
+            mFsd.ATCPositionReceived += Fsd_ATCPositionReceived;
+            mFsd.ClientQueryResponseReceived += Fsd_ClientQueryResponseReceived;
+            mFsd.ClientQueryReceived += Fsd_ClientQueryReceived;
+            mFsd.PlaneInfoRequestReceived += Fsd_PlaneInfoRequestReceived;
+            mFsd.PlaneInfoResponseReceived += Fsd_PlaneInfoResponseReceived;
+            mFsd.LegacyPlaneInfoResponseReceived += Fsd_LegacyPlaneInfoResponseReceived;
+            mFsd.DeletePilotReceived += Fsd_DeletePilotReceived;
+            mFsd.DeleteATCReceived += Fsd_DeleteATCReceived;
+            mFsd.FlightPlanReceived += Fsd_FlightPlanReceived;
+        }
+
+        private void Fsd_FlightPlanReceived(object sender, DataReceivedEventArgs<PDUFlightPlan> e)
+        {
+            if (e.PDU.From == OurCallsign)
             {
-                if (!string.IsNullOrEmpty(disconnectInfo.Reason))
+                FlightPlan fp = ParseFlightPlan(e.PDU);
+                if (string.IsNullOrEmpty(SelcalCode))
                 {
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, $"Forcibly disconnected from the network: { disconnectInfo.Reason }"));
+                    string selcal = ExtractSelcal(fp.Remarks);
+                    if (!string.IsNullOrEmpty(selcal))
+                    {
+                        mConnectInfo.SelCalCode = selcal;
+                    }
                 }
-                else
-                {
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, "Forcibly disconnected from the network."));
-                }
-                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                RaiseFlightPlanReceived?.Invoke(this, new FlightPlanReceived(fp));
             }
             else
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Disconnected from the network."));
+                FlightPlan fp = ParseFlightPlan(e.PDU);
+                RaiseRemoteFlightPlanReceived?.Invoke(this, new FlightPlanReceived(fp));
             }
         }
 
-        private void FSD_ServerIdentificationReceived(object sender, DataReceivedEventArgs<PDUServerIdentification> e)
+        private void Fsd_DeleteATCReceived(object sender, DataReceivedEventArgs<PDUDeleteATC> e)
         {
-            FSD.SendPDU(new PDUClientIdentification(OurCallsign, FSD.GetClientKey(), "xPilot", mVersion.Major, mVersion.Minor, mConfig.VatsimId.Trim(), mSystemUID, null));
-
-            if (mConnectInfo.ObserverMode)
-            {
-                FSD.SendPDU(new PDUAddATC(mConnectInfo.Callsign, mConfig.Name, mConfig.VatsimId.Trim(), mConfig.VatsimPassword.Trim(), NetworkRating.OBS, ProtocolRevision.VatsimAuth));
-            }
-            else
-            {
-                FSD.SendPDU(new PDUAddPilot(OurCallsign, mConfig.VatsimId.Trim(), mConfig.VatsimPassword.Trim(), NetworkRating.OBS, ProtocolRevision.VatsimAuth, SimulatorType.XPlane, mConfig.NameWithAirport));
-            }
-
-            RequestPublicIP();
-            SendPositionUpdate();
-
-            mPositionUpdateTimer.Interval = mConnectInfo.ObserverMode ? 15000 : 5000;
-            mPositionUpdateTimer.Start();
+            RaiseDeleteControllerReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From));
         }
 
-        private void FSD_KillRequestReceived(object sender, DataReceivedEventArgs<PDUKillRequest> e)
+        private void Fsd_DeletePilotReceived(object sender, DataReceivedEventArgs<PDUDeletePilot> e)
         {
-            mKillReason = e.PDU.Reason;
-            mForcedDisconnect = true;
+            RaiseDeletePilotReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From));
         }
 
-        private void FSD_AcarsResponseReceived(object sender, DataReceivedEventArgs<PDUMetarResponse> e)
+        private void Fsd_LegacyPlaneInfoResponseReceived(object sender, DataReceivedEventArgs<PDULegacyPlaneInfoResponse> e)
         {
-            MetarReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Metar));
+            RaiseLegacyPlaneInfoReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, e.PDU.CSL.Replace("CSL=", "").Replace("~", "")));
         }
 
-        private void FSD_RadioMessageReceived(object sender, DataReceivedEventArgs<PDURadioMessage> e)
+        private void Fsd_PlaneInfoResponseReceived(object sender, DataReceivedEventArgs<PDUPlaneInfoResponse> e)
         {
-            List<int> TunedFrequencies = new List<int>();
-
-            if (mRadioStackData != null)
-            {
-                foreach (int freq in e.PDU.Frequencies)
-                {
-                    if (mRadioStackData.IsCom1Receiving && freq.FsdFrequencyToHertz().Normalize25KhzFrequency() == mRadioStackData.Com1ActiveFreq.Normalize25KhzFrequency())
-                    {
-                        if (!TunedFrequencies.Contains(freq))
-                        {
-                            TunedFrequencies.Add(freq);
-                        }
-                    }
-                    else if (mRadioStackData.IsCom2Receiving && freq.FsdFrequencyToHertz().Normalize25KhzFrequency() == mRadioStackData.Com2ActiveFreq.Normalize25KhzFrequency())
-                    {
-                        if (!TunedFrequencies.Contains(freq))
-                        {
-                            TunedFrequencies.Add(freq);
-                        }
-                    }
-                }
-            }
-
-            if (TunedFrequencies.Count > 0)
-            {
-                var match = Regex.Match(e.PDU.Message, "^SELCAL ([A-Z][A-Z]\\-[A-Z][A-Z])$");
-                if (match.Success)
-                {
-                    var selcal = "SELCAL " + match.Groups[1].Value.Replace("-", "");
-                    if (!string.IsNullOrEmpty(mConnectInfo.SelCalCode)
-                        && selcal == "SELCAL " + mConnectInfo.SelCalCode.Replace("-", ""))
-                    {
-                        SelcalAlertReceived?.Invoke(this, new SelcalAlertReceivedEventArgs(e.PDU.From, e.PDU.Frequencies));
-                    }
-                }
-                else
-                {
-                    bool isDirectMessage = e.PDU.Message.ToUpper().StartsWith(OurCallsign.ToUpper());
-                    RadioMessageReceived?.Invoke(this, new RadioMessageReceivedEventArgs(e.PDU.From.ToUpper(), TunedFrequencies.ToArray(), e.PDU.Message, isDirectMessage));
-                }
-            }
+            RaisePlaneInfoReceived?.Invoke(this, new PlaneInfoReceived(e.PDU.From, e.PDU.Equipment, e.PDU.Airline, e.PDU.Livery, e.PDU.CSL)); ;
         }
 
-        private void FSD_TextMessageReceived(object sender, DataReceivedEventArgs<PDUTextMessage> e)
+        private void Fsd_PlaneInfoRequestReceived(object sender, DataReceivedEventArgs<PDUPlaneInfoRequest> e)
         {
-            if (e.PDU.From.ToUpper() == "SERVER")
-            {
-                ServerMessageReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From.ToUpper(), e.PDU.Message));
-            }
-            else
-            {
-                PrivateMessageReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Message));
-            }
+            Match match = Regex.Match(OurCallsign, "^([A-Z]{3})\\d+", RegexOptions.IgnoreCase);
+            mFsd.SendPDU(new PDUPlaneInfoResponse(OurCallsign, e.PDU.From, mConnectInfo.TypeCode, match.Success ? match.Groups[1].Value : "", "", ""));
         }
 
-        private void FSD_BroadcastMessageReceived(object sender, DataReceivedEventArgs<PDUBroadcastMessage> e)
-        {
-            BroadcastMessageReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Message));
-        }
-
-        private void FSD_PilotPositionReceived(object sender, DataReceivedEventArgs<PDUPilotPosition> e)
-        {
-            if (!mConnectInfo.ObserverMode || !Regex.IsMatch(mConnectInfo.Callsign, "^" + Regex.Escape(e.PDU.From) + "[A-Z]$"))
-            {
-                NetworkAircraftState aircraftState = new NetworkAircraftState();
-                aircraftState.Transponder.TransponderCode = e.PDU.SquawkCode;
-                aircraftState.Transponder.TransponderIdent = e.PDU.IsIdenting;
-                aircraftState.Transponder.TransponderModeC = e.PDU.IsSquawkingModeC;
-                aircraftState.Altitude = e.PDU.TrueAltitude;
-                aircraftState.Bank = e.PDU.Bank;
-                aircraftState.Pitch = e.PDU.Pitch;
-                aircraftState.Heading = e.PDU.Heading;
-                aircraftState.GroundSpeed = e.PDU.GroundSpeed;
-                aircraftState.Location = new WorldPoint(e.PDU.Lon, e.PDU.Lat);
-                AircraftUpdateReceived?.Invoke(this, new AircraftUpdateReceivedEventArgs(e.PDU.From, aircraftState));
-            }
-        }
-
-        private void FSD_ATCPositionReceived(object sender, DataReceivedEventArgs<PDUATCPosition> e)
-        {
-            ControllerUpdateReceived?.Invoke(this, new ControllerUpdateReceivedEventArgs(e.PDU.From, (uint)e.PDU.Frequency, new WorldPoint(e.PDU.Lon, e.PDU.Lat)));
-        }
-
-        private void FSD_ClientQueryResponseReceived(object sender, DataReceivedEventArgs<PDUClientQueryResponse> e)
-        {
-            switch (e.PDU.QueryType)
-            {
-                case ClientQueryType.IsValidATC:
-                    IsValidATCReceived?.Invoke(this, new IsValidAtcReceivedEventArgs(e.PDU.Payload[1].ToUpper(), e.PDU.Payload[0].ToUpper() == "Y"));
-                    break;
-                case ClientQueryType.Capabilities:
-                    CapabilitiesResponseReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From.ToUpper(), string.Join(":", e.PDU.Payload.ToArray())));
-                    break;
-                case ClientQueryType.RealName:
-                    RealNameReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Payload[0]));
-                    break;
-                case ClientQueryType.ATIS:
-                    switch (e.PDU.Payload[0])
-                    {
-                        // Controller information
-                        case "E":
-                            AtisEndReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
-                            break;
-                        // Estimated logoff time
-                        case "Z":
-                            AtisLinesReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, string.Format("Estimated Logoff Time: {0}", e.PDU.Payload[1])));
-                            break;
-                        // Controller Information
-                        case "T":
-                            ControllerInfoReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Payload[1]));
-                            break;
-                    }
-                    break;
-                case ClientQueryType.PublicIP:
-                    mPublicIP = ((e.PDU.Payload.Count > 0) ? e.PDU.Payload[0] : "");
-                    break;
-            }
-        }
-
-        private void FSD_ClientQueryReceived(object sender, DataReceivedEventArgs<PDUClientQuery> e)
+        private void Fsd_ClientQueryReceived(object sender, DataReceivedEventArgs<PDUClientQuery> e)
         {
             switch (e.PDU.QueryType)
             {
                 case ClientQueryType.Capabilities:
                     if (e.PDU.From.ToUpper() != "SERVER")
                     {
-                        CapabilitiesRequestReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
+                        RaiseCapabilitiesRequestReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From));
                     }
-                    SendClientCaps(e.PDU.From);
                     break;
                 case ClientQueryType.COM1Freq:
-                    SendCom1Frequency(e.PDU.From, (mRadioStackData.Com1ActiveFreq.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000"));
+                    if (mRadioStackState != null)
+                    {
+                        mFsd.SendPDU(new PDUClientQueryResponse(OurCallsign, e.PDU.From, ClientQueryType.COM1Freq, new List<string> { (mRadioStackState.Com1ActiveFreq.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000") }));
+                    }
                     break;
                 case ClientQueryType.RealName:
-                    FSD.SendPDU(new PDUClientQueryResponse(OurCallsign, e.PDU.From, ClientQueryType.RealName, new List<string> { mConfig.NameWithAirport, "", "1" }));
+                    mFsd.SendPDU(new PDUClientQueryResponse(OurCallsign, e.PDU.From, ClientQueryType.RealName, new List<string> { mConfig.NameWithAirport, "", "1" }));
                     break;
                 case ClientQueryType.INF:
                     string info = string.Format("{0} {1} PID={2} ({3}) IP={4} SYS_UID={5} FSVER={6} LT={7} LO={8} AL={9}", new object[]
                     {
                         "xPilot",
-                        Application.ProductVersion.ToString(),
+                        Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion,
                         mConfig.VatsimId.Trim(),
                         mConfig.NameWithAirport,
                         mPublicIP,
@@ -445,84 +260,265 @@ namespace XPilot.PilotClient.Network
                         mUserAircraftData.Longitude,
                         mUserAircraftData.AltitudeMsl
                     });
-                    FSD.SendPDU(new PDUTextMessage(OurCallsign, e.PDU.From, info));
+                    mFsd.SendPDU(new PDUTextMessage(OurCallsign, e.PDU.From, info));
                     break;
                 case ClientQueryType.AircraftConfiguration:
-                    AircraftConfigurationInfoReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, string.Join(":", e.PDU.Payload.ToArray())));
-                    break;
-                case ClientQueryType.NewInfo:
-                    FSD.SendPDU(new PDUClientQuery(OurCallsign, e.PDU.From, ClientQueryType.ATIS, null));
-                    break;
-                default:
+                    RaiseAircraftConfigurationInfoReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, string.Join(":", e.PDU.Payload.ToArray())));
                     break;
             }
         }
 
-        private void FSD_PlaneInfoRequestReceived(object sender, DataReceivedEventArgs<PDUPlaneInfoRequest> e)
+        private void Fsd_ClientQueryResponseReceived(object sender, DataReceivedEventArgs<PDUClientQueryResponse> e)
         {
-            Match match = Regex.Match(OurCallsign, "^([A-Z]{3})\\d+", RegexOptions.IgnoreCase);
-            FSD.SendPDU(new PDUPlaneInfoResponse(OurCallsign, e.PDU.From, mConnectInfo.TypeCode, match.Success ? match.Groups[1].Value : "", "", ""));
-        }
-
-        private void FSD_PlaneInfoResponseReceived(object sender, DataReceivedEventArgs<PDUPlaneInfoResponse> e)
-        {
-            AircraftInfoReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.Equipment));
-        }
-
-        private void FSD_LegacyPlaneInfoResponseReceived(object sender, DataReceivedEventArgs<PDULegacyPlaneInfoResponse> e)
-        {
-            LegacyPlaneInfoReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From, e.PDU.CSL.Replace("CSL=", "").Replace("~", "")));
-        }
-
-        private void FSD_DeletePilotReceived(object sender, DataReceivedEventArgs<PDUDeletePilot> e)
-        {
-            DeletePilotReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
-        }
-
-        private void FSD_DeleteATCReceived(object sender, DataReceivedEventArgs<PDUDeleteATC> e)
-        {
-            DeleteControllerReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
-        }
-
-        private void FSD_FlightPlanReceived(object sender, DataReceivedEventArgs<PDUFlightPlan> e)
-        {
-            if (e.PDU.From == OurCallsign)
+            switch (e.PDU.QueryType)
             {
-                FlightPlan flightPlan = ParseFlightPlan(e.PDU);
-                if (string.IsNullOrEmpty(mConnectInfo.SelCalCode))
-                {
-                    string selcal = ExtractSelCal(flightPlan.Remarks);
-                    if (!string.IsNullOrEmpty(selcal))
+                case ClientQueryType.IsValidATC:
+                    RaiseIsValidATCReceived?.Invoke(this, new IsValidATCReceived(e.PDU.Payload[1].ToUpper(), e.PDU.Payload[0].ToUpper() == "Y"));
+                    break;
+                case ClientQueryType.Capabilities:
+                    RaisCapabilitiesResponseReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, string.Join(":", e.PDU.Payload.ToArray())));
+                    break;
+                case ClientQueryType.RealName:
+                    RaiseRealNameReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, e.PDU.Payload[0]));
+                    break;
+                case ClientQueryType.ATIS:
+                    switch (e.PDU.Payload[0])
                     {
-                        mConnectInfo.SelCalCode = selcal;
+                        case "E":
+                            RaiseAtisEndReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From));
+                            break;
+                        case "Z":
+                            RaiseAtisLinesReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, $"Estimated Logoff Time: {e.PDU.Payload[1]}"));
+                            break;
+                        case "T":
+                            RaiseControllerInfoReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, e.PDU.Payload[1]));
+                            break;
                     }
-                }
-                FlightPlanReceived?.Invoke(this, new FlightPlanReceivedEventArgs(flightPlan));
+                    break;
+                case ClientQueryType.PublicIP:
+                    mPublicIP = (e.PDU.Payload.Count > 0) ? e.PDU.Payload[0] : "";
+                    break;
+            }
+        }
+
+        private void Fsd_ATCPositionReceived(object sender, DataReceivedEventArgs<PDUATCPosition> e)
+        {
+            Controller c = new Controller
+            {
+                Callsign = e.PDU.From,
+                Frequency = (uint)e.PDU.Frequency,
+                Location = new WorldPoint(e.PDU.Lon, e.PDU.Lat)
+            };
+            RaiseControllerUpdateReceived?.Invoke(this, new ControllerUpdateReceived(c));
+        }
+
+        private void Fsd_PilotPositionReceived(object sender, DataReceivedEventArgs<PDUPilotPosition> e)
+        {
+            if (!IsObserver || !Regex.IsMatch(OurCallsign, "^" + Regex.Escape(e.PDU.From) + "[A-Z]$"))
+            {
+                NetworkAircraftPose pose = new NetworkAircraftPose();
+                pose.Transponder.TransponderCode = e.PDU.SquawkCode;
+                pose.Transponder.TransponderIdent = e.PDU.IsIdenting;
+                pose.Transponder.TransponderModeC = e.PDU.IsSquawkingModeC;
+                pose.Altitude = e.PDU.TrueAltitude;
+                pose.Bank = e.PDU.Bank;
+                pose.Pitch = e.PDU.Pitch;
+                pose.Heading = e.PDU.Heading;
+                pose.GroundSpeed = e.PDU.GroundSpeed;
+                pose.Location = new WorldPoint(e.PDU.Lon, e.PDU.Lat);
+                RaisePilotPositionReceived?.Invoke(this, new NetworkAircraftUpdateReceived(e.PDU.From, pose));
+            }
+        }
+
+        private void Fsd_BroadcastMessageReceived(object sender, DataReceivedEventArgs<PDUBroadcastMessage> e)
+        {
+            RaiseBroadcastMessageReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, e.PDU.Message));
+        }
+
+        private void Fsd_TextMessageReceived(object sender, DataReceivedEventArgs<PDUTextMessage> e)
+        {
+            if (e.PDU.From.ToUpper() == "SERVER")
+            {
+                RaiseServerMessageReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From.ToUpper(), e.PDU.Message));
             }
             else
             {
-                FlightPlan flightPlan = ParseFlightPlan(e.PDU);
-                RemoteFlightPlanReceived?.Invoke(this, new FlightPlanReceivedEventArgs(flightPlan));
+                RaisePrivateMessageReceived?.Invoke(this, new PrivateMessageReceived(e.PDU.From, e.PDU.Message));
             }
         }
 
-        private void FSD_PingReceived(object sender, DataReceivedEventArgs<PDUPing> e)
+        private void Fsd_RadioMessageReceived(object sender, DataReceivedEventArgs<PDURadioMessage> e)
         {
-            FSD.SendPDU(new PDUPong(OurCallsign, e.PDU.From, e.PDU.TimeStamp));
+            List<int> tunedFrequencies = new List<int>();
+            if (mRadioStackState != null)
+            {
+                foreach (int freq in e.PDU.Frequencies)
+                {
+                    if (mRadioStackState.IsCom1Receiving && freq.FsdFrequencyToHertz().Normalize25KhzFrequency() == mRadioStackState.Com1ActiveFreq.Normalize25KhzFrequency())
+                    {
+                        if (!tunedFrequencies.Contains(freq))
+                        {
+                            tunedFrequencies.Add(freq);
+                        }
+                    }
+                    else if (mRadioStackState.IsCom2Receiving && freq.FsdFrequencyToHertz().Normalize25KhzFrequency() == mRadioStackState.Com2ActiveFreq.Normalize25KhzFrequency())
+                    {
+                        if (!tunedFrequencies.Contains(freq))
+                        {
+                            tunedFrequencies.Add(freq);
+                        }
+                    }
+                }
+            }
+
+            if (tunedFrequencies.Count > 0)
+            {
+                var match = Regex.Match(e.PDU.Message, "^SELCAL ([A-Z][A-Z]\\-[A-Z][A-Z])$");
+                if (match.Success)
+                {
+                    var selcal = "SELCAL " + match.Groups[1].Value.Replace("-", "");
+                    if (!string.IsNullOrEmpty(mConnectInfo.SelCalCode)
+                        && selcal == "SELCAL " + mConnectInfo.SelCalCode.Replace("-", ""))
+                    {
+                        RaiseSelcalAlertReceived?.Invoke(this, new SelcalAlertReceived(e.PDU.From, e.PDU.Frequencies));
+                    }
+                }
+                else
+                {
+                    bool isDirectMessage = e.PDU.Message.ToUpper().StartsWith(OurCallsign.ToUpper());
+                    RaiseRadioMessageReceived?.Invoke(this, new RadioMessageReceived(e.PDU.From.ToUpper(), tunedFrequencies.ToArray(), e.PDU.Message, isDirectMessage));
+                }
+            }
         }
 
-        private void PositionUpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void Fsd_AcarsResponseReceived(object sender, DataReceivedEventArgs<PDUMetarResponse> e)
+        {
+            RaiseMetarReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From, e.PDU.Metar));
+        }
+
+        private void Fsd_KillRequestReceived(object sender, DataReceivedEventArgs<PDUKillRequest> e)
+        {
+            mKillReason = e.PDU.Reason;
+            mForcedDisconnect = true;
+        }
+
+        private void Fsd_ServerIdentificationReceived(object sender, DataReceivedEventArgs<PDUServerIdentification> e)
+        {
+            mFsd.SendPDU(new PDUClientIdentification(OurCallsign, mFsd.GetClientKey(), "xPilot", mFsdClientVersion.Major, mFsdClientVersion.Minor, mConfig.VatsimId.Trim(), mSystemUID, null));
+
+            if (IsObserver)
+            {
+                mFsd.SendPDU(new PDUAddATC(OurCallsign, mConfig.Name, mConfig.VatsimId.Trim(), mConfig.VatsimPasswordDecrypted.Trim(), NetworkRating.OBS, ProtocolRevision.VatsimAuth));
+            }
+            else
+            {
+                mFsd.SendPDU(new PDUAddPilot(OurCallsign, mConfig.VatsimId.Trim(), mConfig.VatsimPasswordDecrypted.Trim(), NetworkRating.OBS, ProtocolRevision.VatsimAuth, SimulatorType.XPlane, mConfig.Name));
+            }
+
+            RequestPublicIP();
+            SendPositionUpdate();
+
+            mPositionUpdateTimer.Interval = IsObserver ? 15000 : 5000;
+            mPositionUpdateTimer.Start();
+        }
+
+        private void Fsd_NetworkDisconnected(object sender, NetworkEventArgs e)
+        {
+            mPositionUpdateTimer.Stop();
+            DisconnectInfo di = new DisconnectInfo
+            {
+                Type = (mForcedDisconnect ? DisconnectType.Forcible : (mIntentionalDisconnect ? DisconnectType.Intentional : DisconnectType.Other)),
+                Reason = (mForcedDisconnect ? mKillReason : "")
+            };
+            RaiseNetworkDisconnected?.Invoke(this, new NetworkDisconnected(di));
+            mIntentionalDisconnect = false;
+            mForcedDisconnect = false;
+            mIsIdenting = false;
+            mIsIdentPressed = false;
+            switch (di.Type)
+            {
+                case DisconnectType.Forcible:
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Warning, !string.IsNullOrEmpty(mKillReason) ? $"Forcibly disconnected from the network: {mKillReason}" : "Forcibly disconnected from the network."));
+                    break;
+                default:
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Disconnected from network"));
+                    break;
+            }
+        }
+
+        private void Fsd_NetworkConnected(object sender, NetworkEventArgs e)
+        {
+            mForcedDisconnect = false;
+            mIntentionalDisconnect = false;
+            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, IsObserver ? "Connected to network in oberver mode" : "Connected to network"));
+            RaiseNetworkConnected?.Invoke(this, new NetworkConnected(ConnectInfo));
+        }
+
+        private void Fsd_RawDataSent(object sender, RawDataEventArgs e)
+        {
+
+        }
+
+        private void Fsd_RawDataReceived(object sender, RawDataEventArgs e)
+        {
+
+        }
+
+        private void Fsd_ProtocolErrorReceived(object sender, DataReceivedEventArgs<PDUProtocolError> e)
+        {
+            if (e.PDU.ErrorType != NetworkError.NoFlightPlan)
+            {
+                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Network Error: {e.PDU.Message}"));
+            }
+        }
+
+        private void Fsd_NetworkError(object sender, NetworkErrorEventArgs e)
+        {
+            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, e.Error));
+        }
+
+        private void DownloadNetworkServersAsync()
+        {
+            Task.Run(() =>
+            {
+                mServerList.Clear();
+                mServerList = NetworkInfo.GetServerList(STATUS_FILE_URL);
+            }).ContinueWith((t) =>
+            {
+                if (t.IsCanceled)
+                {
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Server list download cancelled. Using previously cached server list."));
+                }
+                else if (t.Exception != null)
+                {
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Server list download failed. Using previously cached server list. Error: {t.Exception.Message}"));
+                }
+                else
+                {
+                    mConfig.CachedServers.Clear();
+                    foreach (NetworkServerInfo server in mServerList)
+                    {
+                        mConfig.CachedServers.Add(server);
+                    }
+                    mConfig.SaveConfig();
+                    RaiseNetworkServerListUpdated?.Invoke(this, EventArgs.Empty);
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Server list successfully downloaded. { mServerList.Count } servers found."));
+                }
+            });
+        }
+
+        private void PositionUpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             SendPositionUpdate();
         }
 
         private void SendPositionUpdate()
         {
-            if (FSD.Connected)
+            if (IsConnected && mUserAircraftData != null)
             {
-                if (mConnectInfo.ObserverMode)
+                if (IsObserver)
                 {
-                    FSD.SendPDU(new PDUATCPosition(mConnectInfo.Callsign, 99998, NetworkFacility.OBS, 40, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude));
+                    mFsd.SendPDU(new PDUATCPosition(OurCallsign, 99998, NetworkFacility.OBS, 40, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude));
                 }
                 else
                 {
@@ -534,25 +530,28 @@ namespace XPilot.PilotClient.Network
                     else if (mIsIdenting)
                     {
                         mIsIdenting = false;
-                        SquawkingIdentChanged?.Invoke(this, new SquawkingIdentChangedEventArgs(false));
+                        RaiseTransponderIdentChanged?.Invoke(this, new TransponderIdentStateChanged(false));
                     }
-                    if (mUserAircraftData != null)
-                    {
-                        FSD.SendPDU(new PDUPilotPosition(OurCallsign, mUserAircraftData.TransponderCode, mUserAircraftData.TransponderMode >= 2, mIsIdenting || mUserAircraftData.TransponderIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMsl * 3.28084), Convert.ToInt32(mUserAircraftData.PressureAltitude), Convert.ToInt32(mUserAircraftData.GroundSpeed), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Roll), Convert.ToInt32(mUserAircraftData.Yaw)));
-                    }
+                    mFsd.SendPDU(new PDUPilotPosition(OurCallsign, mUserAircraftData.TransponderCode, mUserAircraftData.TransponderMode >= 2, mIsIdenting || mUserAircraftData.TransponderIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMsl * 3.28084), Convert.ToInt32(mUserAircraftData.AltitudeAgl), Convert.ToInt32(mUserAircraftData.GroundSpeed), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Roll), Convert.ToInt32(mUserAircraftData.Yaw)));
                 }
             }
         }
 
-        private string ExtractSelCal(string remarks)
+        private void RequestPublicIP()
         {
-            string result;
-            Match match = Regex.Match(remarks, "SEL/([A-Z][A-Z])([A-Z][A-Z])");
-            result = match.Success ? string.Format("{0}-{1}", match.Groups[1].Value, match.Groups[2].Value) : null;
-            return result;
+            if (IsConnected)
+            {
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.PublicIP, null));
+            }
         }
 
-        private FlightPlan ParseFlightPlan(PDUFlightPlan fp)
+        private static string ExtractSelcal(string remarks)
+        {
+            Match match = Regex.Match(remarks, "SEL/([A-Z][A-Z])([A-Z][A-Z])");
+            return match.Success ? string.Format("{0}-{1}", match.Groups[1].Value, match.Groups[2].Value) : null;
+        }
+
+        private static FlightPlan ParseFlightPlan(PDUFlightPlan fp)
         {
             if (fp.CruiseAlt.Contains("FL"))
             {
@@ -568,8 +567,8 @@ namespace XPilot.PilotClient.Network
 
             FlightPlan flightPlan = new FlightPlan();
             flightPlan.Callsign = fp.From;
-            flightPlan.FlightType = flightPlan.FlightType.FromString(fp.Rules.ToString());
-            flightPlan.Equipment = fp.Equipment;
+            flightPlan.FlightType = (FlightPlanType)fp.Rules;
+            flightPlan.ExtractEquipmentComponents(fp.Equipment);
             flightPlan.IsHeavy = fp.Equipment.StartsWith("H/");
             flightPlan.CruiseAltitude = cruiseAlt;
             flightPlan.CruiseSpeed = cruiseSpeed;
@@ -606,25 +605,11 @@ namespace XPilot.PilotClient.Network
             return flightPlan;
         }
 
-        private void RequestPublicIP()
-        {
-            if (FSD.Connected)
-            {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.PublicIP, null));
-            }
-        }
-
         public void FileFlightPlan(FlightPlan flightPlan)
         {
-            if (FSD.Connected)
+            if (IsConnected)
             {
-                string acType = string.Format("{0}{1}{2}{3}", new object[]
-                {
-                flightPlan.IsHeavy ? "H/":"",
-                mConnectInfo.TypeCode,
-                string.IsNullOrEmpty(flightPlan.EquipmentSuffix) ? "" : "/",
-                string.IsNullOrEmpty(flightPlan.EquipmentSuffix) ? "" : flightPlan.EquipmentSuffix
-                });
+                string acType = $"{(flightPlan.IsHeavy ? "H" : "")}{mConnectInfo.TypeCode}{(string.IsNullOrEmpty(flightPlan.EquipmentSuffix) ? "" : $"/{flightPlan.EquipmentSuffix}")}";
                 flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/v/", "", RegexOptions.IgnoreCase);
                 flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/t/", "", RegexOptions.IgnoreCase);
                 flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/r/", "", RegexOptions.IgnoreCase);
@@ -641,7 +626,7 @@ namespace XPilot.PilotClient.Network
                         break;
                 }
                 // SELCAL
-                string selcal = ExtractSelCal(flightPlan.Remarks);
+                string selcal = ExtractSelcal(flightPlan.Remarks);
                 if (!string.IsNullOrEmpty(selcal))
                 {
                     mConnectInfo.SelCalCode = selcal;
@@ -650,48 +635,32 @@ namespace XPilot.PilotClient.Network
                 {
                     flightPlan.Remarks = string.Format("{0} SEL/{1}", flightPlan.Remarks, mConnectInfo.SelCalCode.Replace("-", ""));
                 }
-                FSD.SendPDU(new PDUFlightPlan(OurCallsign, "SERVER", FlightRules.IFR.FromString(flightPlan.FlightType.ToString()), acType, flightPlan.CruiseSpeed.ToString(), flightPlan.DepartureAirport, flightPlan.DepartureTime.ToString("0000"), "", flightPlan.CruiseAltitude.ToString(), flightPlan.DestinationAirport, flightPlan.EnrouteHours.ToString(), flightPlan.EnrouteMinutes.ToString(), flightPlan.FuelHours.ToString(), flightPlan.FuelMinutes.ToString(), flightPlan.AlternateAirport, flightPlan.Remarks, flightPlan.Route));
+                mFsd.SendPDU(new PDUFlightPlan(OurCallsign, "SERVER", FlightRules.IFR.FromString(flightPlan.FlightType.ToString()), acType, flightPlan.CruiseSpeed.ToString(), flightPlan.DepartureAirport, flightPlan.DepartureTime.ToString("0000"), "", flightPlan.CruiseAltitude.ToString(), flightPlan.DestinationAirport, flightPlan.EnrouteHours.ToString(), flightPlan.EnrouteMinutes.ToString(), flightPlan.FuelHours.ToString(), flightPlan.FuelMinutes.ToString(), flightPlan.AlternateAirport, flightPlan.Remarks, flightPlan.Route));
             }
         }
 
         public void CheckIfValidATC(string callsign)
         {
-            if (FSD.Connected)
+            if (IsConnected)
             {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.IsValidATC, new List<string> { callsign }));
-            }
-        }
-
-        private void RequestFlightPlan()
-        {
-            if (FSD.Connected)
-            {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { OurCallsign }));
-            }
-        }
-
-        public void RequestRemoteFlightPlan(string callsign)
-        {
-            if (FSD.Connected && !string.IsNullOrEmpty(callsign))
-            {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { callsign.ToUpper() }));
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.IsValidATC, new List<string> { callsign }));
             }
         }
 
         public void Connect(ConnectInfo info, string address)
         {
+            //address = "192.168.50.104";
             mConnectInfo = info;
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Connecting to network..."));
-            FSD.Connect(address, 6809, !mConnectInfo.TowerViewMode);
+            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Connecting to network"));
+            mFsd.Connect(address, 6809, !IsTowerView);
         }
 
         public void Disconnect(DisconnectInfo info)
         {
-            NetworkDisconnected?.Invoke(this, new NetworkDisconnectedEventArgs(info));
-            if (FSD.Connected)
+            if (IsConnected)
             {
-                FSD.SendPDU(new PDUDeletePilot(OurCallsign, mConfig.VatsimId.Trim()));
-                FSD.Disconnect();
+                mFsd.SendPDU(new PDUDeletePilot(OurCallsign, mConfig.VatsimId.Trim()));
+                mFsd.Disconnect();
             }
         }
 
@@ -699,100 +668,61 @@ namespace XPilot.PilotClient.Network
         {
             if (IsConnected)
             {
-                FSD.SendPDU(new PDUDeletePilot(OurCallsign, mConfig.VatsimId.Trim()));
-                FSD.Disconnect();
+                mFsd.SendPDU(new PDUDeletePilot(OurCallsign, mConfig.VatsimId.Trim()));
+                mFsd.Disconnect();
             }
-            DisconnectInfo disconnectInfo = new DisconnectInfo
+            DisconnectInfo di = new DisconnectInfo
             {
-                Type = DisconnectType.Quiet,
+                Type = DisconnectType.Forcible,
                 Reason = reason
             };
-            NetworkDisconnected?.Invoke(this, new NetworkDisconnectedEventArgs(disconnectInfo));
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, disconnectInfo.Reason));
-        }
-
-        public void DownloadNetworkServers()
-        {
-            mServerList.Clear();
-
-            try
-            {
-                foreach (var server in mConfig.CachedServers)
-                {
-                    mServerList.Add(server);
-                }
-            }
-            catch { }
-
-            BackgroundWorker serverListBackgroundWorker = new BackgroundWorker();
-            serverListBackgroundWorker.DoWork += ServerListBackgroundWorker_DoWork;
-            serverListBackgroundWorker.RunWorkerCompleted += ServerListBackgroundWorker_RunWorkerCompleted;
-            serverListBackgroundWorker.RunWorkerAsync();
-        }
-
-        private void ServerListBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Cancelled)
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Server list download cancelled. Using previously cached server list."));
-            }
-            else if (e.Error != null)
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Server list download failed. Using previously cached server list. Error: { e.Error.Message }"));
-            }
-            else
-            {
-                mConfig.CachedServers.Clear();
-                foreach (NetworkServerInfo server in mServerList)
-                {
-                    mConfig.CachedServers.Add(server);
-                }
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, $"Server list successfully downloaded. { mServerList.Count } servers found."));
-                NetworkServerListUpdated?.Invoke(this, EventArgs.Empty);
-                mConfig.SaveConfig();
-            }
-        }
-
-        private void ServerListBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            List<NetworkServerInfo> list = NetworkInfo.GetServerList(VATSIM_STATUS_FILE_URL);
-            if (list.Count > 0)
-            {
-                mServerList = list;
-            }
-        }
-
-        public void SendRadioMessage(List<int> frequencies, string message)
-        {
-            FSD.SendPDU(new PDURadioMessage(OurCallsign, frequencies.ToArray(), message));
+            RaiseNetworkDisconnected?.Invoke(this, new NetworkDisconnected(di));
         }
 
         public void RequestClientCapabilities(string callsign)
         {
-            FSD.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.Capabilities));
+            if (IsConnected)
+            {
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.Capabilities));
+            }
         }
 
         public void RequestControllerInfo(string callsign)
         {
             if (IsConnected)
             {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.ATIS));
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.ATIS));
+            }
+        }
+
+        public void RequestFullAircraftConfiguration(string callsign)
+        {
+            if (IsConnected)
+            {
+                AircraftConfigurationInfo acconfig = new AircraftConfigurationInfo
+                {
+                    Request = new AircraftConfigurationInfo.RequestType?(AircraftConfigurationInfo.RequestType.Full)
+                };
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.AircraftConfiguration, new List<string>
+                {
+                    acconfig.ToJson()
+                }));
             }
         }
 
         public void RequestInfoQuery(string to)
         {
-            if (!string.IsNullOrEmpty(to) && FSD.Connected)
+            if (IsConnected)
             {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, to, ClientQueryType.INF));
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, to, ClientQueryType.INF));
             }
         }
 
         public void RequestPlaneInformation(string callsign)
         {
-            if (!string.IsNullOrEmpty(callsign) && FSD.Connected)
+            if (IsConnected && !string.IsNullOrEmpty(callsign))
             {
-                FSD.SendPDU(new PDUPlaneInfoRequest(OurCallsign, callsign));
+                mFsd.SendPDU(new PDUPlaneInfoRequest(OurCallsign, callsign));
             }
         }
 
@@ -800,7 +730,15 @@ namespace XPilot.PilotClient.Network
         {
             if (IsConnected)
             {
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.RealName));
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, callsign, ClientQueryType.RealName));
+            }
+        }
+
+        public void RequestClientFlightPlan(string callsign)
+        {
+            if (IsConnected && !string.IsNullOrEmpty(callsign))
+            {
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { callsign.ToUpper() }));
             }
         }
 
@@ -809,11 +747,26 @@ namespace XPilot.PilotClient.Network
             return mServerList;
         }
 
+        public void SendAircraftConfiguration(string to, AircraftConfiguration config)
+        {
+            if (IsConnected)
+            {
+                AircraftConfigurationInfo acconfig = new AircraftConfigurationInfo
+                {
+                    Config = config
+                };
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, to, ClientQueryType.AircraftConfiguration, new List<string>
+                {
+                    acconfig.ToJson()
+                }));
+            }
+        }
+
         public void SendClientCaps(string from)
         {
-            if (FSD.Connected)
+            if (IsConnected)
             {
-                FSD.SendPDU(new PDUClientQueryResponse(OurCallsign, from, ClientQueryType.Capabilities, new List<string>
+                mFsd.SendPDU(new PDUClientQueryResponse(OurCallsign, from, ClientQueryType.Capabilities, new List<string>
                 {
                     "VERSION=1",
                     "ATCINFO=1",
@@ -823,190 +776,125 @@ namespace XPilot.PilotClient.Network
             }
         }
 
-        public void RequestFullAircraftConfiguration(string to)
-        {
-            if (FSD.Connected)
-            {
-                AircraftConfigurationInfo aircraftConfigurationInfo = new AircraftConfigurationInfo
-                {
-                    Request = new AircraftConfigurationInfo.RequestType?(AircraftConfigurationInfo.RequestType.Full)
-                };
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, to, ClientQueryType.AircraftConfiguration, new List<string>
-                {
-                    aircraftConfigurationInfo.ToJson()
-                }));
-            }
-        }
-
-        public void SendAircraftConfiguration(string to, AircraftConfiguration config)
-        {
-            if (FSD.Connected)
-            {
-                AircraftConfigurationInfo aircraftConfigurationInfo = new AircraftConfigurationInfo
-                {
-                    Config = config
-                };
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, to, ClientQueryType.AircraftConfiguration, new List<string>
-                {
-                    aircraftConfigurationInfo.ToJson()
-                }));
-            }
-        }
-
         public void SendIncrementalAircraftConfigurationUpdate(AircraftConfiguration config)
         {
-            if (FSD.Connected)
+            if (IsConnected)
             {
-                AircraftConfigurationInfo aircraftConfigurationInfo = new AircraftConfigurationInfo
+                AircraftConfigurationInfo acconfig = new AircraftConfigurationInfo
                 {
                     Config = config
                 };
-                FSD.SendPDU(new PDUClientQuery(OurCallsign, "@94836", ClientQueryType.AircraftConfiguration, new List<string>
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "@94836", ClientQueryType.AircraftConfiguration, new List<string>
                 {
-                    aircraftConfigurationInfo.ToJson()
+                    acconfig.ToJson()
                 }));
             }
         }
 
         public void SquawkIdent()
         {
-            if (FSD.Connected)
+            if (IsConnected)
             {
                 mIsIdentPressed = true;
-                SquawkingIdentChanged?.Invoke(this, new SquawkingIdentChangedEventArgs(true));
+                RaiseTransponderIdentChanged?.Invoke(this, new TransponderIdentStateChanged(true));
             }
         }
 
-        private void SendCom1Frequency(string from, string frequency)
+        public bool IsConnected => mFsd.Connected;
+
+        public bool IsObserver => mConnectInfo.ObserverMode;
+
+        public bool IsTowerView => mConnectInfo.TowerViewMode;
+
+        public string OurCallsign { get => mConnectInfo.Callsign; set => _ = mConnectInfo.Callsign; }
+
+        public string SelcalCode => mConnectInfo.SelCalCode;
+
+        public ClientProperties ClientProperties { get => mClientProperties; set => _ = mClientProperties; }
+
+        public ConnectInfo ConnectInfo => mConnectInfo;
+
+        [EventSubscription(EventTopics.UserAircraftDataChanged, typeof(OnPublisher))]
+        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataChanged e)
         {
-            if (FSD.Connected)
+            if (mUserAircraftData == null || !mUserAircraftData.Equals(e.AircraftData))
             {
-                FSD.SendPDU(new PDUClientQueryResponse(OurCallsign, from, ClientQueryType.COM1Freq, new List<string>
-                {
-                    frequency
-                }));
+                mUserAircraftData = e.AircraftData;
             }
         }
 
-        public bool IsConnected
+        [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnPublisher))]
+        public void OnRadioStackStateChanged(object sender, RadioStackStateChanged e)
         {
-            get
+            if (mRadioStackState == null || !mRadioStackState.Equals(e.RadioStack))
             {
-                return FSD.Connected;
+                mRadioStackState = e.RadioStack;
             }
         }
 
-        public bool IsObserver
+        [EventSubscription(EventTopics.MetarRequested, typeof(OnPublisher))]
+        public void MetarRequested(object sender, MetarRequestSent e)
         {
-            get
+            if (IsConnected)
             {
-                return mConnectInfo.ObserverMode;
+                mFsd.SendPDU(new PDUMetarRequest(OurCallsign, e.Station));
             }
         }
 
-        public string OurCallsign
+        [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnPublisher))]
+        public void OnPrivateMessageSent(object sender, PrivateMessageSent e)
         {
-            get
+            if (IsConnected)
             {
-                return mConnectInfo.Callsign;
+                mFsd.SendPDU(new PDUTextMessage(OurCallsign, e.To, e.Message));
             }
-            set => _ = mConnectInfo.Callsign;
         }
 
-        public string SelcalCode
+        [EventSubscription(EventTopics.RadioMessageSent, typeof(OnPublisher))]
+        public void OnRadioMessageSent(object sender, RadioMessageSent e)
         {
-            get
+            if (IsConnected)
             {
-                return mConnectInfo.SelCalCode;
+                mFsd.SendPDU(new PDURadioMessage(OurCallsign, e.Frequencies, e.Message));
             }
         }
 
-        public ClientProperties ClientProperties { get; set; }
-
-        [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnUserInterfaceAsync))]
-        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
-        {
-            if (mUserAircraftData == null || !mUserAircraftData.Equals(e.UserAircraftData))
-            {
-                mUserAircraftData = e.UserAircraftData;
-            }
-        }
-
-        [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
-        {
-            if (mRadioStackData == null || !mRadioStackData.Equals(e.RadioStackState))
-            {
-                mRadioStackData = e.RadioStackState;
-            }
-        }
-
-        [EventSubscription(EventTopics.MainFormShown, typeof(OnUserInterfaceAsync))]
-        public void OnMainFormShown(object sender, EventArgs e)
-        {
-            FSD.SetSyncContext(SynchronizationContext.Current);
-        }
-
-        [EventSubscription(EventTopics.RealNameRequested, typeof(OnUserInterfaceAsync))]
-        public void OnRealNameRequested(object sender, RealNameRequestedEventArgs e)
-        {
-            RequestRealName(e.Callsign);
-        }
-
-        [EventSubscription(EventTopics.MetarRequested, typeof(OnUserInterfaceAsync))]
-        public void MetarRequested(object sender, MetarRequestedEventArgs e)
-        {
-            if (FSD.Connected)
-            {
-                FSD.SendPDU(new PDUMetarRequest(OurCallsign, e.Station));
-            }
-        }
-
-        [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
-        {
-            FSD.SendPDU(new PDUTextMessage(e.From, e.To, e.Message));
-        }
-
-        [EventSubscription(EventTopics.RadioMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
-        {
-            FSD.SendPDU(new PDURadioMessage(e.Callsign, e.Frequencies, e.Message));
-        }
-
-        [EventSubscription(EventTopics.FileFlightPlan, typeof(OnUserInterfaceAsync))]
-        public void OnFileFlightPlan(object sender, FlightPlanReceivedEventArgs e)
+        [EventSubscription(EventTopics.SendFlightPlan, typeof(OnPublisher))]
+        public void OnFileFlightPlan(object sender, FlightPlanSent e)
         {
             if (IsConnected)
             {
                 FileFlightPlan(e.FlightPlan);
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Flight plan submitted."));
+                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Flight plan submitted."));
             }
             else
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Unable to submit flight plan. Not connected to network."));
-                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Unable to submit flight plan. Not connected to network."));
             }
         }
 
-        [EventSubscription(EventTopics.RequestFlightPlan, typeof(OnUserInterfaceAsync))]
+        [EventSubscription(EventTopics.FetchFlightPlan, typeof(OnPublisher))]
         public void OnRequestFlightPlan(object sender, EventArgs e)
         {
             if (IsConnected)
             {
-                RequestFlightPlan();
+                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { OurCallsign }));
             }
         }
 
-        [EventSubscription(EventTopics.WallopRequestSent, typeof(OnUserInterfaceAsync))]
-        public void OnWallopRequestSent(object sender, WallopReceivedEventArgs e)
+        [EventSubscription(EventTopics.WallopSent, typeof(OnPublisher))]
+        public void OnWallopRequestSent(object sender, WallopSent e)
         {
             if (IsConnected)
             {
-                FSD.SendPDU(new PDUWallop(OurCallsign, e.Message));
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Warning, string.Format("[WALLOP] {0}: {1}", OurCallsign, e.Message)));
-                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Broadcast));
+                mFsd.SendPDU(new PDUWallop(OurCallsign, e.Message));
             }
+        }
+
+        [EventSubscription(EventTopics.MainFormShown, typeof(OnPublisher))]
+        public void OnMainFormShown(object sender, EventArgs e)
+        {
+            DownloadNetworkServersAsync();
         }
     }
 }

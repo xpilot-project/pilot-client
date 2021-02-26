@@ -15,9 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
+using XPilot.PilotClient.Aircraft;
+
 namespace XPilot.PilotClient.XplaneAdapter
 {
     public interface IXplaneConnectionManager
     {
+        void SetTransponderCode(int code);
+        void SetRadioFrequency(int radio, uint freq);
+        void SetAudioComSelection(int radio);
+        void SetAudioSelectionCom1(bool enabled);
+        void SetAudioSelectionCom2(bool enabled);
+        void SetLoginStatus(bool connected);
+        void AddPlane(NetworkAircraft plane);
+        void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftPose pose);
+        void PlaneConfigChanged(NetworkAircraft plane, NetworkAircraftConfig config);
+        void RemovePlane(NetworkAircraft plane);
     }
 }

@@ -17,7 +17,10 @@
 */
 namespace XPilot.PilotClient.AudioForVatsim
 {
-    public class IAFVManaged
+    public interface IAFVManaged
     {
+        void SetAudioDriver(string driver);
+        void ConfigureAudioDevices();
+        void UpdateRadioGains();
     }
 }

@@ -139,7 +139,7 @@ namespace XPilot.PilotClient.Common
             this.Route = route;
             this.Remarks = remarks;
         }
-        private void ExtractEquipmentComponents(string equipment)
+        internal void ExtractEquipmentComponents(string equipment)
         {
             Match match = Regex.Match(equipment, "^([A-Z]|\\d{1,2})/(\\S{2,4})/([A-Z])$", RegexOptions.IgnoreCase);
             bool success = match.Success;

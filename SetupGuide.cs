@@ -28,20 +28,20 @@ namespace XPilot.PilotClient
     public partial class SetupGuide : Form, ISetup
     {
         private IEventBroker mEventBroker;
-        private IFsdManger mNetworkManager;
-        private IAfvManager mAfv;
+        private IFsdManager mNetworkManager;
+        private IAFVManaged mAudio;
         private IAppConfig mConfig;
         public SetupScreen CurrentScreen { get; private set; }
         public bool XSquawkBox { get; set; }
         public bool XSwiftBus { get; set; }
         public string XplanePath { get; set; }
 
-        public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManger network, IAfvManager afv)
+        public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManager network, IAFVManaged audio)
         {
             InitializeComponent();
             mConfig = config;
             mNetworkManager = network;
-            mAfv = afv;
+            mAudio = audio;
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
             SwitchScreen("Welcome");
@@ -71,7 +71,7 @@ namespace XPilot.PilotClient
                 case "NetworkCredentials":
                     return new NetworkCredentials(this, mConfig, mNetworkManager);
                 case "AudioConfiguration":
-                    return new AudioConfiguration(this, mConfig, mAfv, mEventBroker);
+                    return new AudioConfiguration(this, mConfig, mAudio, mEventBroker);
             }
         }
 

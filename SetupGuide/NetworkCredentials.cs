@@ -24,9 +24,9 @@ namespace XPilot.PilotClient.Tutorial
 {
     public partial class NetworkCredentials : SetupScreen,ISetupScreen
     {
-        private IFsdManger mNetworkManager;
+        private IFsdManager mNetworkManager;
 
-        public NetworkCredentials(ISetup host, IAppConfig config, IFsdManger network) : base(host, config)
+        public NetworkCredentials(ISetup host, IAppConfig config, IFsdManager network) : base(host, config)
         {
             InitializeComponent();
             Host.SetTitle("Network Credentials");
@@ -38,7 +38,7 @@ namespace XPilot.PilotClient.Tutorial
         private void LoadSettings()
         {
             txtNetworkLogin.Text = mConfig.VatsimId;
-            txtNetworkPassword.Text = mConfig.VatsimPassword;
+            txtNetworkPassword.Text = mConfig.VatsimPasswordDecrypted;
             txtName.Text = mConfig.Name;
             txtHomeAirport.Text = mConfig.HomeAirport;
             ddlServerName.SelectedIndex = ddlServerName.FindStringExact(mConfig.ServerName);
@@ -74,7 +74,7 @@ namespace XPilot.PilotClient.Tutorial
             else
             {
                 mConfig.VatsimId = txtNetworkLogin.Text.Trim();
-                mConfig.VatsimPassword = txtNetworkPassword.Text.Trim();
+                mConfig.VatsimPasswordDecrypted = txtNetworkPassword.Text.Trim();
                 mConfig.Name = txtName.Text.Trim();
                 mConfig.HomeAirport = txtHomeAirport.Text.ToUpper().Trim();
                 mConfig.ServerName = (ddlServerName.SelectedItem as NetworkServerItem).Text;
@@ -94,10 +94,6 @@ namespace XPilot.PilotClient.Tutorial
                     item.Value = x.Address;
                     ddlServerName.Items.Add(item);
                 }
-            }
-            else
-            {
-                mNetworkManager.DownloadNetworkServers();
             }
         }
     }

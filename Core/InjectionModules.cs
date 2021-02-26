@@ -35,13 +35,12 @@ namespace XPilot.PilotClient.Core
             Bind<ITabPages>().ToFactory();
             Bind<IEventBroker>().To(typeof(EventBroker)).InSingletonScope();
             Bind<IAppConfig>().To(typeof(AppConfig)).InSingletonScope();
-            Bind<IFsdManger>().To(typeof(FsdManager)).InSingletonScope();
-            Bind<IAfvManager>().To(typeof(AfvManager)).InSingletonScope();
+            Bind<IFsdManager>().To(typeof(FsdManager)).InSingletonScope();
+            Bind<IAFVManaged>().To(typeof(AFVManaged)).InSingletonScope();
             Bind<ISoundManager>().To(typeof(SoundManager)).InSingletonScope();
             Bind<IXplaneConnectionManager>().To(typeof(XplaneConnectionManager)).InSingletonScope();
             Bind<IVersionCheck>().To(typeof(VersionCheck)).InSingletonScope();
             Bind<IUserAircraftManager>().To(typeof(UserAircraftManager)).InSingletonScope();
-            Bind<ISelcalGenerator>().To(typeof(SelcalGenerator)).InSingletonScope();
             Bind<INetworkAircraftManager>().To(typeof(NetworkAircraftManager)).InSingletonScope();
             Bind<IControllerManager>().To(typeof(ControllerManager)).InSingletonScope();
             Bind<IControllerAtisManager>().To(typeof(ControllerAtisManager)).InSingletonScope();

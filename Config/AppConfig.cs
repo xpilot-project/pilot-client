@@ -41,7 +41,7 @@ namespace XPilot.PilotClient.Config
         public string AfvResourcePath => Path.Combine(AppPath, "afv");
 
         [JsonIgnore]
-        public Dictionary<int, string> AudioApis { get; set; }
+        public Dictionary<int, string> AudioDrivers { get; set; }
 
         [JsonIgnore]
         public Dictionary<int, string> OutputDevices { get; set; }
@@ -102,16 +102,25 @@ namespace XPilot.PilotClient.Config
         public int Com2Volume { get; set; } = 100;
         public FlightPlan LastFlightPlan { get; set; }
         public List<ConnectInfo> RecentConnectionInfo { get; set; }
-        public string SimulatorIP { get; set; } = "127.0.0.1";
+        public string SimulatorIP { get; set; }
+        public List<string> VisualClientIPs { get; set; }
         public string SimulatorPort { get; set; } = "52300";
+        public bool FlashTaskbarPrivateMessage { get; set; }
+        public bool FlashTaskbarRadioMessage { get; set; }
+        public bool FlashTaskbarSelcal { get; set; }
+        public bool FlashTaskbarDisconnect { get; set; }
+        public bool KeepWindowVisible { get; set; }
+        public WindowProperties ClientWindowProperties { get; set; }
 
         public AppConfig()
         {
             CachedServers = new List<NetworkServerInfo>();
+            AudioDrivers = new Dictionary<int, string>();
             OutputDevices = new Dictionary<int, string>();
             InputDevices = new Dictionary<int, string>();
             RecentConnectionInfo = new List<ConnectInfo>();
-            AudioApis = new Dictionary<int, string>();
+            ClientWindowProperties = new WindowProperties();
+            VisualClientIPs = new List<string>();
 
             string appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string configFilePath = Path.Combine(appPath, "AppConfig.json");
@@ -204,6 +213,23 @@ namespace XPilot.PilotClient.Config
             get
             {
                 return new Guid(0xa1afdec5, 0x1f5c, 0x498b, 0xb4, 0xf1, 0x83, 0x49, 0x50, 0xfb, 0xea, 0xf0).ToString();
+            }
+        }
+
+        [JsonIgnore]
+        public object this[string propertyName]
+        {
+            get
+            {
+                Type mType = GetType();
+                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
+                return mPropInfo.GetValue(this, null);
+            }
+            set
+            {
+                Type mType = GetType();
+                PropertyInfo mPropInfo = mType.GetProperty(propertyName);
+                mPropInfo.SetValue(this, value, null);
             }
         }
     }

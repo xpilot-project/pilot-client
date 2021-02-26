@@ -31,7 +31,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         public double Roll { get; set; }
         public double Pitch { get; set; }
         public double AltitudeMsl { get; set; }
-        public double PressureAltitude { get; set; }
+        public double AltitudeAgl { get; set; }
         public double GroundSpeed { get; set; }
         public bool OnGround { get; set; }
         public double Flaps { get; set; }
@@ -65,7 +65,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 Roll == other.Roll &&
                 Pitch == other.Pitch &&
                 AltitudeMsl == other.AltitudeMsl &&
-                PressureAltitude == other.PressureAltitude &&
+                AltitudeAgl == other.AltitudeAgl &&
                 GroundSpeed == other.GroundSpeed &&
                 OnGround == other.OnGround &&
                 Flaps == other.Flaps &&

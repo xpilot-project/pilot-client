@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using GeoVR.Client;
 using System.Collections.Generic;
 using Vatsim.Fsd.Connector;
 using XPilot.PilotClient.Common;
@@ -25,7 +24,7 @@ namespace XPilot.PilotClient.Config
 {
     public interface IAppConfig
     {
-        Dictionary<int, string> AudioApis { get; set; }
+        Dictionary<int, string> AudioDrivers { get; set; }
         Dictionary<int, string> OutputDevices { get; set; }
         Dictionary<int, string> InputDevices { get; set; }
         string AppPath { get; set; }
@@ -50,8 +49,15 @@ namespace XPilot.PilotClient.Config
         int Com2Volume { get; set; }
         FlightPlan LastFlightPlan { get; set; }
         List<ConnectInfo> RecentConnectionInfo { get; set; }
+        List<string> VisualClientIPs { get; set; }
         string SimulatorIP { get; set; }
         string SimulatorPort { get; set; }
+        bool FlashTaskbarPrivateMessage { get; set; }
+        bool FlashTaskbarRadioMessage { get; set; }
+        bool FlashTaskbarSelcal { get; set; }
+        bool FlashTaskbarDisconnect { get; set; }
+        bool KeepWindowVisible { get; set; }
+        WindowProperties ClientWindowProperties { get; set; }
         void LoadConfig(string path);
         void SaveConfig();
     }

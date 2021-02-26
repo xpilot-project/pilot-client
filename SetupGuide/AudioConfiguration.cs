@@ -16,7 +16,6 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using GeoVR.Client;
 using XPilot.PilotClient.AudioForVatsim;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
@@ -27,13 +26,13 @@ namespace XPilot.PilotClient.Tutorial
 {
     public partial class AudioConfiguration : SetupScreen, ISetupScreen
     {
-        private IAfvManager mAfv;
+        private IAFVManaged mAfv;
         private IEventBroker mEventBroker;
 
         [EventPublication(EventTopics.RestartAfvUserClient)]
         public event EventHandler<EventArgs> RestartAfvUserClient;
 
-        public AudioConfiguration(ISetup host, IAppConfig config, IAfvManager afv, IEventBroker eventBroker) : base(host, config)
+        public AudioConfiguration(ISetup host, IAppConfig config, IAFVManaged afv, IEventBroker eventBroker) : base(host, config)
         {
             InitializeComponent();
             mAfv = afv;
@@ -42,13 +41,9 @@ namespace XPilot.PilotClient.Tutorial
             mEventBroker.Register(this);
             Host.SetTitle("Audio Configuration");
 
-            if (mConfig.InputVolumeDb > 18) mConfig.InputVolumeDb = 18;
-            if (mConfig.InputVolumeDb < -18) mConfig.InputVolumeDb = -18;
-
             GetAudioDevices();
             audioInputDevice.SelectedItem = mConfig.InputDeviceName;
             audioOutputDevice.SelectedItem = mConfig.ListenDeviceName;
-            inputVolume.Value = (int)mConfig.InputVolumeDb;
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -67,15 +62,15 @@ namespace XPilot.PilotClient.Tutorial
             audioInputDevice.Items.Clear();
             audioOutputDevice.Items.Clear();
 
-            foreach (var inputDevice in ClientAudioUtilities.GetInputDevices())
-            {
-                audioInputDevice.Items.Add(inputDevice);
-            }
+            //foreach (var inputDevice in ClientAudioUtilities.GetInputDevices())
+            //{
+            //    audioInputDevice.Items.Add(inputDevice);
+            //}
 
-            foreach (var outputDevice in ClientAudioUtilities.GetOutputDevices())
-            {
-                audioOutputDevice.Items.Add(outputDevice);
-            }
+            //foreach (var outputDevice in ClientAudioUtilities.GetOutputDevices())
+            //{
+            //    audioOutputDevice.Items.Add(outputDevice);
+            //}
         }
 
         private void audioInputDevice_SelectedIndexChanged(object sender, EventArgs e)
@@ -104,14 +99,6 @@ namespace XPilot.PilotClient.Tutorial
         {
             GetAudioDevices();
         }
-
-        private void inputVolume_Scroll(object sender, EventArgs e)
-        {
-            mConfig.InputVolumeDb = inputVolume.Value;
-            mAfv.UpdateVolumes();
-            mConfig.SaveConfig();
-        }
-
 
         [EventSubscription(EventTopics.MicrophoneInputLevelChanged, typeof(OnUserInterfaceAsync))]
         public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)

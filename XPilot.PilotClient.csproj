@@ -24,7 +24,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,17 +70,17 @@
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>packages\Castle.Core.4.4.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.15.2.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>packages\Google.Protobuf.3.15.2\lib\net45\Google.Protobuf.dll</HintPath>
+    <Reference Include="Google.Protobuf, Version=3.15.3.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>packages\Google.Protobuf.3.15.3\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="NaCl, Version=0.1.13.0, Culture=neutral, PublicKeyToken=827c20e50a9775fa, processorArchitecture=MSIL">
       <HintPath>packages\NaCl.Net.0.1.13\lib\net472\NaCl.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="NetMQ, Version=4.0.1.4, Culture=neutral, PublicKeyToken=a6decef4ddc58b3a, processorArchitecture=MSIL">
-      <HintPath>packages\NetMQ.4.0.1.4\lib\net47\NetMQ.dll</HintPath>
+    <Reference Include="NetMQ, Version=4.0.1.6, Culture=neutral, PublicKeyToken=a6decef4ddc58b3a, processorArchitecture=MSIL">
+      <HintPath>packages\NetMQ.4.0.1.6\lib\net47\NetMQ.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -90,28 +91,31 @@
     <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.11.7.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.11.7\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SevenZipSharp, Version=1.0.19.0, Culture=neutral, PublicKeyToken=c8ff6ba0184838bb, processorArchitecture=MSIL">
       <HintPath>packages\SevenZipSharp.Net45.1.0.19\lib\net45\SevenZipSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+      <HintPath>packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -140,6 +144,7 @@
     <Compile Include="AudioForVatsim\Station.cs" />
     <Compile Include="Common\AudioUtils.cs" />
     <Compile Include="Common\ComboboxExtensions.cs" />
+    <Compile Include="Common\DictionaryExtensions.cs" />
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
     <Compile Include="Common\FlightPlan.cs" />
@@ -158,6 +163,37 @@
     <Compile Include="ConnectForm.Designer.cs">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Core\Events\AcarsResponseReceived.cs" />
+    <Compile Include="Core\Events\ChatSessionStarted.cs" />
+    <Compile Include="Core\Events\ClientEventArgs.cs" />
+    <Compile Include="Core\Events\ControllerUpdateReceived.cs" />
+    <Compile Include="Core\Events\FlightPlanReceived.cs" />
+    <Compile Include="Core\Events\FlightPlanSent.cs" />
+    <Compile Include="Core\Events\HFAliasChanged.cs" />
+    <Compile Include="Core\Events\IsValidATCReceived.cs" />
+    <Compile Include="Core\Events\MetarRequestSent.cs" />
+    <Compile Include="Core\Events\NetworkAircraftUpdateReceived.cs" />
+    <Compile Include="Core\Events\NetworkConnected.cs" />
+    <Compile Include="Core\Events\NetworkDataReceived.cs" />
+    <Compile Include="Core\Events\NetworkDisconnected.cs" />
+    <Compile Include="Core\Events\OverrideRadioStackState.cs" />
+    <Compile Include="Core\Events\PlaneInfoReceived.cs" />
+    <Compile Include="Core\Events\PlayNotificationSound.cs" />
+    <Compile Include="Core\Events\PrivateMessageReceived.cs" />
+    <Compile Include="Core\Events\PrivateMessageSent.cs" />
+    <Compile Include="Core\Events\PushToTalkStateChanged.cs" />
+    <Compile Include="Core\Events\RadioMessageReceived.cs" />
+    <Compile Include="Core\Events\RadioMessageSent.cs" />
+    <Compile Include="Core\Events\RadioRxStateChanged.cs" />
+    <Compile Include="Core\Events\RadioStackStateChanged.cs" />
+    <Compile Include="Core\Events\RadioTxStateChanged.cs" />
+    <Compile Include="Core\Events\RadioVolumeChanged.cs" />
+    <Compile Include="Core\Events\RequestControllerAtis.cs" />
+    <Compile Include="Core\Events\SelcalAlertReceived.cs" />
+    <Compile Include="Core\Events\SimulatorMessageSent.cs" />
+    <Compile Include="Core\Events\TransponderIdentStateChanged.cs" />
+    <Compile Include="Core\Events\UserAircraftDataChanged.cs" />
+    <Compile Include="Core\Events\WallopSent.cs" />
     <Compile Include="Core\ITabPages.cs" />
     <Compile Include="Core\IUserInterface.cs" />
     <Compile Include="FlightPlanForm.cs">
@@ -172,14 +208,12 @@
     <Compile Include="Network\Aircraft\NetworkAircraft.cs" />
     <Compile Include="Network\Aircraft\NetworkAircraftConfig.cs" />
     <Compile Include="Network\Aircraft\NetworkAircraftManager.cs" />
-    <Compile Include="Network\Aircraft\NetworkAircraftState.cs" />
+    <Compile Include="Network\Aircraft\NetworkAircraftPose.cs" />
     <Compile Include="Network\Aircraft\NetworkAircraftTransponder.cs" />
     <Compile Include="Network\Controllers\ControllerAtisManager.cs" />
     <Compile Include="Network\Controllers\ControllerManager.cs" />
     <Compile Include="Network\Controllers\IControllerAtisManager.cs" />
     <Compile Include="Network\Controllers\IControllerManager.cs" />
-    <Compile Include="Network\ISelcalGenerator.cs" />
-    <Compile Include="Network\SelcalGenerator.cs" />
     <Compile Include="Network\VatsimData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -240,8 +274,6 @@
     <Compile Include="XplaneAdapter\UserAircraftData.cs" />
     <Compile Include="XplaneAdapter\UserAircraftManager.cs" />
     <Compile Include="XplaneAdapter\UserAircraftRadioStack.cs" />
-    <Compile Include="AudioForVatsim\AfvManager.cs" />
-    <Compile Include="AudioForVatsim\IAfvManager.cs" />
     <Compile Include="Common\CallsignStringExtensions.cs" />
     <Compile Include="Common\SingleInstance.cs" />
     <Compile Include="Common\SystemIdentifier.cs" />
@@ -251,37 +283,7 @@
     <Compile Include="Config\IAppConfig.cs" />
     <Compile Include="Core\EventBus\EventBus.cs" />
     <Compile Include="Core\EventBus\IEventBus.cs" />
-    <Compile Include="Core\Events\AircraftUpdateReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\ChatSessionStartedEventArgs.cs" />
-    <Compile Include="Core\Events\ClientEventArgs.cs" />
-    <Compile Include="Core\Events\ComFrequencyAliasChangedEventArgs.cs" />
-    <Compile Include="Core\Events\ComRadioTxRxChangedEventArgs.cs" />
-    <Compile Include="Core\Events\ControllerEventArgs.cs" />
-    <Compile Include="Core\Events\ControllerUpdateReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\DataRefEventArgs.cs" />
-    <Compile Include="Core\Events\FlightPlanReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\IsValidAtcReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\MetarRequestedEventArgs.cs" />
-    <Compile Include="Core\Events\NetworkConnectedEventArgs.cs" />
-    <Compile Include="Core\Events\NetworkDataReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\NetworkDisconnectedEventArgs.cs" />
-    <Compile Include="Core\Events\NotificationPostedEventArgs.cs" />
-    <Compile Include="Core\Events\OverrideComStatusEventArgs.cs" />
-    <Compile Include="Core\Events\PlaySoundEventArgs.cs" />
-    <Compile Include="Core\Events\PrivateMessageSentEventArgs.cs" />
-    <Compile Include="Core\Events\PushToTalkStateChangedEventArgs.cs" />
-    <Compile Include="Core\Events\RadioMessageReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\RadioMessageSentEventArgs.cs" />
-    <Compile Include="Core\Events\RadioStackStateChangedEventArgs.cs" />
-    <Compile Include="Core\Events\RadioVolumeChangedEventArgs.cs" />
-    <Compile Include="Core\Events\RealNameRequestedEventArgs.cs" />
-    <Compile Include="Core\Events\RequestControllerAtisEventArgs.cs" />
-    <Compile Include="Core\Events\RequestedAtisReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\SelcalAlertReceivedEventArgs.cs" />
-    <Compile Include="Core\Events\SimulatorMessageEventArgs.cs" />
-    <Compile Include="Core\Events\SquawkingIdentChangedEventArgs.cs" />
-    <Compile Include="Core\Events\UserAircraftDataUpdatedEventArgs.cs" />
-    <Compile Include="Core\Events\WallopReceivedEventArgs.cs" />
+    <Compile Include="Core\Events\NotificationPosted.cs" />
     <Compile Include="Core\EventTopics.cs" />
     <Compile Include="Core\InjectionModules.cs" />
     <Compile Include="Core\ISoundManager.cs" />
@@ -297,7 +299,7 @@
     <Compile Include="Network\ConnectInfo.cs" />
     <Compile Include="Network\DisconnectInfo.cs" />
     <Compile Include="Network\FsdManager.cs" />
-    <Compile Include="Network\IFsdManger.cs" />
+    <Compile Include="Network\IFsdManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsForm.cs">
@@ -412,18 +414,6 @@
     <ProjectReference Include="..\FsdWrapper-Legacy\Vatsim.Fsd.Connector.csproj">
       <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
       <Name>Vatsim.Fsd.Connector</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GeoVR\source\GeoVR.Client\GeoVR.Client.csproj">
-      <Project>{d36af179-eb0e-4cef-aee8-68abd7abdb38}</Project>
-      <Name>GeoVR.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GeoVR\source\GeoVR.Connection\GeoVR.Connection.csproj">
-      <Project>{a72246a0-e5cf-49f7-b2c7-8d13d455e09e}</Project>
-      <Name>GeoVR.Connection</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GeoVR\source\GeoVR.Shared\GeoVR.Shared.csproj">
-      <Project>{2c4fb517-fabb-4edc-bd79-b10ddd330cff}</Project>
-      <Name>GeoVR.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

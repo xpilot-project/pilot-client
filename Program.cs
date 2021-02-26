@@ -20,6 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Linq;
 using XPilot.PilotClient.AudioForVatsim;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
@@ -29,12 +30,13 @@ using XPilot.PilotClient.Network.Aircraft;
 using XPilot.PilotClient.Network.Controllers;
 using XPilot.PilotClient.XplaneAdapter;
 using Ninject;
+using Appccelerate.EventBroker;
 
 namespace XPilot.PilotClient
 {
     static class Program
     {
-        private static string AppPath;
+        private static string appPath;
 
         [STAThread]
         static void Main()
@@ -45,39 +47,39 @@ namespace XPilot.PilotClient
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-                AppPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                string configFilePath = Path.Combine(AppPath, "AppConfig.json");
+                //appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                //string configFilePath = Path.Combine(appPath, "AppConfig.json");
 
                 IKernel kernel = new StandardKernel(new InjectionModules());
-                IAppConfig config = kernel.Get<IAppConfig>();
+                //IAppConfig config = kernel.Get<IAppConfig>();
 
-                try
-                {
-                    config.LoadConfig(configFilePath);
-                }
-                catch (FileNotFoundException)
-                {
-                    config.SaveConfig();
-                }
-                catch (Exception ex)
-                {
-                    config.SaveConfig();
-                    MessageBox.Show("Error loading configuration file. The configuration file has become corrupt and will be reset to the default settings.", "Error Loading Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    config.AppPath = AppPath;
-                }
+                //try
+                //{
+                //    config.LoadConfig(configFilePath);
+                //}
+                //catch (FileNotFoundException)
+                //{
+                //    config.SaveConfig();
+                //}
+                //catch (Exception)
+                //{
+                //    config.SaveConfig();
+                //    MessageBox.Show("Error loading configuration file. The configuration file has become corrupt and will be reset to the default settings.", "Error Loading Configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //}
+                //finally
+                //{
+                //    config.AppPath = appPath;
+                //}
 
                 var mainForm = kernel.Get<MainForm>();
-                (kernel.Get<IFsdManger>() as IEventBus).Register();
+                (kernel.Get<IFsdManager>() as IEventBus).Register();
                 (kernel.Get<ISoundManager>() as IEventBus).Register();
-                (kernel.Get<IAfvManager>() as IEventBus).Register();
+                (kernel.Get<IAFVManaged>() as IEventBus).Register();
                 (kernel.Get<IXplaneConnectionManager>() as IEventBus).Register();
                 (kernel.Get<IVersionCheck>() as IEventBus).Register();
                 (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
-                (kernel.Get<ISelcalGenerator>() as IEventBus).Register();
                 (kernel.Get<INetworkAircraftManager>() as IEventBus).Register();
                 (kernel.Get<IControllerManager>() as IEventBus).Register();
                 (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
@@ -94,7 +96,7 @@ namespace XPilot.PilotClient
                 StreamWriter streamWriter = null;
                 try
                 {
-                    fileStream = new FileStream(Path.Combine(AppPath, "GlobalExceptions.txt"), FileMode.Append, FileAccess.Write, FileShare.None, 1024, false);
+                    fileStream = new FileStream(Path.Combine(appPath, "GlobalExceptions.txt"), FileMode.Append, FileAccess.Write, FileShare.None, 1024, false);
                     streamWriter = new StreamWriter(fileStream);
                     streamWriter.WriteLine(Assembly.GetEntryAssembly().FullName);
                     streamWriter.WriteLine("============================================================");
@@ -119,6 +121,14 @@ namespace XPilot.PilotClient
                         fileStream.Close();
                     }
                 }
+            }
+        }
+
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            if (AFVBindings.isClientInitialized())
+            {
+                AFVBindings.destroy();
             }
         }
     }

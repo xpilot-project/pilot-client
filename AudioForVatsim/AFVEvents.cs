@@ -35,7 +35,9 @@ namespace XPilot.PilotClient.AudioForVatsim
         PttOpen,
         PttClosed,
         StationAliasesUpdated,
-        AudioError
+        AudioError,
+        RxStarted,
+        RxStopped
     }
 
     public enum APISessionError
@@ -56,5 +58,11 @@ namespace XPilot.PilotClient.AudioForVatsim
         UDPChannelError,
         BadResponseFromAPIServer,
         Timeout,
+    }
+
+    public enum RadioState
+    {
+        RxStarted,
+        RxStopped
     }
 }

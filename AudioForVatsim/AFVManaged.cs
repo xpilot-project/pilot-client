@@ -29,24 +29,22 @@ using XPilot.PilotClient.XplaneAdapter;
 
 namespace XPilot.PilotClient.AudioForVatsim
 {
-    public class AFVManaged : IAFVManaged
+    public class AFVManaged : EventBus, IAFVManaged
     {
         [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+        public event EventHandler<NotificationPosted> RaiseNotificationPosted;
 
         [EventPublication(EventTopics.ComRadioTransmittingChanged)]
-        public event EventHandler<ComRadioTxRxChangedEventArgs> ComRadioTransmittingChanged;
+        public event EventHandler<RadioTxStateChanged> RaiseRadioTransmitStateChanged;
 
-        [EventPublication(EventTopics.ComRadioReceivingChanged)]
-        public event EventHandler<ComRadioTxRxChangedEventArgs> ComRadioReceivingChanged;
+        [EventPublication(EventTopics.RadioReceiveStateChanged)]
+        public event EventHandler<RadioRxStateChanged> RaiseRadioReceiveStateChanged;
 
-        [EventPublication(EventTopics.ComFrequencyAliasChanged)]
-        public event EventHandler<ComFrequencyAliasChangedEventArgs> RaiseComFrequencyAliasChanged;
+        [EventPublication(EventTopics.HFAliasChanged)]
+        public event EventHandler<HFAliasChanged> RaiseHFAliasChanged;
 
-        private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
         private bool mPttActive = false;
-        private Timer mRxTimer;
         private Timer mUpdateTransceiversTimer;
         private UserAircraftRadioStack mRadioStackState;
         private AFVBindings.EventCallback mEventCalllback;
@@ -54,84 +52,43 @@ namespace XPilot.PilotClient.AudioForVatsim
         private List<Station> mAliasStations = new List<Station>();
         private Dictionary<string, Controller> mControllers = new Dictionary<string, Controller>();
 
-        public AFVManaged(IEventBroker eventBroker, IAppConfig config)
+        public AFVManaged(IEventBroker eventBroker, IAppConfig config) : base(eventBroker)
         {
-            mEventBroker = eventBroker;
-            mEventBroker.Register(this);
             mConfig = config;
 
-            AFVBindings.initialize(mConfig.AppPath, 2, "xPilot");
-            SetupAudioDevices();
-
-            mRxTimer = new Timer
-            {
-                Interval = 100
-            };
-            mRxTimer.Elapsed += RxTimer_Elapsed;
-
-            mUpdateTransceiversTimer = new Timer
-            {
-                Interval = 5000
-            };
+            mUpdateTransceiversTimer = new Timer { Interval = 5000 };
             mUpdateTransceiversTimer.Elapsed += UpdateTransceiversTimer_Elapsed;
 
+            AFVBindings.initialize(mConfig.AfvResourcePath, 2, "xPilot");
+            SetupAudioDevices();
+
             mStationCallback = new AFVBindings.AfvStationCallback(StationCallbackHandler);
-            mEventCalllback = new AFVBindings.EventCallback(ClientEventHandler);
+            mEventCalllback = new AFVBindings.EventCallback(AFVEventHandler);
             AFVBindings.RaiseClientEvent(mEventCalllback);
-        }
-
-        private void UpdateTransceiversTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            UpdateTransceivers();
-        }
-
-        private void RxTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(0, AFVBindings.IsCom1Rx()));
-            ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, AFVBindings.IsCom2Rx()));
-        }
-
-        public void GetStationAliases()
-        {
-            AFVBindings.getStationAliases(mStationCallback);
-        }
-
-        private void StationCallbackHandler(string id, string callsign, uint frequency, uint frequencyAlias)
-        {
-            mAliasStations.Add(new Station
-            {
-                ID = id,
-                Callsign = callsign,
-                Frequency = frequency,
-                FrequencyAlias = frequencyAlias
-            });
         }
 
         private void SetupAudioDevices()
         {
             if (!AFVBindings.isClientInitialized())
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Could not setup audio devices. AFV-Native is not initialized."));
+                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Error initializing AFV. The audio devices could not be initialized."));
                 return;
             }
 
-            mConfig.AudioApis.Clear();
+            mConfig.AudioDrivers.Clear();
             mConfig.InputDevices.Clear();
             mConfig.OutputDevices.Clear();
 
-            AFVBindings.getAudioApis(mConfig.AudioApis.SafeAdd);
-
+            AFVBindings.getAudioApis(mConfig.AudioDrivers.SafeAdd);
             if (!string.IsNullOrEmpty(mConfig.AudioDriver))
             {
-                AFVBindings.setAudioApi(mConfig.AudioDriver);
-                AFVBindings.getOutputDevices(mConfig.OutputDevices.SafeAdd);
-                AFVBindings.getInputDevices(mConfig.InputDevices.SafeAdd);
+                SetAudioDriver(mConfig.AudioDriver);
             }
         }
 
-        public void SetAudioApi(string api)
+        public void SetAudioDriver(string driver)
         {
-            AFVBindings.setAudioApi(api);
+            AFVBindings.setAudioApi(driver);
 
             mConfig.OutputDevices.Clear();
             mConfig.InputDevices.Clear();
@@ -140,8 +97,9 @@ namespace XPilot.PilotClient.AudioForVatsim
             AFVBindings.getInputDevices(mConfig.InputDevices.SafeAdd);
         }
 
-        private void ConfigureAudioDevices()
+        public void ConfigureAudioDevices()
         {
+            AFVBindings.stopAudio();
             AFVBindings.setAudioDevice();
             if (!string.IsNullOrEmpty(mConfig.ListenDeviceName))
             {
@@ -149,10 +107,77 @@ namespace XPilot.PilotClient.AudioForVatsim
             }
             if (!string.IsNullOrEmpty(mConfig.InputDeviceName))
             {
-                AFVBindings.setAudioInputDevice(mConfig.InputDeviceName);
+                AFVBindings.setAudioOutputDevice(mConfig.InputDeviceName);
             }
-            AFVBindings.stopAudio();
             AFVBindings.startAudio();
+        }
+
+        public void UpdateRadioGains()
+        {
+            AFVBindings.setRadioGain(0, mConfig.Com1Volume / 100.0f);
+            AFVBindings.setRadioGain(1, mConfig.Com2Volume / 100.0f);
+        }
+
+        private void AFVEventHandler(AFVEvents evt, int data)
+        {
+            Console.WriteLine(">> " + evt);
+            switch (evt)
+            {
+                case AFVEvents.APIServerError:
+                    {
+                        APISessionError error = (APISessionError)data;
+                        switch (error)
+                        {
+                            case APISessionError.BadPassword:
+                            case APISessionError.RejectedCredentials:
+                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Error connecting to voice server. Please check your VATSIM credentials and try again."));
+                                break;
+                            case APISessionError.ConnectionError:
+                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Error initiating connection to the voice server."));
+                                break;
+                            default:
+                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Voice server error: " + error));
+                                break;
+                        }
+                    }
+                    break;
+                case AFVEvents.VoiceServerChannelError:
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Voice server channel error: " + data));
+                    break;
+                case AFVEvents.VoiceServerError:
+                    {
+                        VoiceSessionError error = (VoiceSessionError)data;
+                        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Voice server error: " + error));
+                    }
+                    break;
+                case AFVEvents.StationAliasesUpdated:
+                    GetStationAliases();
+                    break;
+                case AFVEvents.VoiceServerConnected:
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Connected to voice server"));
+                    break;
+                case AFVEvents.VoiceServerDisconnected:
+                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Disconnected from voice server"));
+                    break;
+                case AFVEvents.RxStarted:
+                    RaiseRadioReceiveStateChanged?.Invoke(this, new RadioRxStateChanged(data, true));
+                    break;
+                case AFVEvents.RxStopped:
+                    RaiseRadioReceiveStateChanged?.Invoke(this, new RadioRxStateChanged(data, false));
+                    break;
+                case AFVEvents.AudioError:
+                    break;
+            }
+        }
+
+        private void GetStationAliases()
+        {
+            AFVBindings.getStationAliases(mStationCallback);
+        }
+
+        private void UpdateTransceiversTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            UpdateTransceivers();
         }
 
         private void UpdateTransceivers()
@@ -162,6 +187,18 @@ namespace XPilot.PilotClient.AudioForVatsim
                 CreateTransceiver(0, mRadioStackState.IsCom1Receiving ? mRadioStackState.Com1ActiveFreq : 0);
                 CreateTransceiver(1, mRadioStackState.IsCom2Receiving ? mRadioStackState.Com2ActiveFreq : 0);
             }
+        }
+
+        private void StationCallbackHandler(string id, string callsign, uint frequency, uint frequencyAlias)
+        {
+            mAliasStations.Clear();
+            mAliasStations.Add(new Station
+            {
+                ID = id,
+                Callsign = callsign,
+                Frequency = frequency,
+                FrequencyAlias = frequencyAlias
+            });
         }
 
         private void CreateTransceiver(ushort id, uint frequency)
@@ -201,56 +238,11 @@ namespace XPilot.PilotClient.AudioForVatsim
 
         private void UpdateAliasTooltips(ushort radio, uint alias)
         {
-            RaiseComFrequencyAliasChanged?.Invoke(this, new ComFrequencyAliasChangedEventArgs(radio, alias));
-        }
-
-        private void ClientEventHandler(AFVEvents afvEvent, int data)
-        {
-            switch (afvEvent)
-            {
-                case AFVEvents.APIServerError:
-                    {
-                        APISessionError error = (APISessionError)data;
-                        switch (error)
-                        {
-                            case APISessionError.BadPassword:
-                            case APISessionError.RejectedCredentials:
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error connecting to voice server. Please check your VATSIM credentials and try again."));
-                                break;
-                            case APISessionError.ConnectionError:
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error initiating connection to the voice server."));
-                                break;
-                            default:
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Voice server error: " + error));
-                                break;
-                        }
-                    }
-                    break;
-                case AFVEvents.VoiceServerChannelError:
-                    {
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Voice server channel error: " + data));
-                    }
-                    break;
-                case AFVEvents.VoiceServerError:
-                    {
-                        VoiceSessionError error = (VoiceSessionError)data;
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Voice server error: " + error));
-                    }
-                    break;
-                case AFVEvents.StationAliasesUpdated:
-                    GetStationAliases();
-                    break;
-                case AFVEvents.VoiceServerConnected:
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Connected to voice server"));
-                    break;
-                case AFVEvents.VoiceServerDisconnected:
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Disconnected from voice server"));
-                    break;
-            }
+            RaiseHFAliasChanged?.Invoke(this, new HFAliasChanged(radio, alias));
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnPublisher))]
-        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        public void OnNetworkConnected(object sender, NetworkConnected e)
         {
             if (!string.IsNullOrEmpty(mConfig.VatsimId) && !string.IsNullOrEmpty(mConfig.VatsimPasswordDecrypted))
             {
@@ -260,37 +252,36 @@ namespace XPilot.PilotClient.AudioForVatsim
                 AFVBindings.setCredentials(mConfig.VatsimId, mConfig.VatsimPasswordDecrypted);
                 AFVBindings.afvConnect();
 
-                mRxTimer.Start();
                 mUpdateTransceiversTimer.Start();
-                mLog.Info("AFVNative connected.");
             }
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnPublisher))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
+        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
         {
             AFVBindings.afvDisconnect();
             AFVBindings.stopAudio();
 
             mAliasStations.Clear();
-            mRxTimer.Stop();
             mUpdateTransceiversTimer.Stop();
-            mLog.Info("AFVNative disconnected.");
+
+            RaiseRadioReceiveStateChanged?.Invoke(this, new RadioRxStateChanged(0, false));
+            RaiseRadioReceiveStateChanged?.Invoke(this, new RadioRxStateChanged(1, false));
         }
 
-        [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnPublisher))]
-        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
+        [EventSubscription(EventTopics.UserAircraftDataChanged, typeof(OnPublisher))]
+        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataChanged e)
         {
             if (AFVBindings.isAPIConnected())
             {
-                AFVBindings.setClientPosition(e.UserAircraftData.Latitude, e.UserAircraftData.Longitude, e.UserAircraftData.AltitudeMsl, e.UserAircraftData.AltitudeAgl);
+                AFVBindings.setClientPosition(e.AircraftData.Latitude, e.AircraftData.Longitude, e.AircraftData.AltitudeMsl, e.AircraftData.AltitudeAgl);
             }
         }
 
         [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnPublisher))]
-        public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
+        public void OnRadioStackStateChanged(object sender, RadioStackStateChanged e)
         {
-            mRadioStackState = e.RadioStackState;
+            mRadioStackState = e.RadioStack;
             if (AFVBindings.isAPIConnected())
             {
                 if (mRadioStackState.IsCom1Transmitting)
@@ -306,20 +297,20 @@ namespace XPilot.PilotClient.AudioForVatsim
         }
 
         [EventSubscription(EventTopics.PushToTalkStateChanged, typeof(OnPublisher))]
-        public void OnPushToTalkStateChanged(object sender, PushToTalkStateChangedEventArgs e)
+        public void OnPushToTalkStateChanged(object sender, PushToTalkStateChanged e)
         {
-            mPttActive = e.Down;
+            mPttActive = e.Pressed;
             if (mRadioStackState != null)
             {
                 if (AFVBindings.isAPIConnected())
                 {
                     if (mRadioStackState.IsCom1Transmitting)
                     {
-                        ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(0, mPttActive));
+                        RaiseRadioTransmitStateChanged?.Invoke(this, new RadioTxStateChanged(0, mPttActive));
                     }
                     if (mRadioStackState.IsCom2Transmitting)
                     {
-                        ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, mPttActive));
+                        RaiseRadioTransmitStateChanged?.Invoke(this, new RadioTxStateChanged(1, mPttActive));
                     }
                     AFVBindings.setPtt(mPttActive);
 
@@ -328,35 +319,35 @@ namespace XPilot.PilotClient.AudioForVatsim
         }
 
         [EventSubscription(EventTopics.DeleteControllerReceived, typeof(OnPublisher))]
-        public void OnDeleteControllerReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnDeleteControllerReceived(object sender, NetworkDataReceived e)
         {
             if (mControllers.ContainsKey(e.From))
             {
-                Controller controller = mControllers[e.From];
+                var controller = mControllers[e.From];
                 mControllers.Remove(controller.Callsign);
                 UpdateTransceivers();
             }
         }
 
         [EventSubscription(EventTopics.ControllerUpdateReceived, typeof(OnPublisher))]
-        public void OnControllerUpdated(object sender, ControllerUpdateReceivedEventArgs e)
+        public void OnControllerDictionaryUpdateds(object sender, ControllerUpdateReceived e)
         {
-            if (mControllers.ContainsKey(e.From))
+            if (mControllers.ContainsKey(e.Controller.Callsign))
             {
-                Controller controller = mControllers[e.From];
-                controller.Frequency = e.Frequency;
-                controller.NormalizedFrequency = e.Frequency.Normalize25KhzFsdFrequency();
-                controller.Location = e.Location;
+                Controller controller = mControllers[e.Controller.Callsign];
+                controller.Frequency = e.Controller.Frequency;
+                controller.NormalizedFrequency = e.Controller.NormalizedFrequency;
+                controller.Location = e.Controller.Location;
                 controller.LastUpdate = DateTime.Now;
             }
             else
             {
                 Controller controller = new Controller
                 {
-                    Callsign = e.From,
-                    Frequency = e.Frequency,
-                    NormalizedFrequency = e.Frequency.Normalize25KhzFsdFrequency(),
-                    Location = e.Location,
+                    Callsign = e.Controller.Callsign,
+                    Frequency = e.Controller.Frequency,
+                    NormalizedFrequency = e.Controller.NormalizedFrequency,
+                    Location = e.Controller.Location,
                     LastUpdate = DateTime.Now,
                     RealName = "Unknown"
                 };
@@ -365,7 +356,7 @@ namespace XPilot.PilotClient.AudioForVatsim
         }
 
         [EventSubscription(EventTopics.ControllerFrequencyChanged, typeof(OnPublisher))]
-        public void OnControllerFrequencyChanged(object sender, ControllerEventArgs e)
+        public void OnControllerFrequencyChanged(object sender, ControllerUpdateReceived e)
         {
             if (mControllers.ContainsKey(e.Controller.Callsign))
             {

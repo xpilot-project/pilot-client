@@ -24,48 +24,49 @@ using XPilot.PilotClient.Network;
 using XPilot.PilotClient.Core;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using GeoVR.Client;
+using System.Collections.Generic;
 
 namespace XPilot.PilotClient
 {
     public partial class SettingsForm : Form
     {
         [EventPublication(EventTopics.ClientConfigChanged)]
-        public event EventHandler<EventArgs> ClientConfigChanged;
-
-        [EventPublication(EventTopics.RestartAfvUserClient)]
-        public event EventHandler<EventArgs> RestartAfvUserClient;
-
-        [EventPublication(EventTopics.SettingsFormShown)]
-        public event EventHandler<EventArgs> SettingsFormShown;
+        public event EventHandler<EventArgs> RaiseClientConfigChanged;
 
         [EventPublication(EventTopics.RadioVolumeChanged)]
-        public event EventHandler<RadioVolumeChangedEventArgs> RadioVolumeChanged;
+        public event EventHandler<RadioVolumeChanged> RaiseRadioVolumeChanged;
 
-        private readonly IAfvManager mAfv;
+        private readonly IAFVManaged mAudio;
         private readonly IAppConfig mConfig;
         private readonly IEventBroker mEventBroker;
-        private readonly IFsdManger mNetworkManager;
+        private readonly IFsdManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
 
-        public SettingsForm(IAppConfig appConfig, IAfvManager audioForVatsim, IEventBroker eventBroker, IFsdManger networkManager, IUserInterface userInterface)
+        private List<string> mAudioDrivers = new List<string>();
+        private List<string> mListenDevices = new List<string>();
+        private List<string> mInputDevices = new List<string>();
+
+        public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, IFsdManager networkManager, IUserInterface userInterface)
         {
             InitializeComponent();
 
             mConfig = appConfig;
-            mAfv = audioForVatsim;
+            mAudio = audio;
             mNetworkManager = networkManager;
             mUserInterface = userInterface;
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
 
-            //if (mConfig.Com1Volume > 1) mConfig.Com1Volume = 1;
-            //if (mConfig.Com1Volume < 0) mConfig.Com1Volume = 0;
-            //if (mConfig.Com2Volume > 1) mConfig.Com2Volume = 1;
-            //if (mConfig.Com2Volume < 0) mConfig.Com2Volume = 0;
-
-            GetAudioDevices();
             LoadNetworkServers();
+
+            mAudioDrivers.Clear();
+            foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
+            {
+                ComboboxItem item = new ComboboxItem();
+                item.Text = driver.Value;
+                item.Value = driver.Value;
+                lstAudioDriver.Items.Add(item);
+            }
         }
 
         [EventSubscription(EventTopics.NetworkServerListUpdated, typeof(OnUserInterfaceAsync))]
@@ -83,28 +84,27 @@ namespace XPilot.PilotClient
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            SettingsFormShown(this, EventArgs.Empty);
             txtNetworkLogin.Text = mConfig.VatsimId;
             txtNetworkPassword.Text = mConfig.VatsimPasswordDecrypted;
             txtFullName.Text = mConfig.Name;
             txtHomeAirport.Text = mConfig.HomeAirport;
             lstServerName.SelectedIndex = lstServerName.FindStringExact(mConfig.ServerName);
-            lstAudioDriver.SelectedItem = mConfig.AudioDriver;
-            lstInputDevice.SelectedItem = mConfig.InputDeviceName;
-            lstListenDevice.SelectedItem = mConfig.ListenDeviceName;
+            lstAudioDriver.SelectedIndex = lstAudioDriver.FindStringExact(mConfig.AudioDriver);
+            lstInputDevice.SelectedIndex = lstInputDevice.FindStringExact(mConfig.InputDeviceName);
+            lstListenDevice.SelectedIndex = lstListenDevice.FindStringExact(mConfig.ListenDeviceName);
             trackCom1.Value = mConfig.Com1Volume;
             trackCom2.Value = mConfig.Com2Volume;
             volCom1.Text = mConfig.Com1Volume.ToString("0%");
             volCom2.Text = mConfig.Com2Volume.ToString("0%");
-            chkRadioEffects.Checked = mConfig.DisableAudioEffects;
+            chkDisableRadioEffects.Checked = mConfig.DisableAudioEffects;
             chkHfSquelch.Checked = mConfig.EnableHfSquelch;
+            chkAutoSquawkModeC.Checked = mConfig.AutoSquawkModeC;
+            chkEnableNotificationSounds.Checked = mConfig.EnableNotificationSounds;
+            chkFlashDisconnect.Checked = mConfig.FlashTaskbarDisconnect;
             chkFlashPrivateMessage.Checked = mConfig.FlashTaskbarPrivateMessage;
             chkFlashRadioMessage.Checked = mConfig.FlashTaskbarRadioMessage;
-            chkFlashSelcal.Checked = mConfig.FlashTaskbarSelCal;
-            chkFlashDisconnect.Checked = mConfig.FlashTaskbarDisconnect;
-            chkAutoSquawkModeC.Checked = mConfig.AutoSquawkModeC;
-            chkKeepVisible.Checked = mConfig.KeepClientWindowVisible;
-            chkEnableNotificationSounds.Checked = mConfig.EnableNotificationSounds;
+            chkFlashSelcal.Checked = mConfig.FlashTaskbarSelcal;
+            chkKeepVisible.Checked = mConfig.KeepWindowVisible;
         }
 
         private void LoadNetworkServers()
@@ -113,28 +113,11 @@ namespace XPilot.PilotClient
             {
                 foreach (var x in mConfig.CachedServers)
                 {
-                    NetworkServerItem item = new NetworkServerItem();
+                    ComboboxItem item = new ComboboxItem();
                     item.Text = x.Name;
                     item.Value = x.Address;
                     lstServerName.Items.Add(item);
                 }
-            }
-            else
-            {
-                mNetworkManager.DownloadNetworkServers();
-            }
-        }
-
-        private void GetAudioDevices()
-        {
-            foreach (var inputDevice in ClientAudioUtilities.GetInputDevices())
-            {
-                audioInputDevice.Items.Add(inputDevice);
-            }
-
-            foreach (var outputDevice in ClientAudioUtilities.GetOutputDevices())
-            {
-                audioOutputDevice.Items.Add(outputDevice);
             }
         }
 
@@ -172,19 +155,16 @@ namespace XPilot.PilotClient
                 mConfig.VatsimPasswordDecrypted = txtNetworkPassword.Text.Trim();
                 mConfig.Name = txtFullName.Text;
                 mConfig.HomeAirport = txtHomeAirport.Text;
-                mConfig.ServerName = (lstServerName.SelectedItem as NetworkServerItem).Text;
-                //mConfig.FlashTaskbarPrivateMessage = chkFlashPrivateMessage.Checked;
-                //mConfig.FlashTaskbarRadioMessage = chkFlashRadioMessage.Checked;
-                //mConfig.FlashTaskbarSelCal = chkFlashSelcal.Checked;
-                //mConfig.FlashTaskbarDisconnect = chkFlashDisconnect.Checked;
+                mConfig.ServerName = (lstServerName.SelectedItem as ComboboxItem).Text;
                 mConfig.AutoSquawkModeC = chkAutoSquawkModeC.Checked;
-                //mConfig.KeepClientWindowVisible = chkKeepVisible.Checked;
-                mConfig.PlayGenericSelCalAlert = chkSelcalSound.Checked;
-                mConfig.PlayRadioMessageAlert = chkEnableNotificationSounds.Checked;
-                mConfig.VolumeKnobsControlVolume = chkVolumeKnobVolume.Checked;
-                mConfig.SimulatorPort = txtSimulatorPort.Text;
+                mConfig.EnableNotificationSounds = chkEnableNotificationSounds.Checked;
+                mConfig.FlashTaskbarRadioMessage = chkFlashRadioMessage.Checked;
+                mConfig.FlashTaskbarPrivateMessage = chkFlashPrivateMessage.Checked;
+                mConfig.FlashTaskbarDisconnect = chkFlashDisconnect.Checked;
+                mConfig.FlashTaskbarSelcal = chkFlashSelcal.Checked;
+                mConfig.KeepWindowVisible = chkKeepVisible.Checked;
                 mConfig.SaveConfig();
-                ClientConfigChanged?.Invoke(this, EventArgs.Empty);
+                RaiseClientConfigChanged?.Invoke(this, EventArgs.Empty);
                 Close();
             }
         }
@@ -204,9 +184,9 @@ namespace XPilot.PilotClient
 
         private void chkDisableRadioEffects_CheckedChanged(object sender, EventArgs e)
         {
-            mAfv.SetAudioEffectsDisabled(chkDisableRadioEffects.Checked);
-            mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
-            mConfig.SaveConfig();
+            //mAudio.SetAudioEffectsDisabled(chkDisableRadioEffects.Checked);
+            //mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
+            //mConfig.SaveConfig();
         }
 
         private void btnGuidedSetup_Click(object sender, EventArgs e)
@@ -217,15 +197,78 @@ namespace XPilot.PilotClient
             }
         }
 
-        private void CheckboxCheckedChanged(object sender, EventArgs e)
+        private void lstAudioDriver_SelectedValueChanged(object sender, EventArgs e)
         {
-            var checkbox = sender as CheckBox;
-            mConfig[checkbox.Tag.ToString()] = checkbox.Checked;
-            mConfig.SaveConfig();
+            var driver = (lstAudioDriver.SelectedItem as ComboboxItem).Value.ToString();
+            if (!string.IsNullOrEmpty(driver))
+            {
+                if (driver != mConfig.AudioDriver)
+                {
+                    lstListenDevice.Items.Clear();
+                    lstInputDevice.Items.Clear();
+
+                    mConfig.AudioDriver = driver;
+                    mConfig.SaveConfig();
+                }
+
+                mAudio.SetAudioDriver(driver);
+                SetAudioDevices();
+            }
+        }
+
+        private void SetAudioDevices()
+        {         
+            foreach (KeyValuePair<int, string> driver in mConfig.OutputDevices)
+            {
+                ComboboxItem item = new ComboboxItem
+                {
+                    Text = driver.Value,
+                    Value = driver.Value
+                };
+                lstListenDevice.Items.Add(item);
+            }
+
+            foreach (KeyValuePair<int, string> driver in mConfig.InputDevices)
+            {
+                ComboboxItem item = new ComboboxItem
+                {
+                    Text = driver.Value,
+                    Value = driver.Value
+                };
+                lstInputDevice.Items.Add(item);
+            }
+        }
+
+        private void lstInputDevice_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var device = (lstInputDevice.SelectedItem as ComboboxItem).Value.ToString();
+            if (!string.IsNullOrEmpty(device))
+            {
+                if (device != mConfig.InputDeviceName)
+                {
+                    mConfig.InputDeviceName = device;
+                    mConfig.SaveConfig();
+                    mAudio.ConfigureAudioDevices();
+                }
+            }
+        }
+
+        private void lstListenDevice_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var device = (lstListenDevice.SelectedItem as ComboboxItem).Value.ToString();
+            if (!string.IsNullOrEmpty(device))
+            {
+                if (device != mConfig.ListenDeviceName)
+                {
+                    mConfig.ListenDeviceName = device;
+                    mConfig.SaveConfig();
+                    mAudio.ConfigureAudioDevices();
+                }
+            }
         }
     }
 
-    public class NetworkServerItem
+    public class ComboboxItem
     {
         public string Text { get; set; }
         public object Value { get; set; }

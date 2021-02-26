@@ -249,7 +249,6 @@
             this.inputVolume.Size = new System.Drawing.Size(273, 22);
             this.inputVolume.TabIndex = 21;
             this.inputVolume.TickStyle = System.Windows.Forms.TickStyle.None;
-            this.inputVolume.Scroll += new System.EventHandler(this.inputVolume_Scroll);
             // 
             // lblAudioHelp
             // 

@@ -28,12 +28,6 @@ namespace XPilot.PilotClient.XplaneAdapter
 {
     public class UserAircraftManager : EventBus, IUserAircraftManager
     {
-        [EventPublication(EventTopics.SetXplaneDataRefValue)]
-        public event EventHandler<DataRefEventArgs> SetXplaneDataRefValue;
-
-        //[EventPublication(EventTopics.SendXplaneCommand)]
-        //public event EventHandler<ClientEventArgs<XPlaneConnector.XPlaneCommand>> SendXplaneCommand;
-
         private const int ACCONFIG_TOKEN_REFRESH_INTERVAL = 5000;
         private const int ACCONFIG_MAX_TOKENS = 10;
 
@@ -43,11 +37,11 @@ namespace XPilot.PilotClient.XplaneAdapter
         private bool mInitialAircraftDataReceived = false;
         private bool mAirborne = false;
         private readonly IAppConfig mConfig;
-        private readonly IFsdManger mFsdManager;
+        private readonly IFsdManager mFsdManager;
 
         public UserAircraftData UserAircraftData { get; private set; }
 
-        public UserAircraftManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
+        public UserAircraftManager(IEventBroker broker, IAppConfig config, IFsdManager fsdManager) : base(broker)
         {
             mConfig = config;
             mFsdManager = fsdManager;
@@ -83,7 +77,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.AircraftConfigurationInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceived e)
         {
             AircraftConfigurationInfo info;
             try
@@ -109,12 +103,12 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
         }
 
-        [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnUserInterfaceAsync))]
-        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
+        [EventSubscription(EventTopics.UserAircraftDataChanged, typeof(OnUserInterfaceAsync))]
+        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataChanged e)
         {
-            if (UserAircraftData == null || !UserAircraftData.Equals(e.UserAircraftData))
+            if (UserAircraftData == null || !UserAircraftData.Equals(e.AircraftData))
             {
-                UserAircraftData = e.UserAircraftData;
+                UserAircraftData = e.AircraftData;
             }
 
             if ((mLastBroadcastConfig == null) || !mFsdManager.IsConnected)

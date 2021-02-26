@@ -1,6 +1,6 @@
 ﻿/*
  * xPilot: X-Plane pilot client for VATSIM
- * Copyright (C) 2019-2020 Justin Shannon
+ * Copyright (C) 2019-2021 Justin Shannon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ namespace XPilot.PilotClient.Core.Events
     public class ClientEventArgs<T> : EventArgs
     {
         public T Value { get; set; }
+
         public ClientEventArgs(T value)
         {
             Value = value;

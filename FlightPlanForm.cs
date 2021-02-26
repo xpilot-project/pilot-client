@@ -22,18 +22,16 @@ using XPilot.PilotClient.Config;
 using XPilot.PilotClient.Core.Events;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using System.IO;
-using Newtonsoft.Json;
 
 namespace XPilot.PilotClient
 {
     public partial class FlightPlanForm : Form
     {
-        [EventPublication(EventTopics.FileFlightPlan)]
-        public event EventHandler<FlightPlanReceivedEventArgs> FileFlightPlan;
+        [EventPublication(EventTopics.SendFlightPlan)]
+        public event EventHandler<FlightPlanSent> RaiseFlightPlanSent;
 
-        [EventPublication(EventTopics.RequestFlightPlan)]
-        public event EventHandler<EventArgs> FetchFlightPlan;
+        [EventPublication(EventTopics.FetchFlightPlan)]
+        public event EventHandler<EventArgs> RaiseFetchFlightPlan;
 
         private readonly Timer mClockTimer;
         private readonly IEventBroker mEventBroker;
@@ -72,7 +70,7 @@ namespace XPilot.PilotClient
         }
 
         [EventSubscription(EventTopics.FlightPlanReceived, typeof(OnUserInterfaceAsync))]
-        public void OnFlightPlanReceived(object sender, FlightPlanReceivedEventArgs e)
+        public void OnFlightPlanReceived(object sender, FlightPlanReceived e)
         {
             NewFlightPlan(e.FlightPlan);
             mConfig.LastFlightPlan = e.FlightPlan;
@@ -111,7 +109,7 @@ namespace XPilot.PilotClient
             else
             {
                 mConfig.LastFlightPlan = CreateFlightPlan();
-                FileFlightPlan?.Invoke(this, new FlightPlanReceivedEventArgs(CreateFlightPlan()));
+                RaiseFlightPlanSent?.Invoke(this, new FlightPlanSent(CreateFlightPlan()));
                 Close();
             }
         }
@@ -278,7 +276,7 @@ namespace XPilot.PilotClient
 
         private void BtnFetch_Click(object sender, EventArgs e)
         {
-            FetchFlightPlan(this, EventArgs.Empty);
+            RaiseFetchFlightPlan(this, EventArgs.Empty);
         }
 
         private void BtnSave_Click(object sender, EventArgs e)

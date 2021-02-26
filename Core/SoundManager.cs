@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using XPilot.PilotClient.Config;
-using XPilot.PilotClient.Core.Events;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
+using XPilot.PilotClient.Core.Events;
 
 namespace XPilot.PilotClient.Core
 {
@@ -93,8 +93,8 @@ namespace XPilot.PilotClient.Core
             }
         }
 
-        [EventSubscription(EventTopics.PlaySoundRequested, typeof(OnUserInterfaceAsync))]
-        public void OnPlaySoundRequested(object sender, PlaySoundEventArgs e)
+        [EventSubscription(EventTopics.PlayNotificationSound, typeof(OnUserInterfaceAsync))]
+        public void OnPlaySoundRequested(object sender, PlayNotificationSound e)
         {
             Play(e.Sound);
         }

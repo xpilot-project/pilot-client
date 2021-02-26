@@ -33,6 +33,7 @@ using NetMQ.Sockets;
 using Xpilot;
 using Google.Protobuf;
 using XPilot.PilotClient.Core;
+using XPilot.PilotClient.Aircraft;
 
 namespace XPilot.PilotClient.XplaneAdapter
 {
@@ -41,51 +42,48 @@ namespace XPilot.PilotClient.XplaneAdapter
         const int MIN_PLUGIN_VERSION = 1338; // 1.3.10 = 1310
 
         [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+        public event EventHandler<NotificationPosted> RaiseNotificationPosted;
 
-        [EventPublication(EventTopics.UserAircraftDataUpdated)]
-        public event EventHandler<UserAircraftDataUpdatedEventArgs> UserAircraftDataUpdated;
+        [EventPublication(EventTopics.UserAircraftDataChanged)]
+        public event EventHandler<UserAircraftDataChanged> RaiseUserAircraftDataUpdated;
 
         [EventPublication(EventTopics.SimConnectionStateChanged)]
-        public event EventHandler<ClientEventArgs<bool>> SimConnectionStateChanged;
+        public event EventHandler<ClientEventArgs<bool>> RaiseSimConnectionStateChanged;
 
         [EventPublication(EventTopics.RadioStackStateChanged)]
-        public event EventHandler<RadioStackStateChangedEventArgs> RadioStackStateChanged;
+        public event EventHandler<RadioStackStateChanged> RaiseRadioStackStateChanged;
 
         [EventPublication(EventTopics.TransponderModeChanged)]
-        public event EventHandler<ClientEventArgs<bool>> TransponderModeChanged;
+        public event EventHandler<ClientEventArgs<bool>> RaiseTransponderModeChanged;
 
-        [EventPublication(EventTopics.SquawkingIdentChanged)]
-        public event EventHandler<SquawkingIdentChangedEventArgs> SquawkingIdentChanged;
+        [EventPublication(EventTopics.TransponderIdentStateChanged)]
+        public event EventHandler<TransponderIdentStateChanged> SquawkingIdentChanged;
 
-        [EventPublication(EventTopics.PlaySoundRequested)]
-        public event EventHandler<PlaySoundEventArgs> PlaySoundRequested;
+        [EventPublication(EventTopics.PlayNotificationSound)]
+        public event EventHandler<PlayNotificationSound> RaisePlaySoundRequested;
 
         [EventPublication(EventTopics.PushToTalkStateChanged)]
-        public event EventHandler<PushToTalkStateChangedEventArgs> PushToTalkStateChanged;
+        public event EventHandler<PushToTalkStateChanged> RaisePushToTalkStateChanged;
 
-        [EventPublication(EventTopics.RequestControllerAtis)]
-        public event EventHandler<RequestControllerAtisEventArgs> RequestControllerAtisSent;
+        [EventPublication(EventTopics.AcarsRequestSent)]
+        public event EventHandler<AcarsResponseReceived> RaiseRequestControllerAtisSent;
 
         [EventPublication(EventTopics.SocketMessageReceived)]
         public event EventHandler<ClientEventArgs<string>> RaiseSocketMessageReceived;
 
-        [EventPublication(EventTopics.RadioTextMessage)]
-        public event EventHandler<SimulatorMessageEventArgs> SimulatorTextMessageSent;
+        [EventPublication(EventTopics.SimulatorMessageSent)]
+        public event EventHandler<SimulatorMessageSent> RaiseSimulatorMessageSent;
 
-        [EventPublication(EventTopics.EnableConnectButton)]
-        public event EventHandler<ClientEventArgs<bool>> EnableConnectButton;
+        [EventPublication(EventTopics.ConnectButtonStateChanged)]
+        public event EventHandler<ClientEventArgs<bool>> RaiseConnectButtonStateChanged;
 
         [EventPublication(EventTopics.PrivateMessageSent)]
-        public event EventHandler<PrivateMessageSentEventArgs> PrivateMessageSent;
+        public event EventHandler<PrivateMessageSent> RaisePrivateMessageSent;
 
-        [EventPublication(EventTopics.Com1Volume)]
-        public event EventHandler<RadioVolumeChangedEventArgs> Com1VolumeChanged;
+        [EventPublication(EventTopics.RadioVolumeChanged)]
+        public event EventHandler<RadioVolumeChanged> RaiseRadioVolumeChanged;
 
-        [EventPublication(EventTopics.Com2Volume)]
-        public event EventHandler<RadioVolumeChangedEventArgs> Com2VolumeChanged;
-
-        private readonly IFsdManger mFsdManager;
+        private readonly IFsdManager mFsdManager;
         private readonly IAppConfig mConfig;
 
         private readonly NetMQPoller mPoller;
@@ -109,7 +107,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         private bool mValidCsl = false;
         private string mSimulatorIP = "127.0.0.1";
 
-        public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManger fsdManager) : base(broker)
+        public XplaneConnectionManager(IEventBroker broker, IAppConfig config, IFsdManager fsdManager) : base(broker)
         {
             DealerSocket visualDealerSocket = null;
             mVisualDealerSockets = null;
@@ -125,20 +123,20 @@ namespace XPilot.PilotClient.XplaneAdapter
                     visualDealerSocket.Options.TcpKeepalive = true;
                     try
                     {
-                        visualDealerSocket.Connect("tcp://" + mIP + ":" + mConfig.TcpPort);
+                        visualDealerSocket.Connect("tcp://" + mIP + ":" + mConfig.SimulatorPort);
                         if (mVisualDealerSockets == null) mVisualDealerSockets = new List<DealerSocket>();
                         mVisualDealerSockets.Add(visualDealerSocket);
                     }
                     catch (AddressAlreadyInUseException)
                     {
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
+                        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
                     }
                 }
             }
 
-            if (!string.IsNullOrEmpty(mConfig.SimClientIP))
+            if (!string.IsNullOrEmpty(mConfig.SimulatorIP))
             {
-                mSimulatorIP = mConfig.SimClientIP;
+                mSimulatorIP = mConfig.SimulatorIP;
             }
 
             mMessageQueue = new NetMQQueue<byte[]>();
@@ -148,11 +146,11 @@ namespace XPilot.PilotClient.XplaneAdapter
             mDealerSocket.ReceiveReady += DealerSocket_ReceiveReady;
             try
             {
-                mDealerSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.TcpPort);
+                mDealerSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.SimulatorPort);
             }
             catch (AddressAlreadyInUseException)
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
+                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Plugin port already in use. Please choose a different TCP port."));
             }
             mPoller = new NetMQPoller { mDealerSocket, mMessageQueue };
             if (!mPoller.IsRunning)
@@ -226,11 +224,11 @@ namespace XPilot.PilotClient.XplaneAdapter
                                 mReceivedInitialHandshake = true;
                                 if(wrapper.PluginVersion.Version != MIN_PLUGIN_VERSION)
                                 {
-                                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                                    RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
                                     if (!mInvalidPluginVersionShown)
                                     {
-                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
-                                        PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                                        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
+                                        RaisePlaySoundRequested?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
                                         mInvalidPluginVersionShown = true;
                                     }
                                 }
@@ -244,9 +242,9 @@ namespace XPilot.PilotClient.XplaneAdapter
                                 mValidCsl = wrapper.CslValidate.Valid;
                                 if (!wrapper.CslValidate.Valid)
                                 {
-                                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
-                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
-                                    PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
+                                    RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
+                                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
+                                    RaisePlaySoundRequested?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
                                 }
                             }
                         }
@@ -280,7 +278,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                                 float val = wrapper.XplaneData.Com1Volume;
                                 if (val > 1.0f) val = 1.0f;
                                 if (val < 0.0f) val = 0.0f;
-                                Com1VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, val));
+                                RaiseRadioVolumeChanged?.Invoke(this, new RadioVolumeChanged(1, val));
                             }
 
                             // com2
@@ -305,7 +303,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                                 float val = wrapper.XplaneData.Com2Volume;
                                 if (val > 1.0f) val = 1.0f;
                                 if (val < 0.0f) val = 0.0f;
-                                Com2VolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, val));
+                                RaiseRadioVolumeChanged?.Invoke(this, new RadioVolumeChanged(2, val));
                             }
 
                             if (wrapper.XplaneData.HasAvionicsPowerOn)
@@ -327,7 +325,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                             }
                             if (wrapper.XplaneData.HasPressureAltitude)
                             {
-                                mUserAircraftData.PressureAltitude = wrapper.XplaneData.PressureAltitude;
+                                mUserAircraftData.AltitudeAgl = wrapper.XplaneData.PressureAltitude;
                             }
                             if (wrapper.XplaneData.HasYaw)
                             {
@@ -356,7 +354,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                             if (wrapper.XplaneData.HasTransponderIdent)
                             {
                                 mUserAircraftData.TransponderIdent = wrapper.XplaneData.TransponderIdent;
-                                SquawkingIdentChanged?.Invoke(this, new SquawkingIdentChangedEventArgs(wrapper.XplaneData.TransponderIdent));
+                                SquawkingIdentChanged?.Invoke(this, new TransponderIdentStateChanged(wrapper.XplaneData.TransponderIdent));
                             }
 
                             // lights
@@ -586,18 +584,18 @@ namespace XPilot.PilotClient.XplaneAdapter
                 {
                     if (!mReceivedInitialHandshake)
                     {
-                        SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                        EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                        RaiseSimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
+                        RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
 
                         RequestPluginVersion();
                         RequestPluginHash();
                     }
                     else
                     {
-                        SimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
+                        RaiseSimConnectionStateChanged(this, new ClientEventArgs<bool>(true));
                         if (mValidCsl && !mInvalidPluginVersionShown)
                         {
-                            EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(true));
+                            RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(true));
                         }
                     }
                     mConnectionHeartbeats.RemoveAt(0);
@@ -605,15 +603,15 @@ namespace XPilot.PilotClient.XplaneAdapter
                 else
                 {
                     mReceivedInitialHandshake = false;
-                    SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                    RaiseSimConnectionStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
+                    RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
                 }
             }
             else
             {
                 mReceivedInitialHandshake = false;
-                SimConnectionStateChanged(this, new ClientEventArgs<bool>(false));
-                EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
+                RaiseSimConnectionStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
+                RaiseConnectButtonStateChanged?.Invoke(this, new ClientEventArgs<bool>(false));
             }
         }
 
@@ -621,11 +619,11 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             if (mUserAircraftData.TransponderMode >= 2)
             {
-                TransponderModeChanged?.Invoke(this, new ClientEventArgs<bool>(true));
+                RaiseTransponderModeChanged?.Invoke(this, new ClientEventArgs<bool>(true));
             }
             else
             {
-                TransponderModeChanged?.Invoke(this, new ClientEventArgs<bool>(false));
+                RaiseTransponderModeChanged?.Invoke(this, new ClientEventArgs<bool>(false));
             }
 
             UserAircraftRadioStack radio = new UserAircraftRadioStack
@@ -646,12 +644,12 @@ namespace XPilot.PilotClient.XplaneAdapter
                 AvionicsPower = mRadioStackState.AvionicsPower
             };
 
-            UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
-            RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(radio));
+            RaiseUserAircraftDataUpdated?.Invoke(this, new UserAircraftDataChanged(mUserAircraftData));
+            RaiseRadioStackStateChanged?.Invoke(this, new RadioStackStateChanged(radio));
         }
 
         [EventSubscription(EventTopics.RadioVolumeChanged, typeof(OnUserInterfaceAsync))]
-        public void OnVolumeLevelsChanged(object sender, RadioVolumeChangedEventArgs e)
+        public void OnVolumeLevelsChanged(object sender, RadioVolumeChanged e)
         {
             switch (e.Radio)
             {
@@ -670,8 +668,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
         }
 
-        [EventSubscription(EventTopics.OverrideComStatus, typeof(OnUserInterfaceAsync))]
-        public void OnOverrideComStatus(object sender, OverrideComStatusEventArgs e)
+        [EventSubscription(EventTopics.OverrideRadioStackState, typeof(OnUserInterfaceAsync))]
+        public void OnOverrideComStatus(object sender, OverrideRadioStackState e)
         {
             mRadioStackState.Com1ForceRx = e.Com1Rx;
             mRadioStackState.Com1ForceTx = e.Com1Tx;
@@ -691,32 +689,26 @@ namespace XPilot.PilotClient.XplaneAdapter
         //    mXplaneConnector.SetDataRefValue(e.DataRef, e.Value);
         //}
 
-        [EventSubscription(EventTopics.XPlaneEventPosted, typeof(OnUserInterfaceAsync))]
-        public void OnXplaneEventPosted(object sender, ClientEventArgs<string> e)
+        [EventSubscription(EventTopics.SimulatorMessageSent, typeof(OnUserInterfaceAsync))]
+        public void OnSimulatorMessageSent(object sender, SimulatorMessageSent e)
         {
-            SendMessage(e.Value);
-        }
-
-        [EventSubscription(EventTopics.RadioTextMessage, typeof(OnUserInterfaceAsync))]
-        public void OnRadioTextMessage(object sender, SimulatorMessageEventArgs e)
-        {
-            SendMessage(new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.RadioMessage,
-                Timestamp = DateTime.Now,
-                Data = new XplaneTextMessage
-                {
-                    Message = e.Text,
-                    Red = e.Red,
-                    Green = e.Green,
-                    Blue = e.Blue,
-                    Direct = e.PriorityMessage
-                }
-            }.ToJSON());
+            //SendMessage(new XplaneConnect
+            //{
+            //    Type = XplaneConnect.MessageType.RadioMessage,
+            //    Timestamp = DateTime.Now,
+            //    Data = new XplaneTextMessage
+            //    {
+            //        Message = e.Text,
+            //        Red = e.Red,
+            //        Green = e.Green,
+            //        Blue = e.Blue,
+            //        Direct = e.PriorityMessage
+            //    }
+            //}.ToJSON());
         }
 
         [EventSubscription(EventTopics.PushToTalkStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnPushToTalkStateChanged(object sender, PushToTalkStateChangedEventArgs e)
+        public void OnPushToTalkStateChanged(object sender, PushToTalkStateChanged e)
         {
             //if (mFsdManager.IsConnected)
             //{
@@ -729,7 +721,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        public void OnNetworkConnected(object sender, NetworkConnected e)
         {
             dynamic data = new ExpandoObject();
             data.OurCallsign = e.ConnectInfo.Callsign;
@@ -746,7 +738,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
+        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
         {
             SendMessage(new XplaneConnect
             {
@@ -764,7 +756,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 
             if (!mDisconnectMessageSent)
             {
-                SimulatorTextMessageSent?.Invoke(this, new SimulatorMessageEventArgs("Disconnected from network.", priorityMessage: true));
+                RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent("Disconnected from network.", true));
                 mDisconnectMessageSent = true;
             }
 
@@ -772,8 +764,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             mControllers.Clear();
         }
 
-        [EventSubscription(EventTopics.ControllerAdded, typeof(OnUserInterfaceAsync))]
-        public void OnControllerAdded(object sender, ControllerEventArgs e)
+        [EventSubscription(EventTopics.AddControllerRequestReceived, typeof(OnUserInterfaceAsync))]
+        public void OnControllerAdded(object sender, ControllerUpdateReceived e)
         {
             if (!mControllers.Contains(e.Controller))
             {
@@ -781,8 +773,8 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
         }
 
-        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnUserInterfaceAsync))]
-        public void OnControllerDeleted(object sender, ControllerEventArgs e)
+        [EventSubscription(EventTopics.DeleteControllerRequestReceived, typeof(OnUserInterfaceAsync))]
+        public void OnDeleteControllerRequestReceived(object sender, ControllerUpdateReceived e)
         {
             if (mControllers.Contains(e.Controller))
             {
@@ -791,7 +783,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.ControllerFrequencyChanged, typeof(OnUserInterfaceAsync))]
-        public void OnControllerFrequencyChanged(object sender, ControllerEventArgs e)
+        public void OnControllerFrequencyChanged(object sender, ControllerUpdateReceived e)
         {
             var controller = mControllers.FirstOrDefault(o => o.Callsign == e.Controller.Callsign);
             if (controller != null)
@@ -801,7 +793,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.RealNameReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRealNameReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnRealNameReceived(object sender, NetworkDataReceived e)
         {
             var controller = mControllers.FirstOrDefault(o => o.Callsign == e.From);
             if (controller != null)
@@ -811,13 +803,13 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        public void OnPrivateMessageReceived(object sender, PrivateMessageReceived e)
         {
             if (e.From != "SERVER")
             {
                 dynamic data = new ExpandoObject();
                 data.From = e.From.ToUpper();
-                data.Message = e.Data;
+                data.Message = e.Message;
 
                 SendMessage(new XplaneConnect
                 {
@@ -829,7 +821,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
+        public void OnPrivateMessageSent(object sender, PrivateMessageSent e)
         {
             dynamic data = new ExpandoObject();
             data.To = e.To.ToUpper();
@@ -882,6 +874,56 @@ namespace XPilot.PilotClient.XplaneAdapter
             //    DataRef = "xpilot/audio/vu"
             //};
             //mXplaneConnector.SetDataRefValue(dr, e.Value);
+        }
+
+        public void SetTransponderCode(int code)
+        {
+            
+        }
+
+        public void SetRadioFrequency(int radio, uint freq)
+        {
+            
+        }
+
+        public void SetAudioComSelection(int radio)
+        {
+            
+        }
+
+        public void SetAudioSelectionCom1(bool enabled)
+        {
+            
+        }
+
+        public void SetAudioSelectionCom2(bool enabled)
+        {
+            
+        }
+
+        public void SetLoginStatus(bool connected)
+        {
+            
+        }
+
+        public void AddPlane(NetworkAircraft plane)
+        {
+            
+        }
+
+        public void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftPose pose)
+        {
+            
+        }
+
+        public void PlaneConfigChanged(NetworkAircraft plane, NetworkAircraftConfig config)
+        {
+            
+        }
+
+        public void RemovePlane(NetworkAircraft plane)
+        {
+            
         }
     }
 }

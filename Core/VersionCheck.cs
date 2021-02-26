@@ -34,7 +34,7 @@ namespace XPilot.PilotClient.Core
     public class VersionCheck : EventBus, IVersionCheck
     {
         [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
+        public event EventHandler<NotificationPosted> NotificationPosted;
 
         private readonly IAppConfig mConfig;
         private const string ROOT_URL = "http://xpilot-project.org";
@@ -46,55 +46,55 @@ namespace XPilot.PilotClient.Core
             mConfig = config;
         }
 
-        private void XPilotVersionCheck()
-        {
-            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Performing version check..."));
+        //private void XPilotVersionCheck()
+        //{
+        //    NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Performing version check..."));
 
-            try
-            {
-                var dto = new VersionCheckDto
-                {
-                    UserVersion = Application.ProductVersion.ToString(),
-                    Channel = mConfig.UpdateChannel.GetDescription()
-                }.ToJSON();
+        //    try
+        //    {
+        //        var dto = new VersionCheckDto
+        //        {
+        //            UserVersion = Application.ProductVersion.ToString(),
+        //            Channel = mConfig.UpdateChannel.GetDescription()
+        //        }.ToJSON();
 
-                var client = new RestClient(ROOT_URL);
-                var request = new RestRequest(VERSION_CHECK_ENDPOINT, DataFormat.Json);
-                request.Method = Method.POST;
-                request.AddParameter("application/json", dto, ParameterType.RequestBody);
-                var response = client.Execute(request).Content;
+        //        var client = new RestClient(ROOT_URL);
+        //        var request = new RestRequest(VERSION_CHECK_ENDPOINT, DataFormat.Json);
+        //        request.Method = Method.POST;
+        //        request.AddParameter("application/json", dto, ParameterType.RequestBody);
+        //        var response = client.Execute(request).Content;
 
-                var data = JsonConvert.DeserializeObject<VersionCheckResponse>(response);
+        //        var data = JsonConvert.DeserializeObject<VersionCheckResponse>(response);
 
-                if (data != null)
-                {
-                    Version version = new Version(data.Version);
-                    if (version > Assembly.GetExecutingAssembly().GetName().Version)
-                    {
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "A new version is available for download."));
+        //        if (data != null)
+        //        {
+        //            Version version = new Version(data.Version);
+        //            if (version > Assembly.GetExecutingAssembly().GetName().Version)
+        //            {
+        //                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "A new version is available for download."));
 
-                        using (var dlg = new UpdateForm())
-                        {
-                            dlg.NewVersion = version.ToString();
-                            dlg.DownloadUrl = data.VersionUrl;
-                            dlg.ShowDialog();
-                        }
-                    }
-                    else
-                    {
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Version check complete. You are running the latest version."));
-                    }
-                }
-                else
-                {
-                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Version check complete. You are running the latest version."));
-                }
-            }
-            catch (Exception ex)
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error performing version check: {ex.Message}"));
-            }
-        }
+        //                using (var dlg = new UpdateForm())
+        //                {
+        //                    dlg.NewVersion = version.ToString();
+        //                    dlg.DownloadUrl = data.VersionUrl;
+        //                    dlg.ShowDialog();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Version check complete. You are running the latest version."));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Version check complete. You are running the latest version."));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Error performing version check: {ex.Message}"));
+        //    }
+        //}
 
         private void AircraftTypeCodeUpdate()
         {
@@ -118,7 +118,7 @@ namespace XPilot.PilotClient.Core
                                 if (json != null)
                                 {
                                     File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
+                                    NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Aircraft type code database updated."));
                                 }
                             }
                         }
@@ -131,7 +131,7 @@ namespace XPilot.PilotClient.Core
                             if (json != null)
                             {
                                 File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
+                                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Aircraft type code database updated."));
                             }
 
                         }
@@ -140,7 +140,7 @@ namespace XPilot.PilotClient.Core
             }
             catch (Exception ex)
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error downloading aircraft type code database: {ex.Message}"));
+                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Error downloading aircraft type code database: {ex.Message}"));
             }
         }
 
@@ -148,9 +148,6 @@ namespace XPilot.PilotClient.Core
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
         public void OnInitiateVersionCheck(object sender, EventArgs e)
         {
-            if (mConfig.CheckForUpdates && !Debugger.IsAttached)
-                XPilotVersionCheck();
-
             AircraftTypeCodeUpdate();
         }
     }
