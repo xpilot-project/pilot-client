@@ -29,9 +29,6 @@ namespace XPilot.PilotClient.Tutorial
         private IAFVManaged mAfv;
         private IEventBroker mEventBroker;
 
-        [EventPublication(EventTopics.RestartAfvUserClient)]
-        public event EventHandler<EventArgs> RestartAfvUserClient;
-
         public AudioConfiguration(ISetup host, IAppConfig config, IAFVManaged afv, IEventBroker eventBroker) : base(host, config)
         {
             InitializeComponent();
@@ -78,7 +75,7 @@ namespace XPilot.PilotClient.Tutorial
             var device = audioInputDevice.SelectedItem.ToString();
             if (mConfig.InputDeviceName != device)
             {
-                RestartAfvUserClient(this, EventArgs.Empty);
+                //RestartAfvUserClient(this, EventArgs.Empty);
             }
             mConfig.InputDeviceName = device;
             mConfig.SaveConfig();
@@ -89,7 +86,7 @@ namespace XPilot.PilotClient.Tutorial
             var device = audioOutputDevice.SelectedItem.ToString();
             if (mConfig.ListenDeviceName != device)
             {
-                RestartAfvUserClient(this, EventArgs.Empty);
+                //RestartAfvUserClient(this, EventArgs.Empty);
             }
             mConfig.ListenDeviceName = device;
             mConfig.SaveConfig();
@@ -98,12 +95,6 @@ namespace XPilot.PilotClient.Tutorial
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             GetAudioDevices();
-        }
-
-        [EventSubscription(EventTopics.MicrophoneInputLevelChanged, typeof(OnUserInterfaceAsync))]
-        public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)
-        {
-            levelMeterInput.Value = e.Value;
         }
     }
 }

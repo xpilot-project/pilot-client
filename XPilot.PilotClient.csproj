@@ -147,8 +147,6 @@
     <Compile Include="Common\DictionaryExtensions.cs" />
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
-    <Compile Include="Common\FlightPlan.cs" />
-    <Compile Include="Common\FlightPlanTypeExtensions.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
     <Compile Include="Common\JsonUtils.cs" />
     <Compile Include="Common\ProtobufUtils.cs" />
@@ -196,12 +194,6 @@
     <Compile Include="Core\Events\WallopSent.cs" />
     <Compile Include="Core\ITabPages.cs" />
     <Compile Include="Core\IUserInterface.cs" />
-    <Compile Include="FlightPlanForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FlightPlanForm.Designer.cs">
-      <DependentUpon>FlightPlanForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Network\Aircraft\AircraftConfigurationInfo.cs" />
     <Compile Include="Network\Aircraft\INetworkAircraftManager.cs" />
     <Compile Include="Network\Aircraft\LegacyClientConfigFlags.cs" />
@@ -356,9 +348,6 @@
     <Compile Include="Protobuf\XplaneDataPb.cs" />
     <EmbeddedResource Include="ConnectForm.resx">
       <DependentUpon>ConnectForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FlightPlanForm.resx">
-      <DependentUpon>FlightPlanForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

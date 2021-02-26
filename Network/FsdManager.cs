@@ -17,9 +17,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -31,7 +28,6 @@ using Vatsim.Fsd.Connector.PDU;
 using XPilot.PilotClient.Aircraft;
 using XPilot.PilotClient.Common;
 using XPilot.PilotClient.Config;
-using XPilot.PilotClient.Core;
 using XPilot.PilotClient.Core.Events;
 using XPilot.PilotClient.Network.Controllers;
 using XPilot.PilotClient.XplaneAdapter;
@@ -70,8 +66,8 @@ namespace XPilot.PilotClient.Network
         [EventPublication(EventTopics.ControllerUpdateReceived)]
         public event EventHandler<ControllerUpdateReceived> RaiseControllerUpdateReceived;
 
-        [EventPublication(EventTopics.DeleteControllerReceived)]
-        public event EventHandler<NetworkDataReceived> RaiseDeleteControllerReceived;
+        [EventPublication(EventTopics.ControllerDeleted)]
+        public event EventHandler<NetworkDataReceived> RaiseControllerDeleted;
 
         [EventPublication(EventTopics.CapabilitiesRequestReceived)]
         public event EventHandler<NetworkDataReceived> RaiseCapabilitiesRequestReceived;
@@ -103,9 +99,6 @@ namespace XPilot.PilotClient.Network
         [EventPublication(EventTopics.SelcalAlertReceived)]
         public event EventHandler<SelcalAlertReceived> RaiseSelcalAlertReceived;
 
-        [EventPublication(EventTopics.FlightPlanReceived)]
-        public event EventHandler<FlightPlanReceived> RaiseFlightPlanReceived;
-
         [EventPublication(EventTopics.RemoteFlightPlanReceived)]
         public event EventHandler<FlightPlanReceived> RaiseRemoteFlightPlanReceived;
 
@@ -125,10 +118,10 @@ namespace XPilot.PilotClient.Network
         public event EventHandler<EventArgs> RaiseNetworkServerListUpdated;
 
         private const string STATUS_FILE_URL = "http://status.vatsim.net";
-        private IAppConfig mConfig;
-        private FSDSession mFsd;
-        private Version mFsdClientVersion;
-        private Timer mPositionUpdateTimer;
+        private readonly IAppConfig mConfig;
+        private readonly FSDSession mFsd;
+        private readonly Version mFsdClientVersion;
+        private readonly Timer mPositionUpdateTimer;
         private ConnectInfo mConnectInfo;
         private string mPublicIP;
         private string mSystemUID;
@@ -137,7 +130,7 @@ namespace XPilot.PilotClient.Network
         private string mKillReason;
         private bool mIsIdenting;
         private bool mIsIdentPressed;
-        private ClientProperties mClientProperties;
+        private readonly ClientProperties mClientProperties;
         private UserAircraftData mUserAircraftData;
         private UserAircraftRadioStack mRadioStackState;
         private List<NetworkServerInfo> mServerList = new List<NetworkServerInfo>();
@@ -181,20 +174,7 @@ namespace XPilot.PilotClient.Network
 
         private void Fsd_FlightPlanReceived(object sender, DataReceivedEventArgs<PDUFlightPlan> e)
         {
-            if (e.PDU.From == OurCallsign)
-            {
-                FlightPlan fp = ParseFlightPlan(e.PDU);
-                if (string.IsNullOrEmpty(SelcalCode))
-                {
-                    string selcal = ExtractSelcal(fp.Remarks);
-                    if (!string.IsNullOrEmpty(selcal))
-                    {
-                        mConnectInfo.SelCalCode = selcal;
-                    }
-                }
-                RaiseFlightPlanReceived?.Invoke(this, new FlightPlanReceived(fp));
-            }
-            else
+            if (e.PDU.From != OurCallsign)
             {
                 FlightPlan fp = ParseFlightPlan(e.PDU);
                 RaiseRemoteFlightPlanReceived?.Invoke(this, new FlightPlanReceived(fp));
@@ -203,7 +183,7 @@ namespace XPilot.PilotClient.Network
 
         private void Fsd_DeleteATCReceived(object sender, DataReceivedEventArgs<PDUDeleteATC> e)
         {
-            RaiseDeleteControllerReceived?.Invoke(this, new NetworkDataReceived(e.PDU.From));
+            RaiseControllerDeleted?.Invoke(this, new NetworkDataReceived(e.PDU.From));
         }
 
         private void Fsd_DeletePilotReceived(object sender, DataReceivedEventArgs<PDUDeletePilot> e)
@@ -545,12 +525,6 @@ namespace XPilot.PilotClient.Network
             }
         }
 
-        private static string ExtractSelcal(string remarks)
-        {
-            Match match = Regex.Match(remarks, "SEL/([A-Z][A-Z])([A-Z][A-Z])");
-            return match.Success ? string.Format("{0}-{1}", match.Groups[1].Value, match.Groups[2].Value) : null;
-        }
-
         private static FlightPlan ParseFlightPlan(PDUFlightPlan fp)
         {
             if (fp.CruiseAlt.Contains("FL"))
@@ -603,40 +577,6 @@ namespace XPilot.PilotClient.Network
             flightPlan.Remarks = flightPlan.Remarks.Replace("/R/", "");
             flightPlan.Remarks = flightPlan.Remarks.Replace("/r/", "");
             return flightPlan;
-        }
-
-        public void FileFlightPlan(FlightPlan flightPlan)
-        {
-            if (IsConnected)
-            {
-                string acType = $"{(flightPlan.IsHeavy ? "H" : "")}{mConnectInfo.TypeCode}{(string.IsNullOrEmpty(flightPlan.EquipmentSuffix) ? "" : $"/{flightPlan.EquipmentSuffix}")}";
-                flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/v/", "", RegexOptions.IgnoreCase);
-                flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/t/", "", RegexOptions.IgnoreCase);
-                flightPlan.Remarks = Regex.Replace(flightPlan.Remarks, "/r/", "", RegexOptions.IgnoreCase);
-                switch (flightPlan.VoiceType)
-                {
-                    case VoiceType.Full:
-                        flightPlan.Remarks = string.Format("{0} /v/", flightPlan.Remarks);
-                        break;
-                    case VoiceType.ReceiveOnly:
-                        flightPlan.Remarks = string.Format("{0} /r/", flightPlan.Remarks);
-                        break;
-                    case VoiceType.TextOnly:
-                        flightPlan.Remarks = string.Format("{0} /t/", flightPlan.Remarks);
-                        break;
-                }
-                // SELCAL
-                string selcal = ExtractSelcal(flightPlan.Remarks);
-                if (!string.IsNullOrEmpty(selcal))
-                {
-                    mConnectInfo.SelCalCode = selcal;
-                }
-                else if (!string.IsNullOrEmpty(mConnectInfo.SelCalCode))
-                {
-                    flightPlan.Remarks = string.Format("{0} SEL/{1}", flightPlan.Remarks, mConnectInfo.SelCalCode.Replace("-", ""));
-                }
-                mFsd.SendPDU(new PDUFlightPlan(OurCallsign, "SERVER", FlightRules.IFR.FromString(flightPlan.FlightType.ToString()), acType, flightPlan.CruiseSpeed.ToString(), flightPlan.DepartureAirport, flightPlan.DepartureTime.ToString("0000"), "", flightPlan.CruiseAltitude.ToString(), flightPlan.DestinationAirport, flightPlan.EnrouteHours.ToString(), flightPlan.EnrouteMinutes.ToString(), flightPlan.FuelHours.ToString(), flightPlan.FuelMinutes.ToString(), flightPlan.AlternateAirport, flightPlan.Remarks, flightPlan.Route));
-            }
         }
 
         public void CheckIfValidATC(string callsign)
@@ -856,29 +796,6 @@ namespace XPilot.PilotClient.Network
             if (IsConnected)
             {
                 mFsd.SendPDU(new PDURadioMessage(OurCallsign, e.Frequencies, e.Message));
-            }
-        }
-
-        [EventSubscription(EventTopics.SendFlightPlan, typeof(OnPublisher))]
-        public void OnFileFlightPlan(object sender, FlightPlanSent e)
-        {
-            if (IsConnected)
-            {
-                FileFlightPlan(e.FlightPlan);
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Flight plan submitted."));
-            }
-            else
-            {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "Unable to submit flight plan. Not connected to network."));
-            }
-        }
-
-        [EventSubscription(EventTopics.FetchFlightPlan, typeof(OnPublisher))]
-        public void OnRequestFlightPlan(object sender, EventArgs e)
-        {
-            if (IsConnected)
-            {
-                mFsd.SendPDU(new PDUClientQuery(OurCallsign, "SERVER", ClientQueryType.FlightPlan, new List<string> { OurCallsign }));
             }
         }
 

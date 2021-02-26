@@ -318,13 +318,12 @@ namespace XPilot.PilotClient.AudioForVatsim
             }
         }
 
-        [EventSubscription(EventTopics.DeleteControllerReceived, typeof(OnPublisher))]
-        public void OnDeleteControllerReceived(object sender, NetworkDataReceived e)
+        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnPublisher))]
+        public void OnControllerDeleted(object sender, NetworkDataReceived e)
         {
             if (mControllers.ContainsKey(e.From))
             {
-                var controller = mControllers[e.From];
-                mControllers.Remove(controller.Callsign);
+                mControllers.Remove(e.From);
                 UpdateTransceivers();
             }
         }

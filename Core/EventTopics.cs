@@ -28,7 +28,6 @@ namespace XPilot.PilotClient
         public const string NotificationPosted = "NotificationPosted";
         public const string ChatSessionStarted = "ChatSessionStarted";
         public const string PlayNotificationSound = "PlaySoundRequested";
-        public const string PlaySelcalRequested = "PlaySelcalRequested";
         public const string SessionStarted = "SessionStarted";
         public const string SessionEnded = "SessionEnded";
         public const string MainFormShown = "MainFormShown";
@@ -36,28 +35,18 @@ namespace XPilot.PilotClient
         public const string ClientConfigChanged = "ClientConfigChanged";
 
         // X-Plane
-        public const string SendDataToXplane = "SendDataToXplane";
-        public const string SetDatarefValue = "SetDatarefValue";
-        public const string TriggerXplaneCommand = "TriggerXplaneCommand";
         public const string TransponderModeChanged = "TransponderModeChanged";
         public const string TransponderIdentStateChanged = "TransponderIdentStateChanged";
         public const string SimConnectionStateChanged = "SimConnectionStateChanged";
         public const string SimulatorMessageSent = "SimulatorMessageSent";
-        public const string LowFrameRateAlert = "LowFrameRateAlert";
-        public const string ToggleClientDisplay = "ToggleClientDisplay";
-        public const string Com1FrequencyChanged = "Com1FrequencyChanged";
 
         // Audio for Vatsim
         public const string PushToTalkStateChanged = "PushToTalkStateChanged";
         public const string HFAliasChanged = "HFAliasChanged";
         public const string ComRadioTransmittingChanged = "ComRadioTransmittingChanged";
         public const string RadioReceiveStateChanged = "ComRadioReceivingChanged";
-        public const string MicrophoneInputLevelChanged = "MicrophoneInputLevelChanged";
         public const string RadioStackStateChanged = "RadioStackStateChanged";
         public const string OverrideRadioStackState = "OverrideComStatusChanged";
-        public const string RestartAfvUserClient = "RestartAfvUserClient";
-        public const string Com1Volume = "Com1Volume";
-        public const string Com2Volume = "Com2Volume";
         public const string RadioVolumeChanged = "RadioVolumeChanged";
 
         // Network Events
@@ -69,22 +58,16 @@ namespace XPilot.PilotClient
         public const string CapabilitiesRequestReceived = "CapabilitiesRequestReceived";
         public const string MetarRequested = "MetarRequested";
         public const string WallopSent = "WallopRequestSent";
-        public const string ControllerAtisRequested = "ControllerAtisRequested";
         public const string RadioMessageSent = "RadioMessageSent";
         public const string NetworkServerListUpdated = "NetworkServerListUpdated";
         public const string ServerListDownloadFailed = "ServerListDownloadFailed";
         public const string ServerMessageReceived = "ServerMessageReceived";
         public const string BroadcastMessageReceived = "BroadcastMessageReceived";
-        public const string AddControllerRequestReceived = "AddControllerRequestReceived";
         public const string RealNameReceived = "RealNameReceived";
-        public const string ControllerUpdateReceived = "ControllerUpdateReceived";
-        public const string DeleteControllerReceived = "DeleteControllerReceived";
-        public const string ControllerFrequencyChanged = "ControllerFrequencyChanged";
         public const string MetarReceived = "MetarReceived";
         public const string SelcalAlertReceived = "SelcalAlertReceived";
         public const string RadioMessageReceived = "RadioMessageReceived";
         public const string PrivateMessageReceived = "PrivateMessageReceived";
-        public const string NoFlightPlanReceived = "NoFlightPlanReceived";
         public const string FlightPlanReceived = "FlightPlanReceived";
         public const string RemoteFlightPlanReceived = "RemoteFlightPlanReceived";
         public const string FetchFlightPlan = "FetchFlightPlan";
@@ -92,15 +75,16 @@ namespace XPilot.PilotClient
         public const string RealNameRequested = "RealNameRequested";
         public const string PrivateMessageSent = "PrivateMessageSent";
         public const string IsValidAtcReceived = "IsValidAtcReceived";
-        public const string ControllerLocationChanged = "ControllerLocationChagned";
-        public const string ControllerSupportsNewInfoChanged = "ControllerSupportsNewInfoChanged";
-        public const string ControllerInfoReceived = "ControllerInfoReceived";
         public const string AtisLinesReceived = "AtisLinesReceived";
         public const string AtisEndReceived = "AtisEndReceived";
-        public const string DeleteControllerRequestReceived = "DeleteControllerRequestReceived";
         public const string AcarsRequestSent = "AcarsRequestSent";
         public const string AcarsResponseReceived = "AcarsResponseReceived";
         public const string SocketMessageReceived = "SocketMessageReceived";
+        public const string ControllerAdded = "ControllerAdded";
+        public const string ControllerDeleted = "ControllerDeleted";
+        public const string ControllerFrequencyChanged = "ControllerFrequencyChanged";
+        public const string ControllerUpdateReceived = "ControllerUpdateReceived";
+        public const string ControllerInfoReceived = "ControllerInfoReceived";
 
         // Multiplayer
         public const string PlaneInfoReceived = "AircraftInfoReceived";

@@ -188,7 +188,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 
             mConnectionTimer = new Timer
             {
-                Interval = 50
+                Interval = 1000
             };
             mConnectionTimer.Tick += ConnectionTimer_Tick;
             mConnectionTimer.Start();
@@ -764,7 +764,7 @@ namespace XPilot.PilotClient.XplaneAdapter
             mControllers.Clear();
         }
 
-        [EventSubscription(EventTopics.AddControllerRequestReceived, typeof(OnUserInterfaceAsync))]
+        [EventSubscription(EventTopics.ControllerAdded, typeof(OnUserInterfaceAsync))]
         public void OnControllerAdded(object sender, ControllerUpdateReceived e)
         {
             if (!mControllers.Contains(e.Controller))
@@ -773,12 +773,13 @@ namespace XPilot.PilotClient.XplaneAdapter
             }
         }
 
-        [EventSubscription(EventTopics.DeleteControllerRequestReceived, typeof(OnUserInterfaceAsync))]
-        public void OnDeleteControllerRequestReceived(object sender, ControllerUpdateReceived e)
+        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnUserInterfaceAsync))]
+        public void OnControllerDeleted(object sender, NetworkDataReceived e)
         {
-            if (mControllers.Contains(e.Controller))
+            var controller = mControllers.FirstOrDefault(a => a.Callsign == e.From);
+            if (controller != null)
             {
-                mControllers.Remove(e.Controller);
+                mControllers.Remove(controller);
             }
         }
 
@@ -864,16 +865,6 @@ namespace XPilot.PilotClient.XplaneAdapter
         public void OnValidateCslPaths(object sender, EventArgs e)
         {
             RequestCslValidation();
-        }
-
-        [EventSubscription(EventTopics.MicrophoneInputLevelChanged, typeof(OnUserInterfaceAsync))]
-        public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)
-        {
-            //var dr = new DataRefElement
-            //{
-            //    DataRef = "xpilot/audio/vu"
-            //};
-            //mXplaneConnector.SetDataRefValue(dr, e.Value);
         }
 
         public void SetTransponderCode(int code)

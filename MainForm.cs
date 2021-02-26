@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -746,14 +747,7 @@ namespace XPilot.PilotClient
 
         private void btnFlightPlan_Click(object sender, EventArgs e)
         {
-            if (btnFlightPlan.Enabled)
-            {
-                using (FlightPlanForm dlg = mUserInterface.CreateFlightPlanForm())
-                {
-                    dlg.ShowDialog(this);
-                }
-                TextCommandFocus();
-            }
+            Process.Start("https://my.vatsim.net/pilots/flightplan");
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -1087,12 +1081,6 @@ namespace XPilot.PilotClient
             }
         }
 
-        [EventSubscription(EventTopics.ToggleClientDisplay, typeof(OnUserInterfaceAsync))]
-        public void OnToggleClientDisplayReceived(object sender, ClientEventArgs<bool> e)
-        {
-            WindowState = e.Value ? FormWindowState.Normal : FormWindowState.Minimized;
-        }
-
         [EventSubscription(EventTopics.ChatSessionStarted, typeof(OnUserInterfaceAsync))]
         public void OnChatSessionStarted(object sender, ChatSessionStarted e)
         {
@@ -1193,7 +1181,7 @@ namespace XPilot.PilotClient
             }
         }
 
-        [EventSubscription(EventTopics.ControllerUpdateReceived, typeof(OnUserInterfaceAsync))]
+        [EventSubscription(EventTopics.ControllerAdded, typeof(OnUserInterfaceAsync))]
         public void OnControllerUpdateReceived(object sender, ControllerUpdateReceived e)
         {
             string frequency = (e.Controller.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000");
@@ -1252,14 +1240,14 @@ namespace XPilot.PilotClient
             treeControllers.Sort();
         }
 
-        [EventSubscription(EventTopics.DeleteControllerRequestReceived, typeof(OnUserInterfaceAsync))]
-        public void OnDeleteControllerRequestReceived(object sender, ControllerUpdateReceived e)
+        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnUserInterfaceAsync))]
+        public void OnControllerDeleted(object sender, NetworkDataReceived e)
         {
             if (!treeControllers.IsDisposed && !treeControllers.Disposing)
             {
                 foreach (TreeNode treeNode in treeControllers.Nodes)
                 {
-                    treeNode.Nodes.RemoveByKey(e.Controller.Callsign);
+                    treeNode.Nodes.RemoveByKey(e.From);
                 }
             }
         }

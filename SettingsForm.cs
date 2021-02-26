@@ -80,12 +80,6 @@ namespace XPilot.PilotClient
             LoadNetworkServers();
         }
 
-        [EventSubscription(EventTopics.MicrophoneInputLevelChanged, typeof(OnUserInterfaceAsync))]
-        public void MicrophoneInputLevelChanged(object sender, ClientEventArgs<float> e)
-        {
-            vuMeter.Value = e.Value;
-        }
-
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
