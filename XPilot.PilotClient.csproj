@@ -166,7 +166,6 @@
     <Compile Include="Core\Events\ClientEventArgs.cs" />
     <Compile Include="Core\Events\ControllerUpdateReceived.cs" />
     <Compile Include="Core\Events\FlightPlanReceived.cs" />
-    <Compile Include="Core\Events\FlightPlanSent.cs" />
     <Compile Include="Core\Events\HFAliasChanged.cs" />
     <Compile Include="Core\Events\IsValidATCReceived.cs" />
     <Compile Include="Core\Events\MetarRequestSent.cs" />
@@ -206,12 +205,21 @@
     <Compile Include="Network\Controllers\ControllerManager.cs" />
     <Compile Include="Network\Controllers\IControllerAtisManager.cs" />
     <Compile Include="Network\Controllers\IControllerManager.cs" />
+    <Compile Include="Network\FlightPlan.cs" />
     <Compile Include="Network\VatsimData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Protobuf\AddPlanePb.cs" />
+    <Compile Include="Protobuf\ChangeModelPb.cs" />
+    <Compile Include="Protobuf\NetworkConnectedPb.cs" />
+    <Compile Include="Protobuf\NetworkDisconnectedPb.cs" />
+    <Compile Include="Protobuf\PlaneConfigPb.cs" />
+    <Compile Include="Protobuf\PositionUpdatePb.cs" />
+    <Compile Include="Protobuf\RemoveAllPlanesPb.cs" />
+    <Compile Include="Protobuf\RemovePlanePb.cs" />
     <Compile Include="SetupGuide.cs">
       <SubType>Form</SubType>
     </Compile>

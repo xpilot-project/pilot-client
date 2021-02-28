@@ -17,6 +17,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -134,6 +135,7 @@ namespace XPilot.PilotClient.Network
         private UserAircraftData mUserAircraftData;
         private UserAircraftRadioStack mRadioStackState;
         private List<NetworkServerInfo> mServerList = new List<NetworkServerInfo>();
+        private readonly StreamWriter mRawDataStream;
 
         public FsdManager(IEventBroker broker, IAppConfig config) : base(broker)
         {
@@ -144,6 +146,8 @@ namespace XPilot.PilotClient.Network
             mPositionUpdateTimer.Elapsed += PositionUpdateTimer_Elapsed;
 
             mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, "", "");
+            mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, $"NetworkLogs/NetworkLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log"), false);
+
             mFsd = new FSDSession(mClientProperties)
             {
                 IgnoreUnknownPackets = true
@@ -436,12 +440,14 @@ namespace XPilot.PilotClient.Network
 
         private void Fsd_RawDataSent(object sender, RawDataEventArgs e)
         {
-
+            mRawDataStream.Write("[{0}] >>>     {1}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), e.Data.Replace(mConfig.VatsimPasswordDecrypted, "XXXXXX"));
+            mRawDataStream.Flush();
         }
 
         private void Fsd_RawDataReceived(object sender, RawDataEventArgs e)
         {
-
+            mRawDataStream.Write("[{0}]     <<< {1}", DateTime.UtcNow.ToString("HH:mm:ss.fff"), e.Data);
+            mRawDataStream.Flush();
         }
 
         private void Fsd_ProtocolErrorReceived(object sender, DataReceivedEventArgs<PDUProtocolError> e)

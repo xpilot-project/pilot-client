@@ -29,7 +29,10 @@ namespace XPilot.PilotClient.XplaneAdapter
         void SetLoginStatus(bool connected);
         void AddPlane(NetworkAircraft plane);
         void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftPose pose);
-        void PlaneConfigChanged(NetworkAircraft plane, NetworkAircraftConfig config);
+        void PlaneConfigChanged(Xpilot.AirplaneConfig config);
         void RemovePlane(NetworkAircraft plane);
+        void RemoveAllPlanes();
+        void NetworkConnected(string callsign);
+        void NetworkDisconnected();
     }
 }

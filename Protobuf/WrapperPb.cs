@@ -30,17 +30,30 @@ namespace Xpilot
                 string.Concat(
                   "Cg13cmFwcGVyLnByb3RvEgZ4cGlsb3QaH2dvb2dsZS9wcm90b2J1Zi90aW1l",
                   "c3RhbXAucHJvdG8aEHhwbGFuZWRhdGEucHJvdG8aEHBsdWdpbmhhc2gucHJv",
-                  "dG8aE3BsdWdpbnZlcnNpb24ucHJvdG8aEWNzbHZhbGlkYXRlLnByb3RvIvMB",
-                  "CgdXcmFwcGVyEi0KCXRpbWVzdGFtcBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1",
-                  "Zi5UaW1lc3RhbXASKQoLeHBsYW5lX2RhdGEYAiABKAsyEi54cGlsb3QuWHBs",
-                  "YW5lRGF0YUgAEikKC3BsdWdpbl9oYXNoGAMgASgLMhIueHBpbG90LlBsdWdp",
-                  "bkhhc2hIABIvCg5wbHVnaW5fdmVyc2lvbhgEIAEoCzIVLnhwaWxvdC5QbHVn",
-                  "aW5WZXJzaW9uSAASKwoMY3NsX3ZhbGlkYXRlGAUgASgLMhMueHBpbG90LkNz",
-                  "bFZhbGlkYXRlSABCBQoDbXNnYgZwcm90bzM="));
+                  "dG8aE3BsdWdpbnZlcnNpb24ucHJvdG8aEWNzbHZhbGlkYXRlLnByb3RvGg5h",
+                  "ZGRwbGFuZS5wcm90bxoRY2hhbmdlbW9kZWwucHJvdG8aFHBvc2l0aW9udXBk",
+                  "YXRlLnByb3RvGhFyZW1vdmVwbGFuZS5wcm90bxoVcmVtb3ZlYWxscGxhbmVz",
+                  "LnByb3RvGhZuZXR3b3JrY29ubmVjdGVkLnByb3RvGhluZXR3b3JrZGlzY29u",
+                  "bmVjdGVkLnByb3RvGhRhaXJwbGFuZWNvbmZpZy5wcm90byKEBQoHV3JhcHBl",
+                  "chItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
+                  "YW1wEikKC3hwbGFuZV9kYXRhGAIgASgLMhIueHBpbG90LlhwbGFuZURhdGFI",
+                  "ABIpCgtwbHVnaW5faGFzaBgDIAEoCzISLnhwaWxvdC5QbHVnaW5IYXNoSAAS",
+                  "LwoOcGx1Z2luX3ZlcnNpb24YBCABKAsyFS54cGlsb3QuUGx1Z2luVmVyc2lv",
+                  "bkgAEisKDGNzbF92YWxpZGF0ZRgFIAEoCzITLnhwaWxvdC5Dc2xWYWxpZGF0",
+                  "ZUgAEiUKCWFkZF9wbGFuZRgGIAEoCzIQLnhwaWxvdC5BZGRQbGFuZUgAEisK",
+                  "DGNoYW5nZV9tb2RlbBgHIAEoCzITLnhwaWxvdC5DaGFuZ2VNb2RlbEgAEjEK",
+                  "D3Bvc2l0aW9uX3VwZGF0ZRgIIAEoCzIWLnhwaWxvdC5Qb3NpdGlvblVwZGF0",
+                  "ZUgAEisKDHJlbW92ZV9wbGFuZRgJIAEoCzITLnhwaWxvdC5SZW1vdmVQbGFu",
+                  "ZUgAEjQKEXJlbW92ZV9hbGxfcGxhbmVzGAogASgLMhcueHBpbG90LlJlbW92",
+                  "ZUFsbFBsYW5lc0gAEjUKEW5ldHdvcmtfY29ubmVjdGVkGAsgASgLMhgueHBp",
+                  "bG90Lk5ldHdvcmtDb25uZWN0ZWRIABI7ChRuZXR3b3JrX2Rpc2Nvbm5lY3Rl",
+                  "ZBgMIAEoCzIbLnhwaWxvdC5OZXR3b3JrRGlzY29ubmVjdGVkSAASMQoPYWly",
+                  "cGxhbmVfY29uZmlnGA0gASgLMhYueHBpbG90LkFpcnBsYW5lQ29uZmlnSABC",
+                  "BQoDbXNnYgZwcm90bzM="));
             descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-                new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Xpilot.XplanedataReflection.Descriptor, global::Xpilot.PluginhashReflection.Descriptor, global::Xpilot.PluginversionReflection.Descriptor, global::Xpilot.CslvalidateReflection.Descriptor, },
+                new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Xpilot.XplanedataReflection.Descriptor, global::Xpilot.PluginhashReflection.Descriptor, global::Xpilot.PluginversionReflection.Descriptor, global::Xpilot.CslvalidateReflection.Descriptor, global::Xpilot.AddplaneReflection.Descriptor, global::Xpilot.ChangemodelReflection.Descriptor, global::Xpilot.PositionupdateReflection.Descriptor, global::Xpilot.RemoveplaneReflection.Descriptor, global::Xpilot.RemoveallplanesReflection.Descriptor, global::Xpilot.NetworkconnectedReflection.Descriptor, global::Xpilot.NetworkdisconnectedReflection.Descriptor, global::Xpilot.AirplaneconfigReflection.Descriptor, },
                 new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xpilot.Wrapper), global::Xpilot.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PluginHash", "PluginVersion", "CslValidate" }, new[]{ "Msg" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xpilot.Wrapper), global::Xpilot.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PluginHash", "PluginVersion", "CslValidate", "AddPlane", "ChangeModel", "PositionUpdate", "RemovePlane", "RemoveAllPlanes", "NetworkConnected", "NetworkDisconnected", "AirplaneConfig" }, new[]{ "Msg" }, null, null, null)
                 }));
         }
         #endregion
@@ -94,6 +107,30 @@ namespace Xpilot
                     break;
                 case MsgOneofCase.CslValidate:
                     CslValidate = other.CslValidate.Clone();
+                    break;
+                case MsgOneofCase.AddPlane:
+                    AddPlane = other.AddPlane.Clone();
+                    break;
+                case MsgOneofCase.ChangeModel:
+                    ChangeModel = other.ChangeModel.Clone();
+                    break;
+                case MsgOneofCase.PositionUpdate:
+                    PositionUpdate = other.PositionUpdate.Clone();
+                    break;
+                case MsgOneofCase.RemovePlane:
+                    RemovePlane = other.RemovePlane.Clone();
+                    break;
+                case MsgOneofCase.RemoveAllPlanes:
+                    RemoveAllPlanes = other.RemoveAllPlanes.Clone();
+                    break;
+                case MsgOneofCase.NetworkConnected:
+                    NetworkConnected = other.NetworkConnected.Clone();
+                    break;
+                case MsgOneofCase.NetworkDisconnected:
+                    NetworkDisconnected = other.NetworkDisconnected.Clone();
+                    break;
+                case MsgOneofCase.AirplaneConfig:
+                    AirplaneConfig = other.AirplaneConfig.Clone();
                     break;
             }
 
@@ -171,6 +208,110 @@ namespace Xpilot
             }
         }
 
+        /// <summary>Field number for the "add_plane" field.</summary>
+        public const int AddPlaneFieldNumber = 6;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.AddPlane AddPlane
+        {
+            get { return msgCase_ == MsgOneofCase.AddPlane ? (global::Xpilot.AddPlane)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.AddPlane;
+            }
+        }
+
+        /// <summary>Field number for the "change_model" field.</summary>
+        public const int ChangeModelFieldNumber = 7;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.ChangeModel ChangeModel
+        {
+            get { return msgCase_ == MsgOneofCase.ChangeModel ? (global::Xpilot.ChangeModel)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.ChangeModel;
+            }
+        }
+
+        /// <summary>Field number for the "position_update" field.</summary>
+        public const int PositionUpdateFieldNumber = 8;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.PositionUpdate PositionUpdate
+        {
+            get { return msgCase_ == MsgOneofCase.PositionUpdate ? (global::Xpilot.PositionUpdate)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.PositionUpdate;
+            }
+        }
+
+        /// <summary>Field number for the "remove_plane" field.</summary>
+        public const int RemovePlaneFieldNumber = 9;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.RemovePlane RemovePlane
+        {
+            get { return msgCase_ == MsgOneofCase.RemovePlane ? (global::Xpilot.RemovePlane)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.RemovePlane;
+            }
+        }
+
+        /// <summary>Field number for the "remove_all_planes" field.</summary>
+        public const int RemoveAllPlanesFieldNumber = 10;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.RemoveAllPlanes RemoveAllPlanes
+        {
+            get { return msgCase_ == MsgOneofCase.RemoveAllPlanes ? (global::Xpilot.RemoveAllPlanes)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.RemoveAllPlanes;
+            }
+        }
+
+        /// <summary>Field number for the "network_connected" field.</summary>
+        public const int NetworkConnectedFieldNumber = 11;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.NetworkConnected NetworkConnected
+        {
+            get { return msgCase_ == MsgOneofCase.NetworkConnected ? (global::Xpilot.NetworkConnected)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.NetworkConnected;
+            }
+        }
+
+        /// <summary>Field number for the "network_disconnected" field.</summary>
+        public const int NetworkDisconnectedFieldNumber = 12;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.NetworkDisconnected NetworkDisconnected
+        {
+            get { return msgCase_ == MsgOneofCase.NetworkDisconnected ? (global::Xpilot.NetworkDisconnected)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.NetworkDisconnected;
+            }
+        }
+
+        /// <summary>Field number for the "airplane_config" field.</summary>
+        public const int AirplaneConfigFieldNumber = 13;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.AirplaneConfig AirplaneConfig
+        {
+            get { return msgCase_ == MsgOneofCase.AirplaneConfig ? (global::Xpilot.AirplaneConfig)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.AirplaneConfig;
+            }
+        }
+
         private object msg_;
         /// <summary>Enum of possible cases for the "msg" oneof.</summary>
         public enum MsgOneofCase
@@ -180,6 +321,14 @@ namespace Xpilot
             PluginHash = 3,
             PluginVersion = 4,
             CslValidate = 5,
+            AddPlane = 6,
+            ChangeModel = 7,
+            PositionUpdate = 8,
+            RemovePlane = 9,
+            RemoveAllPlanes = 10,
+            NetworkConnected = 11,
+            NetworkDisconnected = 12,
+            AirplaneConfig = 13,
         }
         private MsgOneofCase msgCase_ = MsgOneofCase.None;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -217,6 +366,14 @@ namespace Xpilot
             if (!object.Equals(PluginHash, other.PluginHash)) return false;
             if (!object.Equals(PluginVersion, other.PluginVersion)) return false;
             if (!object.Equals(CslValidate, other.CslValidate)) return false;
+            if (!object.Equals(AddPlane, other.AddPlane)) return false;
+            if (!object.Equals(ChangeModel, other.ChangeModel)) return false;
+            if (!object.Equals(PositionUpdate, other.PositionUpdate)) return false;
+            if (!object.Equals(RemovePlane, other.RemovePlane)) return false;
+            if (!object.Equals(RemoveAllPlanes, other.RemoveAllPlanes)) return false;
+            if (!object.Equals(NetworkConnected, other.NetworkConnected)) return false;
+            if (!object.Equals(NetworkDisconnected, other.NetworkDisconnected)) return false;
+            if (!object.Equals(AirplaneConfig, other.AirplaneConfig)) return false;
             if (MsgCase != other.MsgCase) return false;
             return Equals(_unknownFields, other._unknownFields);
         }
@@ -230,6 +387,14 @@ namespace Xpilot
             if (msgCase_ == MsgOneofCase.PluginHash) hash ^= PluginHash.GetHashCode();
             if (msgCase_ == MsgOneofCase.PluginVersion) hash ^= PluginVersion.GetHashCode();
             if (msgCase_ == MsgOneofCase.CslValidate) hash ^= CslValidate.GetHashCode();
+            if (msgCase_ == MsgOneofCase.AddPlane) hash ^= AddPlane.GetHashCode();
+            if (msgCase_ == MsgOneofCase.ChangeModel) hash ^= ChangeModel.GetHashCode();
+            if (msgCase_ == MsgOneofCase.PositionUpdate) hash ^= PositionUpdate.GetHashCode();
+            if (msgCase_ == MsgOneofCase.RemovePlane) hash ^= RemovePlane.GetHashCode();
+            if (msgCase_ == MsgOneofCase.RemoveAllPlanes) hash ^= RemoveAllPlanes.GetHashCode();
+            if (msgCase_ == MsgOneofCase.NetworkConnected) hash ^= NetworkConnected.GetHashCode();
+            if (msgCase_ == MsgOneofCase.NetworkDisconnected) hash ^= NetworkDisconnected.GetHashCode();
+            if (msgCase_ == MsgOneofCase.AirplaneConfig) hash ^= AirplaneConfig.GetHashCode();
             hash ^= (int)msgCase_;
             if (_unknownFields != null)
             {
@@ -270,6 +435,38 @@ namespace Xpilot
         output.WriteRawTag(42);
         output.WriteMessage(CslValidate);
       }
+      if (msgCase_ == MsgOneofCase.AddPlane) {
+        output.WriteRawTag(50);
+        output.WriteMessage(AddPlane);
+      }
+      if (msgCase_ == MsgOneofCase.ChangeModel) {
+        output.WriteRawTag(58);
+        output.WriteMessage(ChangeModel);
+      }
+      if (msgCase_ == MsgOneofCase.PositionUpdate) {
+        output.WriteRawTag(66);
+        output.WriteMessage(PositionUpdate);
+      }
+      if (msgCase_ == MsgOneofCase.RemovePlane) {
+        output.WriteRawTag(74);
+        output.WriteMessage(RemovePlane);
+      }
+      if (msgCase_ == MsgOneofCase.RemoveAllPlanes) {
+        output.WriteRawTag(82);
+        output.WriteMessage(RemoveAllPlanes);
+      }
+      if (msgCase_ == MsgOneofCase.NetworkConnected) {
+        output.WriteRawTag(90);
+        output.WriteMessage(NetworkConnected);
+      }
+      if (msgCase_ == MsgOneofCase.NetworkDisconnected) {
+        output.WriteRawTag(98);
+        output.WriteMessage(NetworkDisconnected);
+      }
+      if (msgCase_ == MsgOneofCase.AirplaneConfig) {
+        output.WriteRawTag(106);
+        output.WriteMessage(AirplaneConfig);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -305,6 +502,46 @@ namespace Xpilot
                 output.WriteRawTag(42);
                 output.WriteMessage(CslValidate);
             }
+            if (msgCase_ == MsgOneofCase.AddPlane)
+            {
+                output.WriteRawTag(50);
+                output.WriteMessage(AddPlane);
+            }
+            if (msgCase_ == MsgOneofCase.ChangeModel)
+            {
+                output.WriteRawTag(58);
+                output.WriteMessage(ChangeModel);
+            }
+            if (msgCase_ == MsgOneofCase.PositionUpdate)
+            {
+                output.WriteRawTag(66);
+                output.WriteMessage(PositionUpdate);
+            }
+            if (msgCase_ == MsgOneofCase.RemovePlane)
+            {
+                output.WriteRawTag(74);
+                output.WriteMessage(RemovePlane);
+            }
+            if (msgCase_ == MsgOneofCase.RemoveAllPlanes)
+            {
+                output.WriteRawTag(82);
+                output.WriteMessage(RemoveAllPlanes);
+            }
+            if (msgCase_ == MsgOneofCase.NetworkConnected)
+            {
+                output.WriteRawTag(90);
+                output.WriteMessage(NetworkConnected);
+            }
+            if (msgCase_ == MsgOneofCase.NetworkDisconnected)
+            {
+                output.WriteRawTag(98);
+                output.WriteMessage(NetworkDisconnected);
+            }
+            if (msgCase_ == MsgOneofCase.AirplaneConfig)
+            {
+                output.WriteRawTag(106);
+                output.WriteMessage(AirplaneConfig);
+            }
             if (_unknownFields != null)
             {
                 _unknownFields.WriteTo(ref output);
@@ -335,6 +572,38 @@ namespace Xpilot
             if (msgCase_ == MsgOneofCase.CslValidate)
             {
                 size += 1 + pb::CodedOutputStream.ComputeMessageSize(CslValidate);
+            }
+            if (msgCase_ == MsgOneofCase.AddPlane)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(AddPlane);
+            }
+            if (msgCase_ == MsgOneofCase.ChangeModel)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(ChangeModel);
+            }
+            if (msgCase_ == MsgOneofCase.PositionUpdate)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(PositionUpdate);
+            }
+            if (msgCase_ == MsgOneofCase.RemovePlane)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(RemovePlane);
+            }
+            if (msgCase_ == MsgOneofCase.RemoveAllPlanes)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(RemoveAllPlanes);
+            }
+            if (msgCase_ == MsgOneofCase.NetworkConnected)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(NetworkConnected);
+            }
+            if (msgCase_ == MsgOneofCase.NetworkDisconnected)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(NetworkDisconnected);
+            }
+            if (msgCase_ == MsgOneofCase.AirplaneConfig)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(AirplaneConfig);
             }
             if (_unknownFields != null)
             {
@@ -387,6 +656,62 @@ namespace Xpilot
                         CslValidate = new global::Xpilot.CslValidate();
                     }
                     CslValidate.MergeFrom(other.CslValidate);
+                    break;
+                case MsgOneofCase.AddPlane:
+                    if (AddPlane == null)
+                    {
+                        AddPlane = new global::Xpilot.AddPlane();
+                    }
+                    AddPlane.MergeFrom(other.AddPlane);
+                    break;
+                case MsgOneofCase.ChangeModel:
+                    if (ChangeModel == null)
+                    {
+                        ChangeModel = new global::Xpilot.ChangeModel();
+                    }
+                    ChangeModel.MergeFrom(other.ChangeModel);
+                    break;
+                case MsgOneofCase.PositionUpdate:
+                    if (PositionUpdate == null)
+                    {
+                        PositionUpdate = new global::Xpilot.PositionUpdate();
+                    }
+                    PositionUpdate.MergeFrom(other.PositionUpdate);
+                    break;
+                case MsgOneofCase.RemovePlane:
+                    if (RemovePlane == null)
+                    {
+                        RemovePlane = new global::Xpilot.RemovePlane();
+                    }
+                    RemovePlane.MergeFrom(other.RemovePlane);
+                    break;
+                case MsgOneofCase.RemoveAllPlanes:
+                    if (RemoveAllPlanes == null)
+                    {
+                        RemoveAllPlanes = new global::Xpilot.RemoveAllPlanes();
+                    }
+                    RemoveAllPlanes.MergeFrom(other.RemoveAllPlanes);
+                    break;
+                case MsgOneofCase.NetworkConnected:
+                    if (NetworkConnected == null)
+                    {
+                        NetworkConnected = new global::Xpilot.NetworkConnected();
+                    }
+                    NetworkConnected.MergeFrom(other.NetworkConnected);
+                    break;
+                case MsgOneofCase.NetworkDisconnected:
+                    if (NetworkDisconnected == null)
+                    {
+                        NetworkDisconnected = new global::Xpilot.NetworkDisconnected();
+                    }
+                    NetworkDisconnected.MergeFrom(other.NetworkDisconnected);
+                    break;
+                case MsgOneofCase.AirplaneConfig:
+                    if (AirplaneConfig == null)
+                    {
+                        AirplaneConfig = new global::Xpilot.AirplaneConfig();
+                    }
+                    AirplaneConfig.MergeFrom(other.AirplaneConfig);
                     break;
             }
 
@@ -446,6 +771,78 @@ namespace Xpilot
             }
             input.ReadMessage(subBuilder);
             CslValidate = subBuilder;
+            break;
+          }
+          case 50: {
+            global::Xpilot.AddPlane subBuilder = new global::Xpilot.AddPlane();
+            if (msgCase_ == MsgOneofCase.AddPlane) {
+              subBuilder.MergeFrom(AddPlane);
+            }
+            input.ReadMessage(subBuilder);
+            AddPlane = subBuilder;
+            break;
+          }
+          case 58: {
+            global::Xpilot.ChangeModel subBuilder = new global::Xpilot.ChangeModel();
+            if (msgCase_ == MsgOneofCase.ChangeModel) {
+              subBuilder.MergeFrom(ChangeModel);
+            }
+            input.ReadMessage(subBuilder);
+            ChangeModel = subBuilder;
+            break;
+          }
+          case 66: {
+            global::Xpilot.PositionUpdate subBuilder = new global::Xpilot.PositionUpdate();
+            if (msgCase_ == MsgOneofCase.PositionUpdate) {
+              subBuilder.MergeFrom(PositionUpdate);
+            }
+            input.ReadMessage(subBuilder);
+            PositionUpdate = subBuilder;
+            break;
+          }
+          case 74: {
+            global::Xpilot.RemovePlane subBuilder = new global::Xpilot.RemovePlane();
+            if (msgCase_ == MsgOneofCase.RemovePlane) {
+              subBuilder.MergeFrom(RemovePlane);
+            }
+            input.ReadMessage(subBuilder);
+            RemovePlane = subBuilder;
+            break;
+          }
+          case 82: {
+            global::Xpilot.RemoveAllPlanes subBuilder = new global::Xpilot.RemoveAllPlanes();
+            if (msgCase_ == MsgOneofCase.RemoveAllPlanes) {
+              subBuilder.MergeFrom(RemoveAllPlanes);
+            }
+            input.ReadMessage(subBuilder);
+            RemoveAllPlanes = subBuilder;
+            break;
+          }
+          case 90: {
+            global::Xpilot.NetworkConnected subBuilder = new global::Xpilot.NetworkConnected();
+            if (msgCase_ == MsgOneofCase.NetworkConnected) {
+              subBuilder.MergeFrom(NetworkConnected);
+            }
+            input.ReadMessage(subBuilder);
+            NetworkConnected = subBuilder;
+            break;
+          }
+          case 98: {
+            global::Xpilot.NetworkDisconnected subBuilder = new global::Xpilot.NetworkDisconnected();
+            if (msgCase_ == MsgOneofCase.NetworkDisconnected) {
+              subBuilder.MergeFrom(NetworkDisconnected);
+            }
+            input.ReadMessage(subBuilder);
+            NetworkDisconnected = subBuilder;
+            break;
+          }
+          case 106: {
+            global::Xpilot.AirplaneConfig subBuilder = new global::Xpilot.AirplaneConfig();
+            if (msgCase_ == MsgOneofCase.AirplaneConfig) {
+              subBuilder.MergeFrom(AirplaneConfig);
+            }
+            input.ReadMessage(subBuilder);
+            AirplaneConfig = subBuilder;
             break;
           }
         }
@@ -516,6 +913,94 @@ namespace Xpilot
                             }
                             input.ReadMessage(subBuilder);
                             CslValidate = subBuilder;
+                            break;
+                        }
+                    case 50:
+                        {
+                            global::Xpilot.AddPlane subBuilder = new global::Xpilot.AddPlane();
+                            if (msgCase_ == MsgOneofCase.AddPlane)
+                            {
+                                subBuilder.MergeFrom(AddPlane);
+                            }
+                            input.ReadMessage(subBuilder);
+                            AddPlane = subBuilder;
+                            break;
+                        }
+                    case 58:
+                        {
+                            global::Xpilot.ChangeModel subBuilder = new global::Xpilot.ChangeModel();
+                            if (msgCase_ == MsgOneofCase.ChangeModel)
+                            {
+                                subBuilder.MergeFrom(ChangeModel);
+                            }
+                            input.ReadMessage(subBuilder);
+                            ChangeModel = subBuilder;
+                            break;
+                        }
+                    case 66:
+                        {
+                            global::Xpilot.PositionUpdate subBuilder = new global::Xpilot.PositionUpdate();
+                            if (msgCase_ == MsgOneofCase.PositionUpdate)
+                            {
+                                subBuilder.MergeFrom(PositionUpdate);
+                            }
+                            input.ReadMessage(subBuilder);
+                            PositionUpdate = subBuilder;
+                            break;
+                        }
+                    case 74:
+                        {
+                            global::Xpilot.RemovePlane subBuilder = new global::Xpilot.RemovePlane();
+                            if (msgCase_ == MsgOneofCase.RemovePlane)
+                            {
+                                subBuilder.MergeFrom(RemovePlane);
+                            }
+                            input.ReadMessage(subBuilder);
+                            RemovePlane = subBuilder;
+                            break;
+                        }
+                    case 82:
+                        {
+                            global::Xpilot.RemoveAllPlanes subBuilder = new global::Xpilot.RemoveAllPlanes();
+                            if (msgCase_ == MsgOneofCase.RemoveAllPlanes)
+                            {
+                                subBuilder.MergeFrom(RemoveAllPlanes);
+                            }
+                            input.ReadMessage(subBuilder);
+                            RemoveAllPlanes = subBuilder;
+                            break;
+                        }
+                    case 90:
+                        {
+                            global::Xpilot.NetworkConnected subBuilder = new global::Xpilot.NetworkConnected();
+                            if (msgCase_ == MsgOneofCase.NetworkConnected)
+                            {
+                                subBuilder.MergeFrom(NetworkConnected);
+                            }
+                            input.ReadMessage(subBuilder);
+                            NetworkConnected = subBuilder;
+                            break;
+                        }
+                    case 98:
+                        {
+                            global::Xpilot.NetworkDisconnected subBuilder = new global::Xpilot.NetworkDisconnected();
+                            if (msgCase_ == MsgOneofCase.NetworkDisconnected)
+                            {
+                                subBuilder.MergeFrom(NetworkDisconnected);
+                            }
+                            input.ReadMessage(subBuilder);
+                            NetworkDisconnected = subBuilder;
+                            break;
+                        }
+                    case 106:
+                        {
+                            global::Xpilot.AirplaneConfig subBuilder = new global::Xpilot.AirplaneConfig();
+                            if (msgCase_ == MsgOneofCase.AirplaneConfig)
+                            {
+                                subBuilder.MergeFrom(AirplaneConfig);
+                            }
+                            input.ReadMessage(subBuilder);
+                            AirplaneConfig = subBuilder;
                             break;
                         }
                 }

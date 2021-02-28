@@ -207,61 +207,59 @@ namespace XPilot.PilotClient.Network.Aircraft
 
         private void UpdateLegacyAircraftConfig(NetworkAircraft aircraft, LegacyClientConfigFlags flags)
         {
-            NetworkAircraftConfig temp = new NetworkAircraftConfig
+            Xpilot.AirplaneConfig cfg = new Xpilot.AirplaneConfig();
+            cfg.Callsign = aircraft.Callsign;
+
+            if (cfg.Lights == null)
             {
-                Callsign = aircraft.Callsign,
-                Timestamp = DateTime.Now,
-            };
+                cfg.Lights = new Xpilot.AirplaneConfig.Types.AirplaneConfigLights();
+            }
 
             if (!aircraft.InitialConfigurationSet)
             {
-                temp.GearDown = flags.GearDown;
-                temp.OnGround = flags.OnGround;
-                temp.Lights.TaxiOn = flags.TaxiLightsOn;
-                temp.Lights.LandingOn = flags.LandingLightsOn;
-                temp.Lights.BeaconOn = flags.BeaconLightsOn;
-                temp.Lights.NavOn = flags.NavLightsOn;
-                temp.Lights.StrobesOn = flags.StrobeLightsOn;
-                temp.EnginesOn = flags.EnginesRunning;
+                cfg.GearDown = flags.GearDown;
+                cfg.OnGround = flags.OnGround;
+                cfg.Lights.TaxiLightsOn = flags.TaxiLightsOn;
+                cfg.Lights.LandingLightsOn = flags.LandingLightsOn;
+                cfg.Lights.BeaconLightsOn = flags.BeaconLightsOn;
+                cfg.Lights.NavLightsOn = flags.NavLightsOn;
+                cfg.Lights.StrobeLightsOn = flags.StrobeLightsOn;
+                cfg.EnginesOn = flags.EnginesRunning;
                 aircraft.InitialConfigurationSet = true;
             }
             else
             {
                 if (flags.GearDown != aircraft.LastAppliedConfigFlags.GearDown)
                 {
-                    temp.GearDown = flags.GearDown;
+                    cfg.GearDown = flags.GearDown;
                 }
                 if (flags.OnGround != aircraft.LastAppliedConfigFlags.OnGround)
                 {
-                    temp.OnGround = flags.OnGround;
+                    cfg.OnGround = flags.OnGround;
                 }
                 if (flags.TaxiLightsOn != aircraft.LastAppliedConfigFlags.TaxiLightsOn)
                 {
-                    temp.Lights.TaxiOn = flags.TaxiLightsOn;
+                    cfg.Lights.TaxiLightsOn = flags.TaxiLightsOn;
                 }
                 if (flags.LandingLightsOn != aircraft.LastAppliedConfigFlags.LandingLightsOn)
                 {
-                    temp.Lights.LandingOn = flags.LandingLightsOn;
+                    cfg.Lights.LandingLightsOn = flags.LandingLightsOn;
                 }
                 if (flags.BeaconLightsOn != aircraft.LastAppliedConfigFlags.BeaconLightsOn)
                 {
-                    temp.Lights.BeaconOn = flags.BeaconLightsOn;
+                    cfg.Lights.BeaconLightsOn = flags.BeaconLightsOn;
                 }
                 if (flags.NavLightsOn != aircraft.LastAppliedConfigFlags.NavLightsOn)
                 {
-                    temp.Lights.NavOn = flags.NavLightsOn;
+                    cfg.Lights.NavLightsOn = flags.NavLightsOn;
                 }
                 if (flags.EnginesRunning != aircraft.LastAppliedConfigFlags.EnginesRunning)
                 {
-                    temp.EnginesOn = flags.EnginesRunning;
+                    cfg.EnginesOn = flags.EnginesRunning;
                 }
             }
             aircraft.LastAppliedConfigFlags = flags;
-
-            if (temp.HasConfig)
-            {
-                mXplane.PlaneConfigChanged(aircraft, temp);
-            }
+            mXplane.PlaneConfigChanged(cfg);
         }
 
         private void DeleteNetworkAircraft(NetworkAircraft aircraft)
@@ -271,11 +269,8 @@ namespace XPilot.PilotClient.Network.Aircraft
 
         private void ProcessAircraftConfig(NetworkAircraft aircraft, AircraftConfiguration config)
         {
-            NetworkAircraftConfig cfg = new NetworkAircraftConfig
-            {
-                Callsign = aircraft.Callsign,
-                Timestamp = DateTime.Now
-            };
+            Xpilot.AirplaneConfig cfg = new Xpilot.AirplaneConfig();
+            cfg.Callsign = aircraft.Callsign;
 
             if (config.IsFullData.HasValue && config.IsFullData.Value)
             {
@@ -292,27 +287,32 @@ namespace XPilot.PilotClient.Network.Aircraft
                 aircraft.Configuration.ApplyIncremental(config);
             }
 
+            if (cfg.Lights == null)
+            {
+                cfg.Lights = new Xpilot.AirplaneConfig.Types.AirplaneConfigLights();
+            }
+
             if (!aircraft.InitialConfigurationSet)
             {
                 if (aircraft.Configuration.Lights.StrobesOn.HasValue)
                 {
-                    cfg.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
+                    cfg.Lights.StrobeLightsOn = aircraft.Configuration.Lights.StrobesOn.Value;
                 }
                 if (aircraft.Configuration.Lights.LandingOn.HasValue)
                 {
-                    cfg.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
+                    cfg.Lights.LandingLightsOn = aircraft.Configuration.Lights.LandingOn.Value;
                 }
                 if (aircraft.Configuration.Lights.TaxiOn.HasValue)
                 {
-                    cfg.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
+                    cfg.Lights.TaxiLightsOn = aircraft.Configuration.Lights.TaxiOn.Value;
                 }
                 if (aircraft.Configuration.Lights.BeaconOn.HasValue)
                 {
-                    cfg.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
+                    cfg.Lights.BeaconLightsOn = aircraft.Configuration.Lights.BeaconOn.Value;
                 }
                 if (aircraft.Configuration.Lights.NavOn.HasValue)
                 {
-                    cfg.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
+                    cfg.Lights.NavLightsOn = aircraft.Configuration.Lights.NavOn.Value;
                 }
                 if (aircraft.Configuration.OnGround.HasValue)
                 {
@@ -347,23 +347,23 @@ namespace XPilot.PilotClient.Network.Aircraft
 
                 if (aircraft.Configuration.Lights.StrobesOn.HasValue && aircraft.Configuration.Lights.StrobesOn.Value != aircraft.LastAppliedConfiguration.Lights.StrobesOn.Value)
                 {
-                    cfg.Lights.StrobesOn = aircraft.Configuration.Lights.StrobesOn.Value;
+                    cfg.Lights.StrobeLightsOn = aircraft.Configuration.Lights.StrobesOn.Value;
                 }
                 if (aircraft.Configuration.Lights.NavOn.HasValue && aircraft.Configuration.Lights.NavOn.Value != aircraft.LastAppliedConfiguration.Lights.NavOn.Value)
                 {
-                    cfg.Lights.NavOn = aircraft.Configuration.Lights.NavOn.Value;
+                    cfg.Lights.NavLightsOn = aircraft.Configuration.Lights.NavOn.Value;
                 }
                 if (aircraft.Configuration.Lights.BeaconOn.HasValue && aircraft.Configuration.Lights.BeaconOn.Value != aircraft.LastAppliedConfiguration.Lights.BeaconOn.Value)
                 {
-                    cfg.Lights.BeaconOn = aircraft.Configuration.Lights.BeaconOn.Value;
+                    cfg.Lights.BeaconLightsOn = aircraft.Configuration.Lights.BeaconOn.Value;
                 }
                 if (aircraft.Configuration.Lights.LandingOn.HasValue && aircraft.Configuration.Lights.LandingOn.Value != aircraft.LastAppliedConfiguration.Lights.LandingOn.Value)
                 {
-                    cfg.Lights.LandingOn = aircraft.Configuration.Lights.LandingOn.Value;
+                    cfg.Lights.LandingLightsOn = aircraft.Configuration.Lights.LandingOn.Value;
                 }
                 if (aircraft.Configuration.Lights.TaxiOn.HasValue && aircraft.Configuration.Lights.TaxiOn.Value != aircraft.LastAppliedConfiguration.Lights.TaxiOn.Value)
                 {
-                    cfg.Lights.TaxiOn = aircraft.Configuration.Lights.TaxiOn.Value;
+                    cfg.Lights.TaxiLightsOn = aircraft.Configuration.Lights.TaxiOn.Value;
                 }
                 if (aircraft.Configuration.GearDown.HasValue && aircraft.Configuration.GearDown.Value != aircraft.LastAppliedConfiguration.GearDown.Value)
                 {
@@ -388,10 +388,13 @@ namespace XPilot.PilotClient.Network.Aircraft
             }
             aircraft.LastAppliedConfiguration = aircraft.Configuration.Clone();
 
-            if (cfg.HasConfig)
+            // override gear status if on ground... cuz some other pilot clients aren't sending correct data!
+            if (!cfg.GearDown && cfg.OnGround)
             {
-                mXplane.PlaneConfigChanged(aircraft, cfg);
+                cfg.GearDown = true;
             }
+
+            mXplane.PlaneConfigChanged(cfg);
         }
 
         private void ProcessRemoteFlightPlan(FlightPlan fp)
@@ -521,6 +524,7 @@ namespace XPilot.PilotClient.Network.Aircraft
                     {
                         Console.WriteLine($"Received legacy aircraft info for {e.From} after {aircraft.UpdateCount} updates with no modern plane info packet received, selecting model based on legacy info.");
                         aircraft.Equipment = e.Data.IndexOf("-") > -1 ? e.Data.Substring(0, e.Data.IndexOf("-")) : e.Data;
+                        Console.WriteLine("Legacy: " + aircraft.ToJSON());
                         AddAircraftToSim(aircraft);
                     }
                     else

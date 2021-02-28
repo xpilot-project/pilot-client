@@ -100,7 +100,6 @@ namespace XPilot.PilotClient.Config
         public bool EnableNotificationSounds { get; set; }
         public int Com1Volume { get; set; } = 100;
         public int Com2Volume { get; set; } = 100;
-        public FlightPlan LastFlightPlan { get; set; }
         public List<ConnectInfo> RecentConnectionInfo { get; set; }
         public string SimulatorIP { get; set; }
         public List<string> VisualClientIPs { get; set; }

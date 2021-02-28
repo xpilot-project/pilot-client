@@ -721,24 +721,15 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnected e)
+        public void OnNetworkConnected(object sender, Core.Events.NetworkConnected e)
         {
-            dynamic data = new ExpandoObject();
-            data.OurCallsign = e.ConnectInfo.Callsign;
-
-            SendMessage(new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.NetworkConnected,
-                Timestamp = DateTime.Now,
-                Data = data
-            }.ToJSON());
-
+            NetworkConnected(e.ConnectInfo.Callsign);
             mDisconnectMessageSent = false;
             mWhosOnlineListRefresh.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
+        public void OnNetworkDisconnected(object sender, Core.Events.NetworkDisconnected e)
         {
             SendMessage(new XplaneConnect
             {
@@ -747,12 +738,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 Data = null
             }.ToJSON());
 
-            SendMessage(new XplaneConnect
-            {
-                Type = XplaneConnect.MessageType.RemoveAllPlanes,
-                Timestamp = DateTime.Now,
-                Data = null
-            }.ToJSON());
+            RemoveAllPlanes();
 
             if (!mDisconnectMessageSent)
             {
@@ -899,22 +885,79 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         public void AddPlane(NetworkAircraft plane)
         {
-            
+            var msg = new Wrapper
+            {
+                AddPlane = new AddPlane()
+            };
+            msg.AddPlane.Callsign = plane.Callsign;
+            msg.AddPlane.Equipment = plane.Equipment;
+            msg.AddPlane.Airline = plane.Airline;
+            SendProtobufArray(msg.ToByteArray());
         }
 
         public void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftPose pose)
         {
-            
+            var msg = new Wrapper
+            {
+                PositionUpdate = new PositionUpdate()
+            };
+            msg.PositionUpdate.Callsign = plane.Callsign;
+            msg.PositionUpdate.Latitude = pose.Location.Lat;
+            msg.PositionUpdate.Longitude = pose.Location.Lon;
+            msg.PositionUpdate.Altitude = pose.Altitude;
+            msg.PositionUpdate.Bank = pose.Bank;
+            msg.PositionUpdate.Pitch = pose.Pitch;
+            msg.PositionUpdate.Heading = pose.Heading;
+            msg.PositionUpdate.TransponderCode = pose.Transponder.TransponderCode;
+            msg.PositionUpdate.TransponderModeC = pose.Transponder.TransponderModeC;
+            SendProtobufArray(msg.ToByteArray());
         }
 
-        public void PlaneConfigChanged(NetworkAircraft plane, NetworkAircraftConfig config)
+        public void PlaneConfigChanged(AirplaneConfig config)
         {
-            
+            var msg = new Wrapper
+            {
+                AirplaneConfig = config
+            };
+            SendProtobufArray(msg.ToByteArray());
         }
 
         public void RemovePlane(NetworkAircraft plane)
         {
-            
+            var msg = new Wrapper
+            {
+                RemovePlane = new RemovePlane()
+            };
+            msg.RemovePlane.Callsign = plane.Callsign;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void RemoveAllPlanes()
+        {
+            var msg = new Wrapper
+            {
+                RemoveAllPlanes = new RemoveAllPlanes()
+            };
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void NetworkConnected(string callsign)
+        {
+            var msg = new Wrapper
+            {
+                NetworkConnected = new Xpilot.NetworkConnected()
+            };
+            msg.NetworkConnected.Callsign = callsign;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void NetworkDisconnected()
+        {
+            var msg = new Wrapper
+            {
+                NetworkDisconnected = new Xpilot.NetworkDisconnected()
+            };
+            SendProtobufArray(msg.ToByteArray());
         }
     }
 }

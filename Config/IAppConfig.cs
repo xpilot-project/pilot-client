@@ -47,7 +47,6 @@ namespace XPilot.PilotClient.Config
         bool EnableHfSquelch { get; set; }
         int Com1Volume { get; set; }
         int Com2Volume { get; set; }
-        FlightPlan LastFlightPlan { get; set; }
         List<ConnectInfo> RecentConnectionInfo { get; set; }
         List<string> VisualClientIPs { get; set; }
         string SimulatorIP { get; set; }
