@@ -78,7 +78,7 @@ namespace XPilot.PilotClient.XplaneAdapter
         public event EventHandler<ClientEventArgs<bool>> RaiseConnectButtonStateChanged;
 
         [EventPublication(EventTopics.PrivateMessageSent)]
-        public event EventHandler<PrivateMessageSent> RaisePrivateMessageSent;
+        public event EventHandler<Core.Events.PrivateMessageSent> RaisePrivateMessageSent;
 
         [EventPublication(EventTopics.RadioVolumeChanged)]
         public event EventHandler<RadioVolumeChanged> RaiseRadioVolumeChanged;
@@ -93,7 +93,7 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         private readonly Timer mConnectionTimer;
         private readonly Timer mDataRefreshTimer;
-        private readonly Timer mWhosOnlineListRefresh;
+        private readonly Timer mNearbyControllersRefresh;
 
         private readonly List<DateTime> mConnectionHeartbeats = new List<DateTime>();
         private readonly List<Controller> mControllers = new List<Controller>();
@@ -193,11 +193,11 @@ namespace XPilot.PilotClient.XplaneAdapter
             mConnectionTimer.Tick += ConnectionTimer_Tick;
             mConnectionTimer.Start();
 
-            mWhosOnlineListRefresh = new Timer
+            mNearbyControllersRefresh = new Timer
             {
                 Interval = 5000
             };
-            mWhosOnlineListRefresh.Tick += WhosOnlineListRefresh_Tick;
+            mNearbyControllersRefresh.Tick += NearbyControllersRefresh_Tick;
         }
 
         private void DealerSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
@@ -553,26 +553,25 @@ namespace XPilot.PilotClient.XplaneAdapter
 
         }
 
-        private void WhosOnlineListRefresh_Tick(object sender, EventArgs e)
+        private void NearbyControllersRefresh_Tick(object sender, EventArgs e)
         {
-            List<WhosOnlineList> temp = new List<WhosOnlineList>();
+            List<NearbyControllers.Types.Controller> temp = new List<NearbyControllers.Types.Controller>();
             foreach (var controller in mControllers)
             {
-                temp.Add(new WhosOnlineList
+                temp.Add(new NearbyControllers.Types.Controller
                 {
                     Callsign = controller.Callsign,
-                    XplaneFrequency = controller.NormalizedFrequency + 100000,
                     Frequency = (controller.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000"),
+                    XplaneFrequency = (int)controller.NormalizedFrequency + 100000,
                     RealName = controller.RealName
                 });
             }
-
-            SendMessage(new XplaneConnect
+            var msg = new Wrapper
             {
-                Type = XplaneConnect.MessageType.WhosOnline,
-                Timestamp = DateTime.Now,
-                Data = temp.OrderBy(a => a.Callsign)
-            }.ToJSON());
+                NearbyControllers = new Xpilot.NearbyControllers()
+            };
+            msg.NearbyControllers.List.AddRange(temp.OrderBy(a => a.Callsign));
+            SendProtobufArray(msg.ToByteArray());
         }
 
         private void ConnectionTimer_Tick(object sender, EventArgs e)
@@ -725,18 +724,17 @@ namespace XPilot.PilotClient.XplaneAdapter
         {
             NetworkConnected(e.ConnectInfo.Callsign);
             mDisconnectMessageSent = false;
-            mWhosOnlineListRefresh.Start();
+            mNearbyControllersRefresh.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, Core.Events.NetworkDisconnected e)
         {
-            SendMessage(new XplaneConnect
+            var msg = new Wrapper
             {
-                Type = XplaneConnect.MessageType.WhosOnline,
-                Timestamp = DateTime.Now,
-                Data = null
-            }.ToJSON());
+                ClearNearbyControllers = new Xpilot.ClearNearbyControllers()
+            };
+            SendProtobufArray(msg.ToByteArray());
 
             RemoveAllPlanes();
 
@@ -746,7 +744,7 @@ namespace XPilot.PilotClient.XplaneAdapter
                 mDisconnectMessageSent = true;
             }
 
-            mWhosOnlineListRefresh.Stop();
+            mNearbyControllersRefresh.Stop();
             mControllers.Clear();
         }
 
@@ -790,36 +788,30 @@ namespace XPilot.PilotClient.XplaneAdapter
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageReceived(object sender, PrivateMessageReceived e)
+        public void OnPrivateMessageReceived(object sender, Core.Events.PrivateMessageReceived e)
         {
             if (e.From != "SERVER")
             {
-                dynamic data = new ExpandoObject();
-                data.From = e.From.ToUpper();
-                data.Message = e.Message;
-
-                SendMessage(new XplaneConnect
+                var msg = new Wrapper
                 {
-                    Type = XplaneConnect.MessageType.PrivateMessageReceived,
-                    Timestamp = DateTime.Now,
-                    Data = data
-                }.ToJSON());
+                    PrivateMessageReceived = new Xpilot.PrivateMessageReceived()
+                };
+                msg.PrivateMessageReceived.From = e.From.ToUpper();
+                msg.PrivateMessageReceived.Message = e.Message;
+                SendProtobufArray(msg.ToByteArray());
             }
         }
 
         [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageSent(object sender, PrivateMessageSent e)
+        public void OnPrivateMessageSent(object sender, Core.Events.PrivateMessageSent e)
         {
-            dynamic data = new ExpandoObject();
-            data.To = e.To.ToUpper();
-            data.Message = e.Message;
-
-            SendMessage(new XplaneConnect
+            var msg = new Wrapper
             {
-                Type = XplaneConnect.MessageType.PrivateMessageSent,
-                Timestamp = DateTime.Now,
-                Data = data
-            }.ToJSON());
+                PrivateMessageSent = new Xpilot.PrivateMessageSent()
+            };
+            msg.PrivateMessageSent.To = e.To.ToUpper();
+            msg.PrivateMessageSent.Message = e.Message;
+            SendProtobufArray(msg.ToByteArray());
         }
 
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]

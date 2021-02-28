@@ -34,26 +34,34 @@ namespace Xpilot
                   "ZGRwbGFuZS5wcm90bxoRY2hhbmdlbW9kZWwucHJvdG8aFHBvc2l0aW9udXBk",
                   "YXRlLnByb3RvGhFyZW1vdmVwbGFuZS5wcm90bxoVcmVtb3ZlYWxscGxhbmVz",
                   "LnByb3RvGhZuZXR3b3JrY29ubmVjdGVkLnByb3RvGhluZXR3b3JrZGlzY29u",
-                  "bmVjdGVkLnByb3RvGhRhaXJwbGFuZWNvbmZpZy5wcm90byKEBQoHV3JhcHBl",
-                  "chItCgl0aW1lc3RhbXAYASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0",
-                  "YW1wEikKC3hwbGFuZV9kYXRhGAIgASgLMhIueHBpbG90LlhwbGFuZURhdGFI",
-                  "ABIpCgtwbHVnaW5faGFzaBgDIAEoCzISLnhwaWxvdC5QbHVnaW5IYXNoSAAS",
-                  "LwoOcGx1Z2luX3ZlcnNpb24YBCABKAsyFS54cGlsb3QuUGx1Z2luVmVyc2lv",
-                  "bkgAEisKDGNzbF92YWxpZGF0ZRgFIAEoCzITLnhwaWxvdC5Dc2xWYWxpZGF0",
-                  "ZUgAEiUKCWFkZF9wbGFuZRgGIAEoCzIQLnhwaWxvdC5BZGRQbGFuZUgAEisK",
-                  "DGNoYW5nZV9tb2RlbBgHIAEoCzITLnhwaWxvdC5DaGFuZ2VNb2RlbEgAEjEK",
-                  "D3Bvc2l0aW9uX3VwZGF0ZRgIIAEoCzIWLnhwaWxvdC5Qb3NpdGlvblVwZGF0",
-                  "ZUgAEisKDHJlbW92ZV9wbGFuZRgJIAEoCzITLnhwaWxvdC5SZW1vdmVQbGFu",
-                  "ZUgAEjQKEXJlbW92ZV9hbGxfcGxhbmVzGAogASgLMhcueHBpbG90LlJlbW92",
-                  "ZUFsbFBsYW5lc0gAEjUKEW5ldHdvcmtfY29ubmVjdGVkGAsgASgLMhgueHBp",
-                  "bG90Lk5ldHdvcmtDb25uZWN0ZWRIABI7ChRuZXR3b3JrX2Rpc2Nvbm5lY3Rl",
-                  "ZBgMIAEoCzIbLnhwaWxvdC5OZXR3b3JrRGlzY29ubmVjdGVkSAASMQoPYWly",
-                  "cGxhbmVfY29uZmlnGA0gASgLMhYueHBpbG90LkFpcnBsYW5lQ29uZmlnSABC",
-                  "BQoDbXNnYgZwcm90bzM="));
+                  "bmVjdGVkLnByb3RvGhRhaXJwbGFuZWNvbmZpZy5wcm90bxoXbmVhcmJ5Y29u",
+                  "dHJvbGxlcnMucHJvdG8aHGNsZWFybmVhcmJ5Y29udHJvbGxlcnMucHJvdG8a",
+                  "HHByaXZhdGVtZXNzYWdlcmVjZWl2ZWQucHJvdG8aGHByaXZhdGVtZXNzYWdl",
+                  "c2VudC5wcm90byKBBwoHV3JhcHBlchItCgl0aW1lc3RhbXAYASABKAsyGi5n",
+                  "b29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKC3hwbGFuZV9kYXRhGAIgASgL",
+                  "MhIueHBpbG90LlhwbGFuZURhdGFIABIpCgtwbHVnaW5faGFzaBgDIAEoCzIS",
+                  "LnhwaWxvdC5QbHVnaW5IYXNoSAASLwoOcGx1Z2luX3ZlcnNpb24YBCABKAsy",
+                  "FS54cGlsb3QuUGx1Z2luVmVyc2lvbkgAEisKDGNzbF92YWxpZGF0ZRgFIAEo",
+                  "CzITLnhwaWxvdC5Dc2xWYWxpZGF0ZUgAEiUKCWFkZF9wbGFuZRgGIAEoCzIQ",
+                  "LnhwaWxvdC5BZGRQbGFuZUgAEisKDGNoYW5nZV9tb2RlbBgHIAEoCzITLnhw",
+                  "aWxvdC5DaGFuZ2VNb2RlbEgAEjEKD3Bvc2l0aW9uX3VwZGF0ZRgIIAEoCzIW",
+                  "LnhwaWxvdC5Qb3NpdGlvblVwZGF0ZUgAEisKDHJlbW92ZV9wbGFuZRgJIAEo",
+                  "CzITLnhwaWxvdC5SZW1vdmVQbGFuZUgAEjQKEXJlbW92ZV9hbGxfcGxhbmVz",
+                  "GAogASgLMhcueHBpbG90LlJlbW92ZUFsbFBsYW5lc0gAEjUKEW5ldHdvcmtf",
+                  "Y29ubmVjdGVkGAsgASgLMhgueHBpbG90Lk5ldHdvcmtDb25uZWN0ZWRIABI7",
+                  "ChRuZXR3b3JrX2Rpc2Nvbm5lY3RlZBgMIAEoCzIbLnhwaWxvdC5OZXR3b3Jr",
+                  "RGlzY29ubmVjdGVkSAASMQoPYWlycGxhbmVfY29uZmlnGA0gASgLMhYueHBp",
+                  "bG90LkFpcnBsYW5lQ29uZmlnSAASNwoSbmVhcmJ5X2NvbnRyb2xsZXJzGA4g",
+                  "ASgLMhkueHBpbG90Lk5lYXJieUNvbnRyb2xsZXJzSAASQgoYY2xlYXJfbmVh",
+                  "cmJ5X2NvbnRyb2xsZXJzGA8gASgLMh4ueHBpbG90LkNsZWFyTmVhcmJ5Q29u",
+                  "dHJvbGxlcnNIABJCChhwcml2YXRlX21lc3NhZ2VfcmVjZWl2ZWQYECABKAsy",
+                  "Hi54cGlsb3QuUHJpdmF0ZU1lc3NhZ2VSZWNlaXZlZEgAEjoKFHByaXZhdGVf",
+                  "bWVzc2FnZV9zZW50GBEgASgLMhoueHBpbG90LlByaXZhdGVNZXNzYWdlU2Vu",
+                  "dEgAQgUKA21zZ2IGcHJvdG8z"));
             descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-                new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Xpilot.XplanedataReflection.Descriptor, global::Xpilot.PluginhashReflection.Descriptor, global::Xpilot.PluginversionReflection.Descriptor, global::Xpilot.CslvalidateReflection.Descriptor, global::Xpilot.AddplaneReflection.Descriptor, global::Xpilot.ChangemodelReflection.Descriptor, global::Xpilot.PositionupdateReflection.Descriptor, global::Xpilot.RemoveplaneReflection.Descriptor, global::Xpilot.RemoveallplanesReflection.Descriptor, global::Xpilot.NetworkconnectedReflection.Descriptor, global::Xpilot.NetworkdisconnectedReflection.Descriptor, global::Xpilot.AirplaneconfigReflection.Descriptor, },
+                new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Xpilot.XplanedataReflection.Descriptor, global::Xpilot.PluginhashReflection.Descriptor, global::Xpilot.PluginversionReflection.Descriptor, global::Xpilot.CslvalidateReflection.Descriptor, global::Xpilot.AddplaneReflection.Descriptor, global::Xpilot.ChangemodelReflection.Descriptor, global::Xpilot.PositionupdateReflection.Descriptor, global::Xpilot.RemoveplaneReflection.Descriptor, global::Xpilot.RemoveallplanesReflection.Descriptor, global::Xpilot.NetworkconnectedReflection.Descriptor, global::Xpilot.NetworkdisconnectedReflection.Descriptor, global::Xpilot.AirplaneconfigReflection.Descriptor, global::Xpilot.NearbycontrollersReflection.Descriptor, global::Xpilot.ClearnearbycontrollersReflection.Descriptor, global::Xpilot.PrivatemessagereceivedReflection.Descriptor, global::Xpilot.PrivatemessagesentReflection.Descriptor, },
                 new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xpilot.Wrapper), global::Xpilot.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PluginHash", "PluginVersion", "CslValidate", "AddPlane", "ChangeModel", "PositionUpdate", "RemovePlane", "RemoveAllPlanes", "NetworkConnected", "NetworkDisconnected", "AirplaneConfig" }, new[]{ "Msg" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xpilot.Wrapper), global::Xpilot.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PluginHash", "PluginVersion", "CslValidate", "AddPlane", "ChangeModel", "PositionUpdate", "RemovePlane", "RemoveAllPlanes", "NetworkConnected", "NetworkDisconnected", "AirplaneConfig", "NearbyControllers", "ClearNearbyControllers", "PrivateMessageReceived", "PrivateMessageSent" }, new[]{ "Msg" }, null, null, null)
                 }));
         }
         #endregion
@@ -131,6 +139,18 @@ namespace Xpilot
                     break;
                 case MsgOneofCase.AirplaneConfig:
                     AirplaneConfig = other.AirplaneConfig.Clone();
+                    break;
+                case MsgOneofCase.NearbyControllers:
+                    NearbyControllers = other.NearbyControllers.Clone();
+                    break;
+                case MsgOneofCase.ClearNearbyControllers:
+                    ClearNearbyControllers = other.ClearNearbyControllers.Clone();
+                    break;
+                case MsgOneofCase.PrivateMessageReceived:
+                    PrivateMessageReceived = other.PrivateMessageReceived.Clone();
+                    break;
+                case MsgOneofCase.PrivateMessageSent:
+                    PrivateMessageSent = other.PrivateMessageSent.Clone();
                     break;
             }
 
@@ -312,6 +332,58 @@ namespace Xpilot
             }
         }
 
+        /// <summary>Field number for the "nearby_controllers" field.</summary>
+        public const int NearbyControllersFieldNumber = 14;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.NearbyControllers NearbyControllers
+        {
+            get { return msgCase_ == MsgOneofCase.NearbyControllers ? (global::Xpilot.NearbyControllers)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.NearbyControllers;
+            }
+        }
+
+        /// <summary>Field number for the "clear_nearby_controllers" field.</summary>
+        public const int ClearNearbyControllersFieldNumber = 15;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.ClearNearbyControllers ClearNearbyControllers
+        {
+            get { return msgCase_ == MsgOneofCase.ClearNearbyControllers ? (global::Xpilot.ClearNearbyControllers)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.ClearNearbyControllers;
+            }
+        }
+
+        /// <summary>Field number for the "private_message_received" field.</summary>
+        public const int PrivateMessageReceivedFieldNumber = 16;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.PrivateMessageReceived PrivateMessageReceived
+        {
+            get { return msgCase_ == MsgOneofCase.PrivateMessageReceived ? (global::Xpilot.PrivateMessageReceived)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.PrivateMessageReceived;
+            }
+        }
+
+        /// <summary>Field number for the "private_message_sent" field.</summary>
+        public const int PrivateMessageSentFieldNumber = 17;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        public global::Xpilot.PrivateMessageSent PrivateMessageSent
+        {
+            get { return msgCase_ == MsgOneofCase.PrivateMessageSent ? (global::Xpilot.PrivateMessageSent)msg_ : null; }
+            set
+            {
+                msg_ = value;
+                msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.PrivateMessageSent;
+            }
+        }
+
         private object msg_;
         /// <summary>Enum of possible cases for the "msg" oneof.</summary>
         public enum MsgOneofCase
@@ -329,6 +401,10 @@ namespace Xpilot
             NetworkConnected = 11,
             NetworkDisconnected = 12,
             AirplaneConfig = 13,
+            NearbyControllers = 14,
+            ClearNearbyControllers = 15,
+            PrivateMessageReceived = 16,
+            PrivateMessageSent = 17,
         }
         private MsgOneofCase msgCase_ = MsgOneofCase.None;
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -374,6 +450,10 @@ namespace Xpilot
             if (!object.Equals(NetworkConnected, other.NetworkConnected)) return false;
             if (!object.Equals(NetworkDisconnected, other.NetworkDisconnected)) return false;
             if (!object.Equals(AirplaneConfig, other.AirplaneConfig)) return false;
+            if (!object.Equals(NearbyControllers, other.NearbyControllers)) return false;
+            if (!object.Equals(ClearNearbyControllers, other.ClearNearbyControllers)) return false;
+            if (!object.Equals(PrivateMessageReceived, other.PrivateMessageReceived)) return false;
+            if (!object.Equals(PrivateMessageSent, other.PrivateMessageSent)) return false;
             if (MsgCase != other.MsgCase) return false;
             return Equals(_unknownFields, other._unknownFields);
         }
@@ -395,6 +475,10 @@ namespace Xpilot
             if (msgCase_ == MsgOneofCase.NetworkConnected) hash ^= NetworkConnected.GetHashCode();
             if (msgCase_ == MsgOneofCase.NetworkDisconnected) hash ^= NetworkDisconnected.GetHashCode();
             if (msgCase_ == MsgOneofCase.AirplaneConfig) hash ^= AirplaneConfig.GetHashCode();
+            if (msgCase_ == MsgOneofCase.NearbyControllers) hash ^= NearbyControllers.GetHashCode();
+            if (msgCase_ == MsgOneofCase.ClearNearbyControllers) hash ^= ClearNearbyControllers.GetHashCode();
+            if (msgCase_ == MsgOneofCase.PrivateMessageReceived) hash ^= PrivateMessageReceived.GetHashCode();
+            if (msgCase_ == MsgOneofCase.PrivateMessageSent) hash ^= PrivateMessageSent.GetHashCode();
             hash ^= (int)msgCase_;
             if (_unknownFields != null)
             {
@@ -466,6 +550,22 @@ namespace Xpilot
       if (msgCase_ == MsgOneofCase.AirplaneConfig) {
         output.WriteRawTag(106);
         output.WriteMessage(AirplaneConfig);
+      }
+      if (msgCase_ == MsgOneofCase.NearbyControllers) {
+        output.WriteRawTag(114);
+        output.WriteMessage(NearbyControllers);
+      }
+      if (msgCase_ == MsgOneofCase.ClearNearbyControllers) {
+        output.WriteRawTag(122);
+        output.WriteMessage(ClearNearbyControllers);
+      }
+      if (msgCase_ == MsgOneofCase.PrivateMessageReceived) {
+        output.WriteRawTag(130, 1);
+        output.WriteMessage(PrivateMessageReceived);
+      }
+      if (msgCase_ == MsgOneofCase.PrivateMessageSent) {
+        output.WriteRawTag(138, 1);
+        output.WriteMessage(PrivateMessageSent);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -542,6 +642,26 @@ namespace Xpilot
                 output.WriteRawTag(106);
                 output.WriteMessage(AirplaneConfig);
             }
+            if (msgCase_ == MsgOneofCase.NearbyControllers)
+            {
+                output.WriteRawTag(114);
+                output.WriteMessage(NearbyControllers);
+            }
+            if (msgCase_ == MsgOneofCase.ClearNearbyControllers)
+            {
+                output.WriteRawTag(122);
+                output.WriteMessage(ClearNearbyControllers);
+            }
+            if (msgCase_ == MsgOneofCase.PrivateMessageReceived)
+            {
+                output.WriteRawTag(130, 1);
+                output.WriteMessage(PrivateMessageReceived);
+            }
+            if (msgCase_ == MsgOneofCase.PrivateMessageSent)
+            {
+                output.WriteRawTag(138, 1);
+                output.WriteMessage(PrivateMessageSent);
+            }
             if (_unknownFields != null)
             {
                 _unknownFields.WriteTo(ref output);
@@ -604,6 +724,22 @@ namespace Xpilot
             if (msgCase_ == MsgOneofCase.AirplaneConfig)
             {
                 size += 1 + pb::CodedOutputStream.ComputeMessageSize(AirplaneConfig);
+            }
+            if (msgCase_ == MsgOneofCase.NearbyControllers)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(NearbyControllers);
+            }
+            if (msgCase_ == MsgOneofCase.ClearNearbyControllers)
+            {
+                size += 1 + pb::CodedOutputStream.ComputeMessageSize(ClearNearbyControllers);
+            }
+            if (msgCase_ == MsgOneofCase.PrivateMessageReceived)
+            {
+                size += 2 + pb::CodedOutputStream.ComputeMessageSize(PrivateMessageReceived);
+            }
+            if (msgCase_ == MsgOneofCase.PrivateMessageSent)
+            {
+                size += 2 + pb::CodedOutputStream.ComputeMessageSize(PrivateMessageSent);
             }
             if (_unknownFields != null)
             {
@@ -712,6 +848,34 @@ namespace Xpilot
                         AirplaneConfig = new global::Xpilot.AirplaneConfig();
                     }
                     AirplaneConfig.MergeFrom(other.AirplaneConfig);
+                    break;
+                case MsgOneofCase.NearbyControllers:
+                    if (NearbyControllers == null)
+                    {
+                        NearbyControllers = new global::Xpilot.NearbyControllers();
+                    }
+                    NearbyControllers.MergeFrom(other.NearbyControllers);
+                    break;
+                case MsgOneofCase.ClearNearbyControllers:
+                    if (ClearNearbyControllers == null)
+                    {
+                        ClearNearbyControllers = new global::Xpilot.ClearNearbyControllers();
+                    }
+                    ClearNearbyControllers.MergeFrom(other.ClearNearbyControllers);
+                    break;
+                case MsgOneofCase.PrivateMessageReceived:
+                    if (PrivateMessageReceived == null)
+                    {
+                        PrivateMessageReceived = new global::Xpilot.PrivateMessageReceived();
+                    }
+                    PrivateMessageReceived.MergeFrom(other.PrivateMessageReceived);
+                    break;
+                case MsgOneofCase.PrivateMessageSent:
+                    if (PrivateMessageSent == null)
+                    {
+                        PrivateMessageSent = new global::Xpilot.PrivateMessageSent();
+                    }
+                    PrivateMessageSent.MergeFrom(other.PrivateMessageSent);
                     break;
             }
 
@@ -843,6 +1007,42 @@ namespace Xpilot
             }
             input.ReadMessage(subBuilder);
             AirplaneConfig = subBuilder;
+            break;
+          }
+          case 114: {
+            global::Xpilot.NearbyControllers subBuilder = new global::Xpilot.NearbyControllers();
+            if (msgCase_ == MsgOneofCase.NearbyControllers) {
+              subBuilder.MergeFrom(NearbyControllers);
+            }
+            input.ReadMessage(subBuilder);
+            NearbyControllers = subBuilder;
+            break;
+          }
+          case 122: {
+            global::Xpilot.ClearNearbyControllers subBuilder = new global::Xpilot.ClearNearbyControllers();
+            if (msgCase_ == MsgOneofCase.ClearNearbyControllers) {
+              subBuilder.MergeFrom(ClearNearbyControllers);
+            }
+            input.ReadMessage(subBuilder);
+            ClearNearbyControllers = subBuilder;
+            break;
+          }
+          case 130: {
+            global::Xpilot.PrivateMessageReceived subBuilder = new global::Xpilot.PrivateMessageReceived();
+            if (msgCase_ == MsgOneofCase.PrivateMessageReceived) {
+              subBuilder.MergeFrom(PrivateMessageReceived);
+            }
+            input.ReadMessage(subBuilder);
+            PrivateMessageReceived = subBuilder;
+            break;
+          }
+          case 138: {
+            global::Xpilot.PrivateMessageSent subBuilder = new global::Xpilot.PrivateMessageSent();
+            if (msgCase_ == MsgOneofCase.PrivateMessageSent) {
+              subBuilder.MergeFrom(PrivateMessageSent);
+            }
+            input.ReadMessage(subBuilder);
+            PrivateMessageSent = subBuilder;
             break;
           }
         }
@@ -1001,6 +1201,50 @@ namespace Xpilot
                             }
                             input.ReadMessage(subBuilder);
                             AirplaneConfig = subBuilder;
+                            break;
+                        }
+                    case 114:
+                        {
+                            global::Xpilot.NearbyControllers subBuilder = new global::Xpilot.NearbyControllers();
+                            if (msgCase_ == MsgOneofCase.NearbyControllers)
+                            {
+                                subBuilder.MergeFrom(NearbyControllers);
+                            }
+                            input.ReadMessage(subBuilder);
+                            NearbyControllers = subBuilder;
+                            break;
+                        }
+                    case 122:
+                        {
+                            global::Xpilot.ClearNearbyControllers subBuilder = new global::Xpilot.ClearNearbyControllers();
+                            if (msgCase_ == MsgOneofCase.ClearNearbyControllers)
+                            {
+                                subBuilder.MergeFrom(ClearNearbyControllers);
+                            }
+                            input.ReadMessage(subBuilder);
+                            ClearNearbyControllers = subBuilder;
+                            break;
+                        }
+                    case 130:
+                        {
+                            global::Xpilot.PrivateMessageReceived subBuilder = new global::Xpilot.PrivateMessageReceived();
+                            if (msgCase_ == MsgOneofCase.PrivateMessageReceived)
+                            {
+                                subBuilder.MergeFrom(PrivateMessageReceived);
+                            }
+                            input.ReadMessage(subBuilder);
+                            PrivateMessageReceived = subBuilder;
+                            break;
+                        }
+                    case 138:
+                        {
+                            global::Xpilot.PrivateMessageSent subBuilder = new global::Xpilot.PrivateMessageSent();
+                            if (msgCase_ == MsgOneofCase.PrivateMessageSent)
+                            {
+                                subBuilder.MergeFrom(PrivateMessageSent);
+                            }
+                            input.ReadMessage(subBuilder);
+                            PrivateMessageSent = subBuilder;
                             break;
                         }
                 }

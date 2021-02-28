@@ -214,10 +214,14 @@
     </Compile>
     <Compile Include="Protobuf\AddPlanePb.cs" />
     <Compile Include="Protobuf\ChangeModelPb.cs" />
+    <Compile Include="Protobuf\ClearNearbyControllers.cs" />
+    <Compile Include="Protobuf\NearbyControllersPb.cs" />
     <Compile Include="Protobuf\NetworkConnectedPb.cs" />
     <Compile Include="Protobuf\NetworkDisconnectedPb.cs" />
     <Compile Include="Protobuf\PlaneConfigPb.cs" />
     <Compile Include="Protobuf\PositionUpdatePb.cs" />
+    <Compile Include="Protobuf\PrivateMessageReceivedPb.cs" />
+    <Compile Include="Protobuf\PrivateMessageSentPb.cs" />
     <Compile Include="Protobuf\RemoveAllPlanesPb.cs" />
     <Compile Include="Protobuf\RemovePlanePb.cs" />
     <Compile Include="SetupGuide.cs">
