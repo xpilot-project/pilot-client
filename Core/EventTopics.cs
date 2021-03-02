@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot.Core
 {
     public class EventTopics
     {
@@ -50,47 +50,37 @@ namespace XPilot.PilotClient
         public const string RadioVolumeChanged = "RadioVolumeChanged";
 
         // Network Events
+        public const string NetworkConnectionInitiated = "NetworkConnectionInitiated";
+        public const string NetworkConnectionFailed = "NetworkConnectionFailed";
         public const string NetworkConnected = "NetworkConnected";
+        public const string NetworkDisconnectionInitiated = "NetworkDisconnectionInitiated";
         public const string NetworkDisconnected = "NetworkDisconnected";
-        public const string DeletePilotReceived = "DeletePilotReceived";
-        public const string LegacyPlaneInfoReceived = "LegacyPlaneInfoReceived";
-        public const string CapabilitiesResponseReceived = "CapabilitiesResponseReceived";
-        public const string CapabilitiesRequestReceived = "CapabilitiesRequestReceived";
-        public const string MetarRequested = "MetarRequested";
-        public const string WallopSent = "WallopRequestSent";
-        public const string RadioMessageSent = "RadioMessageSent";
         public const string NetworkServerListUpdated = "NetworkServerListUpdated";
-        public const string ServerListDownloadFailed = "ServerListDownloadFailed";
-        public const string ServerMessageReceived = "ServerMessageReceived";
+        public const string FlightPlanReceived = "FlightPlanReceived";
+        public const string RadioMessageReceived = "RadioMessageReceived";
         public const string BroadcastMessageReceived = "BroadcastMessageReceived";
+        public const string PrivateMessageReceived = "PrivateMessageReceived";
+        public const string ServerMessageReceived = "ServerMessageReceived";
+        public const string DeleteControllerReceived = "DeleteControllerReceived";
+        public const string DeletePilotReceived = "DeletePilotReceived";
+        public const string AircraftUpdateReceived = "AircraftUpdateReceived";
+        public const string ControllerUpdateReceived = "ControlerUpdateReceived";
+        public const string CapabilitiesRequestReceived = "CapabilitiesRequestReceived";
+        public const string AircraftConfigurationInfoReceived = "AircraftConfigurationInfoReceived";
         public const string RealNameReceived = "RealNameReceived";
+        public const string RealNameRequested = "RealNameRequested";
+        public const string IsValidATCReceived = "IsValidATCReceived";
+        public const string AtisLineReceived = "AtisLineReceived";
+        public const string AtisEndReceived = "AtisEndReceived";
+        public const string CapabilitiesResponseReceived = "CapabilitiesResponseReceived";
+        public const string AircraftInfoReceived = "AircraftInfoReceived";
         public const string MetarReceived = "MetarReceived";
         public const string SelcalAlertReceived = "SelcalAlertReceived";
-        public const string RadioMessageReceived = "RadioMessageReceived";
-        public const string PrivateMessageReceived = "PrivateMessageReceived";
-        public const string FlightPlanReceived = "FlightPlanReceived";
-        public const string RemoteFlightPlanReceived = "RemoteFlightPlanReceived";
-        public const string FetchFlightPlan = "FetchFlightPlan";
-        public const string SendFlightPlan = "SendFlightPlan";
-        public const string RealNameRequested = "RealNameRequested";
-        public const string PrivateMessageSent = "PrivateMessageSent";
-        public const string IsValidAtcReceived = "IsValidAtcReceived";
-        public const string AtisLinesReceived = "AtisLinesReceived";
-        public const string AtisEndReceived = "AtisEndReceived";
-        public const string AcarsRequestSent = "AcarsRequestSent";
-        public const string AcarsResponseReceived = "AcarsResponseReceived";
-        public const string SocketMessageReceived = "SocketMessageReceived";
-        public const string ControllerAdded = "ControllerAdded";
-        public const string ControllerDeleted = "ControllerDeleted";
-        public const string ControllerFrequencyChanged = "ControllerFrequencyChanged";
-        public const string ControllerUpdateReceived = "ControllerUpdateReceived";
-        public const string ControllerInfoReceived = "ControllerInfoReceived";
 
         // Multiplayer
         public const string PlaneInfoReceived = "AircraftInfoReceived";
         public const string PilotPositionReceived = "PilotPositionReceived";
-        public const string AircraftConfigurationInfoReceived = "AircraftConfigurationInfoReceived";
-        public const string UserAircraftDataChanged = "UserAircraftDataChanged";
+        public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
         public const string ValidateCslPaths = "ValidateCslPaths";
     }
 }

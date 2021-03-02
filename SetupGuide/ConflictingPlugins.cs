@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 using System.IO;
 
 namespace XPilot.PilotClient.Tutorial

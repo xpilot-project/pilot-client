@@ -17,7 +17,7 @@
 */
 using System;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public struct WorldPoint
     {

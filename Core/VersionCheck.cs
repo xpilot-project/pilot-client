@@ -22,11 +22,11 @@ using RestSharp;
 using System;
 using System.IO;
 using System.Net;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Config;
 using XPilot.PilotClient.Core.Events;
 
-namespace XPilot.PilotClient.Core
+namespace Vatsim.Xpilot.Core
 {
     public class VersionCheck : EventBus, IVersionCheck
     {

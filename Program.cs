@@ -21,12 +21,12 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using XPilot.PilotClient.AudioForVatsim;
-using XPilot.PilotClient.Common;
+using Vatsim.Xpilot.Common;
 using XPilot.PilotClient.Core;
-using XPilot.PilotClient.Network;
-using XPilot.PilotClient.Network.Aircraft;
-using XPilot.PilotClient.Network.Controllers;
-using XPilot.PilotClient.XplaneAdapter;
+using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Networking.Aircraft;
+using Vatsim.Xpilot.Controllers;
+using Vatsim.Xpilot.Simulator;
 using Ninject;
 
 namespace XPilot.PilotClient

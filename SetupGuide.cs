@@ -17,9 +17,9 @@
 */
 using System;
 using System.Windows.Forms;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 using XPilot.PilotClient.Tutorial;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Networking;
 using XPilot.PilotClient.AudioForVatsim;
 using Appccelerate.EventBroker;
 

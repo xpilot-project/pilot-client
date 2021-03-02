@@ -16,7 +16,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 
-using XPilot.PilotClient.Aircraft;
+using Vatsim.Xpilot.Aircrafts;
 
 namespace XPilot.PilotClient.Core.Events
 {

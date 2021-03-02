@@ -19,7 +19,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class ScreenUtils
     {

@@ -19,7 +19,7 @@ using System;
 using System.Globalization;
 using System.Management;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class SystemIdentifier
     {

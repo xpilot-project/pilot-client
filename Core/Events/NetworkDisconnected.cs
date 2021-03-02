@@ -16,7 +16,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Networking;
 
 namespace XPilot.PilotClient.Core.Events
 {

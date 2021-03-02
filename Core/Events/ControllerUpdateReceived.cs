@@ -16,8 +16,8 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Network.Controllers;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Controllers;
 
 namespace XPilot.PilotClient.Core.Events
 {

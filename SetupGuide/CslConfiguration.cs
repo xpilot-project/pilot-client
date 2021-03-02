@@ -24,7 +24,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 using Newtonsoft.Json;
 using SevenZip;
 

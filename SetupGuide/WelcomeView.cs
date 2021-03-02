@@ -20,7 +20,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 
 namespace XPilot.PilotClient
 {

@@ -22,7 +22,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public class SingleInstance
     {

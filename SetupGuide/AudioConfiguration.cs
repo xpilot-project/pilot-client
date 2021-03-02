@@ -20,7 +20,7 @@ using XPilot.PilotClient.AudioForVatsim;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using XPilot.PilotClient.Core.Events;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 
 namespace XPilot.PilotClient.Tutorial
 {

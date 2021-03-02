@@ -23,7 +23,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class StringUtils
     {

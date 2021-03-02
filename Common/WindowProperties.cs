@@ -20,7 +20,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public class WindowProperties
     {

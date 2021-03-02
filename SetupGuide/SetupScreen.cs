@@ -21,8 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using XPilot.PilotClient.Config;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Config;
+using Vatsim.Xpilot.Networking;
 
 namespace XPilot.PilotClient
 {

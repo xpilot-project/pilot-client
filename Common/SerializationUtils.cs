@@ -19,7 +19,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class SerializationUtils
     {

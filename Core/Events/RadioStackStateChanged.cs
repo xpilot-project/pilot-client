@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using XPilot.PilotClient.XplaneAdapter;
+using Vatsim.Xpilot.Simulator;
 
 namespace XPilot.PilotClient.Core.Events
 {

@@ -19,12 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Media;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using XPilot.PilotClient.Core.Events;
 
-namespace XPilot.PilotClient.Core
+namespace Vatsim.Xpilot.Core
 {
     public enum SoundEvent
     {

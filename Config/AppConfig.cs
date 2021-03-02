@@ -21,13 +21,13 @@ using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Networking;
 using Newtonsoft.Json;
 using Vatsim.Fsd.Connector;
 using System.Reflection;
 
-namespace XPilot.PilotClient.Config
+namespace Vatsim.Xpilot.Config
 {
     public class AppConfig : IAppConfig
     {

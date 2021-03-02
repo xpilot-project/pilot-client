@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPilot.PilotClient.Core
+namespace Vatsim.Xpilot.Core
 {
     public interface ITabPages
     {

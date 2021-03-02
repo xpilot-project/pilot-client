@@ -22,7 +22,7 @@ using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using XPilot.PilotClient.Core;
 using XPilot.PilotClient.Core.Events;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Networking;
 
 namespace XPilot.PilotClient
 {

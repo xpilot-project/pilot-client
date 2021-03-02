@@ -18,7 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class FlashTaskbar
     {

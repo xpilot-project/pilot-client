@@ -19,7 +19,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Config;
 using System.Linq;
 
 namespace XPilot.PilotClient

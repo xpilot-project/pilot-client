@@ -19,7 +19,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 
-namespace XPilot.PilotClient.Common
+namespace Vatsim.Xpilot.Common
 {
     public static class FileChecksum
     {

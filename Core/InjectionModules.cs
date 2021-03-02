@@ -16,16 +16,16 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using XPilot.PilotClient.AudioForVatsim;
-using XPilot.PilotClient.Config;
-using XPilot.PilotClient.Network;
-using XPilot.PilotClient.XplaneAdapter;
+using Vatsim.Xpilot.Config;
+using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Simulator;
 using Appccelerate.EventBroker;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
-using XPilot.PilotClient.Network.Aircraft;
-using XPilot.PilotClient.Network.Controllers;
+using Vatsim.Xpilot.Networking.Aircraft;
+using Vatsim.Xpilot.Controllers;
 
-namespace XPilot.PilotClient.Core
+namespace Vatsim.Xpilot.Core
 {
     public class InjectionModules : NinjectModule
     {

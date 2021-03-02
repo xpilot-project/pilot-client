@@ -17,10 +17,10 @@
 */
 using System.Collections.Generic;
 using Vatsim.Fsd.Connector;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Network;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Networking;
 
-namespace XPilot.PilotClient.Config
+namespace Vatsim.Xpilot.Config
 {
     public interface IAppConfig
     {

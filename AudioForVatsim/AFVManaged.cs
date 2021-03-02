@@ -21,11 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Config;
 using XPilot.PilotClient.Core.Events;
-using XPilot.PilotClient.Network.Controllers;
-using XPilot.PilotClient.XplaneAdapter;
+using Vatsim.Xpilot.Controllers;
+using Vatsim.Xpilot.Simulator;
 
 namespace XPilot.PilotClient.AudioForVatsim
 {

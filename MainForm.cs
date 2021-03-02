@@ -26,13 +26,13 @@ using System.Windows.Forms;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using Vatsim.Fsd.Connector;
-using XPilot.PilotClient.Common;
-using XPilot.PilotClient.Config;
+using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Config;
 using XPilot.PilotClient.Core;
 using XPilot.PilotClient.Core.Events;
-using XPilot.PilotClient.Network;
-using XPilot.PilotClient.Network.Controllers;
-using XPilot.PilotClient.XplaneAdapter;
+using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Controllers;
+using Vatsim.Xpilot.Simulator;
 
 namespace XPilot.PilotClient
 {
