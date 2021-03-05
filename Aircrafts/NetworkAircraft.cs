@@ -18,9 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Vatsim.Xpilot.Common;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
@@ -29,7 +26,8 @@ namespace Vatsim.Xpilot.Aircrafts
         New,
         Active,
         OutOfRange,
-        Deleted
+        Deleted,
+        Ignored
     }
 
     public class NetworkAircraft
@@ -38,29 +36,27 @@ namespace Vatsim.Xpilot.Aircrafts
         public string Callsign { get; set; }
         public string Equipment { get; set; }
         public string Airline { get; set; }
-        public List<NetworkAircraftPose> StateHistory { get; set; }
+        public List<NetworkAircraftState> StateHistory { get; set; }
         public DateTime LastUpdated { get; set; }
         public DateTime LastFlightPlanFetch { get; set; }
         public int UpdateCount { get; set; }
         public double GroundSpeed { get; set; }
         public int VerticalSpeed { get; set; }
-        public LegacyClientConfigFlags LastAppliedConfigFlags { get; set; }
         public AircraftConfiguration Configuration { get; set; }
         public AircraftConfiguration LastAppliedConfiguration { get; set; }
         public bool SupportsConfigurationProtocol { get; set; }
         public bool InitialConfigurationSet { get; set; }
         public Stack<AircraftConfiguration> PendingAircraftConfiguration { get; set; }
-        public NetworkAircraftTransponder Transponder { get; set; }
         public string OriginAirport { get; set; } = "";
         public string DestinationAirport { get; set; } = "";
-        public NetworkAircraftPose CurrentPosition
+        public NetworkAircraftState CurrentPosition
         {
             get
             {
                 return StateHistory.Last();
             }
         }
-        public NetworkAircraftPose PreviousPosition
+        public NetworkAircraftState PreviousPosition
         {
             get
             {
@@ -83,10 +79,8 @@ namespace Vatsim.Xpilot.Aircrafts
         }
         public NetworkAircraft()
         {
-            StateHistory = new List<NetworkAircraftPose>();
-            LastAppliedConfigFlags = new LegacyClientConfigFlags();
+            StateHistory = new List<NetworkAircraftState>();
             PendingAircraftConfiguration = new Stack<AircraftConfiguration>();
-            Transponder = new NetworkAircraftTransponder();
         }
         public override string ToString()
         {

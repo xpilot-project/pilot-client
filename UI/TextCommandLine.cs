@@ -18,14 +18,14 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using XPilot.PilotClient.Core.Events;
+using Vatsim.Xpilot.Events.Arguments;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public class TextCommandLine : TextBox
     {
-        public event EventHandler<ClientEventArgs<string>> TextCommandReceived;
-        private List<string> mTextHistory = new List<string>();
+        public event EventHandler<TextCommandReceivedEventArgs> TextCommandReceived;
+        private List<string> mCommandHistory = new List<string>();
         private int mHistoryIndex = -1;
         private string mCommandLineValue = "";
 
@@ -37,7 +37,7 @@ namespace XPilot.PilotClient
                     e.Handled = true;
                     if (!string.IsNullOrEmpty(Text))
                     {
-                        RecordHistory(Text);
+                        RecordCommandHistory(Text);
                         Text = "";
                         mHistoryIndex = -1;
                     }
@@ -76,7 +76,7 @@ namespace XPilot.PilotClient
                 mHistoryIndex = -1;
                 return mCommandLineValue;
             }
-            return mTextHistory[mHistoryIndex];
+            return mCommandHistory[mHistoryIndex];
         }
 
         private string ScrollUp(string text)
@@ -86,18 +86,18 @@ namespace XPilot.PilotClient
                 mCommandLineValue = text;
             }
             mHistoryIndex++;
-            if (mHistoryIndex >= mTextHistory.Count)
+            if (mHistoryIndex >= mCommandHistory.Count)
             {
                 mHistoryIndex = -1;
                 return mCommandLineValue;
             }
-            return mTextHistory[mHistoryIndex];
+            return mCommandHistory[mHistoryIndex];
         }
 
-        private void RecordHistory(string text)
+        private void RecordCommandHistory(string command)
         {
-            mTextHistory.Insert(0, text);
-            TextCommandReceived?.Invoke(this, new ClientEventArgs<string>(text));
+            mCommandHistory.Insert(0, command);
+            TextCommandReceived?.Invoke(this, new TextCommandReceivedEventArgs(command));
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)

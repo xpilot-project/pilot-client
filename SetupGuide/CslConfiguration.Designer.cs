@@ -1,4 +1,4 @@
-﻿namespace XPilot.PilotClient.Tutorial
+﻿namespace Vatsim.Xpilot.Tutorial
 {
     partial class CslConfiguration
     {
@@ -129,7 +129,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::XPilot.PilotClient.Properties.Resources.xPilot_Logo;
+            this.pictureBox1.Image = global::Vatsim.Xpilot.Properties.Resources.xPilot_Logo;
             this.pictureBox1.Location = new System.Drawing.Point(6, 6);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(427, 104);

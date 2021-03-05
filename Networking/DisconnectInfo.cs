@@ -34,6 +34,5 @@ namespace Vatsim.Xpilot.Networking
     {
         public DisconnectType Type { get; set; }
         public string ForcibleReason { get; set; }
-        public bool WillReconnect { get; set; }
     }
 }

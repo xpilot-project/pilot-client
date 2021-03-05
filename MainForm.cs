@@ -17,77 +17,54 @@
 */
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Reflection;
+using System.Diagnostics;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using Vatsim.Fsd.Connector;
-using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
-using XPilot.PilotClient.Core;
-using XPilot.PilotClient.Core.Events;
 using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
+using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Events.Arguments;
+using Vatsim.Xpilot.Aircrafts;
+using System.Text.RegularExpressions;
+using Vatsim.Xpilot.Common;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public partial class MainForm : Form
     {
-        [EventPublication(EventTopics.SessionStarted)]
-        public event EventHandler<EventArgs> RaiseSessionStarted;
-
-        [EventPublication(EventTopics.SessionEnded)]
-        public event EventHandler<EventArgs> RaiseSessionEnded;
-
         [EventPublication(EventTopics.MainFormShown)]
-        public event EventHandler<EventArgs> RaiseMainFormShown;
+        public event EventHandler<EventArgs> MainFormShown;
+
+        [EventPublication(EventTopics.MainFormClosed)]
+        public event EventHandler<EventArgs> MainFormClosed;
 
         [EventPublication(EventTopics.PlayNotificationSound)]
-        public event EventHandler<PlayNotificationSound> RaisePlayNotificationSound;
+        public event EventHandler<PlayNotifictionSoundEventArgs> PlayNotificationSound;
 
         [EventPublication(EventTopics.RadioMessageSent)]
-        public event EventHandler<RadioMessageSent> RaiseRadioMessageSent;
-
-        [EventPublication(EventTopics.ChatSessionStarted)]
-        public event EventHandler<ChatSessionStarted> RaiseChatSessionStarted;
-
-        [EventPublication(EventTopics.WallopSent)]
-        public event EventHandler<WallopSent> RaiseWallopSent;
-
-        [EventPublication(EventTopics.SimulatorMessageSent)]
-        public event EventHandler<SimulatorMessageSent> RaiseSimulatorMessageSent;
-
-        [EventPublication(EventTopics.MetarRequested)]
-        public event EventHandler<MetarRequestSent> RaiseMetarRequestedSent;
-
-        [EventPublication(EventTopics.PrivateMessageSent)]
-        public event EventHandler<PrivateMessageSent> RaisePrivateMessageSent;
-
-        [EventPublication(EventTopics.OverrideRadioStackState)]
-        public event EventHandler<OverrideRadioStackState> RaiseOverrideRadioStackState;
-
-        [EventPublication(EventTopics.ValidateCslPaths)]
-        public event EventHandler<EventArgs> RaiseValidateCslPaths;
-
-        [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPosted> RaiseNotificationPosted;
-
-        [EventPublication(EventTopics.RadioVolumeChanged)]
-        public event EventHandler<RadioVolumeChanged> RaiseRadioVolumeChanged;
+        public event EventHandler<RadioMessageSentEventArgs> RadioMessagSent;
 
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
-        private readonly IFsdManager mNetworkManager;
+        private readonly INetworkManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
         private readonly ITabPages mTabPages;
         private readonly IControllerAtisManager mAtisManager;
-        private readonly IControllerManager mControllerManager;
-        private readonly IXplaneConnectionManager mXplane;
+        private readonly IXplaneAdapter mXplaneAdapter;
+
+        private readonly Color COLOR_LIGHT_GRAY = Color.FromArgb(224, 224, 224);
+        private readonly Color COLOR_WHITE = Color.White;
+        private readonly Color COLOR_INFO = Color.Yellow;
+        private readonly Color COLOR_ORANGE = Color.Orange;
+        private readonly Color COLOR_RED = Color.Red;
+        private readonly Color COLOR_CYAN = Color.Cyan;
+        private readonly Color COLOR_GREEN = Color.FromArgb(0, 192, 0);
+        private readonly Color COLOR_OLIVE_GREEN = Color.FromArgb(133, 166, 100);
 
         [System.Runtime.InteropServices.DllImport("usser32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
@@ -97,27 +74,16 @@ namespace XPilot.PilotClient
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
-        private bool mWaitingForConnection = true;
         private bool mInitializing = true;
-        private bool mFlightLoaded = false;
-        private bool mReplayMode = false;
-        private bool mConnected = false;
+        private bool mReceivingOnBothFrequencies;
 
-        private bool mForceCom1Tx = false;
-        private bool mForceCom1Rx = false;
-        private bool mForceCom2Tx = false;
-        private bool mForceCom2Rx = false;
-
-        private readonly Timer mCheckSimConnection;
-        private UserAircraftRadioStack mRadioStackData;
+        private RadioStackState mRadioStackData;
         private ConnectInfo mConnectInfo;
-        private NotesTab tabNotes;
-
-        private readonly List<TreeNode> mControllerNodes = new List<TreeNode>();
+        private NotesTab TabNotes;
 
         private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
 
-        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, IFsdManager networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IControllerManager controllerManager, IXplaneConnectionManager xplane)
+        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, INetworkManager networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IXplaneAdapter xplane)
         {
             InitializeComponent();
 
@@ -127,455 +93,572 @@ namespace XPilot.PilotClient
             mUserInterface = userInterface;
             mTabPages = tabPages;
             mAtisManager = atisManager;
-            mControllerManager = controllerManager;
-            mXplane = xplane;
+            mXplaneAdapter = xplane;
 
-            mCheckSimConnection = new Timer
-            {
-                Interval = 1000
-            };
-            mCheckSimConnection.Tick += CheckSimConnection_Tick;
-            mCheckSimConnection.Start();
+            RtfMessages.TextCommandLine.TextCommandReceived += TextCommandLine_TextCommandReceived;
+            RtfMessages.RichTextBox.MouseUp += RichTextBox_MouseUp;
 
-            ChatMessageBox.TextCommandLine.TextCommandReceived += MainForm_TextCommandReceived;
-            ChatMessageBox.RichTextBox.MouseUp += rtfMessages_MouseUp;
+            TreeControllers.MouseUp += TreeControllers_MouseUp;
+            TreeControllers.BeforeSelect += TreeControllers_BeforeSelect;
+            TreeControllers.BeforeCollapse += TreeControllers_BeforeCollapse;
+            TreeControllers.ExpandAll();
+            TreeControllers.TreeViewNodeSorter = new TreeNodeSorter();
 
-            treeControllers.MouseUp += TreeControllers_MouseUp;
-            treeControllers.BeforeSelect += TreeControllers_BeforeSelect;
-            treeControllers.BeforeCollapse += TreeControllers_BeforeCollapse;
-            treeControllers.ExpandAll();
-            treeControllers.TreeViewNodeSorter = new TreeNodeSorter();
-
-            tabNotes = mTabPages.CreateNotesTab();
-            tabNotes.Text = "Notes";
-            tabControl.TabPages.Add(tabNotes);
+            TabNotes = mTabPages.CreateNotesTab();
+            TabNotes.Text = "Notes";
+            TabsMain.TabPages.Add(TabNotes);
 
             mEventBroker.Register(this);
         }
 
-        protected override void OnLoad(EventArgs e)
+        [EventSubscription(EventTopics.NotificationPosted, typeof(OnUserInterfaceAsync))]
+        public void OnNotificationPosted(object sender, NotificationPostedEventArgs e)
         {
-            RaiseSessionStarted?.Invoke(this, EventArgs.Empty);
-            RaiseValidateCslPaths?.Invoke(this, EventArgs.Empty);
-            RaiseMainFormShown?.Invoke(this, EventArgs.Empty);
-            ScreenUtils.ApplyWindowProperties(mConfig.ClientWindowProperties, this);
-            mInitializing = false;
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"xPilot Version {Application.ProductVersion}"));
-
-            if (mConfig.ConfigurationRequired)
+            switch (e.Type)
             {
-                //using (var dlg = mUserInterface.CreateSetupGuideForm())
-                //{
-                //    if (dlg.ShowDialog(this) == DialogResult.No)
-                //    {
-                //        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, CONFIGURATION_REQUIRED));
-                //        RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
-                //    }
-                //}
-            }
-
-            if (!string.IsNullOrEmpty(mConfig.SimulatorIP))
-            {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Warning, $"Looking for simulator at IP {mConfig.SimulatorIP}."));
-            }
-            if (mConfig.VisualClientIPs.Count > 0)
-            {
-                string tempIPs = "";
-                foreach (string ip in mConfig.VisualClientIPs)
-                {
-                    tempIPs += " " + ip;
-                }
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Warning, $"Looking for Visuals machine at IP:{tempIPs}."));
+                case NotificationType.Info:
+                    WriteInfoMessage(e.Message);
+                    break;
+                case NotificationType.Warning:
+                    WriteWarningMessage(e.Message);
+                    break;
+                case NotificationType.Error:
+                    WriteErrorMessage(e.Message);
+                    break;
             }
         }
 
-        private void MainForm_TextCommandReceived(object sender, ClientEventArgs<string> e)
+        [EventSubscription(EventTopics.SettingsModified, typeof(OnUserInterfaceAsync))]
+        public void OnSettingsModified(object sender, EventArgs e)
         {
-            string[] split = e.Value.Split(new char[] { ' ' });
+            TopMost = mConfig.KeepWindowVisible;
+        }
 
+        [EventSubscription(EventTopics.NetworkConnectionInitiated, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkConnectionInitiated(object sender, EventArgs e)
+        {
+            BtnConnect.Enabled = false;
+            BtnConnect.Text = "Connecting";
+        }
+
+        [EventSubscription(EventTopics.NetworkConnectionFailed, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkConnectionFailed(object sender, EventArgs e)
+        {
+            HandleNetworkDisconnected();
+        }
+
+        [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        {
+            LblCallsign.Text = e.ConnectInfo.Callsign;
+            BtnConnect.Enabled = true;
+            BtnConnect.Text = "Disconnect";
+        }
+
+        [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRequestAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
+        {
+            WriteMessage(COLOR_GREEN, $"{e.From} ATIS:", true);
+            foreach (string line in e.Lines)
+            {
+                WriteMessage(COLOR_GREEN, line, false);
+            }
+        }
+
+        [EventSubscription(EventTopics.ChatSessionStarted, typeof(OnUserInterfaceAsync))]
+        public void OnChatSessionStarted(object sender, ChatSessionStartedEventArgs e)
+        {
+            HandleChatSessionStarted(e.Callsign);
+        }
+
+        [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
+        public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
+        {
+            PrivateMessageTab tab = GetPrivateMessageTabIfExists(e.To);
+            if (tab == null)
+            {
+                CreatePrivateMessageTab(e.To, e.Message, true, e.From);
+            }
+        }
+
+        [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnPrivateMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            PrivateMessageTab tab = GetPrivateMessageTabIfExists(e.From);
+            if (tab == null)
+            {
+                if (mConfig.FlashTaskbarPrivateMessage)
+                {
+                    FlashTaskbar.Flash(this);
+                }
+                CreatePrivateMessageTab(e.From, e.Data);
+            }
+        }
+
+        [EventSubscription(EventTopics.RealNameReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRealNameReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            TreeNode treeNode = FindController(e.From);
+            if (treeNode != null)
+            {
+                treeNode.ToolTipText = string.IsNullOrEmpty(e.Data) ? "Unknown" : e.Data;
+            }
+        }
+
+        [EventSubscription(EventTopics.ControllerAdded, typeof(OnUserInterfaceAsync))]
+        public void OnControllerAdded(object sender, ControllerEventArgs e)
+        {
+            TreeNode selectedNode = TreeControllers.SelectedNode;
+            string frequency = e.Controller.NormalizedFrequency.FormatFromNetwork();
+            TreeNode treeNode;
+            string nodeText;
+            if (e.Controller.Callsign.EndsWith("_CTR") || e.Controller.Callsign.EndsWith("_FSS"))
+            {
+                treeNode = TreeControllers.Nodes["Center"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else if (e.Controller.Callsign.EndsWith("_APP") || e.Controller.Callsign.EndsWith("_DEP"))
+            {
+                treeNode = TreeControllers.Nodes["Approach"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else if (e.Controller.Callsign.EndsWith("_TWR"))
+            {
+                treeNode = TreeControllers.Nodes["Tower"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else if (e.Controller.Callsign.EndsWith("_GND"))
+            {
+                treeNode = TreeControllers.Nodes["Ground"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else if (e.Controller.Callsign.EndsWith("_DEL"))
+            {
+                treeNode = TreeControllers.Nodes["Delivery"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else if (e.Controller.Callsign.EndsWith("_ATIS"))
+            {
+                treeNode = TreeControllers.Nodes["ATIS"];
+                nodeText = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
+            }
+            else
+            {
+                treeNode = TreeControllers.Nodes["Observers"];
+                nodeText = e.Controller.Callsign.Replace("*", "");
+            }
+            treeNode.Nodes.Add(e.Controller.Callsign, nodeText).ToolTipText = string.IsNullOrEmpty(e.Controller.RealName) ? "Unknown" : e.Controller.RealName;
+            treeNode.Expand();
+            TreeControllers.Sort();
+            TreeControllers.SelectedNode = selectedNode;
+        }
+
+        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnUserInterfaceAsync))]
+        public void OnControllerDeleted(object sender, ControllerEventArgs e)
+        {
+            if (TreeControllers.IsDisposed || TreeControllers.Disposing)
+            {
+                return;
+            }
+            foreach (TreeNode node in TreeControllers.Nodes)
+            {
+                node.Nodes.RemoveByKey(e.Controller.Callsign);
+            }
+        }
+
+        [EventSubscription(EventTopics.ControllerFrequencyChanged, typeof(OnUserInterfaceAsync))]
+        public void OnControllerFrequencyChanged(object sender, ControllerEventArgs e)
+        {
+            TreeNode treeNode = FindController(e.Controller.Callsign);
+            if (treeNode != null)
+            {
+                if (treeNode.Parent.Name == "Observers")
+                {
+                    treeNode.Text = e.Controller.Callsign;
+                }
+                else
+                {
+                    treeNode.Text = $"{e.Controller.Callsign} - {e.Controller.NormalizedFrequency.FormatFromNetwork()}";
+                }
+            }
+        }
+
+        [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
+        public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
+        {
+            mReceivingOnBothFrequencies = e.RadioStackState.ReceivingOnBothComRadios;
+        }
+
+        [EventSubscription(EventTopics.VoiceConnected, typeof(OnUserInterfaceAsync))]
+        public void OnVoiceConnected(object sender, EventArgs e)
+        {
+
+        }
+
+        [EventSubscription(EventTopics.VoiceDisconnected, typeof(OnUserInterfaceAsync))]
+        public void OnVoiceDisconnected(object sender, EventArgs e)
+        {
+
+        }
+
+        [EventSubscription(EventTopics.ComRadioTransmittingChanged, typeof(OnUserInterfaceAsync))]
+        public void OnComRadioTransmittingChanged(object sender, ComRadioTxRxChangedEventArgs e)
+        {
+
+        }
+
+        [EventSubscription(EventTopics.ComRadioReceivingChanged, typeof(OnUserInterfaceAsync))]
+        public void OnComRadioReceivingChanged(object sender, ComRadioTxRxChangedEventArgs e)
+        {
+
+        }
+
+        [EventSubscription(EventTopics.RadioMessageSent, typeof(OnUserInterfaceAsync))]
+        public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
+        {
+            WriteMessage(COLOR_CYAN, $"{e.OurCallsign}: {e.Message}", true);
+        }
+
+        [EventSubscription(EventTopics.WallopSent, typeof(OnUserInterfaceAsync))]
+        public void OnWallopSent(object sender, WallopSentEventArgs e)
+        {
+            WriteMessage(COLOR_RED, $"[WALLOP] {e.OurCallsign}: {e.Message}", true);
+            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
+        }
+
+        [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
+        public void OnMetarReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            WriteMessage(COLOR_GREEN, e.Data, true);
+        }
+
+        [EventSubscription(EventTopics.RadioMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRadioMessageReceived(object sender, RadioMessageReceivedEventArgs e)
+        {
+            string message;
+            if (mReceivingOnBothFrequencies)
+            {
+                string arg;
+                if (e.Frequencies.Length > 1)
+                {
+                    arg = $"{e.Frequencies[0].FormatFromNetwork()} & {e.Frequencies[1].FormatFromNetwork()}";
+                }
+                else
+                {
+                    arg = e.Frequencies[0].FormatFromNetwork();
+                }
+                message = $"{e.From} on {arg}: {e.Data}";
+            }
+            else
+            {
+                message = $"{e.From}: {e.Data}";
+            }
+            WriteMessage(e.IsDirect ? COLOR_WHITE : COLOR_LIGHT_GRAY, message, e.IsDirect);
+            if (e.IsDirect)
+            {
+                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.DirectRadioMessage));
+            }
+            else
+            {
+                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.RadioMessage));
+            }
+            if (mConfig.FlashTaskbarRadioMessage)
+            {
+                FlashTaskbar.Flash(this);
+            }
+        }
+
+        [EventSubscription(EventTopics.BroadcastMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnBroadcastMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            WriteMessage(COLOR_ORANGE, $"[BROADCAST] {e.From}: {e.Data}", false);
+            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
+        }
+
+        [EventSubscription(EventTopics.ServerMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnServerMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            WriteMessage(COLOR_OLIVE_GREEN, $"[SERVER]: {e.Data}", false);
+        }
+
+        [EventSubscription(EventTopics.SelcalAlertReceived, typeof(OnUserInterfaceAsync))]
+        public void OnSelcalAlertReceived(object sender, SelcalAlertReceivedEventArgs e)
+        {
+            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.SelCal));
+        }
+
+        private void WriteErrorMessage(string message)
+        {
+            WriteMessage(COLOR_RED, message, true);
+        }
+
+        private void WriteWarningMessage(string message)
+        {
+            WriteMessage(COLOR_ORANGE, message, true);
+        }
+
+        private void WriteInfoMessage(string message)
+        {
+            WriteMessage(COLOR_INFO, message, false);
+        }
+
+        private void WriteMessage(Color color, string message, bool activateMessageTab)
+        {
+            RtfMessages.WriteMessage(color, message);
+            if (activateMessageTab)
+            {
+                TabsMain.SelectedTab = TabPageMessages;
+            }
+            TabPageMessages.ForeColor = (TabsMain.SelectedTab == TabPageMessages) ? COLOR_LIGHT_GRAY : COLOR_CYAN;
+            TabsMain.Refresh();
+        }
+
+        private void TreeControllers_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
+        {
+            e.Cancel = true;
+            FocusTextCommandLine();
+        }
+
+        private void TreeControllers_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            e.Cancel = true;
+            FocusTextCommandLine();
+        }
+
+        private void TreeControllers_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (RtfMessages.RichTextBox.SelectionLength > 0)
+            {
+                Clipboard.SetText(RtfMessages.RichTextBox.SelectedText);
+                RtfMessages.RichTextBox.SelectionLength = 0;
+            }
+            FocusTextCommandLine();
+        }
+
+        private void FocusTextCommandLine()
+        {
+            if (TabsMain.SelectedTab != null)
+            {
+                if (TabsMain.SelectedTab is PrivateMessageTab)
+                {
+                    (TabsMain.SelectedTab as PrivateMessageTab).FocusTextCommandLine();
+                }
+                else if (TabsMain.SelectedTab == TabPageMessages)
+                {
+                    RtfMessages.TextCommandLine.Focus();
+                }
+            }
+        }
+
+        private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
+        {
+            string[] cmd = e.Command.Split(new char[] { ' ' });
             try
             {
-                if (e.Value.StartsWith("."))
+                if (e.Command.StartsWith("."))
                 {
-                    switch (split[0].ToLower())
+                    switch (cmd[0].ToLower())
                     {
                         case ".simip":
-                            if (split.Length - 1 < 1)
+                            if (cmd.Length - 1 < 1)
                             {
                                 mConfig.SimulatorIP = "";
                                 mConfig.SaveConfig();
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Simulator IP reset."));
+                                WriteInfoMessage("Simulator IP reset.");
                             }
                             else
                             {
-                                mConfig.SimulatorIP = split[1];
+                                mConfig.SimulatorIP = cmd[1];
                                 mConfig.SaveConfig();
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Simulator IP set to {split[1]}. Please restart xPilot."));
+                                WriteInfoMessage($"Simulator IP set to {cmd[1]}. You must restart xPilot for the changes to take effect.");
                             }
                             break;
                         case ".visualip":
-                            if (split.Length - 1 < 1)
+                            if (cmd.Length - 1 < 1)
                             {
                                 mConfig.VisualClientIPs.Clear();
                                 mConfig.SaveConfig();
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Visual IP reset."));
+                                WriteInfoMessage("Visual IP reset.");
                             }
                             else
                             {
                                 mConfig.VisualClientIPs.Clear();
-                                for (int x = 1; x < split.Length; x++)
+                                for (int i = 1; i < cmd.Length; i++)
                                 {
-                                    mConfig.VisualClientIPs.Add(split[x]);
+                                    mConfig.VisualClientIPs.Add(cmd[i]);
                                 }
                                 mConfig.SaveConfig();
-                                string tempIPs = "";
-                                foreach (string ip in mConfig.VisualClientIPs)
-                                {
-                                    tempIPs += " " + ip;
-                                }
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Visual IP set to{tempIPs}. Please restart xPilot."));
+                                WriteInfoMessage($"Visual IP set to {string.Join(", ", mConfig.VisualClientIPs)}. You must restart xPilot for the changes to take effect.");
                             }
                             break;
                         case ".copy":
-                            if (!string.IsNullOrEmpty(ChatMessageBox.RichTextBox.Text))
+                            if (!string.IsNullOrEmpty(RtfMessages.RichTextBox.Text))
                             {
-                                Clipboard.SetText(ChatMessageBox.RichTextBox.Text);
+                                Clipboard.SetText(RtfMessages.RichTextBox.Text);
                             }
                             break;
                         case ".clear":
-                            ChatMessageBox.RichTextBox.Clear();
+                            RtfMessages.RichTextBox.Clear();
                             break;
                         case ".inf":
-                            if (split.Length - 1 < 1)
-                            {
-                                throw new ArgumentException("Not enough parameters.");
-                            }
-                            if (split[1].Length > 10)
+                            CheckMinLength(cmd);
+                            if (cmd[1].Length > 10)
                             {
                                 throw new ArgumentException("Callsign too long.");
                             }
                             else
                             {
-                                mNetworkManager.RequestInfoQuery(split[1].ToUpper());
-                            }
-                            break;
-                        case ".notes":
-                            if (!tabControl.TabPages.Contains(tabNotes))
-                            {
-                                tabNotes = mTabPages.CreateNotesTab();
-                                tabNotes.Text = "Notes";
-                                tabControl.TabPages.Add(tabNotes);
-                                tabControl.SelectedTab = tabNotes;
-                            }
-                            else
-                            {
-                                tabControl.SelectedTab = tabNotes;
+                                //mNetworkManager.RequestAircraftInfo(cmd[1].ToUpper());
                             }
                             break;
                         case ".atis":
                             if (!mNetworkManager.IsConnected)
                             {
-                                throw new ArgumentException("Not connected to the network.");
+                                throw new ArgumentException("Not connected to network.");
                             }
                             else
                             {
-                                if (split.Length - 1 < 1)
-                                {
-                                    throw new ArgumentException("Not enough parameters.");
-                                }
-                                else
-                                {
-                                    mAtisManager.RequestControllerAtis(split[1].ToUpper());
-                                }
+                                CheckMinLength(cmd);
+                                mAtisManager.RequestControllerAtis(cmd[1].ToUpper());
                             }
                             break;
                         case ".x":
                         case ".xpndr":
                         case ".xpdr":
                         case ".squawk":
-                            if (split.Length - 1 < 1)
+                            CheckMinLength(cmd);
+                            if (!Regex.IsMatch(cmd[1], "^[0-7]{4}$"))
                             {
-                                throw new ArgumentException("Not enough parameters.");
+                                throw new ArgumentException("Invalid transponder code.");
                             }
-                            else
-                            {
-                                if (!Regex.IsMatch(split[1], "^[0-7]{4}$"))
-                                {
-                                    throw new ArgumentException("Invalid transponder code format.");
-                                }
-                                int code = Convert.ToInt32(split[1]);
-                                mXplane.SetTransponderCode(code);
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"Transponder code set to {code:0000}."));
-                            }
+                            int code = int.Parse(cmd[1]);
+                            mXplaneAdapter.SetTransponderCode(code);
+                            WriteInfoMessage($"Transponder code set to {code:0000}");
                             break;
                         case ".com1":
                         case ".com2":
-                            if (split.Length - 1 < 1)
                             {
-                                throw new ArgumentException("Not enough parameters.");
-                            }
-                            else
-                            {
-                                if (!Regex.IsMatch(split[1], "^1\\d\\d[\\.\\,]\\d{1,3}$"))
+                                CheckMinLength(cmd);
+                                if (!Regex.IsMatch(cmd[1], "^1\\d\\d[\\.\\,]\\d{1,3}$"))
                                 {
                                     throw new ArgumentException("Invalid frequency format.");
                                 }
-
-                                split[1] = split[1].PadRight(7, '0');
-                                uint f = uint.Parse(split[1].Substring(1).Replace(".", "").Replace(",", ""));
-
-                                if (f % 100 == 20 || f % 100 == 70)
-                                {
-                                    f += 5;
-                                }
-
-                                int com = (split[0].ToLower() == ".com1") ? 1 : 2;
-                                mXplane.SetRadioFrequency(com, f);
-                                // (f+100000)/10
+                                cmd[1] = cmd[1].PadRight(7, '0');
+                                uint freq = uint.Parse(cmd[1].Substring(1).Replace(".", "").Replace(",", "")).Normalize25KhzFsdFrequency();
+                                int radio = cmd[1].ToLower() == ".com1" ? 1 : 2;
+                                mXplaneAdapter.SetRadioFrequency(radio, freq);
                             }
                             break;
                         case ".tx":
-                            if (split.Length - 1 < 1)
                             {
-                                throw new ArgumentException("Command syntax error: .tx com<n>");
-                            }
-                            else
-                            {
-                                if (split[1].ToLower() != "com1" && split[1].ToLower() != "com2")
+                                CheckMinLength(cmd);
+                                if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
                                 {
-                                    throw new ArgumentException("Command syntax error: .tx com<n>");
+                                    throw new ArgumentException("Command syntax error. Expected format: .tx com1 or .tx com2");
                                 }
-                                int radio = split[1].ToLower() == "com1" ? 1 : 2;
-                                switch (radio)
-                                {
-                                    case 1:
-                                        mXplane.SetAudioComSelection(6);
-                                        mForceCom1Tx = true;
-                                        mForceCom2Tx = false;
-                                        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} transmit enabled."));
-                                        break;
-                                    case 2:
-                                        mXplane.SetAudioComSelection(7);
-                                        mForceCom2Tx = true;
-                                        mForceCom1Tx = false;
-                                        RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} transmit enabled."));
-                                        break;
-                                }
-
-                                RaiseOverrideRadioStackState?.Invoke(this, new OverrideRadioStackState(mForceCom1Rx, mForceCom1Tx, mForceCom2Rx, mForceCom2Tx));
+                                int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
+                                mXplaneAdapter.SetAudioComSelection(radio);
+                                WriteInfoMessage($"COM{radio} transmit enabled.");
                             }
                             break;
                         case ".rx":
-                            if (split.Length - 1 < 2)
                             {
-                                throw new ArgumentException("Command syntax error: .rx com<n> (on|off)");
-                            }
-                            else
-                            {
-                                if (split[1].ToLower() != "com1" && split[1].ToLower() != "com2")
+                                CheckMinLength(cmd, 2);
+                                if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
                                 {
-                                    throw new ArgumentException("Command syntax error: .rx com<n> (on|off)");
+                                    throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
                                 }
-                                if (split[2].ToLower() != "on" && split[2].ToLower() != "off")
+                                if (cmd[2].ToLower() != "com1" && cmd[2].ToLower() != "com2")
                                 {
-                                    throw new ArgumentException("Command syntax error: .rx com<n> (on|off)");
+                                    throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
                                 }
-                                bool on = (split[2].ToLower() == "on");
-                                int radio = split[1].ToLower() == "com1" ? 1 : 2;
-                                if (on)
-                                {
-                                    switch (radio)
-                                    {
-                                        case 1:
-                                            mXplane.SetAudioSelectionCom1(true);
-                                            mXplane.SetAudioSelectionCom2(false);
-                                            mForceCom1Rx = true;
-                                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} receiver on."));
-                                            break;
-                                        case 2:
-                                            mXplane.SetAudioSelectionCom1(false);
-                                            mXplane.SetAudioSelectionCom2(true);
-                                            mForceCom2Rx = true;
-                                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} receiver on."));
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (radio)
-                                    {
-                                        case 1:
-                                            mXplane.SetAudioSelectionCom1(false);
-                                            mXplane.SetAudioSelectionCom2(false);
-                                            mForceCom1Rx = false;
-                                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} receiver off."));
-                                            break;
-                                        case 2:
-                                            mXplane.SetAudioSelectionCom1(false);
-                                            mXplane.SetAudioSelectionCom2(false);
-                                            mForceCom2Rx = false;
-                                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"COM{radio} receiver off."));
-                                            break;
-                                    }
-                                }
-
-                                RaiseOverrideRadioStackState?.Invoke(this, new OverrideRadioStackState(mForceCom1Rx, mForceCom1Tx, mForceCom2Rx, mForceCom2Tx));
+                                bool isOn = cmd[2].ToLower() == "on";
+                                int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
                             }
                             break;
                         case ".msg":
                         case ".chat":
-                            if (split.Length - 1 < 1)
-                            {
-                                throw new ArgumentException("Not enough parameters.");
-                            }
-                            if (split[1].Length > 10)
+                            CheckMinLength(cmd);
+                            if (cmd[1].Length > 10)
                             {
                                 throw new ArgumentException("Callsign too long.");
                             }
+                            if (!mNetworkManager.IsConnected)
+                            {
+                                throw new ArgumentException("Not connected to network.");
+                            }
+                            if (cmd.Length > 2)
+                            {
+
+                            }
                             else
                             {
-                                if (!mNetworkManager.IsConnected)
-                                {
-                                    throw new ArgumentException("Not connected to the network.");
-                                }
-                                else
-                                {
-                                    if (split.Length > 2)
-                                    {
-                                        RaisePrivateMessageSent?.Invoke(this, new PrivateMessageSent(mNetworkManager.OurCallsign, split[1].ToUpper(), string.Join(" ", split.Skip(2))));
-                                    }
-                                    else
-                                    {
-                                        InitializeChatSession(split[1].ToUpper());
-                                    }
-                                }
+
                             }
                             break;
                         case ".wallop":
-                            if (split.Length - 1 < 1)
-                            {
-                                throw new ArgumentException("Not enough parameters.");
-                            }
-                            else
-                            {
-                                RaiseWallopSent?.Invoke(this, new WallopSent(string.Join(" ", split.Skip(1))));
-                            }
+                            CheckMinLength(cmd);
+                            mNetworkManager.SendWallop(cmd[1]);
                             break;
                         case ".wx":
                         case ".metar":
-                            if (split.Length - 1 < 1)
-                            {
-                                throw new ArgumentException("Not enough parameters.");
-                            }
-                            else
-                            {
-                                RaiseMetarRequestedSent?.Invoke(this, new MetarRequestSent(split[1]));
-                            }
+                            CheckMinLength(cmd);
+                            mNetworkManager.RequestMetar(cmd[1]);
                             break;
                         case ".towerview":
-                            if (mFlightLoaded)
+                            string tvServer = "127.0.0.1";
+                            string tvCallsign = "TOWER";
+                            if (cmd.Length >= 2)
                             {
-                                string tvServerAddress = "127.0.0.1";
-                                string tvCallsign = "TOWER";
-                                if (split.Length >= 2)
+                                tvServer = cmd[1];
+                                if (cmd.Length >= 3)
                                 {
-                                    tvServerAddress = split[1];
-                                    if (split.Length >= 3)
-                                    {
-                                        tvCallsign = split[2].ToUpper();
-                                    }
+                                    tvCallsign = cmd[2].ToUpper();
                                 }
-                                ConnectInfo tvConnectInfo = new ConnectInfo(tvCallsign, "", "", true, true);
-                                mNetworkManager.Connect(tvConnectInfo, tvServerAddress);
                             }
-                            else
-                            {
-                                throw new ArgumentException("xPilot is unable to connect to X-Plane. Please make sure X-Plane is running and a flight is loaded.");
-                            }
+                            ConnectInfo connectInfo = new ConnectInfo(tvCallsign, "", "", true, true);
+                            mNetworkManager.Connect(connectInfo, tvServer);
                             break;
                     }
                 }
                 else
                 {
-                    if (mNetworkManager.IsConnected)
+                    if (!string.IsNullOrEmpty(e.Command))
                     {
-                        if (!string.IsNullOrEmpty(e.Value))
+                        if (mNetworkManager.IsConnected)
                         {
-                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.SentRadioMessage, $"{mNetworkManager.OurCallsign}: {e.Value}"));
-                            RaiseRadioMessageSent?.Invoke(this, new RadioMessageSent(mNetworkManager.OurCallsign, e.Value, TunedFrequencies().ToArray()));
-                            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"{ mNetworkManager.OurCallsign }: {e.Value}"));
+                            RadioMessagSent(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
                         }
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Not connected to the network.");
+                        else
+                        {
+                            throw new ArgumentException("Not connected to network");
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, ex.Message));
-                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
+                WriteErrorMessage(ex.Message);
+                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
             }
         }
 
-        private PrivateMessageTab InitializeChatSession(string tabIdentifier)
+        private static void CheckMinLength(string[] cmd, int minLength = 1)
         {
-            PrivateMessageTab tab = GetPrivateMessageTabIfExists(tabIdentifier);
-            if (tab == null)
+            if (cmd.Length - 1 < minLength)
             {
-                tab = CreatePrivateMessageTab(tabIdentifier);
-            }
-            tabControl.SelectedTab = tab;
-            return tab;
-        }
-
-        private PrivateMessageTab GetPrivateMessageTabIfExists(string tabIdentifier)
-        {
-            foreach (TabPage tabPage in tabControl.TabPages)
-            {
-                if (tabPage.Name.Equals(tabIdentifier) && tabPage is PrivateMessageTab)
-                {
-                    return tabPage as PrivateMessageTab;
-                }
-            }
-            return null;
-        }
-
-        private void SetActiveMessageTab(string tabName)
-        {
-            foreach (TabPage tabPage in tabControl.TabPages)
-            {
-                if (tabPage.Name.Equals(tabName) && tabPage is PrivateMessageTab)
-                {
-                    tabControl.SelectedTab = tabPage;
-                }
+                throw new ArgumentException("Not enough parameters");
             }
         }
 
-        private PrivateMessageTab CreatePrivateMessageTab(string to, string message = null, bool isOurMessage = false, string ourCallsign = null)
+        private void RichTextBox_MouseUp(object sender, MouseEventArgs e)
         {
-            PrivateMessageTab tab = mTabPages.CreatePrivateMessageTab(to, message, isOurMessage, ourCallsign);
-            tabControl.TabPages.Add(tab);
-            return tab;
-        }
-
-        private void CheckSimConnection_Tick(object sender, EventArgs e)
-        {
-            if (!mFlightLoaded)
-            {
-                mCheckSimConnection.Interval = 5000;
-                if (mWaitingForConnection)
-                {
-                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Waiting for X-Plane connection..."));
-                    mWaitingForConnection = false;
-                }
-            }
+            FocusTextCommandLine();
         }
 
         private TreeNode FindController(string callsign)
         {
-            TreeNode[] array = treeControllers.Nodes.Find(callsign.Replace("*", ""), true);
+            TreeNode[] array = TreeControllers.Nodes.Find(callsign.Replace("*", ""), true);
             TreeNode result;
             if (array.Length >= 1)
             {
@@ -586,6 +669,16 @@ namespace XPilot.PilotClient
                 result = null;
             }
             return result;
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.Style |= 0x20000;
+                return cp;
+            }
         }
 
         protected override void WndProc(ref Message m)
@@ -642,23 +735,22 @@ namespace XPilot.PilotClient
             }
         }
 
-        protected override CreateParams CreateParams
+        protected override void OnLoad(EventArgs e)
         {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.Style |= 0x20000;
-                return cp;
-            }
-        }
+            ScreenUtils.ApplyWindowProperties(mConfig.ClientWindowProperties, this);
+            mInitializing = false;
 
-        protected override void OnPaint(PaintEventArgs pevent)
-        {
-            base.OnPaint(pevent);
-            Rectangle rect = new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
-            using (Pen pen = new Pen(Color.FromArgb(0, 0, 0)))
+            WriteInfoMessage($"xPilot version {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
+            MainFormShown(this, EventArgs.Empty);
+            FocusTextCommandLine();
+
+            if (!string.IsNullOrEmpty(mConfig.SimulatorIP))
             {
-                pevent.Graphics.DrawRectangle(pen, rect);
+                WriteInfoMessage($"Looking for simuator at IP {mConfig.SimulatorIP}");
+            }
+            if (mConfig.VisualClientIPs.Count > 0)
+            {
+                WriteInfoMessage($"Looking for Visuals machine at IP: {string.Join(", ", mConfig.VisualClientIPs)}.");
             }
         }
 
@@ -686,889 +778,124 @@ namespace XPilot.PilotClient
             Invalidate();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        protected override void OnPaint(PaintEventArgs pevent)
         {
-            Close();
-        }
-
-        private void btnMinimize_Click(object sender, EventArgs e)
-        {
-            WindowState = FormWindowState.Minimized;
-        }
-
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            if (mConnected)
+            base.OnPaint(pevent);
+            Rectangle rect = new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
+            using (Pen pen = new Pen(Color.FromArgb(0, 0, 0)))
             {
-                mNetworkManager.Disconnect(new DisconnectInfo
-                {
-                    Type = DisconnectType.Intentional
-                });
+                pevent.Graphics.DrawRectangle(pen, rect);
             }
-            else
-            {
-                using (ConnectForm dlg = mUserInterface.CreateConnectForm())
-                {
-                    if (dlg.ShowDialog(this) == DialogResult.OK)
-                    {
-                        mConnectInfo = dlg.GetConnectInfo();
-                        if (mFlightLoaded)
-                        {
-                            if (mConfig.ConfigurationRequired)
-                            {
-                                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, CONFIGURATION_REQUIRED));
-                                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
-                            }
-                            else
-                            {
-                                NetworkServerInfo server = mNetworkManager.ReturnServerList().FirstOrDefault(o => o.Name == mConfig.ServerName);
-                                if (server != null)
-                                {
-                                    mNetworkManager.Connect(mConnectInfo, server.Address);
-                                    mReplayMode = false;
-                                }
-                                else
-                                {
-                                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "You must first select a server in the settings window."));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "xPilot is unable to connect to X-Plane. Please make sure X-Plane is running and a flight is loaded."));
-                            RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
-                        }
-                    }
-                }
-            }
-
-            TextCommandFocus();
-        }
-
-        private void btnFlightPlan_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://my.vatsim.net/pilots/flightplan");
-        }
-
-        private void btnSettings_Click(object sender, EventArgs e)
-        {
-            using (SettingsForm dlg = mUserInterface.CreateSettingsForm())
-            {
-                dlg.ShowDialog(this);
-            }
-            TextCommandFocus();
-        }
-
-        private void btnIdent_Click(object sender, EventArgs e)
-        {
-            if (mNetworkManager.IsConnected)
-            {
-                mNetworkManager.SquawkIdent();
-            }
-
-            //if (mFlightLoaded)
-            //{
-            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderIdent));
-            //}
-
-            TextCommandFocus();
-        }
-
-        private void chkModeC_Click(object sender, EventArgs e)
-        {
-            chkModeC.Clicked = !chkModeC.Clicked;
-
-            //var laminarB738 = new DataRefElement
-            //{
-            //    DataRef = "laminar/B738/knob/transpoder_pos"
-            //};
-
-            //var tolis = new DataRefElement
-            //{
-            //    DataRef = "ckpt/transponder/mode/anim"
-            //};
-
-            //var laminarB738_Dn_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
-            //var laminarB738_Up_Cmd = new XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
-
-            if (mFlightLoaded)
-            {
-                if (chkModeC.Clicked)
-                {
-                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Up_Cmd));
-                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
-                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderAlt));
-
-                    // tolis a319
-                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 0));
-                    mConfig.SquawkingModeC = true;
-                }
-                else
-                {
-                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(laminarB738_Dn_Cmd));
-                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 1));
-                    //SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneCommand>(Commands.TransponderTransponderOff));
-
-                    // tolis a319
-                    //SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(tolis, 4));
-                    mConfig.SquawkingModeC = false;
-                }
-            }
-            else
-            {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, "xPilot is unable to connect to X-Plane. Please make sure X-Plane is running and a flight is loaded."));
-                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
-            }
-
-            TextCommandFocus();
-        }
-
-        private void treeControllers_MouseUp(object sender, MouseEventArgs e)
-        {
-            FocusTabs();
-        }
-
-        private void treeControllers_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            e.Cancel = true;
-            FocusTabs();
-        }
-
-        private void FocusTabs()
-        {
-            if (tabControl.SelectedTab != null)
-            {
-                if (tabControl.SelectedTab is PrivateMessageTab)
-                {
-                    (tabControl.SelectedTab as PrivateMessageTab).FocusTextCommandLine();
-                }
-                else if (tabControl.SelectedTab == tabPageMessages)
-                {
-                    ChatMessageBox.TextCommandLine.Focus();
-                }
-            }
-        }
-
-        private void treeControllers_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Node.Level != 0)
-            {
-                if (e.Button == MouseButtons.Left)
-                {
-                    mAtisManager.RequestControllerAtis(e.Node.Name.Replace("*", ""));
-                }
-            }
-        }
-
-        private void treeControllers_AfterExpand(object sender, TreeViewEventArgs e)
-        {
-            if (mControllerNodes.Contains(e.Node))
-            {
-                mControllerNodes.Remove(e.Node);
-            }
-        }
-
-        private void treeControllers_AfterCollapse(object sender, TreeViewEventArgs e)
-        {
-            if (!mControllerNodes.Contains(e.Node))
-            {
-                mControllerNodes.Add(e.Node);
-            }
-        }
-
-        public List<int> TunedFrequencies()
-        {
-            List<int> Tuned = new List<int>();
-            if (mRadioStackData != null)
-            {
-                if (mRadioStackData.IsCom1Transmitting)
-                {
-                    Tuned.Add(mRadioStackData.Com1ActiveFreq.Normalize25KhzFrequency().MatchNetworkFormat());
-                    if (!Tuned.Contains(mRadioStackData.Com1ActiveFreq.UnNormalize25KhzFrequency().MatchNetworkFormat()))
-                    {
-                        Tuned.Add(mRadioStackData.Com1ActiveFreq.UnNormalize25KhzFrequency().MatchNetworkFormat());
-                    }
-                }
-                if (mRadioStackData.IsCom2Transmitting)
-                {
-                    Tuned.Add(mRadioStackData.Com2ActiveFreq.Normalize25KhzFrequency().MatchNetworkFormat());
-                    if (!Tuned.Contains(mRadioStackData.Com2ActiveFreq.UnNormalize25KhzFrequency().MatchNetworkFormat()))
-                    {
-                        Tuned.Add(mRadioStackData.Com2ActiveFreq.UnNormalize25KhzFrequency().MatchNetworkFormat());
-                    }
-                }
-            }
-            return Tuned;
-        }
-
-        private void treeControllers_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                treeControllers.SelectedNode = treeControllers.GetNodeAt(e.X, e.Y);
-
-                if (treeControllers.SelectedNode != null && treeControllers.SelectedNode.Nodes.Count > 0)
-                {
-                    controllerTreeContextMenu.Show(treeControllers, e.Location);
-                }
-            }
-        }
-
-        private void treeControllers_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Node.Level != 0 && e.Button == MouseButtons.Right)
-            {
-                ShowControllerContextMenu(e.Node.Name.Replace("*", ""), e.Location);
-            }
-        }
-
-        private void ShowControllerContextMenu(string name, Point point)
-        {
-            startPrivateChat.Tag = name;
-            requestControllerInfo.Tag = name;
-            tuneCom1Frequency.Tag = name;
-            controllerTreeContextMenu.Show(treeControllers, point);
-        }
-
-        private void startPrivateChat_Click(object sender, EventArgs e)
-        {
-            ToolStripMenuItem item = (sender as ToolStripMenuItem);
-            RaiseChatSessionStarted?.Invoke(this, new ChatSessionStarted(item.Tag.ToString()));
-        }
-
-        private void requestControllerInfo_Click(object sender, EventArgs e)
-        {
-            ToolStripMenuItem item = (sender as ToolStripMenuItem);
-            mAtisManager.RequestControllerAtis(item.Tag.ToString());
-        }
-
-        private void tuneCom1Frequency_Click(object sender, EventArgs e)
-        {
-            ToolStripMenuItem item = (sender as ToolStripMenuItem);
-            if (!string.IsNullOrEmpty(item.Tag.ToString()))
-            {
-                uint freq = mControllerManager.GetFrequencyByCallsign(item.Tag.ToString()).FsdFrequencyToHertz() / 1000;
-                mXplane.SetRadioFrequency(1, freq);
-            }
-        }
-
-        private void treeControllers_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
-        {
-            e.Cancel = true;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (mNetworkManager.IsConnected)
+            base.OnFormClosing(e);
+            if (mNetworkManager.IsConnected && MessageBox.Show(this, "You are connected to the network. Are you sure you want to exit?", "Confirm Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) != DialogResult.Yes)
             {
-                DialogResult dialogResult = MessageBox.Show(this, "You are connected to the network. Are you sure you want to exit?", "Confirm Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                if (dialogResult != DialogResult.Yes)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                e.Cancel = true;
+                return;
             }
-
-            RaiseSessionEnded?.Invoke(this, new EventArgs());
-            mConfig.SaveConfig();
+            MainFormClosed(this, EventArgs.Empty);
             mEventBroker.Unregister(this);
         }
 
-        private void MainForm_MouseDown(object sender, MouseEventArgs e)
+        private void BtnExit_Click(object sender, EventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            Close();
+        }
+
+        private void BtnConnect_Click(object sender, EventArgs e)
+        {
+            if (mNetworkManager.IsConnected)
             {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
 
-        private void rtfMessages_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (ChatMessageBox.RichTextBox.SelectionLength > 0)
-            {
-                Clipboard.SetText(ChatMessageBox.RichTextBox.SelectedText);
-                ChatMessageBox.RichTextBox.SelectionLength = 0;
-            }
-            TextCommandFocus();
-        }
-
-        private void TreeControllers_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            e.Cancel = true;
-            TextCommandFocus();
-        }
-
-        private void TreeControllers_MouseUp(object sender, MouseEventArgs e)
-        {
-            TextCommandFocus();
-        }
-
-        private void TreeControllers_BeforeCollapse(object sender, TreeViewCancelEventArgs e)
-        {
-            e.Cancel = true;
-            TextCommandFocus();
-        }
-
-        private void TextCommandFocus()
-        {
-            if (tabControl.SelectedTab != null)
-            {
-                if (tabControl.SelectedIndex > 0)
-                {
-                    ChatBox chatBox = (ChatBox)tabControl.TabPages[tabControl.SelectedIndex].Controls["chatbox"];
-                    if (chatBox != null)
-                    {
-                        chatBox.TextCommandLine.Focus();
-                    }
-                }
-                else
-                {
-                    ChatMessageBox.TextCommandLine.Select();
-                }
-            }
-        }
-
-        private void MainForm_Activated(object sender, EventArgs e)
-        {
-            TextCommandFocus();
-        }
-
-        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            tabControl.SelectedTab.ForeColor = Color.Silver;
-            if (tabControl.SelectedTab != null)
-            {
-                if (tabControl.SelectedTab is PrivateMessageTab)
-                {
-                    (tabControl.SelectedTab as PrivateMessageTab).Focus();
-                }
-                else if (tabControl.SelectedTab == tabPageMessages)
-                {
-                    ChatMessageBox.TextCommandLine.Select();
-                }
-            }
-            tabControl.Refresh();
-        }
-
-        [EventSubscription(EventTopics.ConnectButtonStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnDisableConnectButton(object sender, ClientEventArgs<bool> e)
-        {
-            btnConnect.Enabled = e.Value;
-            if (e.Value == false && mNetworkManager.IsConnected)
-            {
-                mNetworkManager.Disconnect(new DisconnectInfo
-                {
-                    Type = DisconnectType.Intentional
-                });
-            }
-        }
-
-        //[EventSubscription(EventTopics.VoiceServerConnectionLost, typeof(OnUserInterfaceAsync))]
-        //public void OnVoiceServerConnectionLost(object sender, EventArgs e)
-        //{
-        //    FlashTaskbar.Flash(this);
-        //}
-
-
-        [EventSubscription(EventTopics.SocketMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void OnSocketMessageReceived(object sender, ClientEventArgs<string> e)
-        {
-            if (!string.IsNullOrEmpty(e.Value))
-            {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.SentRadioMessage, $"{mNetworkManager.OurCallsign}: {e.Value}"));
-                RaiseRadioMessageSent?.Invoke(this, new RadioMessageSent(mNetworkManager.OurCallsign, e.Value, TunedFrequencies().ToArray()));
-            }
-        }
-
-        [EventSubscription(EventTopics.ChatSessionStarted, typeof(OnUserInterfaceAsync))]
-        public void OnChatSessionStarted(object sender, ChatSessionStarted e)
-        {
-            InitializeChatSession(e.Callsign);
-        }
-
-        [EventSubscription(EventTopics.ServerListDownloadFailed, typeof(OnUserInterfaceAsync))]
-        public void OnServerListDownloadFailed(object sender, ClientEventArgs<string> e)
-        {
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, e.Value));
-        }
-
-        [EventSubscription(EventTopics.NotificationPosted, typeof(OnUserInterfaceAsync))]
-        public void OnNotificationPosted(object sender, NotificationPosted e)
-        {
-            switch (e.Type)
-            {
-                default:
-                case NotificationType.Info:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.Yellow);
-                    break;
-                case NotificationType.Warning:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.FromArgb(243, 156, 18));
-                    break;
-                case NotificationType.Error:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.FromArgb(232, 65, 24));
-                    break;
-                case NotificationType.RadioMessage:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.FromArgb(180, 180, 180));
-                    break;
-                case NotificationType.DirectRadioMessage:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.White);
-                    break;
-                case NotificationType.SentRadioMessage:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.Cyan);
-                    break;
-                case NotificationType.ServerMessage:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.FromArgb(133, 166, 100));
-                    break;
-                case NotificationType.BroadcastMessage:
-                    ChatMessageBox.WriteMessage(e.Type, e.Message, Color.FromArgb(197, 108, 240));
-                    break;
-            }
-        }
-
-        [EventSubscription(EventTopics.ServerMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void ServerMessageReceived(object sender, NetworkDataReceived e)
-        {
-            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"[SERVER] {e.Data}", MessageColor.Green));
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.ServerMessage, $"[SERVER] {e.Data}"));
-        }
-
-        [EventSubscription(EventTopics.BroadcastMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void BroadcastMessageReceived(object sender, NetworkDataReceived e)
-        {
-            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"[BROADCAST] {e.Data}", MessageColor.Orange));
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.BroadcastMessage, $"[BROADCAST] {e.From}: {e.Data}"));
-            RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Broadcast));
-        }
-
-        [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnected e)
-        {
-            mConnected = true;
-            btnConnect.Text = "Disconnect";
-            btnConnect.BackColor = Color.FromArgb(0, 120, 206);
-            lblCallsign.Text = e.ConnectInfo.Callsign;
-
-            Text = $"xPilot - {e.ConnectInfo.Callsign}";
-
-            if (mConnectInfo != null)
-            {
-                chkModeC.Enabled = mConnectInfo.ObserverMode ? false : true;
-                btnIdent.Enabled = mConnectInfo.ObserverMode ? false : true;
-            }
-
-            mXplane.SetLoginStatus(true);
-        }
-
-        [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
-        {
-            Text = "xPilot";
-
-            chkModeC.Enabled = false;
-            btnIdent.Enabled = false;
-
-            mConnected = false;
-            btnConnect.Text = "Connect";
-            btnConnect.BackColor = Color.FromArgb(39, 44, 46);
-            lblCallsign.Text = "-------";
-
-            mXplane.SetLoginStatus(false);
-
-            if (mConfig.FlashTaskbarDisconnect && (e.DisconnectInfo != null && e.DisconnectInfo.Type != DisconnectType.Intentional))
-            {
-                FlashTaskbar.Flash(this);
-            }
-        }
-
-        [EventSubscription(EventTopics.ControllerAdded, typeof(OnUserInterfaceAsync))]
-        public void OnControllerUpdateReceived(object sender, ControllerUpdateReceived e)
-        {
-            string frequency = (e.Controller.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000");
-
-            TreeNode treeNode;
-            string text;
-
-            if (e.Controller.Callsign.EndsWith("_CTR") || e.Controller.Callsign.EndsWith("_FSS"))
-            {
-                treeNode = treeControllers.Nodes["Center"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
-            }
-            else if (e.Controller.Callsign.EndsWith("_APP") || e.Controller.Callsign.EndsWith("_DEP"))
-            {
-                treeNode = treeControllers.Nodes["Approach"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
-            }
-            else if (e.Controller.Callsign.EndsWith("_TWR"))
-            {
-                treeNode = treeControllers.Nodes["Tower"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
-            }
-            else if (e.Controller.Callsign.EndsWith("_GND"))
-            {
-                treeNode = treeControllers.Nodes["Ground"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
-            }
-            else if (e.Controller.Callsign.EndsWith("_DEL"))
-            {
-                treeNode = treeControllers.Nodes["Delivery"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
-            }
-            else if (e.Controller.Callsign.EndsWith("_ATIS"))
-            {
-                treeNode = treeControllers.Nodes["ATIS"];
-                text = string.Format("{0} - {1}", e.Controller.Callsign.Replace("*", ""), frequency);
             }
             else
             {
-                treeNode = treeControllers.Nodes["Observers"];
-                text = e.Controller.Callsign.Replace("*", "");
+                using (ConnectForm connectForm = mUserInterface.CreateConnectForm())
+                {
+                    if (connectForm.ShowDialog(this) == DialogResult.OK)
+                    {
+
+                    }
+                }
             }
-            if (treeNode != null)
+            FocusTextCommandLine();
+        }
+
+        private void BtnSettings_Click(object sender, EventArgs e)
+        {
+            using (SettingsForm settingsForm = mUserInterface.CreateSettingsForm())
             {
-                if (!treeNode.Nodes.ContainsKey(e.Controller.Callsign))
-                {
-                    TreeNode treeNode2 = treeNode.Nodes.Add(e.Controller.Callsign, text);
-                    treeNode2.ToolTipText = (string.IsNullOrEmpty(e.Controller.RealName) ? "Unknown" : e.Controller.RealName);
-
-                    if (!mControllerNodes.Contains(treeNode) && treeNode.Nodes.Count == 1)
-                    {
-                        treeNode.Expand();
-                    }
-                }
+                settingsForm.ShowDialog(this);
             }
-            treeControllers.Sort();
+            FocusTextCommandLine();
         }
 
-        [EventSubscription(EventTopics.ControllerDeleted, typeof(OnUserInterfaceAsync))]
-        public void OnControllerDeleted(object sender, NetworkDataReceived e)
+        private void BtnMinimize_Click(object sender, EventArgs e)
         {
-            if (!treeControllers.IsDisposed && !treeControllers.Disposing)
+            base.WindowState = FormWindowState.Minimized;
+        }
+
+        private void ChkModeC_Click(object sender, EventArgs e)
+        {
+            FocusTextCommandLine();
+        }
+
+        private void ChkIdent_Click(object sender, EventArgs e)
+        {
+            FocusTextCommandLine();
+        }
+
+        private void BtnFlightPlan_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://my.vatsim.net/pilots/flightplan");
+        }
+
+        private void HandleNetworkDisconnected()
+        {
+            LblCallsign.Text = "-------";
+            ClearControllerListNodes();
+            BtnConnect.Enabled = true;
+            BtnConnect.Text = "Connect";
+        }
+
+        private void ClearControllerListNodes()
+        {
+            foreach (TreeNode node in TreeControllers.Nodes)
             {
-                foreach (TreeNode treeNode in treeControllers.Nodes)
-                {
-                    treeNode.Nodes.RemoveByKey(e.From);
-                }
+                node.Nodes.Clear();
             }
         }
 
-        [EventSubscription(EventTopics.RealNameReceived, typeof(OnUserInterfaceAsync))]
-        public void RealNameReceived(object sender, NetworkDataReceived e)
+        private void HandleChatSessionStarted(string callsign)
         {
-            TreeNode treeNode = FindController(e.From.Replace("*", ""));
-            if (treeNode != null)
-            {
-                treeNode.ToolTipText = (string.IsNullOrEmpty(e.Data) ? "Unknown" : e.Data);
-            }
-        }
-
-        [EventSubscription(EventTopics.ControllerFrequencyChanged, typeof(OnUserInterfaceAsync))]
-        public void ControllerFrequencyChanged(object sender, ControllerUpdateReceived e)
-        {
-            TreeNode node = FindController(e.Controller.Callsign);
-            if (node != null)
-            {
-                if (node.Parent.Name == "Observers")
-                {
-                    node.Text = e.Controller.Callsign;
-                }
-                else
-                {
-                    string frequency = (e.Controller.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000");
-                    node.Text = string.Format("{0} - {1}", e.Controller.Callsign, frequency);
-                }
-            }
-        }
-
-        [EventSubscription(EventTopics.SimConnectionStateChanged, typeof(OnUserInterfaceAsync))]
-        public void SimConnectionChanged(object sender, ClientEventArgs<bool> e)
-        {
-            if (e.Value != mFlightLoaded)
-            {
-                mFlightLoaded = e.Value;
-
-                if (mFlightLoaded)
-                {
-                    RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent("xPilot client successfully connected to X-Plane.", MessageColor.Yellow));
-                    RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "X-Plane connection established."));
-                    if (mCheckSimConnection != null)
-                    {
-                        mCheckSimConnection.Stop();
-                    }
-                }
-                else
-                {
-                    mWaitingForConnection = true;
-                    mCheckSimConnection.Interval = 10;
-                    mCheckSimConnection.Start();
-
-                    if (mNetworkManager.IsConnected)
-                    {
-                        mNetworkManager.ForceDisconnect("X-Plane connection lost. Disconnected from network.");
-                    }
-                }
-            }
-        }
-
-        [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnRadioStackStateChanged(object sender, RadioStackStateChanged e)
-        {
-            if (mRadioStackData == null || !e.RadioStack.Equals(mRadioStackData))
-            {
-                if (e.RadioStack.HasPower)
-                {
-                    if (e.RadioStack.Com1ActiveFreq > 0)
-                    {
-                        Com1Freq.Text = (e.RadioStack.Com1ActiveFreq.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                        Com1TX.ForeColor = e.RadioStack.IsCom1Transmitting ? Color.White : Color.FromArgb(39, 44, 46);
-                        Com1RX.ForeColor = e.RadioStack.IsCom1Receiving ? Color.White : Color.FromArgb(39, 44, 46);
-                    }
-                    else
-                    {
-                        Com1Freq.Text = "---.---";
-                        Com1TX.ForeColor = Color.FromArgb(39, 44, 46);
-                        Com1RX.ForeColor = Color.FromArgb(39, 44, 46);
-                    }
-
-                    if (e.RadioStack.Com2ActiveFreq > 0)
-                    {
-                        Com2Freq.Text = (e.RadioStack.Com2ActiveFreq.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                        Com2TX.ForeColor = e.RadioStack.IsCom2Transmitting ? Color.White : Color.FromArgb(39, 44, 46);
-                        Com2RX.ForeColor = e.RadioStack.IsCom2Receiving ? Color.White : Color.FromArgb(39, 44, 46);
-                    }
-                    else
-                    {
-                        Com2Freq.Text = "---.---";
-                        Com2TX.ForeColor = Color.FromArgb(39, 44, 46);
-                        Com2RX.ForeColor = Color.FromArgb(39, 44, 46);
-                    }
-                }
-                else
-                {
-                    Com1Freq.Text = "---.---";
-                    Com1TX.ForeColor = Color.FromArgb(39, 44, 46);
-                    Com1RX.ForeColor = Color.FromArgb(39, 44, 46);
-
-                    Com2Freq.Text = "---.---";
-                    Com2TX.ForeColor = Color.FromArgb(39, 44, 46);
-                    Com2RX.ForeColor = Color.FromArgb(39, 44, 46);
-                }
-                mRadioStackData = e.RadioStack;
-            }
-        }
-
-        [EventSubscription(EventTopics.HFAliasChanged, typeof(OnUserInterfaceAsync))]
-        public void OnCom1FrequencyAliasChanged(object sender, HFAliasChanged e)
-        {
-            switch (e.Radio)
-            {
-                case 1:
-                    if (e.HighFrequency > 0)
-                    {
-                        hfTooltip.SetToolTip(Com1Freq, $"HF: {((double)e.HighFrequency / 1000000).ToString("0.00000")}");
-                    }
-                    else
-                    {
-                        hfTooltip.SetToolTip(Com1Freq, null);
-                    }
-                    break;
-                case 2:
-                    if (e.HighFrequency > 0)
-                    {
-                        hfTooltip.SetToolTip(Com2Freq, $"HF: {((double)e.HighFrequency / 1000000).ToString("0.00000")}");
-                    }
-                    else
-                    {
-                        hfTooltip.SetToolTip(Com2Freq, null);
-                    }
-                    break;
-            }
-        }
-
-        [EventSubscription(EventTopics.ComRadioTransmittingChanged, typeof(OnUserInterfaceAsync))]
-        public void ComRadioTransmittingChanged(object sender, RadioTxStateChanged e)
-        {
-            switch (e.Radio)
-            {
-                case 1:
-                    Com1TX.BackColor = e.State ? Color.FromArgb(39, 174, 96) : Color.Transparent;
-                    break;
-                case 2:
-                    Com2TX.BackColor = e.State ? Color.FromArgb(39, 174, 96) : Color.Transparent;
-                    break;
-            }
-        }
-
-        [EventSubscription(EventTopics.RadioReceiveStateChanged, typeof(OnUserInterfaceAsync))]
-        public void ComRadioReceivingChanged(object sender, RadioRxStateChanged e)
-        {
-            switch (e.Radio)
-            {
-                case 0:
-                    Com1RX.BackColor = e.State ? Color.FromArgb(39, 174, 96) : Color.Transparent;
-                    break;
-                case 1:
-                    Com2RX.BackColor = e.State ? Color.FromArgb(39, 174, 96) : Color.Transparent;
-                    break;
-            }
-        }
-
-        [EventSubscription(EventTopics.UserAircraftDataChanged, typeof(OnUserInterfaceAsync))]
-        public void UserAircraftDataUpdateReceived(object sender, UserAircraftDataChanged e)
-        {
-            if (!mReplayMode && (mNetworkManager.IsConnected && e.AircraftData.ReplayModeEnabled))
-            {
-                RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"You have been disconnected from the network because Replay Mode is enabled.", true, MessageColor.Red));
-                mNetworkManager.ForceDisconnect("You have been disconnected from the network because Replay Mode is enabled.");
-                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.Error));
-                mReplayMode = true;
-            }
-        }
-
-        [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
-        public void MetarResponseReceived(object sender, NetworkDataReceived e)
-        {
-            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"METAR: {e.Data}", true, MessageColor.Yellow));
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"METAR: {e.Data}"));
-        }
-
-        [EventSubscription(EventTopics.SelcalAlertReceived, typeof(OnUserInterfaceAsync))]
-        public void SelcalAlertReceived(object sender, SelcalAlertReceived e)
-        {
-            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"SELCAL alert received on {e.Frequencies[0].FormatFromNetwork()}", true, MessageColor.Yellow));
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"SELCAL alert received on {e.Frequencies[0].FormatFromNetwork()}."));
-            if (mConfig.EnableNotificationSounds)
-            {
-                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.SelCal));
-            }
-            if (mConfig.FlashTaskbarSelcal)
-            {
-                FlashTaskbar.Flash(this);
-            }
-        }
-
-        [EventSubscription(EventTopics.RadioMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void RadioMessageReceived(object sender, RadioMessageReceived e)
-        {
-            string message;
-            if (mRadioStackData != null)
-            {
-                if (mRadioStackData.ReceivingOnBothFrequencies)
-                {
-                    string arg;
-                    if (e.Frequencies.Length > 1)
-                    {
-                        arg = string.Format("{0} & {1}", e.Frequencies[0].FormatFromNetwork(), e.Frequencies[1].FormatFromNetwork());
-                    }
-                    else
-                    {
-                        arg = e.Frequencies[0].FormatFromNetwork();
-                    }
-                    message = string.Format("{0} on {1}: {2}", e.From, arg, e.Data);
-                }
-                else
-                {
-                    message = string.Format("{0}: {1}", e.From, e.Data);
-                }
-                if (e.IsDirect)
-                {
-                    RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent(message, true, MessageColor.Yellow));
-                }
-                else
-                {
-                    RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent(message, MessageColor.Gray));
-                }
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(e.IsDirect ? NotificationType.DirectRadioMessage : NotificationType.RadioMessage, message));
-                if (e.IsDirect)
-                {
-                    RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.DirectRadioMessage));
-                    if (mConfig.FlashTaskbarRadioMessage)
-                    {
-                        FlashTaskbar.Flash(this);
-                    }
-                }
-
-                if (mConfig.EnableNotificationSounds)
-                {
-                    RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.RadioMessage));
-                }
-
-                if (tabControl.SelectedTab != tabPageMessages)
-                {
-                    tabControl.TabPages[0].ForeColor = Color.Yellow;
-                    tabControl.Refresh();
-                }
-            }
-        }
-
-        [EventSubscription(EventTopics.ClientConfigChanged, typeof(OnUserInterfaceAsync))]
-        public void ClientConfigChanged(object sender, EventArgs e)
-        {
-            TopMost = mConfig.KeepWindowVisible;
-        }
-
-        [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
-        public void PrivateMessageReceived(object sender, PrivateMessageReceived e)
-        {
-            PrivateMessageTab tab = GetPrivateMessageTabIfExists(e.From);
+            PrivateMessageTab tab = GetPrivateMessageTabIfExists(callsign);
             if (tab == null)
             {
-                RaisePlayNotificationSound?.Invoke(this, new PlayNotificationSound(SoundEvent.PrivateMessage));
-                if (mConfig.FlashTaskbarPrivateMessage)
+                tab = CreatePrivateMessageTab(callsign);
+            }
+            TabsMain.SelectedTab = tab;
+        }
+
+        private PrivateMessageTab GetPrivateMessageTabIfExists(string tabIdentifier)
+        {
+            foreach (TabPage tabPage in TabsMain.TabPages)
+            {
+                if (tabPage.Name.Equals(tabIdentifier) && tabPage is PrivateMessageTab)
                 {
-                    FlashTaskbar.Flash(this);
+                    return tabPage as PrivateMessageTab;
                 }
-                CreatePrivateMessageTab(e.From, e.Message);
             }
+            return null;
         }
 
-        [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnPrivateMessageSent(object sender, PrivateMessageSent e)
+        private PrivateMessageTab CreatePrivateMessageTab(string to, string message = null, bool isOurMessage = false, string ourCallsign = null)
         {
-            PrivateMessageTab tab = GetPrivateMessageTabIfExists(e.To);
-            if (tab == null)
-            {
-                CreatePrivateMessageTab(e.To, e.Message, true, e.From);
-                SetActiveMessageTab(e.To);
-            }
-        }
-
-        [EventSubscription(EventTopics.AcarsResponseReceived, typeof(OnUserInterfaceAsync))]
-        public void OnRequestedAtisReceived(object sender, AcarsResponseReceived e)
-        {
-            RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent($"{e.From} ATIS:", MessageColor.Green));
-            foreach (string line in e.Lines)
-            {
-                RaiseSimulatorMessageSent?.Invoke(this, new SimulatorMessageSent(line, MessageColor.Green));
-            }
-            RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, $"{e.From} ATIS:"));
-            foreach (string line in e.Lines)
-            {
-                RaiseNotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, line));
-            }
-        }
-
-        [EventSubscription(EventTopics.TransponderIdentStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnSquawkingIdentChanged(object sender, TransponderIdentStateChanged e)
-        {
-            btnIdent.Clicked = e.Identing;
-        }
-
-        [EventSubscription(EventTopics.TransponderModeChanged, typeof(OnUserInterfaceAsync))]
-        public void OnTransponderModeChanged(object sender, ClientEventArgs<bool> e)
-        {
-            if (e.Value)
-            {
-                chkModeC.Clicked = true;
-                chkModeC.Text = "Mode C";
-                mConfig.SquawkingModeC = true;
-            }
-            else
-            {
-                chkModeC.Clicked = false;
-                chkModeC.Text = "Standby";
-                mConfig.SquawkingModeC = false;
-            }
+            PrivateMessageTab tab = mTabPages.CreatePrivateMessageTab(to, message, isOurMessage, ourCallsign);
+            TabsMain.TabPages.Add(tab);
+            return tab;
         }
     }
 

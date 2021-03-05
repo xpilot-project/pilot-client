@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Vatsim.Xpilot.Core
 {
     public class EventTopics
@@ -31,23 +25,28 @@ namespace Vatsim.Xpilot.Core
         public const string SessionStarted = "SessionStarted";
         public const string SessionEnded = "SessionEnded";
         public const string MainFormShown = "MainFormShown";
-        public const string ConnectButtonStateChanged = "EnableConnectButton";
-        public const string ClientConfigChanged = "ClientConfigChanged";
+        public const string MainFormClosed = "MainFormClosed";
+        public const string SettingsModified = "SettingsModified";
 
         // X-Plane
         public const string TransponderModeChanged = "TransponderModeChanged";
         public const string TransponderIdentStateChanged = "TransponderIdentStateChanged";
-        public const string SimConnectionStateChanged = "SimConnectionStateChanged";
+        public const string SimulatorConnected = "SimulatorConnected";
+        public const string SimulatorDisconnected = "SimulatorDisconnected";
+        public const string ConnectButtonEnabled = "ConnectButtonEnabled";
+        public const string ConnectButtonDisabled = "ConnectButtonDisabled";
         public const string SimulatorMessageSent = "SimulatorMessageSent";
 
         // Audio for Vatsim
         public const string PushToTalkStateChanged = "PushToTalkStateChanged";
         public const string HFAliasChanged = "HFAliasChanged";
         public const string ComRadioTransmittingChanged = "ComRadioTransmittingChanged";
-        public const string RadioReceiveStateChanged = "ComRadioReceivingChanged";
+        public const string ComRadioReceivingChanged = "ComRadioReceivingChanged";
         public const string RadioStackStateChanged = "RadioStackStateChanged";
         public const string OverrideRadioStackState = "OverrideComStatusChanged";
         public const string RadioVolumeChanged = "RadioVolumeChanged";
+        public const string VoiceConnected = "VoiceConnected";
+        public const string VoiceDisconnected = "VoiceDisconnected";
 
         // Network Events
         public const string NetworkConnectionInitiated = "NetworkConnectionInitiated";
@@ -58,8 +57,10 @@ namespace Vatsim.Xpilot.Core
         public const string NetworkServerListUpdated = "NetworkServerListUpdated";
         public const string FlightPlanReceived = "FlightPlanReceived";
         public const string RadioMessageReceived = "RadioMessageReceived";
+        public const string RadioMessageSent = "RadioMessageSent";
         public const string BroadcastMessageReceived = "BroadcastMessageReceived";
         public const string PrivateMessageReceived = "PrivateMessageReceived";
+        public const string PrivateMessageSent = "PrivateMessageSent";
         public const string ServerMessageReceived = "ServerMessageReceived";
         public const string DeleteControllerReceived = "DeleteControllerReceived";
         public const string DeletePilotReceived = "DeletePilotReceived";
@@ -76,11 +77,23 @@ namespace Vatsim.Xpilot.Core
         public const string AircraftInfoReceived = "AircraftInfoReceived";
         public const string MetarReceived = "MetarReceived";
         public const string SelcalAlertReceived = "SelcalAlertReceived";
+        public const string ControllerAdded = "ControllerAdded";
+        public const string ControllerDeleted = "ControllerDeleted";
+        public const string ControllerFrequencyChanged = "ControllerFrequencyChanged";
+        public const string ControllerSupportsNewInfoChanged = "ControllerSupportsNewInfoChanged";
+        public const string ControllerLocationChanged = "ControllerLocationChanged";
+        public const string RequestedAtisReceived = "RequestedAtisReceived";
+        public const string WallopSent = "WallopSent";
+
+        public const string AircraftDiscovered = "AircraftDiscovered";
+        public const string AircraftUpdated = "AircraftUpdated";
+        public const string AircraftDeleted = "AircraftDeleted";
 
         // Multiplayer
         public const string PlaneInfoReceived = "AircraftInfoReceived";
         public const string PilotPositionReceived = "PilotPositionReceived";
         public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
+        public const string UserAircraftConfigDataUpdated = "UserAircraftConfigDataUpdated";
         public const string ValidateCslPaths = "ValidateCslPaths";
     }
 }

@@ -22,7 +22,7 @@ using System.IO;
 using Vatsim.Xpilot.Config;
 using System.Linq;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public partial class SetXplanePath : SetupScreen, ISetupScreen
     {

@@ -15,16 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Vatsim.Xpilot.Aircrafts
 {
     public class RadioStackState
     {
+        public bool MasterSwitchOn { get; set; }
+        public bool AvionicsPowerOn { get; set; }
         public uint Com1ActiveFrequency { get; set; }
         public bool Com1TransmitEnabled { get; set; }
         public bool Com1ReceiveEnabled { get; set; }

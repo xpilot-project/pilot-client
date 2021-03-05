@@ -28,7 +28,7 @@ using Vatsim.Xpilot.Config;
 using Newtonsoft.Json;
 using SevenZip;
 
-namespace XPilot.PilotClient.Tutorial
+namespace Vatsim.Xpilot.Tutorial
 {
     public partial class CslConfiguration : SetupScreen, ISetupScreen
     {

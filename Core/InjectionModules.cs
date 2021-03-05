@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using XPilot.PilotClient.AudioForVatsim;
+using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.Simulator;
@@ -35,10 +35,10 @@ namespace Vatsim.Xpilot.Core
             Bind<ITabPages>().ToFactory();
             Bind<IEventBroker>().To(typeof(EventBroker)).InSingletonScope();
             Bind<IAppConfig>().To(typeof(AppConfig)).InSingletonScope();
-            Bind<IFsdManager>().To(typeof(FsdManager)).InSingletonScope();
+            Bind<INetworkManager>().To(typeof(NetworkManager)).InSingletonScope();
             Bind<IAFVManaged>().To(typeof(AFVManaged)).InSingletonScope();
             Bind<ISoundManager>().To(typeof(SoundManager)).InSingletonScope();
-            Bind<IXplaneConnectionManager>().To(typeof(XplaneConnectionManager)).InSingletonScope();
+            Bind<IXplaneAdapter>().To(typeof(XplaneAdapter)).InSingletonScope();
             Bind<IVersionCheck>().To(typeof(VersionCheck)).InSingletonScope();
             Bind<IUserAircraftManager>().To(typeof(UserAircraftManager)).InSingletonScope();
             Bind<INetworkAircraftManager>().To(typeof(NetworkAircraftManager)).InSingletonScope();

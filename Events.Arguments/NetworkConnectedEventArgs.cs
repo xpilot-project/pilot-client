@@ -18,7 +18,7 @@
 using System;
 using Vatsim.Xpilot.Networking;
 
-namespace Xpilot.Events.Arguments
+namespace Vatsim.Xpilot.Events.Arguments
 {
     public class NetworkConnectedEventArgs : EventArgs
     {

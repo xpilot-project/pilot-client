@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     partial class SettingsForm
     {
@@ -66,7 +66,7 @@ namespace XPilot.PilotClient
             this.volCom2 = new System.Windows.Forms.Label();
             this.chkFlashRadioMessage = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.vuMeter = new XPilot.PilotClient.LevelMeter();
+            this.vuMeter = new Vatsim.Xpilot.LevelMeter();
             ((System.ComponentModel.ISupportInitialize)(this.trackCom2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackCom1)).BeginInit();
             this.panel1.SuspendLayout();

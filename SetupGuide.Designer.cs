@@ -1,4 +1,4 @@
-﻿namespace XPilot.PilotClient
+﻿namespace Vatsim.Xpilot
 {
     partial class SetupGuide
     {

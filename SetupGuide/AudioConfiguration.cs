@@ -16,13 +16,11 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using XPilot.PilotClient.AudioForVatsim;
 using Appccelerate.EventBroker;
-using Appccelerate.EventBroker.Handlers;
-using XPilot.PilotClient.Core.Events;
+using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Config;
 
-namespace XPilot.PilotClient.Tutorial
+namespace Vatsim.Xpilot.Tutorial
 {
     public partial class AudioConfiguration : SetupScreen, ISetupScreen
     {

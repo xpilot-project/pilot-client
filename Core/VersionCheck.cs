@@ -24,14 +24,14 @@ using System.IO;
 using System.Net;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
-using XPilot.PilotClient.Core.Events;
+using Vatsim.Xpilot.Events.Arguments;
 
 namespace Vatsim.Xpilot.Core
 {
     public class VersionCheck : EventBus, IVersionCheck
     {
         [EventPublication(EventTopics.NotificationPosted)]
-        public event EventHandler<NotificationPosted> NotificationPosted;
+        public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
 
         private readonly IAppConfig mConfig;
         private const string ROOT_URL = "http://xpilot-project.org";
@@ -115,7 +115,7 @@ namespace Vatsim.Xpilot.Core
                                 if (json != null)
                                 {
                                     File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                    NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Aircraft type code database updated."));
+                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
                                 }
                             }
                         }
@@ -128,7 +128,7 @@ namespace Vatsim.Xpilot.Core
                             if (json != null)
                             {
                                 File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Aircraft type code database updated."));
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
                             }
 
                         }
@@ -137,7 +137,7 @@ namespace Vatsim.Xpilot.Core
             }
             catch (Exception ex)
             {
-                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Error downloading aircraft type code database: {ex.Message}"));
+                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error downloading aircraft type code database: {ex.Message}"));
             }
         }
 

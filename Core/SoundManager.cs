@@ -22,7 +22,7 @@ using System.Media;
 using Vatsim.Xpilot.Config;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using XPilot.PilotClient.Core.Events;
+using Vatsim.Xpilot.Events.Arguments;
 
 namespace Vatsim.Xpilot.Core
 {
@@ -94,7 +94,7 @@ namespace Vatsim.Xpilot.Core
         }
 
         [EventSubscription(EventTopics.PlayNotificationSound, typeof(OnUserInterfaceAsync))]
-        public void OnPlaySoundRequested(object sender, PlayNotificationSound e)
+        public void OnPlaySoundRequested(object sender, PlayNotifictionSoundEventArgs e)
         {
             Play(e.Sound);
         }

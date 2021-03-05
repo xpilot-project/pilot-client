@@ -19,7 +19,6 @@ using System;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Vatsim.Xpilot.Simulator;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
@@ -121,16 +120,16 @@ namespace Vatsim.Xpilot.Aircrafts
             return clone;
         }
 
-        internal static AircraftConfiguration FromUserAircraftData(UserAircraftData uad)
+        internal static AircraftConfiguration FromUserAircraftData(UserAircraftConfigData userAircraftConfigData)
         {
             AircraftConfiguration cfg = new AircraftConfiguration
             {
-                Lights = AircraftConfigurationLights.FromUserAircraftData(uad),
-                Engines = AircraftConfigurationEngines.FromUserAircraftData(uad),
-                GearDown = uad.GearDown,
-                FlapsPercent = RoundUpToNearest5(uad.Flaps),
-                SpoilersDeployed = uad.SpeedBrakeDeployed,
-                OnGround = uad.OnGround
+                Lights = AircraftConfigurationLights.FromUserAircraftData(userAircraftConfigData),
+                Engines = AircraftConfigurationEngines.FromUserAircraftData(userAircraftConfigData),
+                GearDown = userAircraftConfigData.GearDown,
+                FlapsPercent = RoundUpToNearest5(userAircraftConfigData.FlapsRatio),
+                SpoilersDeployed = userAircraftConfigData.SpoilersRatio != 0,
+                OnGround = userAircraftConfigData.OnGround
             };
             return cfg;
         }
@@ -220,15 +219,15 @@ namespace Vatsim.Xpilot.Aircrafts
             return clone;
         }
 
-        internal static AircraftConfigurationLights FromUserAircraftData(UserAircraftData uad)
+        internal static AircraftConfigurationLights FromUserAircraftData(UserAircraftConfigData userAircraftConfigData)
         {
             AircraftConfigurationLights acl = new AircraftConfigurationLights
             {
-                StrobesOn = uad.StrobeLightsOn,
-                LandingOn = uad.LandingLightsOn,
-                TaxiOn = uad.TaxiLightsOn,
-                BeaconOn = uad.BeaconLightsOn,
-                NavOn = uad.NavLightsOn
+                StrobesOn = userAircraftConfigData.StrobesOn,
+                LandingOn = userAircraftConfigData.LandingLightsOn,
+                TaxiOn = userAircraftConfigData.TaxiLightsOn,
+                BeaconOn = userAircraftConfigData.BeaconOn,
+                NavOn = userAircraftConfigData.NavLightOn
             };
             return acl;
         }
@@ -331,13 +330,13 @@ namespace Vatsim.Xpilot.Aircrafts
             return clone;
         }
 
-        internal static AircraftConfigurationEngines FromUserAircraftData(UserAircraftData uad)
+        internal static AircraftConfigurationEngines FromUserAircraftData(UserAircraftConfigData userAircraftConfigData)
         {
             AircraftConfigurationEngines ace = new AircraftConfigurationEngines();
-            if (uad.EngineCount >= 1) ace.Engine1 = AircraftConfigurationEngine.FromUserAircraftData(uad, 1);
-            if (uad.EngineCount >= 2) ace.Engine2 = AircraftConfigurationEngine.FromUserAircraftData(uad, 2);
-            if (uad.EngineCount >= 3) ace.Engine3 = AircraftConfigurationEngine.FromUserAircraftData(uad, 3);
-            if (uad.EngineCount >= 4) ace.Engine4 = AircraftConfigurationEngine.FromUserAircraftData(uad, 4);
+            if (userAircraftConfigData.EngineCount >= 1) ace.Engine1 = AircraftConfigurationEngine.FromUserAircraftData(userAircraftConfigData, 1);
+            if (userAircraftConfigData.EngineCount >= 2) ace.Engine2 = AircraftConfigurationEngine.FromUserAircraftData(userAircraftConfigData, 2);
+            if (userAircraftConfigData.EngineCount >= 3) ace.Engine3 = AircraftConfigurationEngine.FromUserAircraftData(userAircraftConfigData, 3);
+            if (userAircraftConfigData.EngineCount >= 4) ace.Engine4 = AircraftConfigurationEngine.FromUserAircraftData(userAircraftConfigData, 4);
             return ace;
         }
 
@@ -394,15 +393,15 @@ namespace Vatsim.Xpilot.Aircrafts
             return clone;
         }
 
-        internal static AircraftConfigurationEngine FromUserAircraftData(UserAircraftData uad, int engineNum)
+        internal static AircraftConfigurationEngine FromUserAircraftData(UserAircraftConfigData userAircraftConfigData, int engineNum)
         {
             AircraftConfigurationEngine ace = new AircraftConfigurationEngine();
             switch (engineNum)
             {
-                case 1: ace.Running = uad.Engine1Running; break;
-                case 2: ace.Running = uad.Engine2Running; break;
-                case 3: ace.Running = uad.Engine3Running; break;
-                case 4: ace.Running = uad.Engine4Running; break;
+                case 1: ace.Running = userAircraftConfigData.Engine1Running; break;
+                case 2: ace.Running = userAircraftConfigData.Engine2Running; break;
+                case 3: ace.Running = userAircraftConfigData.Engine3Running; break;
+                case 4: ace.Running = userAircraftConfigData.Engine4Running; break;
             }
             return ace;
         }

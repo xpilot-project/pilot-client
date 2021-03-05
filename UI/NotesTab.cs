@@ -16,19 +16,15 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using XPilot.PilotClient.Core.Events;
+using Vatsim.Xpilot.Events.Arguments;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public class NotesTab : TabPage
     {
-        private readonly ChatBox mChatBox;
+        private readonly MessageConsoleControl mChatBox;
         private Color mMessageColor = Color.FromArgb(224, 224, 224);
         private Color mErrorColor = Color.Red;
         private Color mNotificationColor = Color.Yellow;
@@ -54,25 +50,21 @@ namespace XPilot.PilotClient
             BackColor = Color.FromArgb(20, 22, 24);
             ForeColor = Color.Silver;
 
-            mChatBox = new ChatBox
+            mChatBox = new MessageConsoleControl
             {
                 Dock = DockStyle.Fill
             };
             Controls.Add(mChatBox);
-            mChatBox.TextCommandLine.TextCommandReceived += NotesTab_TextCommandReceived;
+            mChatBox.TextCommandLine.TextCommandReceived += TextCommandLine_TextCommandReceived;
         }
 
-        private void NotesTab_TextCommandReceived(object sender, ClientEventArgs<string> e)
+        private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
         {
-            if (e.Value.ToLower().Equals(".close"))
-            {
-                Dispose();
-            }
-            else if (e.Value.ToLower().Equals(".clear"))
+            if (e.Command.ToLower().Equals(".clear"))
             {
                 RichTextBox.Clear();
             }
-            else if (e.Value.ToLower().Equals(".copy"))
+            else if (e.Command.ToLower().Equals(".copy"))
             {
                 if (!string.IsNullOrEmpty(RichTextBox.Text))
                 {
@@ -82,7 +74,7 @@ namespace XPilot.PilotClient
             }
             else
             {
-                WriteMessage(mMessageColor, e.Value);
+                WriteMessage(mMessageColor, e.Command);
             }
         }
 

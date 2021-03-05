@@ -17,36 +17,29 @@
 */
 using System;
 using System.Collections.Generic;
-using XPilot.PilotClient.Core.Events;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
+using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Events.Arguments;
+using Vatsim.Xpilot.Networking;
 
 namespace Vatsim.Xpilot.Controllers
 {
     public class ControllerAtisManager : EventBus, IControllerAtisManager
     {
-        [EventPublication(EventTopics.AcarsResponseReceived)]
-        public event EventHandler<AcarsResponseReceived> RaiseAcarsResponseReceived;
+        [EventPublication(EventTopics.RequestedAtisReceived)]
+        public event EventHandler<RequestedAtisReceivedEventArgs> RequestAtisReceived;
 
-        private readonly IFsdManager mFsdManager;
+        private readonly INetworkManager mFsdManager;
         private readonly Dictionary<string, List<string>> mAtisReceived = new Dictionary<string, List<string>>();
 
-        public ControllerAtisManager(IEventBroker broker, IFsdManager fsdManager) : base(broker)
+        public ControllerAtisManager(IEventBroker broker, INetworkManager fsdManager) : base(broker)
         {
             mFsdManager = fsdManager;
         }
 
-        public void RequestControllerAtis(string callsign)
-        {
-            if (!mAtisReceived.ContainsKey(callsign))
-            {
-                mAtisReceived.Add(callsign, new List<string>());
-            }
-            mFsdManager.RequestControllerInfo(callsign);
-        }
-
-        [EventSubscription(EventTopics.ControllerInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnControllerInfoReceived(object sender, NetworkDataReceived e)
+        [EventSubscription(EventTopics.AtisLineReceived, typeof(OnUserInterfaceAsync))]
+        public void OnAtisLineReceived(object sender, NetworkDataReceivedEventArgs e)
         {
             if (mAtisReceived.ContainsKey(e.From))
             {
@@ -55,25 +48,28 @@ namespace Vatsim.Xpilot.Controllers
         }
 
         [EventSubscription(EventTopics.AtisEndReceived, typeof(OnUserInterfaceAsync))]
-        public void OnAtisEndReceived(object sender, NetworkDataReceived e)
+        public void OnAtisEndReceived(object sender, NetworkDataReceivedEventArgs e)
         {
             if (mAtisReceived.ContainsKey(e.From))
             {
-                RaiseAcarsResponseReceived?.Invoke(this, new AcarsResponseReceived(e.From, mAtisReceived[e.From]));
+                RequestAtisReceived?.Invoke(this, new RequestedAtisReceivedEventArgs(e.From, mAtisReceived[e.From]));
                 mAtisReceived.Remove(e.From);
             }
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkDisconnected(object sender, NetworkDisconnected e)
+        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
             mAtisReceived.Clear();
         }
 
-        [EventSubscription(EventTopics.AcarsRequestSent, typeof(OnUserInterfaceAsync))]
-        public void OnRequestControllerAtisReceived(object sender, NetworkDataReceived e)
+        public void RequestControllerAtis(string callsign)
         {
-            RequestControllerAtis(e.From);
+            if (!mAtisReceived.ContainsKey(callsign))
+            {
+                mAtisReceived.Add(callsign, new List<string>());
+                mFsdManager.RequestControlerInfo(callsign);
+            }
         }
     }
 }

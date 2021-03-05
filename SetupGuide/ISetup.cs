@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public interface ISetup
     {

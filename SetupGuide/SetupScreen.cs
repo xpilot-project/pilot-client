@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Networking;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public class SetupScreen : UserControl
     {

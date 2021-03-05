@@ -142,21 +142,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aircrafts\RadioStackState.cs" />
+    <Compile Include="Aircrafts\UserAircraftConfigData.cs" />
     <Compile Include="AudioForVatsim\AFVBindings.cs" />
     <Compile Include="AudioForVatsim\AFVEvents.cs" />
     <Compile Include="AudioForVatsim\AFVManaged.cs" />
     <Compile Include="AudioForVatsim\IAFVManaged.cs" />
     <Compile Include="AudioForVatsim\Station.cs" />
-    <Compile Include="Common\AudioUtils.cs" />
-    <Compile Include="Common\ComboboxExtensions.cs" />
     <Compile Include="Common\DictionaryExtensions.cs" />
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
-    <Compile Include="Common\JsonUtils.cs" />
-    <Compile Include="Common\ProtobufUtils.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
-    <Compile Include="Common\SerializationUtils.cs" />
     <Compile Include="Common\StringUtils.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
@@ -166,36 +162,6 @@
     <Compile Include="ConnectForm.Designer.cs">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core\Events\AcarsResponseReceived.cs" />
-    <Compile Include="Core\Events\ChatSessionStarted.cs" />
-    <Compile Include="Core\Events\ClientEventArgs.cs" />
-    <Compile Include="Core\Events\ControllerUpdateReceived.cs" />
-    <Compile Include="Core\Events\FlightPlanReceived.cs" />
-    <Compile Include="Core\Events\HFAliasChanged.cs" />
-    <Compile Include="Core\Events\IsValidATCReceived.cs" />
-    <Compile Include="Core\Events\MetarRequestSent.cs" />
-    <Compile Include="Core\Events\NetworkAircraftUpdateReceived.cs" />
-    <Compile Include="Core\Events\NetworkConnected.cs" />
-    <Compile Include="Core\Events\NetworkDataReceived.cs" />
-    <Compile Include="Core\Events\NetworkDisconnected.cs" />
-    <Compile Include="Core\Events\OverrideRadioStackState.cs" />
-    <Compile Include="Core\Events\PlaneInfoReceived.cs" />
-    <Compile Include="Core\Events\PlayNotificationSound.cs" />
-    <Compile Include="Core\Events\PrivateMessageReceived.cs" />
-    <Compile Include="Core\Events\PrivateMessageSent.cs" />
-    <Compile Include="Core\Events\PushToTalkStateChanged.cs" />
-    <Compile Include="Core\Events\RadioMessageReceived.cs" />
-    <Compile Include="Core\Events\RadioMessageSent.cs" />
-    <Compile Include="Core\Events\RadioRxStateChanged.cs" />
-    <Compile Include="Core\Events\RadioStackStateChanged.cs" />
-    <Compile Include="Core\Events\RadioTxStateChanged.cs" />
-    <Compile Include="Core\Events\RadioVolumeChanged.cs" />
-    <Compile Include="Core\Events\RequestControllerAtis.cs" />
-    <Compile Include="Core\Events\SelcalAlertReceived.cs" />
-    <Compile Include="Core\Events\SimulatorMessageSent.cs" />
-    <Compile Include="Core\Events\TransponderIdentStateChanged.cs" />
-    <Compile Include="Core\Events\UserAircraftDataChanged.cs" />
-    <Compile Include="Core\Events\WallopSent.cs" />
     <Compile Include="Core\ITabPages.cs" />
     <Compile Include="Core\IUserInterface.cs" />
     <Compile Include="Aircrafts\AircraftConfigurationInfo.cs" />
@@ -203,13 +169,17 @@
     <Compile Include="Aircrafts\NetworkAircraft.cs" />
     <Compile Include="Aircrafts\NetworkAircraftConfig.cs" />
     <Compile Include="Aircrafts\NetworkAircraftManager.cs" />
-    <Compile Include="Aircrafts\NetworkAircraftPose.cs" />
-    <Compile Include="Aircrafts\NetworkAircraftTransponder.cs" />
+    <Compile Include="Aircrafts\NetworkAircraftState.cs" />
     <Compile Include="Controllers\ControllerAtisManager.cs" />
     <Compile Include="Controllers\ControllerManager.cs" />
     <Compile Include="Controllers\IControllerAtisManager.cs" />
     <Compile Include="Controllers\IControllerManager.cs" />
+    <Compile Include="Events.Arguments\AircraftInfoReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\AircraftUpdatedEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftUpdateReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\ChatSessionStartedEventArgs.cs" />
+    <Compile Include="Events.Arguments\ComRadioTxRxChangedEventArgs.cs" />
+    <Compile Include="Events.Arguments\ControllerEventArgs.cs" />
     <Compile Include="Events.Arguments\ControllerUpdateReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\FlightPlanReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\IsValidAtcReceivedEventArgs.cs" />
@@ -218,30 +188,44 @@
     <Compile Include="Events.Arguments\NetworkDisconnectedEventArgs.cs" />
     <Compile Include="Events.Arguments\NotificationPostedEventArgs.cs" />
     <Compile Include="Events.Arguments\NotificationType.cs" />
+    <Compile Include="Events.Arguments\PlayNotifictionSoundEventArgs.cs" />
+    <Compile Include="Events.Arguments\PrivateMessageSentEventArgs.cs" />
+    <Compile Include="Events.Arguments\PushToTalkStateChangedEventArgs.cs" />
     <Compile Include="Events.Arguments\RadioMessageReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\RadioMessageSentEventArgs.cs" />
     <Compile Include="Events.Arguments\RadioStackStateChangedEventArgs.cs" />
+    <Compile Include="Events.Arguments\RadioVolumeChangedEventArgs.cs" />
     <Compile Include="Events.Arguments\RealNameRequestedEventArgs.cs" />
+    <Compile Include="Events.Arguments\RequestedAtisReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\SelcalAlertReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\TextCommandReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\UserAircraftConfigDataUpdatedEventArgs.cs" />
     <Compile Include="Events.Arguments\UserAircraftDataUpdatedEventArgs.cs" />
+    <Compile Include="Events.Arguments\WallopSentEventArgs.cs" />
     <Compile Include="Networking\FlightPlan.cs" />
-    <Compile Include="Networking\VatsimData.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Protobuf\AddPlanePb.cs" />
-    <Compile Include="Protobuf\ChangeModelPb.cs" />
+    <Compile Include="Protobuf\AddPlane.cs" />
+    <Compile Include="Protobuf\AirplaneConfig.cs" />
+    <Compile Include="Protobuf\ChangeModel.cs" />
     <Compile Include="Protobuf\ClearNearbyControllers.cs" />
-    <Compile Include="Protobuf\NearbyControllersPb.cs" />
-    <Compile Include="Protobuf\NetworkConnectedPb.cs" />
-    <Compile Include="Protobuf\NetworkDisconnectedPb.cs" />
-    <Compile Include="Protobuf\PlaneConfigPb.cs" />
-    <Compile Include="Protobuf\PositionUpdatePb.cs" />
-    <Compile Include="Protobuf\PrivateMessageReceivedPb.cs" />
-    <Compile Include="Protobuf\PrivateMessageSentPb.cs" />
-    <Compile Include="Protobuf\RemoveAllPlanesPb.cs" />
-    <Compile Include="Protobuf\RemovePlanePb.cs" />
+    <Compile Include="Protobuf\CSLValidate.cs" />
+    <Compile Include="Protobuf\NearbyControllers.cs" />
+    <Compile Include="Protobuf\NetworkConnected.cs" />
+    <Compile Include="Protobuf\NetworkDisconnected.cs" />
+    <Compile Include="Protobuf\PluginHash.cs" />
+    <Compile Include="Protobuf\PluginVersion.cs" />
+    <Compile Include="Protobuf\PositionUpdate.cs" />
+    <Compile Include="Protobuf\PrivateMessageReceived.cs" />
+    <Compile Include="Protobuf\PrivateMessageSent.cs" />
+    <Compile Include="Protobuf\RemoveAllPlanes.cs" />
+    <Compile Include="Protobuf\RemovePlane.cs" />
+    <Compile Include="Protobuf\SetTransponderCode.cs" />
+    <Compile Include="Protobuf\Wrapper.cs" />
+    <Compile Include="Protobuf\XplaneDatarefs.cs" />
     <Compile Include="SetupGuide.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -289,23 +273,17 @@
     <Compile Include="SetupGuide\WelcomeView.Designer.cs">
       <DependentUpon>WelcomeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Protobuf\CslValidatePb.cs" />
     <Compile Include="Simulator\IUserAircraftManager.cs" />
-    <Compile Include="Protobuf\PluginHashPb.cs" />
-    <Compile Include="Protobuf\PluginVersionPb.cs" />
-    <Compile Include="Simulator\UserAircraftData.cs" />
+    <Compile Include="Aircrafts\UserAircraftData.cs" />
     <Compile Include="Simulator\UserAircraftManager.cs" />
-    <Compile Include="Simulator\UserAircraftRadioStack.cs" />
     <Compile Include="Common\CallsignStringExtensions.cs" />
     <Compile Include="Common\SingleInstance.cs" />
-    <Compile Include="Common\SystemIdentifier.cs" />
     <Compile Include="Common\WindowProperties.cs" />
     <Compile Include="Common\WorldPoint.cs" />
     <Compile Include="Config\AppConfig.cs" />
     <Compile Include="Config\IAppConfig.cs" />
     <Compile Include="Core\EventBus.cs" />
     <Compile Include="Core\IEventBus.cs" />
-    <Compile Include="Core\Events\NotificationPosted.cs" />
     <Compile Include="Core\EventTopics.cs" />
     <Compile Include="Core\InjectionModules.cs" />
     <Compile Include="Core\ISoundManager.cs" />
@@ -320,8 +298,8 @@
     </Compile>
     <Compile Include="Networking\ConnectInfo.cs" />
     <Compile Include="Networking\DisconnectInfo.cs" />
-    <Compile Include="Networking\FsdManager.cs" />
-    <Compile Include="Networking\IFsdManager.cs" />
+    <Compile Include="Networking\NetworkManager.cs" />
+    <Compile Include="Networking\INetworkManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsForm.cs">
@@ -336,11 +314,11 @@
     <Compile Include="UpdateForm.Designer.cs">
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Ui\ChatBox.cs">
+    <Compile Include="Ui\MessageConsoleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Ui\ChatBox.Designer.cs">
-      <DependentUpon>ChatBox.cs</DependentUpon>
+    <Compile Include="Ui\MessageConsoleControl.Designer.cs">
+      <DependentUpon>MessageConsoleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Ui\TransparentClickLabel.cs">
       <SubType>Component</SubType>
@@ -370,12 +348,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controllers\Controller.cs" />
-    <Compile Include="Simulator\IXplaneConnectionManager.cs" />
-    <Compile Include="Simulator\WhosOnlineList.cs" />
-    <Compile Include="Protobuf\WrapperPb.cs" />
-    <Compile Include="Simulator\XplaneConnect.cs" />
-    <Compile Include="Simulator\XplaneConnectionManager.cs" />
-    <Compile Include="Protobuf\XplaneDataPb.cs" />
+    <Compile Include="Simulator\IXplaneAdapter.cs" />
+    <Compile Include="Simulator\XplaneAdapter.cs" />
     <EmbeddedResource Include="ConnectForm.resx">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </EmbeddedResource>

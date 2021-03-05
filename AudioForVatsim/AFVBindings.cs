@@ -15,103 +15,98 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace XPilot.PilotClient.AudioForVatsim
+namespace Vatsim.Xpilot.AudioForVatsim
 {
     public class AFVBindings
     {
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool isClientInitialized();
+        public static extern bool IsClientInitialized();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void DictionaryAdd(int key, string value);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void initialize(string resourcePath, int numRadios, string clientName);
+        public static extern void Initialize(string resourcePath, int numRadios, string clientName);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setBaseUrl(string url);
+        public static extern void SetBaseUrl(string url);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void destroy();
+        public static extern void Destroy();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool isAPIConnected();
+        public static extern bool IsAPIConnected();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool isVoiceConnected();
+        public static extern bool IsVoiceConnected();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool afvConnect();
+        public static extern bool AfvConnect();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void afvDisconnect();
+        public static extern void AfvDisconnect();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setCredentials(string username, string password);
+        public static extern void SetCredentials(string username, string password);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setCallsign(string callsign);
+        public static extern void SetCallsign(string callsign);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setClientPosition(double lat, double lon, double amslm, double aglm);
+        public static extern void SetClientPosition(double lat, double lon, double amslm, double aglm);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setRadioState(uint radioNum, int freq);
+        public static extern void SetRadioState(uint radioNum, int freq);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setRadioGain(uint radioNum, float gain);
+        public static extern void SetRadioGain(uint radioNum, float gain);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setTxRadio(uint radioNum);
+        public static extern void SetTxRadio(uint radioNum);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setPtt(bool ptt);
+        public static extern void SetPtt(bool ptt);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool getEnableInputFilters();
+        public static extern bool GetEnableInputFilters();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setEnableInputFilters(bool enabelInputFilters);
+        public static extern void SetEnableInputFilters(bool enabelInputFilters);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setEnableOutputEffects(bool enableOutputEffects);
+        public static extern void SetEnableOutputEffects(bool enableOutputEffects);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setEnableHfSquelch(bool enableSquelch);
+        public static extern void SetEnableHfSquelch(bool enableSquelch);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void getAudioApis(DictionaryAdd callback);
+        public static extern void GetAudioApis(DictionaryAdd callback);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setAudioApi(string api);
+        public static extern void GetAudioApi(string api);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setAudioDevice();
+        public static extern void SetAudioDevice();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void getOutputDevices(DictionaryAdd callback);
+        public static extern void GetOutputDevices(DictionaryAdd callback);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void getInputDevices(DictionaryAdd callback);
+        public static extern void GetInputDevices(DictionaryAdd callback);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setAudioInputDevice(string inputDevice);
+        public static extern void SetAudioInputDevice(string inputDevice);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void setAudioOutputDevice(string outputDevice);
+        public static extern void SetAudioOutputDevice(string outputDevice);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern double getInputPeak();
+        public static extern double GetInputPeak();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern double getInputVu();
+        public static extern double GetInputVu();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void EventCallback(AFVEvents evt, int data);
@@ -123,13 +118,13 @@ namespace XPilot.PilotClient.AudioForVatsim
         public delegate void AfvStationCallback(string id, string callsign, uint frequency, uint frequencyAlias);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void getStationAliases(AfvStationCallback fn);
+        public static extern void GetStationAliases(AfvStationCallback fn);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void startAudio();
+        public static extern void StartAudio();
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void stopAudio();
+        public static extern void StopAudio();
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void RxCallsignCallback(uint id, uint count);

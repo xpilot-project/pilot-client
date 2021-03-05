@@ -24,7 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public class CustomTabControl : TabControl
     {

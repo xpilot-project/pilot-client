@@ -20,13 +20,13 @@ using System.Windows.Forms;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Networking;
 
-namespace XPilot.PilotClient.Tutorial
+namespace Vatsim.Xpilot.Tutorial
 {
     public partial class NetworkCredentials : SetupScreen,ISetupScreen
     {
-        private IFsdManager mNetworkManager;
+        private INetworkManager mNetworkManager;
 
-        public NetworkCredentials(ISetup host, IAppConfig config, IFsdManager network) : base(host, config)
+        public NetworkCredentials(ISetup host, IAppConfig config, INetworkManager network) : base(host, config)
         {
             InitializeComponent();
             Host.SetTitle("Network Credentials");

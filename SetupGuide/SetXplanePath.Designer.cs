@@ -1,4 +1,4 @@
-﻿namespace XPilot.PilotClient
+﻿namespace Vatsim.Xpilot
 {
     partial class SetXplanePath
     {
@@ -92,7 +92,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::XPilot.PilotClient.Properties.Resources.xPilot_Logo;
+            this.pictureBox1.Image = global::Vatsim.Xpilot.Properties.Resources.xPilot_Logo;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(488, 87);

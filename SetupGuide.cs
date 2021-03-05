@@ -18,17 +18,17 @@
 using System;
 using System.Windows.Forms;
 using Vatsim.Xpilot.Config;
-using XPilot.PilotClient.Tutorial;
+using Vatsim.Xpilot.Tutorial;
 using Vatsim.Xpilot.Networking;
-using XPilot.PilotClient.AudioForVatsim;
+using Vatsim.Xpilot.AudioForVatsim;
 using Appccelerate.EventBroker;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public partial class SetupGuide : Form, ISetup
     {
         private IEventBroker mEventBroker;
-        private IFsdManager mNetworkManager;
+        private INetworkManager mNetworkManager;
         private IAFVManaged mAudio;
         private IAppConfig mConfig;
         public SetupScreen CurrentScreen { get; private set; }
@@ -36,7 +36,7 @@ namespace XPilot.PilotClient
         public bool XSwiftBus { get; set; }
         public string XplanePath { get; set; }
 
-        public SetupGuide(IEventBroker eventBroker, IAppConfig config, IFsdManager network, IAFVManaged audio)
+        public SetupGuide(IEventBroker eventBroker, IAppConfig config, INetworkManager network, IAFVManaged audio)
         {
             InitializeComponent();
             mConfig = config;

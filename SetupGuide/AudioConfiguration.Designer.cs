@@ -1,4 +1,4 @@
-﻿namespace XPilot.PilotClient.Tutorial
+﻿namespace Vatsim.Xpilot.Tutorial
 {
     partial class AudioConfiguration
     {
@@ -40,7 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.audioOutputDevice = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.levelMeterInput = new XPilot.PilotClient.LevelMeter();
+            this.levelMeterInput = new Vatsim.Xpilot.LevelMeter();
             this.label3 = new System.Windows.Forms.Label();
             this.inputVolume = new System.Windows.Forms.TrackBar();
             this.lblAudioHelp = new System.Windows.Forms.Label();
@@ -106,7 +106,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::XPilot.PilotClient.Properties.Resources.xPilot_Logo;
+            this.pictureBox1.Image = global::Vatsim.Xpilot.Properties.Resources.xPilot_Logo;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(418, 104);

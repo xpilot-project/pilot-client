@@ -18,9 +18,9 @@
 using System;
 using System.Windows.Forms;
 using Vatsim.Xpilot.Aircrafts;
-using Vatsim.Xpilot.Config;
-using XPilot.PilotClient.Core.Events;
 using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Events.Arguments;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 
@@ -32,52 +32,35 @@ namespace Vatsim.Xpilot.Simulator
         private const int ACCONFIG_MAX_TOKENS = 10;
 
         private Timer mAcconfigTokenRefreshTimer;
-        private int mAcconfigAvailableTokens = ACCONFIG_MAX_TOKENS;
-        private AircraftConfiguration mLastBroadcastConfig;
-        private bool mInitialAircraftDataReceived = false;
-        private bool mAirborne = false;
-        private readonly IAppConfig mConfig;
-        private readonly IFsdManager mFsdManager;
+        private int mTokensRemaining = ACCONFIG_MAX_TOKENS;
+        private AircraftConfiguration mLastSentConfig;
+        private UserAircraftConfigData mUserAircraftConfigData;
+        private readonly INetworkManager mFsdManager;
 
-        public UserAircraftData UserAircraftData { get; private set; }
-
-        public UserAircraftManager(IEventBroker broker, IAppConfig config, IFsdManager fsdManager) : base(broker)
+        public UserAircraftManager(IEventBroker broker, INetworkManager fsdManager) : base(broker)
         {
-            mConfig = config;
             mFsdManager = fsdManager;
-            InitializeTimers();
-        }
-
-        private void InitializeTimers()
-        {
             mAcconfigTokenRefreshTimer = new Timer
             {
                 Interval = ACCONFIG_TOKEN_REFRESH_INTERVAL
             };
             mAcconfigTokenRefreshTimer.Tick += AcconfigTokenRefreshTimer_Tick;
         }
-        private void AcconfigTokenRefreshTimer_Tick(object sender, EventArgs e)
-        {
-            if (mAcconfigAvailableTokens < ACCONFIG_MAX_TOKENS)
-            {
-                mAcconfigAvailableTokens++;
-            }
-        }
 
-        [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnMainFormShown(object sender, EventArgs e)
+        [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
+        public void OnSessionStarted(object sender, EventArgs e)
         {
             mAcconfigTokenRefreshTimer.Start();
         }
 
-        [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnMainFormClosed(object sender, EventArgs e)
+        [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
+        public void OnSessionEnded(object sender, EventArgs e)
         {
             mAcconfigTokenRefreshTimer.Stop();
         }
 
         [EventSubscription(EventTopics.AircraftConfigurationInfoReceived, typeof(OnUserInterfaceAsync))]
-        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceived e)
+        public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceivedEventArgs e)
         {
             AircraftConfigurationInfo info;
             try
@@ -88,61 +71,46 @@ namespace Vatsim.Xpilot.Simulator
             {
                 return;
             }
-            if (info.Request.HasValue)
+            if (info.Request.HasValue && info.Request.Value == AircraftConfigurationInfo.RequestType.Full)
             {
-                switch (info.Request.Value)
-                {
-                    case AircraftConfigurationInfo.RequestType.Full:
-                        {
-                            AircraftConfiguration cfg = AircraftConfiguration.FromUserAircraftData(UserAircraftData);
-                            cfg.IsFullData = true;
-                            mFsdManager.SendAircraftConfiguration(e.From, cfg);
-                            break;
-                        }
-                }
+                AircraftConfiguration cfg = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
+                cfg.IsFullData = true;
+                mFsdManager.SendAircraftConfigurationUpdate(e.From, cfg);
             }
         }
 
-        [EventSubscription(EventTopics.UserAircraftDataChanged, typeof(OnUserInterfaceAsync))]
-        public void OnUserAircraftDataUpdated(object sender, UserAircraftDataChanged e)
+        [EventSubscription(EventTopics.UserAircraftConfigDataUpdated, typeof(OnUserInterfaceAsync))]
+        public void OnUserAircraftConfigDataUpdated(object sender, UserAircraftConfigDataUpdatedEventArgs e)
         {
-            if (UserAircraftData == null || !UserAircraftData.Equals(e.AircraftData))
+            mUserAircraftConfigData = e.UserAircraftConfigData;
+            if (mUserAircraftConfigData != null && mFsdManager.IsConnected)
             {
-                UserAircraftData = e.AircraftData;
-            }
-
-            if ((mLastBroadcastConfig == null) || !mFsdManager.IsConnected)
-            {
-                mLastBroadcastConfig = AircraftConfiguration.FromUserAircraftData(UserAircraftData);
-            }
-            else if (mAcconfigAvailableTokens > 0)
-            {
-                AircraftConfiguration newCfg = AircraftConfiguration.FromUserAircraftData(UserAircraftData);
-                if (!newCfg.Equals(mLastBroadcastConfig))
+                if (mTokensRemaining > 0)
                 {
-                    AircraftConfiguration incremental = mLastBroadcastConfig.CreateIncremental(newCfg);
-                    mFsdManager.SendIncrementalAircraftConfigurationUpdate(incremental);
-                    mLastBroadcastConfig = newCfg;
-                    mAcconfigAvailableTokens--;
+                    AircraftConfiguration aircraftConfiguration = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
+                    if (!aircraftConfiguration.Equals(mLastSentConfig))
+                    {
+                        AircraftConfiguration incrementalConfig = mLastSentConfig.CreateIncremental(aircraftConfiguration);
+                        mFsdManager.SendAircraftConfigurationUpdate(incrementalConfig);
+                        mLastSentConfig = aircraftConfiguration;
+                        mTokensRemaining--;
+                    }
                 }
             }
-            bool wasAirborne = mAirborne;
-            mAirborne = !UserAircraftData.OnGround;
-            //if (mInitialAircraftDataReceived && !wasAirborne && mAirborne && !mConfig.SquawkingModeC && mConfig.AutoSquawkModeC)
-            //{
-            //    var laminarB738 = new XPlaneConnector.DataRefElement
-            //    {
-            //        DataRef = "laminar/B738/knob/transpoder_pos"
-            //    };
+            else
+            {
+                mLastSentConfig = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
+            }
 
-            //    var laminarB738_Dn_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
-            //    var laminarB738_Up_Cmd = new XPlaneConnector.XPlaneCommand("laminar/B738/knob/transponder_mode_up", "");
+            // auto squawk mode c
+        }
 
-            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(laminarB738_Up_Cmd));
-            //    SetXplaneDataRefValue?.Invoke(this, new DataRefEventArgs(laminarB738, 3));
-            //    SendXplaneCommand?.Invoke(this, new ClientEventArgs<XPlaneConnector.XPlaneCommand>(XPlaneConnector.Commands.TransponderTransponderAlt));
-            //}
-            mInitialAircraftDataReceived = true;
+        private void AcconfigTokenRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            if (mTokensRemaining < ACCONFIG_MAX_TOKENS)
+            {
+                mTokensRemaining++;
+            }
         }
     }
 }

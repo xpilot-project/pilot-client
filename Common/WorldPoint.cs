@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-
 namespace Vatsim.Xpilot.Common
 {
     public struct WorldPoint
@@ -28,14 +26,6 @@ namespace Vatsim.Xpilot.Common
             this = default;
             Lat = lat;
             Lon = lon;
-        }
-        private static double RadiansToDegrees(double radians)
-        {
-            return radians / Math.PI * 180.0;
-        }
-        private static double DegreesToRadians(double degrees)
-        {
-            return degrees * 0.0174532925;
         }
         public override string ToString()
         {

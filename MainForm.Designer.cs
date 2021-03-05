@@ -1,6 +1,6 @@
-﻿using XPilot.PilotClient;
+﻿using Vatsim.Xpilot;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     partial class MainForm
     {
@@ -37,43 +37,44 @@ namespace XPilot.PilotClient
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Ground   ");
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("ATIS   ");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Observers");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.controllerTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.requestControllerInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.startPrivateChat = new System.Windows.Forms.ToolStripMenuItem();
+            this.tuneCom1Frequency = new System.Windows.Forms.ToolStripMenuItem();
             this.bwVersionCheck = new System.ComponentModel.BackgroundWorker();
             this.hfTooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.pnlTabs = new XPilot.PilotClient.TransparentClickPanel();
-            this.tabControl = new XPilot.PilotClient.CustomTabControl();
-            this.tabPageMessages = new System.Windows.Forms.TabPage();
-            this.ChatMessageBox = new XPilot.PilotClient.ChatBox();
-            this.pnlToolbar = new XPilot.PilotClient.TransparentClickPanel();
-            this.btnIdent = new XPilot.PilotClient.FlatButton();
-            this.chkModeC = new XPilot.PilotClient.FlatButton();
-            this.btnMinimize = new XPilot.PilotClient.FlatButton();
-            this.btnClose = new XPilot.PilotClient.FlatButton();
-            this.lblCallsign = new XPilot.PilotClient.TransparentClickLabel();
-            this.btnSettings = new XPilot.PilotClient.FlatButton();
-            this.btnFlightPlan = new XPilot.PilotClient.FlatButton();
-            this.btnConnect = new XPilot.PilotClient.FlatButton();
-            this.pnlSidebar = new XPilot.PilotClient.TransparentClickPanel();
-            this.pnlTreeContainer = new XPilot.PilotClient.TransparentClickPanel();
-            this.treeControllers = new System.Windows.Forms.TreeView();
-            this.lblControllers = new XPilot.PilotClient.TransparentClickLabel();
-            this.pnlComRadios = new XPilot.PilotClient.TransparentClickPanel();
-            this.Com2RX = new XPilot.PilotClient.TransparentClickLabel();
-            this.Com2TX = new XPilot.PilotClient.TransparentClickLabel();
-            this.Com2Freq = new XPilot.PilotClient.TransparentClickLabel();
-            this.lblCom2 = new XPilot.PilotClient.TransparentClickLabel();
-            this.Com1RX = new XPilot.PilotClient.TransparentClickLabel();
-            this.Com1TX = new XPilot.PilotClient.TransparentClickLabel();
-            this.Com1Freq = new XPilot.PilotClient.TransparentClickLabel();
-            this.lblCom1 = new XPilot.PilotClient.TransparentClickLabel();
-            this.tuneCom1Frequency = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnlTabs = new Vatsim.Xpilot.TransparentClickPanel();
+            this.TabsMain = new Vatsim.Xpilot.CustomTabControl();
+            this.TabPageMessages = new System.Windows.Forms.TabPage();
+            this.RtfMessages = new Vatsim.Xpilot.MessageConsoleControl();
+            this.pnlToolbar = new Vatsim.Xpilot.TransparentClickPanel();
+            this.ChkIdent = new Vatsim.Xpilot.FlatButton();
+            this.ChkModeC = new Vatsim.Xpilot.FlatButton();
+            this.BtnMinimize = new Vatsim.Xpilot.FlatButton();
+            this.BtnExit = new Vatsim.Xpilot.FlatButton();
+            this.LblCallsign = new Vatsim.Xpilot.TransparentClickLabel();
+            this.BtnSettings = new Vatsim.Xpilot.FlatButton();
+            this.BtnFlightPlan = new Vatsim.Xpilot.FlatButton();
+            this.BtnConnect = new Vatsim.Xpilot.FlatButton();
+            this.pnlSidebar = new Vatsim.Xpilot.TransparentClickPanel();
+            this.pnlTreeContainer = new Vatsim.Xpilot.TransparentClickPanel();
+            this.TreeControllers = new System.Windows.Forms.TreeView();
+            this.lblControllers = new Vatsim.Xpilot.TransparentClickLabel();
+            this.pnlComRadios = new Vatsim.Xpilot.TransparentClickPanel();
+            this.Com2RX = new Vatsim.Xpilot.TransparentClickLabel();
+            this.Com2TX = new Vatsim.Xpilot.TransparentClickLabel();
+            this.Com2Freq = new Vatsim.Xpilot.TransparentClickLabel();
+            this.lblCom2 = new Vatsim.Xpilot.TransparentClickLabel();
+            this.Com1RX = new Vatsim.Xpilot.TransparentClickLabel();
+            this.Com1TX = new Vatsim.Xpilot.TransparentClickLabel();
+            this.Com1Freq = new Vatsim.Xpilot.TransparentClickLabel();
+            this.lblCom1 = new Vatsim.Xpilot.TransparentClickLabel();
             this.controllerTreeContextMenu.SuspendLayout();
             this.pnlTabs.SuspendLayout();
-            this.tabControl.SuspendLayout();
-            this.tabPageMessages.SuspendLayout();
+            this.TabsMain.SuspendLayout();
+            this.TabPageMessages.SuspendLayout();
             this.pnlToolbar.SuspendLayout();
             this.pnlSidebar.SuspendLayout();
             this.pnlTreeContainer.SuspendLayout();
@@ -87,27 +88,31 @@ namespace XPilot.PilotClient
             this.startPrivateChat,
             this.tuneCom1Frequency});
             this.controllerTreeContextMenu.Name = "contextMenuStrip1";
-            this.controllerTreeContextMenu.Size = new System.Drawing.Size(197, 92);
+            this.controllerTreeContextMenu.Size = new System.Drawing.Size(197, 70);
             // 
             // requestControllerInfo
             // 
             this.requestControllerInfo.Name = "requestControllerInfo";
             this.requestControllerInfo.Size = new System.Drawing.Size(196, 22);
             this.requestControllerInfo.Text = "Request Controller Info";
-            this.requestControllerInfo.Click += new System.EventHandler(this.requestControllerInfo_Click);
             // 
             // startPrivateChat
             // 
             this.startPrivateChat.Name = "startPrivateChat";
             this.startPrivateChat.Size = new System.Drawing.Size(196, 22);
             this.startPrivateChat.Text = "Start Private Chat";
-            this.startPrivateChat.Click += new System.EventHandler(this.startPrivateChat_Click);
+            // 
+            // tuneCom1Frequency
+            // 
+            this.tuneCom1Frequency.Name = "tuneCom1Frequency";
+            this.tuneCom1Frequency.Size = new System.Drawing.Size(196, 22);
+            this.tuneCom1Frequency.Text = "Tune COM1 Frequency";
             // 
             // pnlTabs
             // 
             this.pnlTabs.BackColor = System.Drawing.Color.Transparent;
             this.pnlTabs.BorderColor = System.Drawing.Color.Transparent;
-            this.pnlTabs.Controls.Add(this.tabControl);
+            this.pnlTabs.Controls.Add(this.TabsMain);
             this.pnlTabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTabs.Location = new System.Drawing.Point(189, 61);
             this.pnlTabs.Name = "pnlTabs";
@@ -115,206 +120,205 @@ namespace XPilot.PilotClient
             this.pnlTabs.Size = new System.Drawing.Size(540, 148);
             this.pnlTabs.TabIndex = 2;
             // 
-            // tabControl
+            // TabsMain
             // 
-            this.tabControl.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
-            this.tabControl.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(92)))), ((int)(((byte)(92)))));
-            this.tabControl.Controls.Add(this.tabPageMessages);
-            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.tabControl.ItemSize = new System.Drawing.Size(100, 21);
-            this.tabControl.Location = new System.Drawing.Point(10, 10);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(520, 128);
-            this.tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.tabControl.TabIndex = 1;
-            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
+            this.TabsMain.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
+            this.TabsMain.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(92)))), ((int)(((byte)(92)))), ((int)(((byte)(92)))));
+            this.TabsMain.Controls.Add(this.TabPageMessages);
+            this.TabsMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TabsMain.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
+            this.TabsMain.ItemSize = new System.Drawing.Size(100, 21);
+            this.TabsMain.Location = new System.Drawing.Point(10, 10);
+            this.TabsMain.Name = "TabsMain";
+            this.TabsMain.SelectedIndex = 0;
+            this.TabsMain.Size = new System.Drawing.Size(520, 128);
+            this.TabsMain.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.TabsMain.TabIndex = 1;
             // 
-            // tabPageMessages
+            // TabPageMessages
             // 
-            this.tabPageMessages.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
-            this.tabPageMessages.Controls.Add(this.ChatMessageBox);
-            this.tabPageMessages.ForeColor = System.Drawing.Color.Silver;
-            this.tabPageMessages.Location = new System.Drawing.Point(4, 25);
-            this.tabPageMessages.Name = "tabPageMessages";
-            this.tabPageMessages.Size = new System.Drawing.Size(512, 99);
-            this.tabPageMessages.TabIndex = 0;
-            this.tabPageMessages.Text = "Messages";
+            this.TabPageMessages.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(22)))), ((int)(((byte)(24)))));
+            this.TabPageMessages.Controls.Add(this.RtfMessages);
+            this.TabPageMessages.ForeColor = System.Drawing.Color.Silver;
+            this.TabPageMessages.Location = new System.Drawing.Point(4, 25);
+            this.TabPageMessages.Name = "TabPageMessages";
+            this.TabPageMessages.Size = new System.Drawing.Size(512, 99);
+            this.TabPageMessages.TabIndex = 0;
+            this.TabPageMessages.Text = "Messages";
             // 
-            // ChatMessageBox
+            // RtfMessages
             // 
-            this.ChatMessageBox.BackColor = System.Drawing.Color.Black;
-            this.ChatMessageBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ChatMessageBox.Location = new System.Drawing.Point(0, 0);
-            this.ChatMessageBox.Margin = new System.Windows.Forms.Padding(0);
-            this.ChatMessageBox.Name = "ChatMessageBox";
-            this.ChatMessageBox.Size = new System.Drawing.Size(512, 99);
-            this.ChatMessageBox.TabIndex = 0;
+            this.RtfMessages.BackColor = System.Drawing.Color.Black;
+            this.RtfMessages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RtfMessages.Location = new System.Drawing.Point(0, 0);
+            this.RtfMessages.Margin = new System.Windows.Forms.Padding(0);
+            this.RtfMessages.Name = "RtfMessages";
+            this.RtfMessages.Size = new System.Drawing.Size(512, 99);
+            this.RtfMessages.TabIndex = 0;
             // 
             // pnlToolbar
             // 
             this.pnlToolbar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
             this.pnlToolbar.BorderColor = System.Drawing.Color.Transparent;
-            this.pnlToolbar.Controls.Add(this.btnIdent);
-            this.pnlToolbar.Controls.Add(this.chkModeC);
-            this.pnlToolbar.Controls.Add(this.btnMinimize);
-            this.pnlToolbar.Controls.Add(this.btnClose);
-            this.pnlToolbar.Controls.Add(this.lblCallsign);
-            this.pnlToolbar.Controls.Add(this.btnSettings);
-            this.pnlToolbar.Controls.Add(this.btnFlightPlan);
-            this.pnlToolbar.Controls.Add(this.btnConnect);
+            this.pnlToolbar.Controls.Add(this.ChkIdent);
+            this.pnlToolbar.Controls.Add(this.ChkModeC);
+            this.pnlToolbar.Controls.Add(this.BtnMinimize);
+            this.pnlToolbar.Controls.Add(this.BtnExit);
+            this.pnlToolbar.Controls.Add(this.LblCallsign);
+            this.pnlToolbar.Controls.Add(this.BtnSettings);
+            this.pnlToolbar.Controls.Add(this.BtnFlightPlan);
+            this.pnlToolbar.Controls.Add(this.BtnConnect);
             this.pnlToolbar.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlToolbar.Location = new System.Drawing.Point(189, 1);
             this.pnlToolbar.Name = "pnlToolbar";
             this.pnlToolbar.Size = new System.Drawing.Size(540, 60);
             this.pnlToolbar.TabIndex = 1;
             // 
-            // btnIdent
+            // ChkIdent
             // 
-            this.btnIdent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnIdent.Clicked = false;
-            this.btnIdent.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnIdent.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnIdent.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnIdent.Enabled = false;
-            this.btnIdent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnIdent.ForeColor = System.Drawing.Color.White;
-            this.btnIdent.Location = new System.Drawing.Point(177, 19);
-            this.btnIdent.Name = "btnIdent";
-            this.btnIdent.Pushed = false;
-            this.btnIdent.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnIdent.Size = new System.Drawing.Size(75, 23);
-            this.btnIdent.TabIndex = 8;
-            this.btnIdent.Text = "Ident";
-            this.btnIdent.Click += new System.EventHandler(this.btnIdent_Click);
+            this.ChkIdent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.ChkIdent.Clicked = false;
+            this.ChkIdent.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.ChkIdent.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ChkIdent.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.ChkIdent.Enabled = false;
+            this.ChkIdent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChkIdent.ForeColor = System.Drawing.Color.White;
+            this.ChkIdent.Location = new System.Drawing.Point(176, 19);
+            this.ChkIdent.Name = "ChkIdent";
+            this.ChkIdent.Pushed = false;
+            this.ChkIdent.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.ChkIdent.Size = new System.Drawing.Size(75, 23);
+            this.ChkIdent.TabIndex = 8;
+            this.ChkIdent.Text = "Ident";
+            this.ChkIdent.Click += new System.EventHandler(this.ChkIdent_Click);
             // 
-            // chkModeC
+            // ChkModeC
             // 
-            this.chkModeC.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.chkModeC.Clicked = false;
-            this.chkModeC.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.chkModeC.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.chkModeC.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.chkModeC.Enabled = false;
-            this.chkModeC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkModeC.ForeColor = System.Drawing.Color.White;
-            this.chkModeC.Location = new System.Drawing.Point(93, 19);
-            this.chkModeC.Name = "chkModeC";
-            this.chkModeC.Pushed = false;
-            this.chkModeC.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.chkModeC.Size = new System.Drawing.Size(75, 23);
-            this.chkModeC.TabIndex = 7;
-            this.chkModeC.Text = "Mode C";
-            this.chkModeC.Click += new System.EventHandler(this.chkModeC_Click);
+            this.ChkModeC.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.ChkModeC.Clicked = false;
+            this.ChkModeC.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.ChkModeC.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ChkModeC.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.ChkModeC.Enabled = false;
+            this.ChkModeC.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChkModeC.ForeColor = System.Drawing.Color.White;
+            this.ChkModeC.Location = new System.Drawing.Point(95, 19);
+            this.ChkModeC.Name = "ChkModeC";
+            this.ChkModeC.Pushed = false;
+            this.ChkModeC.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.ChkModeC.Size = new System.Drawing.Size(75, 23);
+            this.ChkModeC.TabIndex = 7;
+            this.ChkModeC.Text = "Mode C";
+            this.ChkModeC.Click += new System.EventHandler(this.ChkModeC_Click);
             // 
-            // btnMinimize
+            // BtnMinimize
             // 
-            this.btnMinimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMinimize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnMinimize.Clicked = false;
-            this.btnMinimize.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnMinimize.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnMinimize.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMinimize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.btnMinimize.Location = new System.Drawing.Point(484, 19);
-            this.btnMinimize.Name = "btnMinimize";
-            this.btnMinimize.Pushed = false;
-            this.btnMinimize.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnMinimize.Size = new System.Drawing.Size(20, 23);
-            this.btnMinimize.TabIndex = 6;
-            this.btnMinimize.Text = "–";
-            this.btnMinimize.Click += new System.EventHandler(this.btnMinimize_Click);
+            this.BtnMinimize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnMinimize.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.BtnMinimize.Clicked = false;
+            this.BtnMinimize.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnMinimize.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnMinimize.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnMinimize.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+            this.BtnMinimize.Location = new System.Drawing.Point(484, 19);
+            this.BtnMinimize.Name = "BtnMinimize";
+            this.BtnMinimize.Pushed = false;
+            this.BtnMinimize.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnMinimize.Size = new System.Drawing.Size(20, 23);
+            this.BtnMinimize.TabIndex = 6;
+            this.BtnMinimize.Text = "–";
+            this.BtnMinimize.Click += new System.EventHandler(this.BtnMinimize_Click);
             // 
-            // btnClose
+            // BtnExit
             // 
-            this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(207)))), ((int)(((byte)(94)))), ((int)(((byte)(57)))));
-            this.btnClose.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
-            this.btnClose.Clicked = false;
-            this.btnClose.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClose.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnClose.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Location = new System.Drawing.Point(510, 19);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Pushed = false;
-            this.btnClose.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
-            this.btnClose.Size = new System.Drawing.Size(20, 23);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = "X";
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.BtnExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnExit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(207)))), ((int)(((byte)(94)))), ((int)(((byte)(57)))));
+            this.BtnExit.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
+            this.BtnExit.Clicked = false;
+            this.BtnExit.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnExit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnExit.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnExit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnExit.ForeColor = System.Drawing.Color.White;
+            this.BtnExit.Location = new System.Drawing.Point(510, 19);
+            this.BtnExit.Name = "BtnExit";
+            this.BtnExit.Pushed = false;
+            this.BtnExit.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(76)))), ((int)(((byte)(60)))));
+            this.BtnExit.Size = new System.Drawing.Size(20, 23);
+            this.BtnExit.TabIndex = 2;
+            this.BtnExit.Text = "X";
+            this.BtnExit.Click += new System.EventHandler(this.BtnExit_Click);
             // 
-            // lblCallsign
+            // LblCallsign
             // 
-            this.lblCallsign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblCallsign.AutoSize = true;
-            this.lblCallsign.BorderColor = System.Drawing.Color.Empty;
-            this.lblCallsign.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCallsign.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
-            this.lblCallsign.HasBorder = false;
-            this.lblCallsign.Location = new System.Drawing.Point(421, 23);
-            this.lblCallsign.Name = "lblCallsign";
-            this.lblCallsign.Size = new System.Drawing.Size(56, 15);
-            this.lblCallsign.TabIndex = 5;
-            this.lblCallsign.Text = "-------";
-            this.lblCallsign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.LblCallsign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.LblCallsign.AutoSize = true;
+            this.LblCallsign.BorderColor = System.Drawing.Color.Empty;
+            this.LblCallsign.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LblCallsign.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(230)))), ((int)(((byte)(230)))));
+            this.LblCallsign.HasBorder = false;
+            this.LblCallsign.Location = new System.Drawing.Point(421, 23);
+            this.LblCallsign.Name = "LblCallsign";
+            this.LblCallsign.Size = new System.Drawing.Size(56, 15);
+            this.LblCallsign.TabIndex = 5;
+            this.LblCallsign.Text = "-------";
+            this.LblCallsign.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnSettings
+            // BtnSettings
             // 
-            this.btnSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnSettings.Clicked = false;
-            this.btnSettings.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnSettings.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSettings.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSettings.ForeColor = System.Drawing.Color.White;
-            this.btnSettings.Location = new System.Drawing.Point(339, 19);
-            this.btnSettings.Name = "btnSettings";
-            this.btnSettings.Pushed = false;
-            this.btnSettings.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnSettings.Size = new System.Drawing.Size(75, 23);
-            this.btnSettings.TabIndex = 4;
-            this.btnSettings.Text = "Settings";
-            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            this.BtnSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.BtnSettings.Clicked = false;
+            this.BtnSettings.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnSettings.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnSettings.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnSettings.ForeColor = System.Drawing.Color.White;
+            this.BtnSettings.Location = new System.Drawing.Point(338, 19);
+            this.BtnSettings.Name = "BtnSettings";
+            this.BtnSettings.Pushed = false;
+            this.BtnSettings.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnSettings.Size = new System.Drawing.Size(75, 23);
+            this.BtnSettings.TabIndex = 4;
+            this.BtnSettings.Text = "Settings";
+            this.BtnSettings.Click += new System.EventHandler(this.BtnSettings_Click);
             // 
-            // btnFlightPlan
+            // BtnFlightPlan
             // 
-            this.btnFlightPlan.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnFlightPlan.Clicked = false;
-            this.btnFlightPlan.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnFlightPlan.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnFlightPlan.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnFlightPlan.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnFlightPlan.ForeColor = System.Drawing.Color.White;
-            this.btnFlightPlan.Location = new System.Drawing.Point(258, 19);
-            this.btnFlightPlan.Name = "btnFlightPlan";
-            this.btnFlightPlan.Pushed = false;
-            this.btnFlightPlan.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnFlightPlan.Size = new System.Drawing.Size(75, 23);
-            this.btnFlightPlan.TabIndex = 3;
-            this.btnFlightPlan.Text = "Flight Plan";
-            this.btnFlightPlan.Click += new System.EventHandler(this.btnFlightPlan_Click);
+            this.BtnFlightPlan.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.BtnFlightPlan.Clicked = false;
+            this.BtnFlightPlan.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnFlightPlan.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnFlightPlan.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnFlightPlan.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnFlightPlan.ForeColor = System.Drawing.Color.White;
+            this.BtnFlightPlan.Location = new System.Drawing.Point(257, 19);
+            this.BtnFlightPlan.Name = "BtnFlightPlan";
+            this.BtnFlightPlan.Pushed = false;
+            this.BtnFlightPlan.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnFlightPlan.Size = new System.Drawing.Size(75, 23);
+            this.BtnFlightPlan.TabIndex = 3;
+            this.BtnFlightPlan.Text = "Flight Plan";
+            this.BtnFlightPlan.Click += new System.EventHandler(this.BtnFlightPlan_Click);
             // 
-            // btnConnect
+            // BtnConnect
             // 
-            this.btnConnect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.btnConnect.Clicked = false;
-            this.btnConnect.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnConnect.DisabledTextColor = System.Drawing.Color.DarkGray;
-            this.btnConnect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnConnect.ForeColor = System.Drawing.Color.White;
-            this.btnConnect.Location = new System.Drawing.Point(14, 19);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Pushed = false;
-            this.btnConnect.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
-            this.btnConnect.Size = new System.Drawing.Size(75, 23);
-            this.btnConnect.TabIndex = 0;
-            this.btnConnect.Text = "Connect";
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            this.BtnConnect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.BtnConnect.Clicked = false;
+            this.BtnConnect.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.BtnConnect.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnConnect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnConnect.ForeColor = System.Drawing.Color.White;
+            this.BtnConnect.Location = new System.Drawing.Point(14, 19);
+            this.BtnConnect.Name = "BtnConnect";
+            this.BtnConnect.Pushed = false;
+            this.BtnConnect.PushedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
+            this.BtnConnect.Size = new System.Drawing.Size(75, 23);
+            this.BtnConnect.TabIndex = 0;
+            this.BtnConnect.Text = "Connect";
+            this.BtnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
             // 
             // pnlSidebar
             // 
@@ -334,7 +338,7 @@ namespace XPilot.PilotClient
             // 
             this.pnlTreeContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
             this.pnlTreeContainer.BorderColor = System.Drawing.Color.Transparent;
-            this.pnlTreeContainer.Controls.Add(this.treeControllers);
+            this.pnlTreeContainer.Controls.Add(this.TreeControllers);
             this.pnlTreeContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTreeContainer.Location = new System.Drawing.Point(0, 85);
             this.pnlTreeContainer.Name = "pnlTreeContainer";
@@ -342,17 +346,17 @@ namespace XPilot.PilotClient
             this.pnlTreeContainer.Size = new System.Drawing.Size(188, 123);
             this.pnlTreeContainer.TabIndex = 3;
             // 
-            // treeControllers
+            // TreeControllers
             // 
-            this.treeControllers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
-            this.treeControllers.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.treeControllers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeControllers.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.treeControllers.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.treeControllers.Indent = 19;
-            this.treeControllers.Location = new System.Drawing.Point(5, 5);
-            this.treeControllers.MinimumSize = new System.Drawing.Size(1, 1);
-            this.treeControllers.Name = "treeControllers";
+            this.TreeControllers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(44)))), ((int)(((byte)(46)))));
+            this.TreeControllers.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TreeControllers.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TreeControllers.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TreeControllers.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.TreeControllers.Indent = 19;
+            this.TreeControllers.Location = new System.Drawing.Point(5, 5);
+            this.TreeControllers.MinimumSize = new System.Drawing.Size(1, 1);
+            this.TreeControllers.Name = "TreeControllers";
             treeNode1.Name = "Center";
             treeNode1.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             treeNode1.Text = "Center   ";
@@ -371,26 +375,23 @@ namespace XPilot.PilotClient
             treeNode6.Name = "ATIS";
             treeNode6.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             treeNode6.Text = "ATIS   ";
-            this.treeControllers.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode7.Name = "Observers";
+            treeNode7.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode7.Text = "Observers";
+            this.TreeControllers.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
             treeNode4,
             treeNode5,
-            treeNode6});
-            this.treeControllers.ShowNodeToolTips = true;
-            this.treeControllers.ShowPlusMinus = false;
-            this.treeControllers.ShowRootLines = false;
-            this.treeControllers.Size = new System.Drawing.Size(178, 113);
-            this.treeControllers.TabIndex = 5;
-            this.treeControllers.TabStop = false;
-            this.treeControllers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeControllers_BeforeCollapse);
-            this.treeControllers.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.treeControllers_AfterCollapse);
-            this.treeControllers.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeControllers_AfterExpand);
-            this.treeControllers.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeControllers_BeforeSelect);
-            this.treeControllers.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeControllers_NodeMouseClick);
-            this.treeControllers.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeControllers_NodeMouseDoubleClick);
-            this.treeControllers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeControllers_MouseUp);
+            treeNode6,
+            treeNode7});
+            this.TreeControllers.ShowNodeToolTips = true;
+            this.TreeControllers.ShowPlusMinus = false;
+            this.TreeControllers.ShowRootLines = false;
+            this.TreeControllers.Size = new System.Drawing.Size(178, 113);
+            this.TreeControllers.TabIndex = 5;
+            this.TreeControllers.TabStop = false;
             // 
             // lblControllers
             // 
@@ -532,13 +533,6 @@ namespace XPilot.PilotClient
             this.lblCom1.TabIndex = 9;
             this.lblCom1.Text = "COM1:";
             // 
-            // tuneCom1Frequency
-            // 
-            this.tuneCom1Frequency.Name = "tuneCom1Frequency";
-            this.tuneCom1Frequency.Size = new System.Drawing.Size(196, 22);
-            this.tuneCom1Frequency.Text = "Tune COM1 Frequency";
-            this.tuneCom1Frequency.Click += new System.EventHandler(this.tuneCom1Frequency_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -556,12 +550,10 @@ namespace XPilot.PilotClient
             this.Padding = new System.Windows.Forms.Padding(1);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xPilot";
-            this.Activated += new System.EventHandler(this.MainForm_Activated);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseDown);
             this.controllerTreeContextMenu.ResumeLayout(false);
             this.pnlTabs.ResumeLayout(false);
-            this.tabControl.ResumeLayout(false);
-            this.tabPageMessages.ResumeLayout(false);
+            this.TabsMain.ResumeLayout(false);
+            this.TabPageMessages.ResumeLayout(false);
             this.pnlToolbar.ResumeLayout(false);
             this.pnlToolbar.PerformLayout();
             this.pnlSidebar.ResumeLayout(false);
@@ -569,7 +561,6 @@ namespace XPilot.PilotClient
             this.pnlComRadios.ResumeLayout(false);
             this.pnlComRadios.PerformLayout();
             this.ResumeLayout(false);
-
         }
 
         #endregion
@@ -579,15 +570,14 @@ namespace XPilot.PilotClient
         private TransparentClickPanel pnlToolbar;
         private TransparentClickLabel lblControllers;
         private TransparentClickPanel pnlTreeContainer;
-        private System.Windows.Forms.TreeView treeControllers;
-        private TransparentClickLabel lblCallsign;
-        private FlatButton btnSettings;
-        private FlatButton btnFlightPlan;
-        private FlatButton btnConnect;
-        private FlatButton btnClose;
-        private FlatButton btnMinimize;
+        private System.Windows.Forms.TreeView TreeControllers;
+        private TransparentClickLabel LblCallsign;
+        private FlatButton BtnSettings;
+        private FlatButton BtnFlightPlan;
+        private FlatButton BtnConnect;
+        private FlatButton BtnExit;
+        private FlatButton BtnMinimize;
         private TransparentClickPanel pnlTabs;
-        private ChatBox ChatMessageBox;
         private System.Windows.Forms.ContextMenuStrip controllerTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem requestControllerInfo;
         private System.Windows.Forms.ToolStripMenuItem startPrivateChat;
@@ -600,11 +590,12 @@ namespace XPilot.PilotClient
         private TransparentClickLabel Com1TX;
         private TransparentClickLabel Com1Freq;
         private TransparentClickLabel lblCom1;
-        private CustomTabControl tabControl;
-        private System.Windows.Forms.TabPage tabPageMessages;
+        private CustomTabControl TabsMain;
+        private System.Windows.Forms.TabPage TabPageMessages;
         private System.Windows.Forms.ToolTip hfTooltip;
-        private FlatButton btnIdent;
-        private FlatButton chkModeC;
+        private FlatButton ChkIdent;
+        private FlatButton ChkModeC;
         private System.Windows.Forms.ToolStripMenuItem tuneCom1Frequency;
+        private MessageConsoleControl RtfMessages;
     }
 }

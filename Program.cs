@@ -20,16 +20,16 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using XPilot.PilotClient.AudioForVatsim;
+using Ninject;
+using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Common;
-using XPilot.PilotClient.Core;
 using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.Networking.Aircraft;
 using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
-using Ninject;
+using Vatsim.Xpilot.Core;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     static class Program
     {
@@ -51,17 +51,16 @@ namespace XPilot.PilotClient
                 IKernel kernel = new StandardKernel(new InjectionModules());
 
                 var mainForm = kernel.Get<MainForm>();
-                (kernel.Get<IFsdManager>() as IEventBus).Register();
+                (kernel.Get<INetworkManager>() as IEventBus).Register();
                 (kernel.Get<ISoundManager>() as IEventBus).Register();
                 (kernel.Get<IAFVManaged>() as IEventBus).Register();
-                (kernel.Get<IXplaneConnectionManager>() as IEventBus).Register();
+                (kernel.Get<IXplaneAdapter>() as IEventBus).Register();
                 (kernel.Get<IVersionCheck>() as IEventBus).Register();
                 (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
                 (kernel.Get<INetworkAircraftManager>() as IEventBus).Register();
                 (kernel.Get<IControllerManager>() as IEventBus).Register();
                 (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
                 Application.Run(mainForm);
-                kernel.Dispose();
             }
         }
 
@@ -103,9 +102,9 @@ namespace XPilot.PilotClient
 
         private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            if (AFVBindings.isClientInitialized())
+            if (AFVBindings.IsClientInitialized())
             {
-                AFVBindings.destroy();
+                AFVBindings.Destroy();
             }
         }
     }

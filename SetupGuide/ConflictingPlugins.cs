@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using Vatsim.Xpilot.Config;
 using System.IO;
 
-namespace XPilot.PilotClient.Tutorial
+namespace Vatsim.Xpilot.Tutorial
 {
     public partial class ConflictingPlugins : SetupScreen, ISetupScreen
     {

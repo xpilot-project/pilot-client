@@ -15,20 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vatsim.Xpilot.Common
 {
     public static class FrequencyUtils
     {
-        public static string FormatFromNetwork(this int frequency)
+        public static string FormatFromNetwork(this uint frequency)
         {
-            return (frequency / 1000.0 + 100.0).ToString("0.000", CultureInfo.InvariantCulture);
+            return ((double)frequency / 1000.0 + 100.0).ToString("0.000", CultureInfo.InvariantCulture);
         }
 
         public static bool IsValidFrequency(this uint frequency)

@@ -26,10 +26,10 @@ namespace Vatsim.Xpilot.Events.Arguments
 {
     public class AircraftUpdateReceivedEventArgs : NetworkDataReceivedEventArgs
     {
-        public NetworkAircraft Aircraft { get; set; }
-        public AircraftUpdateReceivedEventArgs(string from, NetworkAircraft aircraft, double x) : base(from, null)
+        public NetworkAircraftState Position { get; set; }
+        public AircraftUpdateReceivedEventArgs(string from, NetworkAircraftState position) : base(from, null)
         {
-            Aircraft = aircraft;
+            Position = position;
         }
     }
 }

@@ -17,33 +17,33 @@
 */
 using System;
 using System.Windows.Forms;
-using XPilot.PilotClient.AudioForVatsim;
-using Vatsim.Xpilot.Config;
-using XPilot.PilotClient.Core.Events;
-using Vatsim.Xpilot.Networking;
-using XPilot.PilotClient.Core;
+using System.Collections.Generic;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using System.Collections.Generic;
+using Vatsim.Xpilot.AudioForVatsim;
+using Vatsim.Xpilot.Config;
+using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Events.Arguments;
 
-namespace XPilot.PilotClient
+namespace Vatsim.Xpilot
 {
     public partial class SettingsForm : Form
     {
-        [EventPublication(EventTopics.ClientConfigChanged)]
-        public event EventHandler<EventArgs> RaiseClientConfigChanged;
+        [EventPublication(EventTopics.SettingsModified)]
+        public event EventHandler<EventArgs> SettingsModified;
 
         [EventPublication(EventTopics.RadioVolumeChanged)]
-        public event EventHandler<RadioVolumeChanged> RaiseRadioVolumeChanged;
+        public event EventHandler<RadioVolumeChangedEventArgs> RadioVolumeChanged;
 
         private readonly IAFVManaged mAudio;
         private readonly IAppConfig mConfig;
         private readonly IEventBroker mEventBroker;
-        private readonly IFsdManager mNetworkManager;
+        private readonly INetworkManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
         private Timer mVuTimer;
 
-        public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, IFsdManager networkManager, IUserInterface userInterface)
+        public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, INetworkManager networkManager, IUserInterface userInterface)
         {
             InitializeComponent();
 
@@ -70,7 +70,7 @@ namespace XPilot.PilotClient
 
         private void VuTimer_Tick(object sender, EventArgs e)
         {
-            float v = (float)ScaleVu(AFVBindings.getInputPeak());
+            float v = (float)ScaleVu(AFVBindings.GetInputPeak());
             vuMeter.Value = v;
         }
 
@@ -170,7 +170,7 @@ namespace XPilot.PilotClient
                 mConfig.FlashTaskbarSelcal = chkFlashSelcal.Checked;
                 mConfig.KeepWindowVisible = chkKeepVisible.Checked;
                 mConfig.SaveConfig();
-                RaiseClientConfigChanged?.Invoke(this, EventArgs.Empty);
+                SettingsModified?.Invoke(this, EventArgs.Empty);
                 Close();
             }
         }
