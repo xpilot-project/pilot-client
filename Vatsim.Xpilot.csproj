@@ -314,37 +314,37 @@
     <Compile Include="UpdateForm.Designer.cs">
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Ui\MessageConsoleControl.cs">
+    <Compile Include="UserInterface\MessageConsoleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Ui\MessageConsoleControl.Designer.cs">
+    <Compile Include="UserInterface\MessageConsoleControl.Designer.cs">
       <DependentUpon>MessageConsoleControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Ui\TransparentClickLabel.cs">
+    <Compile Include="UserInterface\TransparentClickLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\TransparentClickPanel.cs">
+    <Compile Include="UserInterface\TransparentClickPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\CustomTabControl.cs">
+    <Compile Include="UserInterface\CustomTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\FlatButton.cs">
+    <Compile Include="UserInterface\FlatButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\FlatCheckbox.cs">
+    <Compile Include="UserInterface\FlatCheckbox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\LevelMeter.cs">
+    <Compile Include="UserInterface\LevelMeter.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\NotesTab.cs">
+    <Compile Include="UserInterface\NotesTab.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\PrivateMessageTab.cs">
+    <Compile Include="UserInterface\PrivateMessageTab.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Ui\TextCommandLine.cs">
+    <Compile Include="UserInterface\TextCommandLine.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controllers\Controller.cs" />
