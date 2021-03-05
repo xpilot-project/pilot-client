@@ -88,6 +88,8 @@ namespace Vatsim.Xpilot
             InitializeComponent();
 
             mEventBroker = eventBroker;
+            mEventBroker.Register(this);
+
             mConfig = appConfig;
             mNetworkManager = networkManager;
             mUserInterface = userInterface;
@@ -98,17 +100,14 @@ namespace Vatsim.Xpilot
             RtfMessages.TextCommandLine.TextCommandReceived += TextCommandLine_TextCommandReceived;
             RtfMessages.RichTextBox.MouseUp += RichTextBox_MouseUp;
 
-            TreeControllers.MouseUp += TreeControllers_MouseUp;
-            TreeControllers.BeforeSelect += TreeControllers_BeforeSelect;
-            TreeControllers.BeforeCollapse += TreeControllers_BeforeCollapse;
             TreeControllers.ExpandAll();
             TreeControllers.TreeViewNodeSorter = new TreeNodeSorter();
+            
+            TopMost = mConfig.KeepWindowVisible;
 
             TabNotes = mTabPages.CreateNotesTab();
             TabNotes.Text = "Notes";
             TabsMain.TabPages.Add(TabNotes);
-
-            mEventBroker.Register(this);
         }
 
         [EventSubscription(EventTopics.NotificationPosted, typeof(OnUserInterfaceAsync))]
@@ -450,6 +449,11 @@ namespace Vatsim.Xpilot
             }
         }
 
+        private void RichTextBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            FocusTextCommandLine();
+        }
+
         private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
         {
             string[] cmd = e.Command.Split(new char[] { ' ' });
@@ -651,11 +655,6 @@ namespace Vatsim.Xpilot
             }
         }
 
-        private void RichTextBox_MouseUp(object sender, MouseEventArgs e)
-        {
-            FocusTextCommandLine();
-        }
-
         private TreeNode FindController(string callsign)
         {
             TreeNode[] array = TreeControllers.Nodes.Find(callsign.Replace("*", ""), true);
@@ -735,10 +734,9 @@ namespace Vatsim.Xpilot
             }
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override void OnShown(EventArgs e)
         {
-            ScreenUtils.ApplyWindowProperties(mConfig.ClientWindowProperties, this);
-            mInitializing = false;
+            base.OnShown(e);
 
             WriteInfoMessage($"xPilot version {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
             MainFormShown(this, EventArgs.Empty);
@@ -752,6 +750,13 @@ namespace Vatsim.Xpilot
             {
                 WriteInfoMessage($"Looking for Visuals machine at IP: {string.Join(", ", mConfig.VisualClientIPs)}.");
             }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ScreenUtils.ApplyWindowProperties(mConfig.ClientWindowProperties, this);
+            mInitializing = false;
         }
 
         protected override void OnResizeEnd(EventArgs e)

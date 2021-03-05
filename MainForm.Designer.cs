@@ -37,7 +37,7 @@ namespace Vatsim.Xpilot
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Ground   ");
             System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
             System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("ATIS   ");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Observers");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Observers  ");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.controllerTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.requestControllerInfo = new System.Windows.Forms.ToolStripMenuItem();
@@ -377,7 +377,7 @@ namespace Vatsim.Xpilot
             treeNode6.Text = "ATIS   ";
             treeNode7.Name = "Observers";
             treeNode7.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode7.Text = "Observers";
+            treeNode7.Text = "Observers  ";
             this.TreeControllers.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -392,6 +392,9 @@ namespace Vatsim.Xpilot
             this.TreeControllers.Size = new System.Drawing.Size(178, 113);
             this.TreeControllers.TabIndex = 5;
             this.TreeControllers.TabStop = false;
+            this.TreeControllers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeControllers_BeforeCollapse);
+            this.TreeControllers.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeControllers_BeforeSelect);
+            this.TreeControllers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TreeControllers_MouseUp);
             // 
             // lblControllers
             // 
@@ -561,6 +564,7 @@ namespace Vatsim.Xpilot
             this.pnlComRadios.ResumeLayout(false);
             this.pnlComRadios.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
