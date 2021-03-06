@@ -23,6 +23,7 @@ namespace Vatsim.Xpilot.Aircrafts
 {
     public enum AircraftStatus
     {
+        Pending,
         New,
         Active,
         Deleted,

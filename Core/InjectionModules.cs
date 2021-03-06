@@ -44,7 +44,6 @@ namespace Vatsim.Xpilot.Core
             Bind<IAircraftManager>().To(typeof(AircraftManager)).InSingletonScope();
             Bind<IControllerManager>().To(typeof(ControllerManager)).InSingletonScope();
             Bind<IControllerAtisManager>().To(typeof(ControllerAtisManager)).InSingletonScope();
-            Bind<ITimeStampProvider>().To(typeof(TimeStampProvider)).InSingletonScope();
         }
     }
 }

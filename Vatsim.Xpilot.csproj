@@ -61,6 +61,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="abacus, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Abacus.1.1.0\lib\abacus.dll</HintPath>
+    </Reference>
     <Reference Include="Appccelerate.EventBroker, Version=4.0.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
       <HintPath>packages\Appccelerate.EventBroker.4.0.0\lib\netstandard2.0\Appccelerate.EventBroker.dll</HintPath>
     </Reference>
@@ -142,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aircrafts\Aircraft.cs" />
+    <Compile Include="Aircrafts\AircraftVisualState.cs" />
     <Compile Include="Aircrafts\RadioStackState.cs" />
     <Compile Include="Aircrafts\UserAircraftConfigData.cs" />
     <Compile Include="AudioForVatsim\AFVBindings.cs" />
@@ -153,6 +157,8 @@
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
+    <Compile Include="Common\GeoCalc.cs" />
+    <Compile Include="Common\QuaternionExtensions.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
     <Compile Include="Common\StringUtils.cs" />
     <Compile Include="Common\VoiceType.cs" />
@@ -164,7 +170,6 @@
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\ITabPages.cs" />
-    <Compile Include="Core\ITimeStampProvider.cs" />
     <Compile Include="Core\IUserInterface.cs" />
     <Compile Include="Aircrafts\AircraftConfigurationInfo.cs" />
     <Compile Include="Aircrafts\IAircraftManager.cs" />
@@ -176,7 +181,6 @@
     <Compile Include="Controllers\ControllerManager.cs" />
     <Compile Include="Controllers\IControllerAtisManager.cs" />
     <Compile Include="Controllers\IControllerManager.cs" />
-    <Compile Include="Core\TimeStampProvider.cs" />
     <Compile Include="Events.Arguments\AircraftEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftInfoReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftUpdatedEventArgs.cs" />
@@ -185,7 +189,9 @@
     <Compile Include="Events.Arguments\ComRadioTxRxChangedEventArgs.cs" />
     <Compile Include="Events.Arguments\ControllerEventArgs.cs" />
     <Compile Include="Events.Arguments\ControllerUpdateReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\FastPositionUpdateEventArgs.cs" />
     <Compile Include="Events.Arguments\FlightPlanReceivedEventArgs.cs" />
+    <Compile Include="Events.Arguments\GenericEventArgs.cs" />
     <Compile Include="Events.Arguments\IsValidAtcReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\NetworkConnectedEventArgs.cs" />
     <Compile Include="Events.Arguments\NetworkDataReceivedEventArgs.cs" />
@@ -217,9 +223,11 @@
     <Compile Include="Protobuf\ChangeModel.cs" />
     <Compile Include="Protobuf\ClearNearbyControllers.cs" />
     <Compile Include="Protobuf\CSLValidate.cs" />
+    <Compile Include="Protobuf\FastPositionUpdate.cs" />
     <Compile Include="Protobuf\NearbyControllers.cs" />
     <Compile Include="Protobuf\NetworkConnected.cs" />
     <Compile Include="Protobuf\NetworkDisconnected.cs" />
+    <Compile Include="Protobuf\PlaneAddedToSim.cs" />
     <Compile Include="Protobuf\PluginHash.cs" />
     <Compile Include="Protobuf\PluginVersion.cs" />
     <Compile Include="Protobuf\PositionUpdate.cs" />

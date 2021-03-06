@@ -17,20 +17,24 @@
 */
 using Abacus.DoublePrecision;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vatsim.Xpilot.Aircrafts;
 
-namespace Vatsim.Xpilot.Aircrafts
+namespace Vatsim.Xpilot.Events.Arguments
 {
-    public class Aircraft
+    public class FastPositionUpdateEventArgs : NetworkDataReceivedEventArgs
     {
-        public string Callsign { get; set; }
-        public AircraftStatus Status { get; set; }
-        public string Airline { get; set; }
-        public string TypeCode { get; set; }
-        public AircraftConfiguration Configuration { get; set; }
-        public DateTime LastSlowPositionUpdate { get; set; }
-        public Aircraft(string callsign)
+        public AircraftVisualState VisualState { get; set; }
+        public Vector3 PositionalVelocityVector { get; set; }
+        public Vector3 RotationalVelocityVector { get; set; }
+        public FastPositionUpdateEventArgs(string from, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVecotr) : base(from, null)
         {
-            Callsign = callsign;
+            VisualState = visualState;
+            PositionalVelocityVector = positionalVelocityVector;
+            RotationalVelocityVector = rotationalVelocityVecotr;
         }
     }
 }

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
+using Abacus.DoublePrecision;
 using System.Collections.Generic;
 using Vatsim.Xpilot.Aircrafts;
 
@@ -28,11 +29,12 @@ namespace Vatsim.Xpilot.Simulator
         void SetAudioSelectionCom1(bool enabled);
         void SetAudioSelectionCom2(bool enabled);
         void SetLoginStatus(bool connected);
-        void AddPlane(NetworkAircraft plane);
-        void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftState pose);
-        void PlaneConfigChanged(AircraftConfiguration config);
-        void RemovePlane(NetworkAircraft plane);
-        void ChangeModel(NetworkAircraft plane);
+        void AddPlane(Aircraft aircraft);
+        void SendSlowPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, double groundSpeed);
+        void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVector);
+        void PlaneConfigChanged(string callsign, AircraftConfiguration config);
+        void RemovePlane(Aircraft aircraft);
+        void ChangeModel(Aircraft aircraft);
         void RemoveAllPlanes();
         void NetworkConnected(string callsign);
         void NetworkDisconnected();

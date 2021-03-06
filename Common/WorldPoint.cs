@@ -15,30 +15,77 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
+using System.Drawing;
+
 namespace Vatsim.Xpilot.Common
 {
-    public struct WorldPoint
-    {
-        public double Lat { get; set; }
-        public double Lon { get; set; }
-        public WorldPoint(double lon, double lat)
-        {
-            this = default;
-            Lat = lat;
-            Lon = lon;
-        }
-        public override string ToString()
-        {
-            return string.Format("{0}, {1}", this.Lat, this.Lon);
-        }
-        public override bool Equals(object obj)
-        {
-            if (!(obj is WorldPoint other)) return false;
-            return other.Lat == Lat && other.Lon == Lon;
-        }
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-    }
+	public struct WorldPoint
+	{
+		public double Lon { set; get; }
+
+		public double Lat { set; get; }
+
+		public bool IsNonZero { get { return ((Lon != 0.0) || (Lat != 0.0)); } }
+
+		public bool IsZero { get { return !IsNonZero; } }
+
+		public static WorldPoint Zero { get { return new WorldPoint(); } }
+
+		public WorldPoint(double lon, double lat)
+			: this()
+		{
+			Lon = lon;
+			Lat = lat;
+		}
+
+		public WorldPoint Offset(double lonOffset, double latOffset)
+		{
+			return new WorldPoint(Lon + lonOffset, Lat + latOffset);
+		}
+
+		public double DistanceTo(WorldPoint point)
+		{
+			return GeoCalc.CartesianDistance(this, point);
+		}
+
+		public double DistanceTo(WorldPoint point, double scaleFactor)
+		{
+			return GeoCalc.CartesianDistance(this, point, scaleFactor);
+		}
+
+		public double GreatCircleDistanceTo(WorldPoint point)
+		{
+			return GeoCalc.GreatCircleDistance(this, point);
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}, {1}", Lon, Lat);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+
+			return (((WorldPoint)obj).Lon == Lon) && (((WorldPoint)obj).Lat == Lat);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public static WorldPoint FromPoint(Point pt)
+		{
+			return new WorldPoint(pt.X, pt.Y);
+		}
+
+		public static WorldPoint FromPoint(PointF pt)
+		{
+			return new WorldPoint(pt.X, pt.Y);
+		}
+	}
 }

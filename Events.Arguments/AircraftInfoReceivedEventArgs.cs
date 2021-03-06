@@ -25,11 +25,11 @@ namespace Vatsim.Xpilot.Events.Arguments
 {
     public class AircraftInfoReceivedEventArgs : NetworkDataReceivedEventArgs
     {
-        public string Equipment { get; set; }
+        public string TypeCode { get; set; }
         public string Airline { get; set; }
         public AircraftInfoReceivedEventArgs(string from, string equipment, string airline) : base(from, null)
         {
-            Equipment = equipment;
+            TypeCode = equipment;
             Airline = airline;
         }
     }

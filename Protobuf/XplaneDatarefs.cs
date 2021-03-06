@@ -42,7 +42,7 @@ namespace Vatsim.Xpilot.Protobuf {
     static XplaneDatarefsReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChRYcGxhbmVEYXRhcmVmcy5wcm90bxIGeHBpbG90IroNCg5YcGxhbmVEYXRh",
+            "ChRYcGxhbmVEYXRhcmVmcy5wcm90bxIGeHBpbG90IvAPCg5YcGxhbmVEYXRh",
             "cmVmcxIgChNhdWRpb19jb21fc2VsZWN0aW9uGAEgASgFSACIAQESFwoKY29t",
             "MV9wb3dlchgCIAEoCEgBiAEBEhYKCWNvbTFfZnJlcRgDIAEoBUgCiAEBEhsK",
             "DmNvbTFfc3RieV9mcmVxGAQgASgFSAOIAQESIQoUY29tMV9hdWRpb19zZWxl",
@@ -54,38 +54,45 @@ namespace Vatsim.Xpilot.Protobuf {
             "GA0gASgBSAyIAQESFgoJbG9uZ2l0dWRlGA4gASgBSA2IAQESFQoIYWx0aXR1",
             "ZGUYDyABKAFIDogBARIeChFwcmVzc3VyZV9hbHRpdHVkZRgQIAEoAUgPiAEB",
             "EhkKDGdyb3VuZF9zcGVlZBgRIAEoAUgQiAEBEhIKBXBpdGNoGBIgASgBSBGI",
-            "AQESEQoEcm9sbBgTIAEoAUgSiAEBEhAKA3lhdxgUIAEoAUgTiAEBEh0KEHRy",
-            "YW5zcG9uZGVyX2NvZGUYFSABKAVIFIgBARIdChB0cmFuc3BvbmRlcl9tb2Rl",
-            "GBYgASgFSBWIAQESHgoRdHJhbnNwb25kZXJfaWRlbnQYFyABKAhIFogBARId",
-            "ChBiZWFjb25fbGlnaHRzX29uGBggASgISBeIAQESHgoRbGFuZGluZ19saWdo",
-            "dHNfb24YGSABKAhIGIgBARIaCg1uYXZfbGlnaHRzX29uGBogASgISBmIAQES",
-            "HQoQc3Ryb2JlX2xpZ2h0c19vbhgbIAEoCEgaiAEBEhsKDnRheGlfbGlnaHRz",
-            "X29uGBwgASgISBuIAQESEgoFZmxhcHMYHSABKAFIHIgBARIWCglnZWFyX2Rv",
-            "d24YHiABKAhIHYgBARIZCgxzcGVlZF9icmFrZXMYHyABKAFIHogBARIZCgxl",
-            "bmdpbmVfY291bnQYICABKAVIH4gBARIcCg9lbmdpbmUxX3J1bm5pbmcYISAB",
-            "KAhIIIgBARIcCg9lbmdpbmUyX3J1bm5pbmcYIiABKAhIIYgBARIcCg9lbmdp",
-            "bmUzX3J1bm5pbmcYIyABKAhIIogBARIcCg9lbmdpbmU0X3J1bm5pbmcYJCAB",
-            "KAhII4gBARIWCglvbl9ncm91bmQYJSABKAhIJIgBARIYCgtyZXBsYXlfbW9k",
-            "ZRgmIAEoCEgliAEBQhYKFF9hdWRpb19jb21fc2VsZWN0aW9uQg0KC19jb20x",
-            "X3Bvd2VyQgwKCl9jb20xX2ZyZXFCEQoPX2NvbTFfc3RieV9mcmVxQhcKFV9j",
-            "b20xX2F1ZGlvX3NlbGVjdGlvbkIOCgxfY29tMV92b2x1bWVCDQoLX2NvbTJf",
-            "cG93ZXJCDAoKX2NvbTJfZnJlcUIRCg9fY29tMl9zdGJ5X2ZyZXFCFwoVX2Nv",
-            "bTJfYXVkaW9fc2VsZWN0aW9uQg4KDF9jb20yX3ZvbHVtZUIUChJfYXZpb25p",
-            "Y3NfcG93ZXJfb25CCwoJX2xhdGl0dWRlQgwKCl9sb25naXR1ZGVCCwoJX2Fs",
-            "dGl0dWRlQhQKEl9wcmVzc3VyZV9hbHRpdHVkZUIPCg1fZ3JvdW5kX3NwZWVk",
-            "QggKBl9waXRjaEIHCgVfcm9sbEIGCgRfeWF3QhMKEV90cmFuc3BvbmRlcl9j",
-            "b2RlQhMKEV90cmFuc3BvbmRlcl9tb2RlQhQKEl90cmFuc3BvbmRlcl9pZGVu",
-            "dEITChFfYmVhY29uX2xpZ2h0c19vbkIUChJfbGFuZGluZ19saWdodHNfb25C",
-            "EAoOX25hdl9saWdodHNfb25CEwoRX3N0cm9iZV9saWdodHNfb25CEQoPX3Rh",
-            "eGlfbGlnaHRzX29uQggKBl9mbGFwc0IMCgpfZ2Vhcl9kb3duQg8KDV9zcGVl",
-            "ZF9icmFrZXNCDwoNX2VuZ2luZV9jb3VudEISChBfZW5naW5lMV9ydW5uaW5n",
-            "QhIKEF9lbmdpbmUyX3J1bm5pbmdCEgoQX2VuZ2luZTNfcnVubmluZ0ISChBf",
-            "ZW5naW5lNF9ydW5uaW5nQgwKCl9vbl9ncm91bmRCDgoMX3JlcGxheV9tb2Rl",
-            "QhmqAhZWYXRzaW0uWHBpbG90LlByb3RvYnVmYgZwcm90bzM="));
+            "AQESEQoEcm9sbBgTIAEoAUgSiAEBEhAKA3lhdxgUIAEoAUgTiAEBEh4KEXZl",
+            "bG9jaXR5X2xhdGl0dWRlGBUgASgBSBSIAQESHgoRdmVsb2NpdHlfYWx0aXR1",
+            "ZGUYFiABKAFIFYgBARIfChJ2ZWxvY2l0eV9sb25naXR1ZGUYFyABKAFIFogB",
+            "ARIbCg52ZWxvY2l0eV9waXRjaBgYIAEoAUgXiAEBEh0KEHZlbG9jaXR5X2hl",
+            "YWRpbmcYGSABKAFIGIgBARIaCg12ZWxvY2l0eV9iYW5rGBogASgBSBmIAQES",
+            "HQoQdHJhbnNwb25kZXJfY29kZRgbIAEoBUgaiAEBEh0KEHRyYW5zcG9uZGVy",
+            "X21vZGUYHCABKAVIG4gBARIeChF0cmFuc3BvbmRlcl9pZGVudBgdIAEoCEgc",
+            "iAEBEh0KEGJlYWNvbl9saWdodHNfb24YHiABKAhIHYgBARIeChFsYW5kaW5n",
+            "X2xpZ2h0c19vbhgfIAEoCEgeiAEBEhoKDW5hdl9saWdodHNfb24YICABKAhI",
+            "H4gBARIdChBzdHJvYmVfbGlnaHRzX29uGCEgASgISCCIAQESGwoOdGF4aV9s",
+            "aWdodHNfb24YIiABKAhIIYgBARISCgVmbGFwcxgjIAEoAUgiiAEBEhYKCWdl",
+            "YXJfZG93bhgkIAEoCEgjiAEBEhkKDHNwZWVkX2JyYWtlcxglIAEoAUgkiAEB",
+            "EhkKDGVuZ2luZV9jb3VudBgmIAEoBUgliAEBEhwKD2VuZ2luZTFfcnVubmlu",
+            "ZxgnIAEoCEgmiAEBEhwKD2VuZ2luZTJfcnVubmluZxgoIAEoCEgniAEBEhwK",
+            "D2VuZ2luZTNfcnVubmluZxgpIAEoCEgoiAEBEhwKD2VuZ2luZTRfcnVubmlu",
+            "ZxgqIAEoCEgpiAEBEhYKCW9uX2dyb3VuZBgrIAEoCEgqiAEBEhgKC3JlcGxh",
+            "eV9tb2RlGCwgASgISCuIAQFCFgoUX2F1ZGlvX2NvbV9zZWxlY3Rpb25CDQoL",
+            "X2NvbTFfcG93ZXJCDAoKX2NvbTFfZnJlcUIRCg9fY29tMV9zdGJ5X2ZyZXFC",
+            "FwoVX2NvbTFfYXVkaW9fc2VsZWN0aW9uQg4KDF9jb20xX3ZvbHVtZUINCgtf",
+            "Y29tMl9wb3dlckIMCgpfY29tMl9mcmVxQhEKD19jb20yX3N0YnlfZnJlcUIX",
+            "ChVfY29tMl9hdWRpb19zZWxlY3Rpb25CDgoMX2NvbTJfdm9sdW1lQhQKEl9h",
+            "dmlvbmljc19wb3dlcl9vbkILCglfbGF0aXR1ZGVCDAoKX2xvbmdpdHVkZUIL",
+            "CglfYWx0aXR1ZGVCFAoSX3ByZXNzdXJlX2FsdGl0dWRlQg8KDV9ncm91bmRf",
+            "c3BlZWRCCAoGX3BpdGNoQgcKBV9yb2xsQgYKBF95YXdCFAoSX3ZlbG9jaXR5",
+            "X2xhdGl0dWRlQhQKEl92ZWxvY2l0eV9hbHRpdHVkZUIVChNfdmVsb2NpdHlf",
+            "bG9uZ2l0dWRlQhEKD192ZWxvY2l0eV9waXRjaEITChFfdmVsb2NpdHlfaGVh",
+            "ZGluZ0IQCg5fdmVsb2NpdHlfYmFua0ITChFfdHJhbnNwb25kZXJfY29kZUIT",
+            "ChFfdHJhbnNwb25kZXJfbW9kZUIUChJfdHJhbnNwb25kZXJfaWRlbnRCEwoR",
+            "X2JlYWNvbl9saWdodHNfb25CFAoSX2xhbmRpbmdfbGlnaHRzX29uQhAKDl9u",
+            "YXZfbGlnaHRzX29uQhMKEV9zdHJvYmVfbGlnaHRzX29uQhEKD190YXhpX2xp",
+            "Z2h0c19vbkIICgZfZmxhcHNCDAoKX2dlYXJfZG93bkIPCg1fc3BlZWRfYnJh",
+            "a2VzQg8KDV9lbmdpbmVfY291bnRCEgoQX2VuZ2luZTFfcnVubmluZ0ISChBf",
+            "ZW5naW5lMl9ydW5uaW5nQhIKEF9lbmdpbmUzX3J1bm5pbmdCEgoQX2VuZ2lu",
+            "ZTRfcnVubmluZ0IMCgpfb25fZ3JvdW5kQg4KDF9yZXBsYXlfbW9kZUIZqgIW",
+            "VmF0c2ltLlhwaWxvdC5Qcm90b2J1ZmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.XplaneDatarefs), global::Vatsim.Xpilot.Protobuf.XplaneDatarefs.Parser, new[]{ "AudioComSelection", "Com1Power", "Com1Freq", "Com1StbyFreq", "Com1AudioSelection", "Com1Volume", "Com2Power", "Com2Freq", "Com2StbyFreq", "Com2AudioSelection", "Com2Volume", "AvionicsPowerOn", "Latitude", "Longitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "TransponderCode", "TransponderMode", "TransponderIdent", "BeaconLightsOn", "LandingLightsOn", "NavLightsOn", "StrobeLightsOn", "TaxiLightsOn", "Flaps", "GearDown", "SpeedBrakes", "EngineCount", "Engine1Running", "Engine2Running", "Engine3Running", "Engine4Running", "OnGround", "ReplayMode" }, new[]{ "AudioComSelection", "Com1Power", "Com1Freq", "Com1StbyFreq", "Com1AudioSelection", "Com1Volume", "Com2Power", "Com2Freq", "Com2StbyFreq", "Com2AudioSelection", "Com2Volume", "AvionicsPowerOn", "Latitude", "Longitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "TransponderCode", "TransponderMode", "TransponderIdent", "BeaconLightsOn", "LandingLightsOn", "NavLightsOn", "StrobeLightsOn", "TaxiLightsOn", "Flaps", "GearDown", "SpeedBrakes", "EngineCount", "Engine1Running", "Engine2Running", "Engine3Running", "Engine4Running", "OnGround", "ReplayMode" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.XplaneDatarefs), global::Vatsim.Xpilot.Protobuf.XplaneDatarefs.Parser, new[]{ "AudioComSelection", "Com1Power", "Com1Freq", "Com1StbyFreq", "Com1AudioSelection", "Com1Volume", "Com2Power", "Com2Freq", "Com2StbyFreq", "Com2AudioSelection", "Com2Volume", "AvionicsPowerOn", "Latitude", "Longitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank", "TransponderCode", "TransponderMode", "TransponderIdent", "BeaconLightsOn", "LandingLightsOn", "NavLightsOn", "StrobeLightsOn", "TaxiLightsOn", "Flaps", "GearDown", "SpeedBrakes", "EngineCount", "Engine1Running", "Engine2Running", "Engine3Running", "Engine4Running", "OnGround", "ReplayMode" }, new[]{ "AudioComSelection", "Com1Power", "Com1Freq", "Com1StbyFreq", "Com1AudioSelection", "Com1Volume", "Com2Power", "Com2Freq", "Com2StbyFreq", "Com2AudioSelection", "Com2Volume", "AvionicsPowerOn", "Latitude", "Longitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank", "TransponderCode", "TransponderMode", "TransponderIdent", "BeaconLightsOn", "LandingLightsOn", "NavLightsOn", "StrobeLightsOn", "TaxiLightsOn", "Flaps", "GearDown", "SpeedBrakes", "EngineCount", "Engine1Running", "Engine2Running", "Engine3Running", "Engine4Running", "OnGround", "ReplayMode" }, null, null, null)
           }));
     }
     #endregion
@@ -145,6 +152,12 @@ namespace Vatsim.Xpilot.Protobuf {
       pitch_ = other.pitch_;
       roll_ = other.roll_;
       yaw_ = other.yaw_;
+      velocityLatitude_ = other.velocityLatitude_;
+      velocityAltitude_ = other.velocityAltitude_;
+      velocityLongitude_ = other.velocityLongitude_;
+      velocityPitch_ = other.velocityPitch_;
+      velocityHeading_ = other.velocityHeading_;
+      velocityBank_ = other.velocityBank_;
       transponderCode_ = other.transponderCode_;
       transponderMode_ = other.transponderMode_;
       transponderIdent_ = other.transponderIdent_;
@@ -611,400 +624,532 @@ namespace Vatsim.Xpilot.Protobuf {
       _hasBits0 &= ~524288;
     }
 
+    /// <summary>Field number for the "velocity_latitude" field.</summary>
+    public const int VelocityLatitudeFieldNumber = 21;
+    private double velocityLatitude_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityLatitude {
+      get { if ((_hasBits0 & 1048576) != 0) { return velocityLatitude_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 1048576;
+        velocityLatitude_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_latitude" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityLatitude {
+      get { return (_hasBits0 & 1048576) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_latitude" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityLatitude() {
+      _hasBits0 &= ~1048576;
+    }
+
+    /// <summary>Field number for the "velocity_altitude" field.</summary>
+    public const int VelocityAltitudeFieldNumber = 22;
+    private double velocityAltitude_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityAltitude {
+      get { if ((_hasBits0 & 2097152) != 0) { return velocityAltitude_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 2097152;
+        velocityAltitude_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_altitude" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityAltitude {
+      get { return (_hasBits0 & 2097152) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_altitude" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityAltitude() {
+      _hasBits0 &= ~2097152;
+    }
+
+    /// <summary>Field number for the "velocity_longitude" field.</summary>
+    public const int VelocityLongitudeFieldNumber = 23;
+    private double velocityLongitude_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityLongitude {
+      get { if ((_hasBits0 & 4194304) != 0) { return velocityLongitude_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 4194304;
+        velocityLongitude_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_longitude" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityLongitude {
+      get { return (_hasBits0 & 4194304) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_longitude" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityLongitude() {
+      _hasBits0 &= ~4194304;
+    }
+
+    /// <summary>Field number for the "velocity_pitch" field.</summary>
+    public const int VelocityPitchFieldNumber = 24;
+    private double velocityPitch_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityPitch {
+      get { if ((_hasBits0 & 8388608) != 0) { return velocityPitch_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 8388608;
+        velocityPitch_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_pitch" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityPitch {
+      get { return (_hasBits0 & 8388608) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_pitch" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityPitch() {
+      _hasBits0 &= ~8388608;
+    }
+
+    /// <summary>Field number for the "velocity_heading" field.</summary>
+    public const int VelocityHeadingFieldNumber = 25;
+    private double velocityHeading_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityHeading {
+      get { if ((_hasBits0 & 16777216) != 0) { return velocityHeading_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 16777216;
+        velocityHeading_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_heading" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityHeading {
+      get { return (_hasBits0 & 16777216) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_heading" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityHeading() {
+      _hasBits0 &= ~16777216;
+    }
+
+    /// <summary>Field number for the "velocity_bank" field.</summary>
+    public const int VelocityBankFieldNumber = 26;
+    private double velocityBank_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public double VelocityBank {
+      get { if ((_hasBits0 & 33554432) != 0) { return velocityBank_; } else { return 0D; } }
+      set {
+        _hasBits0 |= 33554432;
+        velocityBank_ = value;
+      }
+    }
+    /// <summary>Gets whether the "velocity_bank" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasVelocityBank {
+      get { return (_hasBits0 & 33554432) != 0; }
+    }
+    /// <summary>Clears the value of the "velocity_bank" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearVelocityBank() {
+      _hasBits0 &= ~33554432;
+    }
+
     /// <summary>Field number for the "transponder_code" field.</summary>
-    public const int TransponderCodeFieldNumber = 21;
+    public const int TransponderCodeFieldNumber = 27;
     private int transponderCode_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int TransponderCode {
-      get { if ((_hasBits0 & 1048576) != 0) { return transponderCode_; } else { return 0; } }
+      get { if ((_hasBits0 & 67108864) != 0) { return transponderCode_; } else { return 0; } }
       set {
-        _hasBits0 |= 1048576;
+        _hasBits0 |= 67108864;
         transponderCode_ = value;
       }
     }
     /// <summary>Gets whether the "transponder_code" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasTransponderCode {
-      get { return (_hasBits0 & 1048576) != 0; }
+      get { return (_hasBits0 & 67108864) != 0; }
     }
     /// <summary>Clears the value of the "transponder_code" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearTransponderCode() {
-      _hasBits0 &= ~1048576;
+      _hasBits0 &= ~67108864;
     }
 
     /// <summary>Field number for the "transponder_mode" field.</summary>
-    public const int TransponderModeFieldNumber = 22;
+    public const int TransponderModeFieldNumber = 28;
     private int transponderMode_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int TransponderMode {
-      get { if ((_hasBits0 & 2097152) != 0) { return transponderMode_; } else { return 0; } }
+      get { if ((_hasBits0 & 134217728) != 0) { return transponderMode_; } else { return 0; } }
       set {
-        _hasBits0 |= 2097152;
+        _hasBits0 |= 134217728;
         transponderMode_ = value;
       }
     }
     /// <summary>Gets whether the "transponder_mode" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasTransponderMode {
-      get { return (_hasBits0 & 2097152) != 0; }
+      get { return (_hasBits0 & 134217728) != 0; }
     }
     /// <summary>Clears the value of the "transponder_mode" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearTransponderMode() {
-      _hasBits0 &= ~2097152;
+      _hasBits0 &= ~134217728;
     }
 
     /// <summary>Field number for the "transponder_ident" field.</summary>
-    public const int TransponderIdentFieldNumber = 23;
+    public const int TransponderIdentFieldNumber = 29;
     private bool transponderIdent_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool TransponderIdent {
-      get { if ((_hasBits0 & 4194304) != 0) { return transponderIdent_; } else { return false; } }
+      get { if ((_hasBits0 & 268435456) != 0) { return transponderIdent_; } else { return false; } }
       set {
-        _hasBits0 |= 4194304;
+        _hasBits0 |= 268435456;
         transponderIdent_ = value;
       }
     }
     /// <summary>Gets whether the "transponder_ident" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasTransponderIdent {
-      get { return (_hasBits0 & 4194304) != 0; }
+      get { return (_hasBits0 & 268435456) != 0; }
     }
     /// <summary>Clears the value of the "transponder_ident" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearTransponderIdent() {
-      _hasBits0 &= ~4194304;
+      _hasBits0 &= ~268435456;
     }
 
     /// <summary>Field number for the "beacon_lights_on" field.</summary>
-    public const int BeaconLightsOnFieldNumber = 24;
+    public const int BeaconLightsOnFieldNumber = 30;
     private bool beaconLightsOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool BeaconLightsOn {
-      get { if ((_hasBits0 & 8388608) != 0) { return beaconLightsOn_; } else { return false; } }
+      get { if ((_hasBits0 & 536870912) != 0) { return beaconLightsOn_; } else { return false; } }
       set {
-        _hasBits0 |= 8388608;
+        _hasBits0 |= 536870912;
         beaconLightsOn_ = value;
       }
     }
     /// <summary>Gets whether the "beacon_lights_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasBeaconLightsOn {
-      get { return (_hasBits0 & 8388608) != 0; }
+      get { return (_hasBits0 & 536870912) != 0; }
     }
     /// <summary>Clears the value of the "beacon_lights_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearBeaconLightsOn() {
-      _hasBits0 &= ~8388608;
+      _hasBits0 &= ~536870912;
     }
 
     /// <summary>Field number for the "landing_lights_on" field.</summary>
-    public const int LandingLightsOnFieldNumber = 25;
+    public const int LandingLightsOnFieldNumber = 31;
     private bool landingLightsOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool LandingLightsOn {
-      get { if ((_hasBits0 & 16777216) != 0) { return landingLightsOn_; } else { return false; } }
+      get { if ((_hasBits0 & 1073741824) != 0) { return landingLightsOn_; } else { return false; } }
       set {
-        _hasBits0 |= 16777216;
+        _hasBits0 |= 1073741824;
         landingLightsOn_ = value;
       }
     }
     /// <summary>Gets whether the "landing_lights_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasLandingLightsOn {
-      get { return (_hasBits0 & 16777216) != 0; }
+      get { return (_hasBits0 & 1073741824) != 0; }
     }
     /// <summary>Clears the value of the "landing_lights_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearLandingLightsOn() {
-      _hasBits0 &= ~16777216;
+      _hasBits0 &= ~1073741824;
     }
 
     /// <summary>Field number for the "nav_lights_on" field.</summary>
-    public const int NavLightsOnFieldNumber = 26;
+    public const int NavLightsOnFieldNumber = 32;
     private bool navLightsOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool NavLightsOn {
-      get { if ((_hasBits0 & 33554432) != 0) { return navLightsOn_; } else { return false; } }
+      get { if ((_hasBits0 & -2147483648) != 0) { return navLightsOn_; } else { return false; } }
       set {
-        _hasBits0 |= 33554432;
+        _hasBits0 |= -2147483648;
         navLightsOn_ = value;
       }
     }
     /// <summary>Gets whether the "nav_lights_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasNavLightsOn {
-      get { return (_hasBits0 & 33554432) != 0; }
+      get { return (_hasBits0 & -2147483648) != 0; }
     }
     /// <summary>Clears the value of the "nav_lights_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearNavLightsOn() {
-      _hasBits0 &= ~33554432;
+      _hasBits0 &= ~-2147483648;
     }
 
     /// <summary>Field number for the "strobe_lights_on" field.</summary>
-    public const int StrobeLightsOnFieldNumber = 27;
+    public const int StrobeLightsOnFieldNumber = 33;
     private bool strobeLightsOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool StrobeLightsOn {
-      get { if ((_hasBits0 & 67108864) != 0) { return strobeLightsOn_; } else { return false; } }
+      get { if ((_hasBits1 & 1) != 0) { return strobeLightsOn_; } else { return false; } }
       set {
-        _hasBits0 |= 67108864;
+        _hasBits1 |= 1;
         strobeLightsOn_ = value;
       }
     }
     /// <summary>Gets whether the "strobe_lights_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasStrobeLightsOn {
-      get { return (_hasBits0 & 67108864) != 0; }
+      get { return (_hasBits1 & 1) != 0; }
     }
     /// <summary>Clears the value of the "strobe_lights_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearStrobeLightsOn() {
-      _hasBits0 &= ~67108864;
+      _hasBits1 &= ~1;
     }
 
     /// <summary>Field number for the "taxi_lights_on" field.</summary>
-    public const int TaxiLightsOnFieldNumber = 28;
+    public const int TaxiLightsOnFieldNumber = 34;
     private bool taxiLightsOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool TaxiLightsOn {
-      get { if ((_hasBits0 & 134217728) != 0) { return taxiLightsOn_; } else { return false; } }
+      get { if ((_hasBits1 & 2) != 0) { return taxiLightsOn_; } else { return false; } }
       set {
-        _hasBits0 |= 134217728;
+        _hasBits1 |= 2;
         taxiLightsOn_ = value;
       }
     }
     /// <summary>Gets whether the "taxi_lights_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasTaxiLightsOn {
-      get { return (_hasBits0 & 134217728) != 0; }
+      get { return (_hasBits1 & 2) != 0; }
     }
     /// <summary>Clears the value of the "taxi_lights_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearTaxiLightsOn() {
-      _hasBits0 &= ~134217728;
+      _hasBits1 &= ~2;
     }
 
     /// <summary>Field number for the "flaps" field.</summary>
-    public const int FlapsFieldNumber = 29;
+    public const int FlapsFieldNumber = 35;
     private double flaps_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public double Flaps {
-      get { if ((_hasBits0 & 268435456) != 0) { return flaps_; } else { return 0D; } }
+      get { if ((_hasBits1 & 4) != 0) { return flaps_; } else { return 0D; } }
       set {
-        _hasBits0 |= 268435456;
+        _hasBits1 |= 4;
         flaps_ = value;
       }
     }
     /// <summary>Gets whether the "flaps" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasFlaps {
-      get { return (_hasBits0 & 268435456) != 0; }
+      get { return (_hasBits1 & 4) != 0; }
     }
     /// <summary>Clears the value of the "flaps" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearFlaps() {
-      _hasBits0 &= ~268435456;
+      _hasBits1 &= ~4;
     }
 
     /// <summary>Field number for the "gear_down" field.</summary>
-    public const int GearDownFieldNumber = 30;
+    public const int GearDownFieldNumber = 36;
     private bool gearDown_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool GearDown {
-      get { if ((_hasBits0 & 536870912) != 0) { return gearDown_; } else { return false; } }
+      get { if ((_hasBits1 & 8) != 0) { return gearDown_; } else { return false; } }
       set {
-        _hasBits0 |= 536870912;
+        _hasBits1 |= 8;
         gearDown_ = value;
       }
     }
     /// <summary>Gets whether the "gear_down" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasGearDown {
-      get { return (_hasBits0 & 536870912) != 0; }
+      get { return (_hasBits1 & 8) != 0; }
     }
     /// <summary>Clears the value of the "gear_down" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearGearDown() {
-      _hasBits0 &= ~536870912;
+      _hasBits1 &= ~8;
     }
 
     /// <summary>Field number for the "speed_brakes" field.</summary>
-    public const int SpeedBrakesFieldNumber = 31;
+    public const int SpeedBrakesFieldNumber = 37;
     private double speedBrakes_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public double SpeedBrakes {
-      get { if ((_hasBits0 & 1073741824) != 0) { return speedBrakes_; } else { return 0D; } }
+      get { if ((_hasBits1 & 16) != 0) { return speedBrakes_; } else { return 0D; } }
       set {
-        _hasBits0 |= 1073741824;
+        _hasBits1 |= 16;
         speedBrakes_ = value;
       }
     }
     /// <summary>Gets whether the "speed_brakes" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasSpeedBrakes {
-      get { return (_hasBits0 & 1073741824) != 0; }
+      get { return (_hasBits1 & 16) != 0; }
     }
     /// <summary>Clears the value of the "speed_brakes" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearSpeedBrakes() {
-      _hasBits0 &= ~1073741824;
+      _hasBits1 &= ~16;
     }
 
     /// <summary>Field number for the "engine_count" field.</summary>
-    public const int EngineCountFieldNumber = 32;
+    public const int EngineCountFieldNumber = 38;
     private int engineCount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int EngineCount {
-      get { if ((_hasBits0 & -2147483648) != 0) { return engineCount_; } else { return 0; } }
+      get { if ((_hasBits1 & 32) != 0) { return engineCount_; } else { return 0; } }
       set {
-        _hasBits0 |= -2147483648;
+        _hasBits1 |= 32;
         engineCount_ = value;
       }
     }
     /// <summary>Gets whether the "engine_count" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEngineCount {
-      get { return (_hasBits0 & -2147483648) != 0; }
+      get { return (_hasBits1 & 32) != 0; }
     }
     /// <summary>Clears the value of the "engine_count" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEngineCount() {
-      _hasBits0 &= ~-2147483648;
+      _hasBits1 &= ~32;
     }
 
     /// <summary>Field number for the "engine1_running" field.</summary>
-    public const int Engine1RunningFieldNumber = 33;
+    public const int Engine1RunningFieldNumber = 39;
     private bool engine1Running_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Engine1Running {
-      get { if ((_hasBits1 & 1) != 0) { return engine1Running_; } else { return false; } }
+      get { if ((_hasBits1 & 64) != 0) { return engine1Running_; } else { return false; } }
       set {
-        _hasBits1 |= 1;
+        _hasBits1 |= 64;
         engine1Running_ = value;
       }
     }
     /// <summary>Gets whether the "engine1_running" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEngine1Running {
-      get { return (_hasBits1 & 1) != 0; }
+      get { return (_hasBits1 & 64) != 0; }
     }
     /// <summary>Clears the value of the "engine1_running" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEngine1Running() {
-      _hasBits1 &= ~1;
+      _hasBits1 &= ~64;
     }
 
     /// <summary>Field number for the "engine2_running" field.</summary>
-    public const int Engine2RunningFieldNumber = 34;
+    public const int Engine2RunningFieldNumber = 40;
     private bool engine2Running_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Engine2Running {
-      get { if ((_hasBits1 & 2) != 0) { return engine2Running_; } else { return false; } }
+      get { if ((_hasBits1 & 128) != 0) { return engine2Running_; } else { return false; } }
       set {
-        _hasBits1 |= 2;
+        _hasBits1 |= 128;
         engine2Running_ = value;
       }
     }
     /// <summary>Gets whether the "engine2_running" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEngine2Running {
-      get { return (_hasBits1 & 2) != 0; }
+      get { return (_hasBits1 & 128) != 0; }
     }
     /// <summary>Clears the value of the "engine2_running" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEngine2Running() {
-      _hasBits1 &= ~2;
+      _hasBits1 &= ~128;
     }
 
     /// <summary>Field number for the "engine3_running" field.</summary>
-    public const int Engine3RunningFieldNumber = 35;
+    public const int Engine3RunningFieldNumber = 41;
     private bool engine3Running_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Engine3Running {
-      get { if ((_hasBits1 & 4) != 0) { return engine3Running_; } else { return false; } }
+      get { if ((_hasBits1 & 256) != 0) { return engine3Running_; } else { return false; } }
       set {
-        _hasBits1 |= 4;
+        _hasBits1 |= 256;
         engine3Running_ = value;
       }
     }
     /// <summary>Gets whether the "engine3_running" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEngine3Running {
-      get { return (_hasBits1 & 4) != 0; }
+      get { return (_hasBits1 & 256) != 0; }
     }
     /// <summary>Clears the value of the "engine3_running" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEngine3Running() {
-      _hasBits1 &= ~4;
+      _hasBits1 &= ~256;
     }
 
     /// <summary>Field number for the "engine4_running" field.</summary>
-    public const int Engine4RunningFieldNumber = 36;
+    public const int Engine4RunningFieldNumber = 42;
     private bool engine4Running_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool Engine4Running {
-      get { if ((_hasBits1 & 8) != 0) { return engine4Running_; } else { return false; } }
+      get { if ((_hasBits1 & 512) != 0) { return engine4Running_; } else { return false; } }
       set {
-        _hasBits1 |= 8;
+        _hasBits1 |= 512;
         engine4Running_ = value;
       }
     }
     /// <summary>Gets whether the "engine4_running" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEngine4Running {
-      get { return (_hasBits1 & 8) != 0; }
+      get { return (_hasBits1 & 512) != 0; }
     }
     /// <summary>Clears the value of the "engine4_running" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEngine4Running() {
-      _hasBits1 &= ~8;
+      _hasBits1 &= ~512;
     }
 
     /// <summary>Field number for the "on_ground" field.</summary>
-    public const int OnGroundFieldNumber = 37;
+    public const int OnGroundFieldNumber = 43;
     private bool onGround_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool OnGround {
-      get { if ((_hasBits1 & 16) != 0) { return onGround_; } else { return false; } }
+      get { if ((_hasBits1 & 1024) != 0) { return onGround_; } else { return false; } }
       set {
-        _hasBits1 |= 16;
+        _hasBits1 |= 1024;
         onGround_ = value;
       }
     }
     /// <summary>Gets whether the "on_ground" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasOnGround {
-      get { return (_hasBits1 & 16) != 0; }
+      get { return (_hasBits1 & 1024) != 0; }
     }
     /// <summary>Clears the value of the "on_ground" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearOnGround() {
-      _hasBits1 &= ~16;
+      _hasBits1 &= ~1024;
     }
 
     /// <summary>Field number for the "replay_mode" field.</summary>
-    public const int ReplayModeFieldNumber = 38;
+    public const int ReplayModeFieldNumber = 44;
     private bool replayMode_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool ReplayMode {
-      get { if ((_hasBits1 & 32) != 0) { return replayMode_; } else { return false; } }
+      get { if ((_hasBits1 & 2048) != 0) { return replayMode_; } else { return false; } }
       set {
-        _hasBits1 |= 32;
+        _hasBits1 |= 2048;
         replayMode_ = value;
       }
     }
     /// <summary>Gets whether the "replay_mode" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasReplayMode {
-      get { return (_hasBits1 & 32) != 0; }
+      get { return (_hasBits1 & 2048) != 0; }
     }
     /// <summary>Clears the value of the "replay_mode" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearReplayMode() {
-      _hasBits1 &= ~32;
+      _hasBits1 &= ~2048;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1040,6 +1185,12 @@ namespace Vatsim.Xpilot.Protobuf {
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Pitch, other.Pitch)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Roll, other.Roll)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Yaw, other.Yaw)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityLatitude, other.VelocityLatitude)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityAltitude, other.VelocityAltitude)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityLongitude, other.VelocityLongitude)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityPitch, other.VelocityPitch)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityHeading, other.VelocityHeading)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(VelocityBank, other.VelocityBank)) return false;
       if (TransponderCode != other.TransponderCode) return false;
       if (TransponderMode != other.TransponderMode) return false;
       if (TransponderIdent != other.TransponderIdent) return false;
@@ -1084,6 +1235,12 @@ namespace Vatsim.Xpilot.Protobuf {
       if (HasPitch) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Pitch);
       if (HasRoll) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Roll);
       if (HasYaw) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Yaw);
+      if (HasVelocityLatitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityLatitude);
+      if (HasVelocityAltitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityAltitude);
+      if (HasVelocityLongitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityLongitude);
+      if (HasVelocityPitch) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityPitch);
+      if (HasVelocityHeading) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityHeading);
+      if (HasVelocityBank) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(VelocityBank);
       if (HasTransponderCode) hash ^= TransponderCode.GetHashCode();
       if (HasTransponderMode) hash ^= TransponderMode.GetHashCode();
       if (HasTransponderIdent) hash ^= TransponderIdent.GetHashCode();
@@ -1198,76 +1355,100 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(161, 1);
         output.WriteDouble(Yaw);
       }
+      if (HasVelocityLatitude) {
+        output.WriteRawTag(169, 1);
+        output.WriteDouble(VelocityLatitude);
+      }
+      if (HasVelocityAltitude) {
+        output.WriteRawTag(177, 1);
+        output.WriteDouble(VelocityAltitude);
+      }
+      if (HasVelocityLongitude) {
+        output.WriteRawTag(185, 1);
+        output.WriteDouble(VelocityLongitude);
+      }
+      if (HasVelocityPitch) {
+        output.WriteRawTag(193, 1);
+        output.WriteDouble(VelocityPitch);
+      }
+      if (HasVelocityHeading) {
+        output.WriteRawTag(201, 1);
+        output.WriteDouble(VelocityHeading);
+      }
+      if (HasVelocityBank) {
+        output.WriteRawTag(209, 1);
+        output.WriteDouble(VelocityBank);
+      }
       if (HasTransponderCode) {
-        output.WriteRawTag(168, 1);
+        output.WriteRawTag(216, 1);
         output.WriteInt32(TransponderCode);
       }
       if (HasTransponderMode) {
-        output.WriteRawTag(176, 1);
+        output.WriteRawTag(224, 1);
         output.WriteInt32(TransponderMode);
       }
       if (HasTransponderIdent) {
-        output.WriteRawTag(184, 1);
+        output.WriteRawTag(232, 1);
         output.WriteBool(TransponderIdent);
       }
       if (HasBeaconLightsOn) {
-        output.WriteRawTag(192, 1);
+        output.WriteRawTag(240, 1);
         output.WriteBool(BeaconLightsOn);
       }
       if (HasLandingLightsOn) {
-        output.WriteRawTag(200, 1);
+        output.WriteRawTag(248, 1);
         output.WriteBool(LandingLightsOn);
       }
       if (HasNavLightsOn) {
-        output.WriteRawTag(208, 1);
+        output.WriteRawTag(128, 2);
         output.WriteBool(NavLightsOn);
       }
       if (HasStrobeLightsOn) {
-        output.WriteRawTag(216, 1);
+        output.WriteRawTag(136, 2);
         output.WriteBool(StrobeLightsOn);
       }
       if (HasTaxiLightsOn) {
-        output.WriteRawTag(224, 1);
+        output.WriteRawTag(144, 2);
         output.WriteBool(TaxiLightsOn);
       }
       if (HasFlaps) {
-        output.WriteRawTag(233, 1);
+        output.WriteRawTag(153, 2);
         output.WriteDouble(Flaps);
       }
       if (HasGearDown) {
-        output.WriteRawTag(240, 1);
+        output.WriteRawTag(160, 2);
         output.WriteBool(GearDown);
       }
       if (HasSpeedBrakes) {
-        output.WriteRawTag(249, 1);
+        output.WriteRawTag(169, 2);
         output.WriteDouble(SpeedBrakes);
       }
       if (HasEngineCount) {
-        output.WriteRawTag(128, 2);
+        output.WriteRawTag(176, 2);
         output.WriteInt32(EngineCount);
       }
       if (HasEngine1Running) {
-        output.WriteRawTag(136, 2);
+        output.WriteRawTag(184, 2);
         output.WriteBool(Engine1Running);
       }
       if (HasEngine2Running) {
-        output.WriteRawTag(144, 2);
+        output.WriteRawTag(192, 2);
         output.WriteBool(Engine2Running);
       }
       if (HasEngine3Running) {
-        output.WriteRawTag(152, 2);
+        output.WriteRawTag(200, 2);
         output.WriteBool(Engine3Running);
       }
       if (HasEngine4Running) {
-        output.WriteRawTag(160, 2);
+        output.WriteRawTag(208, 2);
         output.WriteBool(Engine4Running);
       }
       if (HasOnGround) {
-        output.WriteRawTag(168, 2);
+        output.WriteRawTag(216, 2);
         output.WriteBool(OnGround);
       }
       if (HasReplayMode) {
-        output.WriteRawTag(176, 2);
+        output.WriteRawTag(224, 2);
         output.WriteBool(ReplayMode);
       }
       if (_unknownFields != null) {
@@ -1359,76 +1540,100 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(161, 1);
         output.WriteDouble(Yaw);
       }
+      if (HasVelocityLatitude) {
+        output.WriteRawTag(169, 1);
+        output.WriteDouble(VelocityLatitude);
+      }
+      if (HasVelocityAltitude) {
+        output.WriteRawTag(177, 1);
+        output.WriteDouble(VelocityAltitude);
+      }
+      if (HasVelocityLongitude) {
+        output.WriteRawTag(185, 1);
+        output.WriteDouble(VelocityLongitude);
+      }
+      if (HasVelocityPitch) {
+        output.WriteRawTag(193, 1);
+        output.WriteDouble(VelocityPitch);
+      }
+      if (HasVelocityHeading) {
+        output.WriteRawTag(201, 1);
+        output.WriteDouble(VelocityHeading);
+      }
+      if (HasVelocityBank) {
+        output.WriteRawTag(209, 1);
+        output.WriteDouble(VelocityBank);
+      }
       if (HasTransponderCode) {
-        output.WriteRawTag(168, 1);
+        output.WriteRawTag(216, 1);
         output.WriteInt32(TransponderCode);
       }
       if (HasTransponderMode) {
-        output.WriteRawTag(176, 1);
+        output.WriteRawTag(224, 1);
         output.WriteInt32(TransponderMode);
       }
       if (HasTransponderIdent) {
-        output.WriteRawTag(184, 1);
+        output.WriteRawTag(232, 1);
         output.WriteBool(TransponderIdent);
       }
       if (HasBeaconLightsOn) {
-        output.WriteRawTag(192, 1);
+        output.WriteRawTag(240, 1);
         output.WriteBool(BeaconLightsOn);
       }
       if (HasLandingLightsOn) {
-        output.WriteRawTag(200, 1);
+        output.WriteRawTag(248, 1);
         output.WriteBool(LandingLightsOn);
       }
       if (HasNavLightsOn) {
-        output.WriteRawTag(208, 1);
+        output.WriteRawTag(128, 2);
         output.WriteBool(NavLightsOn);
       }
       if (HasStrobeLightsOn) {
-        output.WriteRawTag(216, 1);
+        output.WriteRawTag(136, 2);
         output.WriteBool(StrobeLightsOn);
       }
       if (HasTaxiLightsOn) {
-        output.WriteRawTag(224, 1);
+        output.WriteRawTag(144, 2);
         output.WriteBool(TaxiLightsOn);
       }
       if (HasFlaps) {
-        output.WriteRawTag(233, 1);
+        output.WriteRawTag(153, 2);
         output.WriteDouble(Flaps);
       }
       if (HasGearDown) {
-        output.WriteRawTag(240, 1);
+        output.WriteRawTag(160, 2);
         output.WriteBool(GearDown);
       }
       if (HasSpeedBrakes) {
-        output.WriteRawTag(249, 1);
+        output.WriteRawTag(169, 2);
         output.WriteDouble(SpeedBrakes);
       }
       if (HasEngineCount) {
-        output.WriteRawTag(128, 2);
+        output.WriteRawTag(176, 2);
         output.WriteInt32(EngineCount);
       }
       if (HasEngine1Running) {
-        output.WriteRawTag(136, 2);
+        output.WriteRawTag(184, 2);
         output.WriteBool(Engine1Running);
       }
       if (HasEngine2Running) {
-        output.WriteRawTag(144, 2);
+        output.WriteRawTag(192, 2);
         output.WriteBool(Engine2Running);
       }
       if (HasEngine3Running) {
-        output.WriteRawTag(152, 2);
+        output.WriteRawTag(200, 2);
         output.WriteBool(Engine3Running);
       }
       if (HasEngine4Running) {
-        output.WriteRawTag(160, 2);
+        output.WriteRawTag(208, 2);
         output.WriteBool(Engine4Running);
       }
       if (HasOnGround) {
-        output.WriteRawTag(168, 2);
+        output.WriteRawTag(216, 2);
         output.WriteBool(OnGround);
       }
       if (HasReplayMode) {
-        output.WriteRawTag(176, 2);
+        output.WriteRawTag(224, 2);
         output.WriteBool(ReplayMode);
       }
       if (_unknownFields != null) {
@@ -1498,6 +1703,24 @@ namespace Vatsim.Xpilot.Protobuf {
         size += 2 + 8;
       }
       if (HasYaw) {
+        size += 2 + 8;
+      }
+      if (HasVelocityLatitude) {
+        size += 2 + 8;
+      }
+      if (HasVelocityAltitude) {
+        size += 2 + 8;
+      }
+      if (HasVelocityLongitude) {
+        size += 2 + 8;
+      }
+      if (HasVelocityPitch) {
+        size += 2 + 8;
+      }
+      if (HasVelocityHeading) {
+        size += 2 + 8;
+      }
+      if (HasVelocityBank) {
         size += 2 + 8;
       }
       if (HasTransponderCode) {
@@ -1624,6 +1847,24 @@ namespace Vatsim.Xpilot.Protobuf {
       }
       if (other.HasYaw) {
         Yaw = other.Yaw;
+      }
+      if (other.HasVelocityLatitude) {
+        VelocityLatitude = other.VelocityLatitude;
+      }
+      if (other.HasVelocityAltitude) {
+        VelocityAltitude = other.VelocityAltitude;
+      }
+      if (other.HasVelocityLongitude) {
+        VelocityLongitude = other.VelocityLongitude;
+      }
+      if (other.HasVelocityPitch) {
+        VelocityPitch = other.VelocityPitch;
+      }
+      if (other.HasVelocityHeading) {
+        VelocityHeading = other.VelocityHeading;
+      }
+      if (other.HasVelocityBank) {
+        VelocityBank = other.VelocityBank;
       }
       if (other.HasTransponderCode) {
         TransponderCode = other.TransponderCode;
@@ -1773,75 +2014,99 @@ namespace Vatsim.Xpilot.Protobuf {
             Yaw = input.ReadDouble();
             break;
           }
-          case 168: {
-            TransponderCode = input.ReadInt32();
+          case 169: {
+            VelocityLatitude = input.ReadDouble();
             break;
           }
-          case 176: {
-            TransponderMode = input.ReadInt32();
+          case 177: {
+            VelocityAltitude = input.ReadDouble();
             break;
           }
-          case 184: {
-            TransponderIdent = input.ReadBool();
+          case 185: {
+            VelocityLongitude = input.ReadDouble();
             break;
           }
-          case 192: {
-            BeaconLightsOn = input.ReadBool();
+          case 193: {
+            VelocityPitch = input.ReadDouble();
             break;
           }
-          case 200: {
-            LandingLightsOn = input.ReadBool();
+          case 201: {
+            VelocityHeading = input.ReadDouble();
             break;
           }
-          case 208: {
-            NavLightsOn = input.ReadBool();
+          case 209: {
+            VelocityBank = input.ReadDouble();
             break;
           }
           case 216: {
-            StrobeLightsOn = input.ReadBool();
+            TransponderCode = input.ReadInt32();
             break;
           }
           case 224: {
-            TaxiLightsOn = input.ReadBool();
+            TransponderMode = input.ReadInt32();
             break;
           }
-          case 233: {
-            Flaps = input.ReadDouble();
+          case 232: {
+            TransponderIdent = input.ReadBool();
             break;
           }
           case 240: {
-            GearDown = input.ReadBool();
+            BeaconLightsOn = input.ReadBool();
             break;
           }
-          case 249: {
-            SpeedBrakes = input.ReadDouble();
+          case 248: {
+            LandingLightsOn = input.ReadBool();
             break;
           }
           case 256: {
-            EngineCount = input.ReadInt32();
+            NavLightsOn = input.ReadBool();
             break;
           }
           case 264: {
-            Engine1Running = input.ReadBool();
+            StrobeLightsOn = input.ReadBool();
             break;
           }
           case 272: {
-            Engine2Running = input.ReadBool();
+            TaxiLightsOn = input.ReadBool();
             break;
           }
-          case 280: {
-            Engine3Running = input.ReadBool();
+          case 281: {
+            Flaps = input.ReadDouble();
             break;
           }
           case 288: {
-            Engine4Running = input.ReadBool();
+            GearDown = input.ReadBool();
             break;
           }
-          case 296: {
-            OnGround = input.ReadBool();
+          case 297: {
+            SpeedBrakes = input.ReadDouble();
             break;
           }
           case 304: {
+            EngineCount = input.ReadInt32();
+            break;
+          }
+          case 312: {
+            Engine1Running = input.ReadBool();
+            break;
+          }
+          case 320: {
+            Engine2Running = input.ReadBool();
+            break;
+          }
+          case 328: {
+            Engine3Running = input.ReadBool();
+            break;
+          }
+          case 336: {
+            Engine4Running = input.ReadBool();
+            break;
+          }
+          case 344: {
+            OnGround = input.ReadBool();
+            break;
+          }
+          case 352: {
             ReplayMode = input.ReadBool();
             break;
           }
@@ -1939,75 +2204,99 @@ namespace Vatsim.Xpilot.Protobuf {
             Yaw = input.ReadDouble();
             break;
           }
-          case 168: {
-            TransponderCode = input.ReadInt32();
+          case 169: {
+            VelocityLatitude = input.ReadDouble();
             break;
           }
-          case 176: {
-            TransponderMode = input.ReadInt32();
+          case 177: {
+            VelocityAltitude = input.ReadDouble();
             break;
           }
-          case 184: {
-            TransponderIdent = input.ReadBool();
+          case 185: {
+            VelocityLongitude = input.ReadDouble();
             break;
           }
-          case 192: {
-            BeaconLightsOn = input.ReadBool();
+          case 193: {
+            VelocityPitch = input.ReadDouble();
             break;
           }
-          case 200: {
-            LandingLightsOn = input.ReadBool();
+          case 201: {
+            VelocityHeading = input.ReadDouble();
             break;
           }
-          case 208: {
-            NavLightsOn = input.ReadBool();
+          case 209: {
+            VelocityBank = input.ReadDouble();
             break;
           }
           case 216: {
-            StrobeLightsOn = input.ReadBool();
+            TransponderCode = input.ReadInt32();
             break;
           }
           case 224: {
-            TaxiLightsOn = input.ReadBool();
+            TransponderMode = input.ReadInt32();
             break;
           }
-          case 233: {
-            Flaps = input.ReadDouble();
+          case 232: {
+            TransponderIdent = input.ReadBool();
             break;
           }
           case 240: {
-            GearDown = input.ReadBool();
+            BeaconLightsOn = input.ReadBool();
             break;
           }
-          case 249: {
-            SpeedBrakes = input.ReadDouble();
+          case 248: {
+            LandingLightsOn = input.ReadBool();
             break;
           }
           case 256: {
-            EngineCount = input.ReadInt32();
+            NavLightsOn = input.ReadBool();
             break;
           }
           case 264: {
-            Engine1Running = input.ReadBool();
+            StrobeLightsOn = input.ReadBool();
             break;
           }
           case 272: {
-            Engine2Running = input.ReadBool();
+            TaxiLightsOn = input.ReadBool();
             break;
           }
-          case 280: {
-            Engine3Running = input.ReadBool();
+          case 281: {
+            Flaps = input.ReadDouble();
             break;
           }
           case 288: {
-            Engine4Running = input.ReadBool();
+            GearDown = input.ReadBool();
             break;
           }
-          case 296: {
-            OnGround = input.ReadBool();
+          case 297: {
+            SpeedBrakes = input.ReadDouble();
             break;
           }
           case 304: {
+            EngineCount = input.ReadInt32();
+            break;
+          }
+          case 312: {
+            Engine1Running = input.ReadBool();
+            break;
+          }
+          case 320: {
+            Engine2Running = input.ReadBool();
+            break;
+          }
+          case 328: {
+            Engine3Running = input.ReadBool();
+            break;
+          }
+          case 336: {
+            Engine4Running = input.ReadBool();
+            break;
+          }
+          case 344: {
+            OnGround = input.ReadBool();
+            break;
+          }
+          case 352: {
             ReplayMode = input.ReadBool();
             break;
           }

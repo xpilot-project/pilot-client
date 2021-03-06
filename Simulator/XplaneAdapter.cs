@@ -33,6 +33,7 @@ using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
 using Vatsim.Xpilot.Protobuf;
+using Abacus.DoublePrecision;
 
 namespace Vatsim.Xpilot.Simulator
 {
@@ -70,6 +71,9 @@ namespace Vatsim.Xpilot.Simulator
 
         [EventPublication(EventTopics.ConnectButtonDisabled)]
         public event EventHandler<EventArgs> ConnectButtonDisabled;
+
+        [EventPublication(EventTopics.AircraftAddedToSimulator)]
+        public event EventHandler<GenericEventArgs<string>> AircraftAddedToSimulator;
 
         private readonly INetworkManager mFsdManager;
         private readonly IAppConfig mConfig;
@@ -312,6 +316,14 @@ namespace Vatsim.Xpilot.Simulator
                             }
                         }
                         break;
+                    case Wrapper.MsgOneofCase.PlaneAddedToSim:
+                        {
+                            if (wrapper.PlaneAddedToSim.HasCallsign)
+                            {
+                                AircraftAddedToSimulator(this, new GenericEventArgs<string>(wrapper.PlaneAddedToSim.Callsign));
+                            }
+                        }
+                        break;
                     case Wrapper.MsgOneofCase.XplaneDatarefs:
                         {
                             if (wrapper.XplaneDatarefs.HasAudioComSelection)
@@ -357,6 +369,32 @@ namespace Vatsim.Xpilot.Simulator
                             if (wrapper.XplaneDatarefs.HasAvionicsPowerOn)
                             {
                                 mRadioStackState.AvionicsPowerOn = wrapper.XplaneDatarefs.AvionicsPowerOn;
+                            }
+
+                            if(wrapper.XplaneDatarefs.HasVelocityLatitude)
+                            {
+                                mUserAircraftData.LatitudeVelocity = wrapper.XplaneDatarefs.VelocityLatitude;
+                            }
+                            if (wrapper.XplaneDatarefs.HasVelocityAltitude)
+                            {
+                                mUserAircraftData.AltitudeVelocity = wrapper.XplaneDatarefs.VelocityAltitude;
+                            }
+                            if (wrapper.XplaneDatarefs.HasVelocityLongitude)
+                            {
+                                mUserAircraftData.LongitudeVelocity = wrapper.XplaneDatarefs.VelocityLongitude;
+                            }
+
+                            if (wrapper.XplaneDatarefs.HasVelocityPitch)
+                            {
+                                mUserAircraftData.PitchVelocity = wrapper.XplaneDatarefs.VelocityPitch;
+                            }
+                            if (wrapper.XplaneDatarefs.HasVelocityHeading)
+                            {
+                                mUserAircraftData.HeadingVelocity = wrapper.XplaneDatarefs.VelocityHeading;
+                            }
+                            if (wrapper.XplaneDatarefs.HasVelocityBank)
+                            {
+                                mUserAircraftData.BankVelocity = wrapper.XplaneDatarefs.VelocityBank;
                             }
 
                             if (wrapper.XplaneDatarefs.HasLatitude)
@@ -710,36 +748,6 @@ namespace Vatsim.Xpilot.Simulator
 
         }
 
-        public void AddPlane(NetworkAircraft plane)
-        {
-            var msg = new Wrapper
-            {
-                AddPlane = new AddPlane()
-            };
-            msg.AddPlane.Callsign = plane.Callsign;
-            msg.AddPlane.Equipment = plane.Equipment;
-            msg.AddPlane.Airline = plane.Airline;
-            SendProtobufArray(msg.ToByteArray());
-        }
-
-        public void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftState pose)
-        {
-            var msg = new Wrapper
-            {
-                PositionUpdate = new PositionUpdate()
-            };
-            msg.PositionUpdate.Callsign = plane.Callsign;
-            msg.PositionUpdate.Latitude = pose.Location.Lat;
-            msg.PositionUpdate.Longitude = pose.Location.Lon;
-            msg.PositionUpdate.Altitude = pose.Altitude;
-            msg.PositionUpdate.Bank = pose.Bank;
-            msg.PositionUpdate.Pitch = pose.Pitch;
-            msg.PositionUpdate.Heading = pose.Heading;
-            //msg.PositionUpdate.TransponderCode = pose.Transponder.TransponderCode;
-            //msg.PositionUpdate.TransponderModeC = pose.Transponder.TransponderModeC;
-            SendProtobufArray(msg.ToByteArray());
-        }
-
         public void PlaneConfigChanged(AirplaneConfig config)
         {
             var msg = new Wrapper
@@ -749,13 +757,13 @@ namespace Vatsim.Xpilot.Simulator
             SendProtobufArray(msg.ToByteArray());
         }
 
-        public void RemovePlane(NetworkAircraft plane)
+        public void RemovePlane(NetworkAircraft aircraft)
         {
             var msg = new Wrapper
             {
                 RemovePlane = new RemovePlane()
             };
-            msg.RemovePlane.Callsign = plane.Callsign;
+            msg.RemovePlane.Callsign = aircraft.Callsign;
             SendProtobufArray(msg.ToByteArray());
         }
 
@@ -796,14 +804,76 @@ namespace Vatsim.Xpilot.Simulator
             SendProtobufArray(msg.ToByteArray());
         }
 
-        public void PlaneConfigChanged(AircraftConfiguration config)
+        public void PlaneConfigChanged(string callsign, AircraftConfiguration config)
         {
-            throw new NotImplementedException();
+            //var msg = new Wrapper
+            //{
+            //    AirplaneConfig = new AirplaneConfig()
+            //};
+            //msg.AirplaneConfig.Callsign = callsign;
+            //SendProtobufArray(msg.ToByteArray());
         }
 
-        public void ChangeModel(NetworkAircraft plane)
+        public void AddPlane(Aircraft aircraft)
         {
-            throw new NotImplementedException();
+            var msg = new Wrapper
+            {
+                AddPlane = new AddPlane()
+            };
+            msg.AddPlane.Callsign = aircraft.Callsign;
+            msg.AddPlane.Equipment = aircraft.TypeCode ?? "";
+            msg.AddPlane.Airline = aircraft.Airline ?? "";
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void RemovePlane(Aircraft aircraft)
+        {
+            var msg = new Wrapper
+            {
+                RemovePlane = new RemovePlane()
+            };
+            msg.RemovePlane.Callsign = aircraft.Callsign;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void ChangeModel(Aircraft aircraft)
+        {
+
+        }
+
+        public void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVector)
+        {
+            var msg = new Wrapper
+            {
+                FastPositionUpdate = new Protobuf.FastPositionUpdate()
+            };
+            msg.FastPositionUpdate.Callsign = aircraft.Callsign;
+            msg.FastPositionUpdate.Latitude = visualState.Location.Lat;
+            msg.FastPositionUpdate.Longitude = visualState.Location.Lon;
+            msg.FastPositionUpdate.Altitude = visualState.Altitude;
+            msg.FastPositionUpdate.VelocityLatitude = positionalVelocityVector.X;
+            msg.FastPositionUpdate.VelocityAltitude = positionalVelocityVector.Y;
+            msg.FastPositionUpdate.VelocityLongitude = positionalVelocityVector.Z;
+            msg.FastPositionUpdate.VelocityPitch = rotationalVelocityVector.X;
+            msg.FastPositionUpdate.VelocityHeading = rotationalVelocityVector.Y;
+            msg.FastPositionUpdate.VelocityBank = rotationalVelocityVector.Z;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void SendSlowPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, double groundSpeed)
+        {
+            var msg = new Wrapper
+            {
+                PositionUpdate = new Protobuf.PositionUpdate()
+            };
+            msg.PositionUpdate.Callsign = aircraft.Callsign;
+            msg.PositionUpdate.Latitude = visualState.Location.Lat;
+            msg.PositionUpdate.Longitude = visualState.Location.Lon;
+            msg.PositionUpdate.Altitude = visualState.Altitude;
+            msg.PositionUpdate.Pitch = visualState.Pitch;
+            msg.PositionUpdate.Heading = visualState.Heading;
+            msg.PositionUpdate.Bank = visualState.Bank;
+            SendProtobufArray(msg.ToByteArray());
         }
 
         public List<int> TunedFrequencies => mTunedFrequencies;

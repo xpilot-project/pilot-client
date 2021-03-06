@@ -34,6 +34,7 @@ using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Simulator;
 using System.Linq;
+using Abacus.DoublePrecision;
 
 namespace Vatsim.Xpilot.Networking
 {
@@ -83,6 +84,9 @@ namespace Vatsim.Xpilot.Networking
 
         [EventPublication(EventTopics.AircraftUpdateReceived)]
         public event EventHandler<AircraftUpdateReceivedEventArgs> AircraftUpdateReceived;
+
+        [EventPublication(EventTopics.FastPositionUpdateReceived)]
+        public event EventHandler<FastPositionUpdateEventArgs> FastPositionUpdateReceived;
 
         [EventPublication(EventTopics.ControllerUpdateReceived)]
         public event EventHandler<ControllerUpdateReceivedEventArgs> ControllerUpdateReceived;
@@ -155,6 +159,7 @@ namespace Vatsim.Xpilot.Networking
             mFsd.ClientQueryReceived += Fsd_ClientQueryReceived;
             mFsd.ClientQueryResponseReceived += Fsd_ClientQueryResponseReceived;
             mFsd.PilotPositionReceived += Fsd_PilotPositionReceived;
+            mFsd.FastPilotPositionReceived += Fsd_FastPilotPositionReceived;
             mFsd.ATCPositionReceived += Fsd_ATCPositionReceived;
             mFsd.AcarsResponseReceived += Fsd_AcarsResponseReceived;
             mFsd.DeletePilotReceived += Fsd_DeletePilotReceived;
@@ -398,18 +403,20 @@ namespace Vatsim.Xpilot.Networking
             }
         }
 
+        private void Fsd_FastPilotPositionReceived(object sender, DataReceivedEventArgs<PDUFastPilotPosition> e)
+        {
+            AircraftVisualState visualState = new AircraftVisualState(new WorldPoint(e.PDU.Lon, e.PDU.Lat), e.PDU.Altitude, e.PDU.Pitch, e.PDU.Heading, e.PDU.Bank);
+            Vector3 positionalVelocityVector = new Vector3(e.PDU.VelocityX, e.PDU.VelocityZ, e.PDU.VelocityY);
+            Vector3 rotationalVeloctyVector = new Vector3(e.PDU.VelocityPitch, e.PDU.VelocityHeading, e.PDU.VelocityBank);
+            FastPositionUpdateReceived(this, new FastPositionUpdateEventArgs(e.PDU.From, visualState, positionalVelocityVector, rotationalVeloctyVector));
+        }
+
         private void Fsd_PilotPositionReceived(object sender, DataReceivedEventArgs<PDUPilotPosition> e)
         {
             if (!mConnectInfo.ObserverMode || !Regex.IsMatch(mConnectInfo.Callsign, "^" + Regex.Escape(e.PDU.From) + "[A-Z]$"))
             {
-                NetworkAircraftState pose = new NetworkAircraftState();
-                pose.ReportedAltitude = e.PDU.TrueAltitude;
-                pose.Altitude = e.PDU.PressureAltitude;
-                pose.Bank = e.PDU.Bank;
-                pose.Pitch = e.PDU.Pitch;
-                pose.Heading = e.PDU.Heading;
-                pose.Location = new WorldPoint(e.PDU.Lon, e.PDU.Lat);
-                AircraftUpdateReceived?.Invoke(this, new AircraftUpdateReceivedEventArgs(e.PDU.From, pose));
+                AircraftVisualState visualState = new AircraftVisualState(new WorldPoint(e.PDU.Lon, e.PDU.Lat), e.PDU.TrueAltitude, e.PDU.Pitch, e.PDU.Heading, e.PDU.Bank);
+                AircraftUpdateReceived?.Invoke(this, new AircraftUpdateReceivedEventArgs(e.PDU.From, visualState, e.PDU.GroundSpeed));
             }
         }
 
@@ -642,6 +649,7 @@ namespace Vatsim.Xpilot.Networking
                 "ATCINFO=1",
                 "MODELDESC=1",
                 "ACCONFIG=1",
+                "VISUPDATE=1"
             }));
         }
 
@@ -768,6 +776,11 @@ namespace Vatsim.Xpilot.Networking
         public void SetPluginHash(string hash)
         {
             mClientProperties.PluginHash = hash;
+        }
+
+        public void SendControlerInfoRequest(string callsign)
+        {
+            throw new NotImplementedException();
         }
 
         public bool IsConnected => mFsd.Connected;

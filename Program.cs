@@ -22,12 +22,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using Ninject;
 using Vatsim.Xpilot.AudioForVatsim;
-using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Networking;
-using Vatsim.Xpilot.Networking.Aircraft;
 using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot
 {

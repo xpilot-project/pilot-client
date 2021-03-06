@@ -15,10 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-namespace Vatsim.Xpilot.Core
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Vatsim.Xpilot.Events.Arguments
 {
-    public interface ITimeStampProvider
+    public class GenericEventArgs<T> : EventArgs
     {
-        long Precision { get; }
+        public T Value { get; set; }
+        public GenericEventArgs(T value)
+        {
+            Value = value;
+        }
     }
 }

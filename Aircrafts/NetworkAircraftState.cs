@@ -29,5 +29,28 @@ namespace Vatsim.Xpilot.Aircrafts
         public double Bank { get; set; }
         public double Heading { get; set; }
         public double GroundSpeed { get; set; }
+        public double VelocityLatitude { get; set; }
+        public double VelcoityAltitude { get; set; }
+        public double VelocityLongitude { get; set; }
+        public double VelocityPitch { get; set; }
+        public double VelocityBank { get; set; }
+        public double VelocityHeading { get; set; }
+        public NetworkAircraftState Clone()
+        {
+            return new NetworkAircraftState
+            {
+                Location = Location,
+                Altitude = Altitude,
+                Pitch = Pitch,
+                Bank = Bank,
+                Heading = Heading,
+                VelocityLatitude = VelocityLatitude,
+                VelcoityAltitude = VelcoityAltitude,
+                VelocityLongitude = VelocityLongitude,
+                VelocityPitch = VelocityPitch,
+                VelocityBank = VelocityBank,
+                VelocityHeading = VelocityHeading
+            };
+        }
     }
 }

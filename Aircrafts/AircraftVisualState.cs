@@ -15,22 +15,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Abacus.DoublePrecision;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Vatsim.Xpilot.Common;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
-    public class Aircraft
-    {
-        public string Callsign { get; set; }
-        public AircraftStatus Status { get; set; }
-        public string Airline { get; set; }
-        public string TypeCode { get; set; }
-        public AircraftConfiguration Configuration { get; set; }
-        public DateTime LastSlowPositionUpdate { get; set; }
-        public Aircraft(string callsign)
-        {
-            Callsign = callsign;
-        }
-    }
+	public class AircraftVisualState
+	{
+		internal WorldPoint Location { get; }
+		internal double Altitude { get; }
+		internal double Pitch { get; }
+		internal double Heading { get; }
+		internal double Bank { get; }
+
+		public AircraftVisualState(WorldPoint location, double altitude, double pitch, double heading, double bank)
+		{
+			Location = location;
+			Altitude = altitude;
+			Pitch = pitch;
+			Heading = heading;
+			Bank = bank;
+		}
+
+		public AircraftVisualState Clone()
+		{
+			return new AircraftVisualState(Location, Altitude, Pitch, Heading, Bank);
+		}
+	}
 }
