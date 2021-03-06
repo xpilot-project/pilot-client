@@ -17,29 +17,18 @@
 */
 namespace Vatsim.Xpilot.Aircrafts
 {
-    public class RadioStackState
+    public struct RadioStackState
     {
-        public bool MasterSwitchOn { get; set; }
-        public bool AvionicsPowerOn { get; set; }
-        public uint Com1ActiveFrequency { get; set; }
-        public bool Com1TransmitEnabled { get; set; }
-        public bool Com1ReceiveEnabled { get; set; }
-        public uint Com2ActiveFrequency { get; set; }
-        public bool Com2TransmitEnabled { get; set; }
-        public bool Com2ReceiveEnabled { get; set; }
-        public bool SquawkingModeC { get; set; }
-        public ushort TransponderCode { get; set; }
-        public bool SquawkingIdent { get; set; }
-        public bool ReceivingOnBothComRadios
-        {
-            get
-            {
-                if (Com1ReceiveEnabled)
-                {
-                    return Com2ReceiveEnabled;
-                }
-                return false;
-            }
-        }
+        public bool AvionicsPowerOn;
+        public uint Com1ActiveFrequency;
+        public bool Com1TransmitEnabled;
+        public bool Com1ReceiveEnabled;
+        public uint Com2ActiveFrequency;
+        public bool Com2TransmitEnabled;
+        public bool Com2ReceiveEnabled;
+        public bool SquawkingModeC;
+        public ushort TransponderCode;
+        public bool SquawkingIdent;
+        public bool ReceivingOnBothComRadios => Com1ReceiveEnabled && Com2ReceiveEnabled;
     }
 }

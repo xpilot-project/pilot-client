@@ -15,9 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-namespace Vatsim.Xpilot.Networking.Aircraft
+namespace Vatsim.Xpilot.Aircrafts
 {
-    internal interface INetworkAircraftManager
+    internal interface IAircraftManager
     {
+        void IgnoreAircraft(string callsign);
+        void UnignoreAircraft(string callsign);
     }
 }

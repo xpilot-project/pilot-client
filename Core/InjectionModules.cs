@@ -22,8 +22,8 @@ using Vatsim.Xpilot.Simulator;
 using Appccelerate.EventBroker;
 using Ninject.Extensions.Factory;
 using Ninject.Modules;
-using Vatsim.Xpilot.Networking.Aircraft;
 using Vatsim.Xpilot.Controllers;
+using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot.Core
 {
@@ -41,9 +41,10 @@ namespace Vatsim.Xpilot.Core
             Bind<IXplaneAdapter>().To(typeof(XplaneAdapter)).InSingletonScope();
             Bind<IVersionCheck>().To(typeof(VersionCheck)).InSingletonScope();
             Bind<IUserAircraftManager>().To(typeof(UserAircraftManager)).InSingletonScope();
-            Bind<INetworkAircraftManager>().To(typeof(NetworkAircraftManager)).InSingletonScope();
+            Bind<IAircraftManager>().To(typeof(AircraftManager)).InSingletonScope();
             Bind<IControllerManager>().To(typeof(ControllerManager)).InSingletonScope();
             Bind<IControllerAtisManager>().To(typeof(ControllerAtisManager)).InSingletonScope();
+            Bind<ITimeStampProvider>().To(typeof(TimeStampProvider)).InSingletonScope();
         }
     }
 }

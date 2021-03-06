@@ -27,7 +27,7 @@ namespace Vatsim.Xpilot.Events.Arguments
     public class AircraftUpdatedEventArgs : NetworkDataReceivedEventArgs
     {
         public NetworkAircraft Aircraft { get; set; }
-        public AircraftUpdatedEventArgs(string from, NetworkAircraft aircraft) : base(from, null)
+        public AircraftUpdatedEventArgs(NetworkAircraft aircraft) : base(null, null)
         {
             Aircraft = aircraft;
         }

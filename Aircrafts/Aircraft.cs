@@ -23,21 +23,19 @@ using System.Threading.Tasks;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
-    public struct UserAircraftConfigData
+    public class Aircraft
     {
-        public bool StrobesOn;
-        public bool LandingLightsOn;
-        public bool TaxiLightsOn;
-        public bool BeaconOn;
-        public bool NavLightOn;
-        public int EngineCount;
-        public bool Engine1Running;
-        public bool Engine2Running;
-        public bool Engine3Running;
-        public bool Engine4Running;
-        public bool GearDown;
-        public double FlapsRatio;
-        public double SpoilersRatio;
-        public bool OnGround;
+        public string Callsign { get; set; }
+        public AircraftStatus Status { get; set; }
+        public string Airline { get; set; }
+        public string TypeCode { get; set; }
+        public long? LastSlowPositionTimeStamp { get; set; }
+        public long? LastFastPositionTimeStamp { get; set; }
+        public double Speed { get; set; }
+        public AircraftConfiguration Configuration { get; set; }
+        public Aircraft(string callsign)
+        {
+            Callsign = callsign;
+        }
     }
 }

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
+using System.Collections.Generic;
 using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot.Simulator
@@ -31,8 +32,10 @@ namespace Vatsim.Xpilot.Simulator
         void PlanePoseChanged(NetworkAircraft plane, NetworkAircraftState pose);
         void PlaneConfigChanged(AircraftConfiguration config);
         void RemovePlane(NetworkAircraft plane);
+        void ChangeModel(NetworkAircraft plane);
         void RemoveAllPlanes();
         void NetworkConnected(string callsign);
         void NetworkDisconnected();
+        List<int> TunedFrequencies { get; }
     }
 }

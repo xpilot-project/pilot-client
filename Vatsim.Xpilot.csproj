@@ -141,6 +141,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aircrafts\Aircraft.cs" />
     <Compile Include="Aircrafts\RadioStackState.cs" />
     <Compile Include="Aircrafts\UserAircraftConfigData.cs" />
     <Compile Include="AudioForVatsim\AFVBindings.cs" />
@@ -163,17 +164,20 @@
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\ITabPages.cs" />
+    <Compile Include="Core\ITimeStampProvider.cs" />
     <Compile Include="Core\IUserInterface.cs" />
     <Compile Include="Aircrafts\AircraftConfigurationInfo.cs" />
-    <Compile Include="Aircrafts\INetworkAircraftManager.cs" />
+    <Compile Include="Aircrafts\IAircraftManager.cs" />
     <Compile Include="Aircrafts\NetworkAircraft.cs" />
     <Compile Include="Aircrafts\NetworkAircraftConfig.cs" />
-    <Compile Include="Aircrafts\NetworkAircraftManager.cs" />
+    <Compile Include="Aircrafts\AircraftManager.cs" />
     <Compile Include="Aircrafts\NetworkAircraftState.cs" />
     <Compile Include="Controllers\ControllerAtisManager.cs" />
     <Compile Include="Controllers\ControllerManager.cs" />
     <Compile Include="Controllers\IControllerAtisManager.cs" />
     <Compile Include="Controllers\IControllerManager.cs" />
+    <Compile Include="Core\TimeStampProvider.cs" />
+    <Compile Include="Events.Arguments\AircraftEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftInfoReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftUpdatedEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftUpdateReceivedEventArgs.cs" />

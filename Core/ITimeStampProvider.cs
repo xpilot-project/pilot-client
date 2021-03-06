@@ -15,29 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Vatsim.Xpilot.Aircrafts
+namespace Vatsim.Xpilot.Core
 {
-    public struct UserAircraftConfigData
+    public interface ITimeStampProvider
     {
-        public bool StrobesOn;
-        public bool LandingLightsOn;
-        public bool TaxiLightsOn;
-        public bool BeaconOn;
-        public bool NavLightOn;
-        public int EngineCount;
-        public bool Engine1Running;
-        public bool Engine2Running;
-        public bool Engine3Running;
-        public bool Engine4Running;
-        public bool GearDown;
-        public double FlapsRatio;
-        public double SpoilersRatio;
-        public bool OnGround;
+        long Precision { get; }
     }
 }

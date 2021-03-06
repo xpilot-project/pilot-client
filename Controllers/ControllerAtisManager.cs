@@ -68,7 +68,7 @@ namespace Vatsim.Xpilot.Controllers
             if (!mAtisReceived.ContainsKey(callsign))
             {
                 mAtisReceived.Add(callsign, new List<string>());
-                mFsdManager.RequestControlerInfo(callsign);
+                mFsdManager.SendControlerInfoRequest(callsign);
             }
         }
     }

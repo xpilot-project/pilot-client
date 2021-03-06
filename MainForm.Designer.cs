@@ -134,6 +134,7 @@ namespace Vatsim.Xpilot
             this.TabsMain.Size = new System.Drawing.Size(520, 128);
             this.TabsMain.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.TabsMain.TabIndex = 1;
+            this.TabsMain.SelectedIndexChanged += new System.EventHandler(this.TabsMain_SelectedIndexChanged);
             // 
             // TabPageMessages
             // 

@@ -25,7 +25,6 @@ namespace Vatsim.Xpilot.Core
         public const string SessionStarted = "SessionStarted";
         public const string SessionEnded = "SessionEnded";
         public const string MainFormShown = "MainFormShown";
-        public const string MainFormClosed = "MainFormClosed";
         public const string SettingsModified = "SettingsModified";
 
         // X-Plane
@@ -45,8 +44,6 @@ namespace Vatsim.Xpilot.Core
         public const string RadioStackStateChanged = "RadioStackStateChanged";
         public const string OverrideRadioStackState = "OverrideComStatusChanged";
         public const string RadioVolumeChanged = "RadioVolumeChanged";
-        public const string VoiceConnected = "VoiceConnected";
-        public const string VoiceDisconnected = "VoiceDisconnected";
 
         // Network Events
         public const string NetworkConnectionInitiated = "NetworkConnectionInitiated";
@@ -65,6 +62,7 @@ namespace Vatsim.Xpilot.Core
         public const string DeleteControllerReceived = "DeleteControllerReceived";
         public const string DeletePilotReceived = "DeletePilotReceived";
         public const string AircraftUpdateReceived = "AircraftUpdateReceived";
+        public const string FastPositionUpdateReceived = "FastPositionUpdateReceived";
         public const string ControllerUpdateReceived = "ControlerUpdateReceived";
         public const string CapabilitiesRequestReceived = "CapabilitiesRequestReceived";
         public const string AircraftConfigurationInfoReceived = "AircraftConfigurationInfoReceived";
@@ -94,6 +92,7 @@ namespace Vatsim.Xpilot.Core
         public const string PilotPositionReceived = "PilotPositionReceived";
         public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
         public const string UserAircraftConfigDataUpdated = "UserAircraftConfigDataUpdated";
+        public const string AircraftAddedToSimulator = "AircraftAddedToSimulator";
         public const string ValidateCslPaths = "ValidateCslPaths";
     }
 }

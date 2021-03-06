@@ -20,24 +20,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vatsim.Xpilot.Aircrafts;
 
-namespace Vatsim.Xpilot.Aircrafts
+namespace Vatsim.Xpilot.Events.Arguments
 {
-    public struct UserAircraftConfigData
+    public class AircraftEventArgs : EventArgs
     {
-        public bool StrobesOn;
-        public bool LandingLightsOn;
-        public bool TaxiLightsOn;
-        public bool BeaconOn;
-        public bool NavLightOn;
-        public int EngineCount;
-        public bool Engine1Running;
-        public bool Engine2Running;
-        public bool Engine3Running;
-        public bool Engine4Running;
-        public bool GearDown;
-        public double FlapsRatio;
-        public double SpoilersRatio;
-        public bool OnGround;
+        public Aircraft Aircraft { get; set; }
+        public AircraftEventArgs(Aircraft aircraft)
+        {
+            Aircraft = aircraft;
+        }
     }
 }

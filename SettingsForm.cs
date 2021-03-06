@@ -132,7 +132,7 @@ namespace Vatsim.Xpilot
             MessageBox.Show(this, message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
         }
 
-        private void BtnClose_Click(object sender, EventArgs e)
+        private void BtnOK_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtNetworkLogin.Text))
             {
@@ -282,6 +282,11 @@ namespace Vatsim.Xpilot
             int baseMin = -40;
             int baseMax = 0;
             return ((limitMax - limitMin) * (v - baseMin)) / (baseMax - baseMin) + limitMin;
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 

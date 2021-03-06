@@ -83,7 +83,7 @@ namespace Vatsim.Xpilot.Simulator
         public void OnUserAircraftConfigDataUpdated(object sender, UserAircraftConfigDataUpdatedEventArgs e)
         {
             mUserAircraftConfigData = e.UserAircraftConfigData;
-            if (mUserAircraftConfigData != null && mFsdManager.IsConnected)
+            if (mFsdManager.IsConnected)
             {
                 if (mTokensRemaining > 0)
                 {

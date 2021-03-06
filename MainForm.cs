@@ -29,9 +29,10 @@ using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
-using Vatsim.Xpilot.Aircrafts;
 using System.Text.RegularExpressions;
 using Vatsim.Xpilot.Common;
+using Vatsim.Fsd.Connector;
+using System.Linq;
 
 namespace Vatsim.Xpilot
 {
@@ -40,14 +41,18 @@ namespace Vatsim.Xpilot
         [EventPublication(EventTopics.MainFormShown)]
         public event EventHandler<EventArgs> MainFormShown;
 
-        [EventPublication(EventTopics.MainFormClosed)]
-        public event EventHandler<EventArgs> MainFormClosed;
+        [EventPublication(EventTopics.SessionStarted)]
+        public event EventHandler<EventArgs> SessionStarted;
+
+        [EventPublication(EventTopics.SessionEnded)]
+        public event EventHandler<EventArgs> SessionEnded;
 
         [EventPublication(EventTopics.PlayNotificationSound)]
         public event EventHandler<PlayNotifictionSoundEventArgs> PlayNotificationSound;
 
         [EventPublication(EventTopics.RadioMessageSent)]
         public event EventHandler<RadioMessageSentEventArgs> RadioMessagSent;
+
 
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
@@ -57,29 +62,24 @@ namespace Vatsim.Xpilot
         private readonly IControllerAtisManager mAtisManager;
         private readonly IXplaneAdapter mXplaneAdapter;
 
-        private readonly Color COLOR_LIGHT_GRAY = Color.FromArgb(224, 224, 224);
-        private readonly Color COLOR_WHITE = Color.White;
         private readonly Color COLOR_INFO = Color.Yellow;
         private readonly Color COLOR_ORANGE = Color.Orange;
         private readonly Color COLOR_RED = Color.Red;
         private readonly Color COLOR_CYAN = Color.Cyan;
         private readonly Color COLOR_GREEN = Color.FromArgb(0, 192, 0);
         private readonly Color COLOR_OLIVE_GREEN = Color.FromArgb(133, 166, 100);
+        private readonly Color ACTIVE_TXRX_BACKGROUND = Color.FromArgb(39, 174, 96);
+        private readonly Color INACTIVE_TXRX_COLOR = Color.FromArgb(39, 44, 46);
 
         [System.Runtime.InteropServices.DllImport("usser32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-
         private bool mInitializing = true;
         private bool mReceivingOnBothFrequencies;
-
-        private RadioStackState mRadioStackData;
         private ConnectInfo mConnectInfo;
-        private NotesTab TabNotes;
+        private NotesTab mTabNotes;
 
         private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
 
@@ -105,9 +105,9 @@ namespace Vatsim.Xpilot
             
             TopMost = mConfig.KeepWindowVisible;
 
-            TabNotes = mTabPages.CreateNotesTab();
-            TabNotes.Text = "Notes";
-            TabsMain.TabPages.Add(TabNotes);
+            mTabNotes = mTabPages.CreateNotesTab();
+            mTabNotes.Text = "Notes";
+            TabsMain.TabPages.Add(mTabNotes);
         }
 
         [EventSubscription(EventTopics.NotificationPosted, typeof(OnUserInterfaceAsync))]
@@ -138,6 +138,13 @@ namespace Vatsim.Xpilot
         {
             BtnConnect.Enabled = false;
             BtnConnect.Text = "Connecting";
+            BtnConnect.Pushed = true;
+        }
+
+        [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
+        {
+            HandleNetworkDisconnected();
         }
 
         [EventSubscription(EventTopics.NetworkConnectionFailed, typeof(OnUserInterfaceAsync))]
@@ -152,6 +159,7 @@ namespace Vatsim.Xpilot
             LblCallsign.Text = e.ConnectInfo.Callsign;
             BtnConnect.Enabled = true;
             BtnConnect.Text = "Disconnect";
+            BtnConnect.Pushed = true;
         }
 
         [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
@@ -173,11 +181,7 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
         public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
         {
-            PrivateMessageTab tab = GetPrivateMessageTabIfExists(e.To);
-            if (tab == null)
-            {
-                CreatePrivateMessageTab(e.To, e.Message, true, e.From);
-            }
+            HandlePrivateMessageSent(e.To, e.Message);
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -286,35 +290,78 @@ namespace Vatsim.Xpilot
         public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
         {
             mReceivingOnBothFrequencies = e.RadioStackState.ReceivingOnBothComRadios;
-        }
+            if (e.RadioStackState.AvionicsPowerOn)
+            {
+                if (e.RadioStackState.Com1ActiveFrequency > 0)
+                {
+                    Com1Freq.Text = (e.RadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
+                    Com1TX.ForeColor = e.RadioStackState.Com1TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com1RX.ForeColor = e.RadioStackState.Com1ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                }
+                else
+                {
+                    Com1Freq.Text = "---.---";
+                    Com1TX.ForeColor = INACTIVE_TXRX_COLOR;
+                    Com1RX.ForeColor = INACTIVE_TXRX_COLOR;
+                }
 
-        [EventSubscription(EventTopics.VoiceConnected, typeof(OnUserInterfaceAsync))]
-        public void OnVoiceConnected(object sender, EventArgs e)
-        {
+                if (e.RadioStackState.Com2ActiveFrequency > 0)
+                {
+                    Com2Freq.Text = (e.RadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
+                    Com2TX.ForeColor = e.RadioStackState.Com2TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com2RX.ForeColor = e.RadioStackState.Com2ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                }
+                else
+                {
+                    Com2Freq.Text = "---.---";
+                    Com2TX.ForeColor = INACTIVE_TXRX_COLOR;
+                    Com2RX.ForeColor = INACTIVE_TXRX_COLOR;
+                }
+            }
+            else
+            {
+                Com1Freq.Text = "---.---";
+                Com1TX.ForeColor = INACTIVE_TXRX_COLOR;
+                Com1RX.ForeColor = INACTIVE_TXRX_COLOR;
 
-        }
-
-        [EventSubscription(EventTopics.VoiceDisconnected, typeof(OnUserInterfaceAsync))]
-        public void OnVoiceDisconnected(object sender, EventArgs e)
-        {
-
+                Com2Freq.Text = "---.---";
+                Com2TX.ForeColor = INACTIVE_TXRX_COLOR;
+                Com2RX.ForeColor = INACTIVE_TXRX_COLOR;
+            }
         }
 
         [EventSubscription(EventTopics.ComRadioTransmittingChanged, typeof(OnUserInterfaceAsync))]
         public void OnComRadioTransmittingChanged(object sender, ComRadioTxRxChangedEventArgs e)
         {
-
+            switch (e.Radio)
+            {
+                case 0:
+                    Com1TX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    break;
+                case 1:
+                    Com2TX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    break;
+            }
         }
 
         [EventSubscription(EventTopics.ComRadioReceivingChanged, typeof(OnUserInterfaceAsync))]
         public void OnComRadioReceivingChanged(object sender, ComRadioTxRxChangedEventArgs e)
         {
-
+            switch (e.Radio)
+            {
+                case 0:
+                    Com1RX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    break;
+                case 1:
+                    Com2RX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    break;
+            }
         }
 
         [EventSubscription(EventTopics.RadioMessageSent, typeof(OnUserInterfaceAsync))]
         public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
         {
+            mNetworkManager.SendRadioMessage(mXplaneAdapter.TunedFrequencies, e.Message);
             WriteMessage(COLOR_CYAN, $"{e.OurCallsign}: {e.Message}", true);
         }
 
@@ -322,7 +369,7 @@ namespace Vatsim.Xpilot
         public void OnWallopSent(object sender, WallopSentEventArgs e)
         {
             WriteMessage(COLOR_RED, $"[WALLOP] {e.OurCallsign}: {e.Message}", true);
-            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
+            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
         }
 
         [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
@@ -352,14 +399,14 @@ namespace Vatsim.Xpilot
             {
                 message = $"{e.From}: {e.Data}";
             }
-            WriteMessage(e.IsDirect ? COLOR_WHITE : COLOR_LIGHT_GRAY, message, e.IsDirect);
+            WriteMessage(e.IsDirect ? Color.White : Color.Silver, message, e.IsDirect);
             if (e.IsDirect)
             {
-                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.DirectRadioMessage));
+                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.DirectRadioMessage));
             }
             else
             {
-                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.RadioMessage));
+                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.RadioMessage));
             }
             if (mConfig.FlashTaskbarRadioMessage)
             {
@@ -371,7 +418,7 @@ namespace Vatsim.Xpilot
         public void OnBroadcastMessageReceived(object sender, NetworkDataReceivedEventArgs e)
         {
             WriteMessage(COLOR_ORANGE, $"[BROADCAST] {e.From}: {e.Data}", false);
-            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
+            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
         }
 
         [EventSubscription(EventTopics.ServerMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -383,7 +430,8 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.SelcalAlertReceived, typeof(OnUserInterfaceAsync))]
         public void OnSelcalAlertReceived(object sender, SelcalAlertReceivedEventArgs e)
         {
-            PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.SelCal));
+            WriteInfoMessage($"SELCAL alert received on {e.Frequencies[0].FormatFromNetwork()}");
+            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.SelCal));
         }
 
         private void WriteErrorMessage(string message)
@@ -408,7 +456,7 @@ namespace Vatsim.Xpilot
             {
                 TabsMain.SelectedTab = TabPageMessages;
             }
-            TabPageMessages.ForeColor = (TabsMain.SelectedTab == TabPageMessages) ? COLOR_LIGHT_GRAY : COLOR_CYAN;
+            TabPageMessages.ForeColor = (TabsMain.SelectedTab == TabPageMessages) ? Color.Silver : Color.Cyan;
             TabsMain.Refresh();
         }
 
@@ -504,17 +552,6 @@ namespace Vatsim.Xpilot
                         case ".clear":
                             RtfMessages.RichTextBox.Clear();
                             break;
-                        case ".inf":
-                            CheckMinLength(cmd);
-                            if (cmd[1].Length > 10)
-                            {
-                                throw new ArgumentException("Callsign too long.");
-                            }
-                            else
-                            {
-                                //mNetworkManager.RequestAircraftInfo(cmd[1].ToUpper());
-                            }
-                            break;
                         case ".atis":
                             if (!mNetworkManager.IsConnected)
                             {
@@ -593,11 +630,12 @@ namespace Vatsim.Xpilot
                             }
                             if (cmd.Length > 2)
                             {
-
+                                HandlePrivateMessageSent(cmd[1].ToUpper(), string.Join(" ", cmd.Skip(2)));
+                                mNetworkManager.SendPrivateMessage(cmd[1].ToUpper(), string.Join(" ", cmd.Skip(2)));
                             }
                             else
                             {
-
+                                HandleChatSessionStarted(cmd[1].ToUpper());
                             }
                             break;
                         case ".wallop":
@@ -607,7 +645,7 @@ namespace Vatsim.Xpilot
                         case ".wx":
                         case ".metar":
                             CheckMinLength(cmd);
-                            mNetworkManager.RequestMetar(cmd[1]);
+                            mNetworkManager.SendMetarRequest(cmd[1]);
                             break;
                         case ".towerview":
                             string tvServer = "127.0.0.1";
@@ -631,7 +669,7 @@ namespace Vatsim.Xpilot
                     {
                         if (mNetworkManager.IsConnected)
                         {
-                            RadioMessagSent(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
+                            RadioMessagSent?.Invoke(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
                         }
                         else
                         {
@@ -643,7 +681,7 @@ namespace Vatsim.Xpilot
             catch (Exception ex)
             {
                 WriteErrorMessage(ex.Message);
-                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
             }
         }
 
@@ -740,6 +778,7 @@ namespace Vatsim.Xpilot
 
             WriteInfoMessage($"xPilot version {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
             MainFormShown(this, EventArgs.Empty);
+            SessionStarted(this, EventArgs.Empty);
             FocusTextCommandLine();
 
             if (!string.IsNullOrEmpty(mConfig.SimulatorIP))
@@ -801,7 +840,7 @@ namespace Vatsim.Xpilot
                 e.Cancel = true;
                 return;
             }
-            MainFormClosed(this, EventArgs.Empty);
+            SessionEnded(this, EventArgs.Empty);
             mEventBroker.Unregister(this);
         }
 
@@ -814,7 +853,7 @@ namespace Vatsim.Xpilot
         {
             if (mNetworkManager.IsConnected)
             {
-
+                mNetworkManager.Disconnect();
             }
             else
             {
@@ -822,7 +861,24 @@ namespace Vatsim.Xpilot
                 {
                     if (connectForm.ShowDialog(this) == DialogResult.OK)
                     {
-
+                        mConnectInfo = connectForm.GetConnectInfo();
+                        if (mConfig.ConfigurationRequired)
+                        {
+                            WriteErrorMessage(CONFIGURATION_REQUIRED);
+                            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                        }
+                        else
+                        {
+                            NetworkServerInfo server = mNetworkManager.ServerList.FirstOrDefault(t => t.Name == mConfig.ServerName);
+                            if (server != null)
+                            {
+                                mNetworkManager.Connect(mConnectInfo, server.Address);
+                            }
+                            else
+                            {
+                                WriteErrorMessage("You must first select a network server in the Settings.");
+                            }
+                        }
                     }
                 }
             }
@@ -864,6 +920,7 @@ namespace Vatsim.Xpilot
             ClearControllerListNodes();
             BtnConnect.Enabled = true;
             BtnConnect.Text = "Connect";
+            BtnConnect.Pushed = false;
         }
 
         private void ClearControllerListNodes()
@@ -880,6 +937,16 @@ namespace Vatsim.Xpilot
             if (tab == null)
             {
                 tab = CreatePrivateMessageTab(callsign);
+            }
+            TabsMain.SelectedTab = tab;
+        }
+
+        private void HandlePrivateMessageSent(string callsign, string message)
+        {
+            PrivateMessageTab tab = GetPrivateMessageTabIfExists(callsign);
+            if (tab == null)
+            {
+                tab = CreatePrivateMessageTab(callsign, message, true, mNetworkManager.OurCallsign);
             }
             TabsMain.SelectedTab = tab;
         }
@@ -901,6 +968,23 @@ namespace Vatsim.Xpilot
             PrivateMessageTab tab = mTabPages.CreatePrivateMessageTab(to, message, isOurMessage, ourCallsign);
             TabsMain.TabPages.Add(tab);
             return tab;
+        }
+
+        private void TabsMain_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TabsMain.SelectedTab.ForeColor = Color.Silver;
+            if (TabsMain.SelectedTab != null)
+            {
+                if (TabsMain.SelectedTab is PrivateMessageTab)
+                {
+                    (TabsMain.SelectedTab as PrivateMessageTab).Focus();
+                }
+                else if (TabsMain.SelectedTab == TabPageMessages)
+                {
+                    RtfMessages.TextCommandLine.Select();
+                }
+            }
+            TabsMain.Refresh();
         }
     }
 

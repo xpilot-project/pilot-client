@@ -41,12 +41,6 @@ namespace Vatsim.Xpilot.AudioForVatsim
         [EventPublication(EventTopics.ComRadioReceivingChanged)]
         public event EventHandler<ComRadioTxRxChangedEventArgs> ComRadioReceivingChanged;
 
-        [EventPublication(EventTopics.VoiceConnected)]
-        public event EventHandler<EventArgs> VoiceConnected;
-
-        [EventPublication(EventTopics.VoiceDisconnected)]
-        public event EventHandler<EventArgs> VoiceDisconnected;
-
         private readonly IAppConfig mConfig;
         private bool mPttActive = false;
         private Timer mUpdateTransceiversTimer;
@@ -130,20 +124,17 @@ namespace Vatsim.Xpilot.AudioForVatsim
         public void OnPushToTalkStateChanged(object sender, PushToTalkStateChangedEventArgs e)
         {
             mPttActive = e.Pressed;
-            if (mRadioStackState != null)
+            if (AFVBindings.IsAPIConnected())
             {
-                if (AFVBindings.IsAPIConnected())
+                if (mRadioStackState.Com1TransmitEnabled)
                 {
-                    if (mRadioStackState.Com1TransmitEnabled)
-                    {
-                        ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(0, mPttActive));
-                    }
-                    if (mRadioStackState.Com2TransmitEnabled)
-                    {
-                        ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, mPttActive));
-                    }
-                    AFVBindings.SetPtt(mPttActive);
+                    ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(0, mPttActive));
                 }
+                if (mRadioStackState.Com2TransmitEnabled)
+                {
+                    ComRadioTransmittingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, mPttActive));
+                }
+                AFVBindings.SetPtt(mPttActive);
             }
         }
 
@@ -287,11 +278,8 @@ namespace Vatsim.Xpilot.AudioForVatsim
 
         private void UpdateTransceivers()
         {
-            if (mRadioStackState != null)
-            {
-                CreateTransceiver(0, mRadioStackState.Com1ReceiveEnabled ? mRadioStackState.Com1ActiveFrequency : 0);
-                CreateTransceiver(1, mRadioStackState.Com2ReceiveEnabled ? mRadioStackState.Com2ActiveFrequency : 0);
-            }
+            CreateTransceiver(0, mRadioStackState.Com1ReceiveEnabled ? mRadioStackState.Com1ActiveFrequency : 0);
+            CreateTransceiver(1, mRadioStackState.Com2ReceiveEnabled ? mRadioStackState.Com2ActiveFrequency : 0);
         }
 
         private void StationCallbackHandler(string id, string callsign, uint frequency, uint frequencyAlias)

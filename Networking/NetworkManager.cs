@@ -22,7 +22,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Threading;
-using System.Linq;
 using System.Reflection;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
@@ -33,6 +32,8 @@ using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Core;
+using Vatsim.Xpilot.Simulator;
+using System.Linq;
 
 namespace Vatsim.Xpilot.Networking
 {
@@ -118,6 +119,7 @@ namespace Vatsim.Xpilot.Networking
 
         private const string STATUS_FILE_URL = "http://status.vatsim.net";
         private readonly IAppConfig mConfig;
+        private readonly IXplaneAdapter mXplaneAdapter;
         private readonly FSDSession mFsd;
         private readonly Version mFsdClientVersion;
         private readonly System.Timers.Timer mPositionUpdateTimer;
@@ -139,6 +141,8 @@ namespace Vatsim.Xpilot.Networking
             mConfig = config;
             mConnectInfo = new ConnectInfo();
             mFsdClientVersion = new Version("1.2");
+
+            mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, "", "");
 
             mFsd = new FSDSession(mClientProperties);
             mFsd.IgnoreUnknownPackets = true;
@@ -167,11 +171,12 @@ namespace Vatsim.Xpilot.Networking
             mFsd.RawDataSent += Fsd_RawDataSent;
             mFsd.RawDataReceived += Fsd_RawDataReceived;
 
-            mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, "", "");
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, $"NetworkLogs/NetworkLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log"), false);
 
             mPositionUpdateTimer = new System.Timers.Timer();
             mPositionUpdateTimer.Elapsed += PositionUpdateTimer_Elapsed;
+
+            DownloadNetworkServersAsync();
         }
 
         [EventSubscription(EventTopics.MainFormShown, typeof(OnUserInterfaceAsync))]
@@ -202,13 +207,19 @@ namespace Vatsim.Xpilot.Networking
         [EventSubscription(EventTopics.RealNameRequested, typeof(OnUserInterface))]
         public void OnRealNameRequested(object sender, RealNameRequestedEventArgs e)
         {
-            RequestRealName(e.Callsign);
+            SendRealNameRequest(e.Callsign);
         }
 
         [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
         public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
         {
             mRadioStackState = e.RadioStackState;
+        }
+
+        [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
+        public void OnPrivateMessageSent(object sender, PrivateMessageSentEventArgs e)
+        {
+            SendPrivateMessage(e.To, e.Message);
         }
 
         private void Fsd_NetworkError(object sender, NetworkErrorEventArgs e)
@@ -312,7 +323,7 @@ namespace Vatsim.Xpilot.Networking
             switch (e.PDU.QueryType)
             {
                 case ClientQueryType.NewInfo:
-                    RequestControlerInfo(e.PDU.From);
+                    SendControllerInfoRequest(e.PDU.From);
                     break;
                 case ClientQueryType.AircraftConfiguration:
                     AircraftConfigurationInfoReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From.ToUpper(), string.Join(":", e.PDU.Payload.ToArray())));
@@ -322,7 +333,7 @@ namespace Vatsim.Xpilot.Networking
                     {
                         CapabilitiesRequestReceived?.Invoke(this, new NetworkDataReceivedEventArgs(e.PDU.From));
                     }
-                    SendClientCapabilities(e.PDU.From);
+                    SendCapabilities(e.PDU.From);
                     break;
                 case ClientQueryType.COM1Freq:
                     SendCom1Frequency(e.PDU.From, mRadioStackState.Com1ActiveFrequency.FormatFromNetwork());
@@ -433,14 +444,14 @@ namespace Vatsim.Xpilot.Networking
             for (int i = 0; i < e.PDU.Frequencies.Length; i++)
             {
                 uint frequency = (uint)e.PDU.Frequencies[i];
-                if (mRadioStackState.Com1ReceiveEnabled && frequency.Normalize25KhzFsdFrequency() == mRadioStackState.Com1ActiveFrequency)
+                if (mRadioStackState.Com1ReceiveEnabled && frequency.Normalize25KhzFsdFrequency() == mRadioStackState.Com1ActiveFrequency.MatchNetworkFormat())
                 {
                     if (!frequencyList.Contains(frequency))
                     {
                         frequencyList.Add(frequency);
                     }
                 }
-                else if (mRadioStackState.Com2ReceiveEnabled && frequency.Normalize25KhzFrequency() == mRadioStackState.Com2ActiveFrequency)
+                else if (mRadioStackState.Com2ReceiveEnabled && frequency.Normalize25KhzFrequency() == mRadioStackState.Com2ActiveFrequency.MatchNetworkFormat())
                 {
                     if (!frequencyList.Contains(frequency))
                     {
@@ -452,11 +463,14 @@ namespace Vatsim.Xpilot.Networking
             {
                 return;
             }
-            if (Regex.IsMatch(e.PDU.Message, "^SELCAL [A-Z][A-Z]\\-[A-Z][A-Z]$"))
+            var match = Regex.Match(e.PDU.Message, "^SELCAL ([A-Z][A-Z]\\-[A-Z][A-Z])$");
+            if (match.Success)
             {
-                if (!string.IsNullOrEmpty(mConnectInfo.SelCalCode) && e.PDU.Message == "SELCAL" + mConnectInfo.SelCalCode)
+                var selcal = "SELCAL " + match.Groups[1].Value.Replace("-", "");
+                if (!string.IsNullOrEmpty(mConnectInfo.SelCalCode)
+                    && selcal == "SELCAL " + mConnectInfo.SelCalCode.Replace("-", ""))
                 {
-                    SelcalAlertReceived?.Invoke(this, new SelcalAlertReceivedEventArgs(e.PDU.From, frequencyList.ToArray()));
+                    SelcalAlertReceived?.Invoke(this, new SelcalAlertReceivedEventArgs(e.PDU.From, e.PDU.Frequencies.Select(t => (uint)t).ToArray()));
                 }
             }
             else
@@ -565,27 +579,27 @@ namespace Vatsim.Xpilot.Networking
             mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeTrue, mUserAircraftData.Pitch, mUserAircraftData.Bank, mUserAircraftData.Heading, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.BankVelocity, mUserAircraftData.HeadingVelocity));
         }
 
-        public void RequestRealName(string callsign)
+        public void SendRealNameRequest(string callsign)
         {
             mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, callsign, ClientQueryType.RealName));
         }
 
-        public void RequestIsValidATC(string callsign)
+        public void SendIsValidATCRequest(string callsign)
         {
             mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, "SERVER", ClientQueryType.IsValidATC, new List<string> { callsign }));
         }
 
-        public void RequestControlerInfo(string callsign)
+        public void SendControllerInfoRequest(string callsign)
         {
             mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, callsign, ClientQueryType.ATIS));
         }
 
-        public void RequestClientCapabilities(string callsign)
+        public void SendCapabilitiesRequest(string callsign)
         {
             mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, callsign, ClientQueryType.Capabilities));
         }
 
-        public void RequestMetar(string station)
+        public void SendMetarRequest(string station)
         {
             mFsd.SendPDU(new PDUMetarRequest(mConnectInfo.Callsign, station));
         }
@@ -595,9 +609,9 @@ namespace Vatsim.Xpilot.Networking
             mFsd.SendPDU(new PDUTextMessage(mConnectInfo.Callsign, to, message));
         }
 
-        public void SendRadioMessage(List<uint> freqs, string message)
+        public void SendRadioMessage(List<int> freqs, string message)
         {
-            mFsd.SendPDU(new PDURadioMessage(mConnectInfo.Callsign, freqs.Select(f => (int)f).ToArray(), message));
+            mFsd.SendPDU(new PDURadioMessage(mConnectInfo.Callsign, freqs.ToArray(), message));
         }
 
         public void SendWallop(string message)
@@ -610,17 +624,17 @@ namespace Vatsim.Xpilot.Networking
             mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, callsign, ClientQueryType.INF));
         }
 
-        public void RequestClientVersion(string callsign)
+        public void SendClientVersionRequest(string callsign)
         {
             mFsd.SendPDU(new PDUVersionRequest(mConnectInfo.Callsign, callsign));
         }
 
-        public void RequestAircraftInfo(string callsign)
+        public void SendAircraftInfoRequest(string callsign)
         {
             mFsd.SendPDU(new PDUPlaneInfoRequest(mConnectInfo.Callsign, callsign));
         }
 
-        public void SendClientCapabilities(string to)
+        public void SendCapabilities(string to)
         {
             mFsd.SendPDU(new PDUClientQueryResponse(mConnectInfo.Callsign, to, ClientQueryType.Capabilities, new List<string>
             {
@@ -648,7 +662,7 @@ namespace Vatsim.Xpilot.Networking
             SendAircraftConfigurationUpdate("@94836", config);
         }
 
-        public void RequestAircraftConfiguration(string callsign)
+        public void SendAircraftConfigurationRequest(string callsign)
         {
             AircraftConfigurationInfo acconfig = new AircraftConfigurationInfo
             {
@@ -679,6 +693,7 @@ namespace Vatsim.Xpilot.Networking
 
         public void Disconnect()
         {
+            mUserInitiatedDisconnect = true;
             NetworkDisconnectionInitiated?.Invoke(this, EventArgs.Empty);
             mFsd.SendPDU(new PDUDeletePilot(mConnectInfo.Callsign, mConfig.VatsimId.Trim()));
             mFsd.Disconnect();
@@ -758,5 +773,7 @@ namespace Vatsim.Xpilot.Networking
         public bool IsConnected => mFsd.Connected;
 
         public string OurCallsign => mConnectInfo.Callsign;
+
+        public List<NetworkServerInfo> ServerList => mServerList;
     }
 }

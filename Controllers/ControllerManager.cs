@@ -122,9 +122,9 @@ namespace Vatsim.Xpilot.Controllers
                     RealName = "Unknown"
                 };
                 mControllers.Add(controller.Callsign, controller);
-                mFsdManager.RequestIsValidATC(controller.Callsign);
-                mFsdManager.RequestClientCapabilities(controller.Callsign);
-                mFsdManager.RequestRealName(controller.Callsign);
+                mFsdManager.SendIsValidATCRequest(controller.Callsign);
+                mFsdManager.SendCapabilitiesRequest(controller.Callsign);
+                mFsdManager.SendRealNameRequest(controller.Callsign);
             }
         }
 

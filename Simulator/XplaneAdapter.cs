@@ -29,7 +29,6 @@ using NetMQ.Sockets;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Networking;
-using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
@@ -75,50 +74,46 @@ namespace Vatsim.Xpilot.Simulator
         private readonly INetworkManager mFsdManager;
         private readonly IAppConfig mConfig;
 
-        private readonly NetMQPoller mPoller;
-        private readonly NetMQQueue<byte[]> mMessageQueue;
-        private readonly DealerSocket mDealerSocket;
-        private readonly List<DealerSocket> mVisualDealerSockets;
+        private NetMQQueue<byte[]> mMessageQueue;
+        private NetMQPoller mPoller;
+        private DealerSocket mDealerSocket;
+        private List<DealerSocket> mVisualDealerSockets;
 
-        private readonly Timer mConnectionTimer;
-        private readonly Timer mNearbyControllersRefresh;
-
-        private readonly List<DateTime> mConnectionHeartbeats = new List<DateTime>();
-        private readonly List<Controller> mControllers = new List<Controller>();
+        private Timer mConnectionTimer;
+        private List<DateTime> mConnectionHeartbeats;
+        private List<int> mTunedFrequencies;
 
         private UserAircraftData mUserAircraftData;
         private UserAircraftConfigData mUserAircraftConfigData;
         private RadioStackState mRadioStackState;
 
+        private string mSimulatorIP = "127.0.0.1";
         private bool mInvalidPluginVersionShown = false;
         private bool mReceivedInitialHandshake = false;
         private bool mValidCsl = false;
-        private string mSimulatorIP = "127.0.0.1";
 
         public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager fsdManager) : base(broker)
         {
-            DealerSocket visualDealerSocket = null;
-            mVisualDealerSockets = null;
             mConfig = config;
             mFsdManager = fsdManager;
 
+            mVisualDealerSockets = null;
+            mConnectionHeartbeats = new List<DateTime>();
+            mTunedFrequencies = new List<int>();
+
             if (mConfig.VisualClientIPs.Count > 0)
             {
+                DealerSocket visualDealerSocket = null;
                 foreach (string mIP in mConfig.VisualClientIPs)
                 {
-                    visualDealerSocket = new DealerSocket();
+                    visualDealerSocket = new DealerSocket("tcp://" + mIP + ":" + mConfig.SimulatorPort);
                     visualDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
                     visualDealerSocket.Options.TcpKeepalive = true;
-                    try
+                    if (mVisualDealerSockets == null)
                     {
-                        visualDealerSocket.Connect("tcp://" + mIP + ":" + mConfig.SimulatorPort);
-                        if (mVisualDealerSockets == null) mVisualDealerSockets = new List<DealerSocket>();
-                        mVisualDealerSockets.Add(visualDealerSocket);
+                        mVisualDealerSockets = new List<DealerSocket>();
                     }
-                    catch (AddressAlreadyInUseException)
-                    {
-                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use."));
-                    }
+                    mVisualDealerSockets.Add(visualDealerSocket);
                 }
             }
 
@@ -128,25 +123,14 @@ namespace Vatsim.Xpilot.Simulator
             }
 
             mMessageQueue = new NetMQQueue<byte[]>();
-            mDealerSocket = new DealerSocket();
+
+            mDealerSocket = new DealerSocket("tcp://" + mSimulatorIP + ":" + mConfig.SimulatorPort);
             mDealerSocket.Options.TcpKeepalive = true;
             mDealerSocket.Options.Identity = Encoding.UTF8.GetBytes("CLIENT");
             mDealerSocket.ReceiveReady += DealerSocket_ReceiveReady;
-            try
-            {
-                mDealerSocket.Connect("tcp://" + mSimulatorIP + ":" + mConfig.SimulatorPort);
-            }
-            catch (AddressAlreadyInUseException)
-            {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Plugin port already in use."));
-            }
-            using (mPoller = new NetMQPoller { mDealerSocket, mMessageQueue })
-            {
-                if (!mPoller.IsRunning)
-                {
-                    mPoller.RunAsync();
-                }
-            }
+
+            mPoller = new NetMQPoller { mDealerSocket, mMessageQueue };
+            mPoller.RunAsync();
 
             mMessageQueue.ReceiveReady += (s, e) =>
             {
@@ -211,20 +195,12 @@ namespace Vatsim.Xpilot.Simulator
             //}
         }
 
-        [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
-        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
-        {
-            mNearbyControllersRefresh.Start();
-        }
-
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
             ClearNearbyControllersMessage();
             NetworkDisconnected();
             RemoveAllPlanes();
-            mNearbyControllersRefresh.Stop();
-            mControllers.Clear();
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -275,7 +251,6 @@ namespace Vatsim.Xpilot.Simulator
                 {
                     socket.Close();
                 }
-
             }
         }
 
@@ -494,6 +469,8 @@ namespace Vatsim.Xpilot.Simulator
                             mConnectionHeartbeats.Add(wrapper.Timestamp.ToDateTime());
                             UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
                             RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
+                            UserAircraftConfigDataUpdated?.Invoke(this, new UserAircraftConfigDataUpdatedEventArgs(mUserAircraftConfigData));
+                            UpdateTunedFrequencies();
                         }
                         break;
                 }
@@ -579,6 +556,27 @@ namespace Vatsim.Xpilot.Simulator
             //        //NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error deserializing JSON object: " + ex.Message));
             //    }
             //}
+        }
+
+        private void UpdateTunedFrequencies()
+        {
+            mTunedFrequencies.Clear();
+            if (mRadioStackState.Com1TransmitEnabled)
+            {
+                mTunedFrequencies.Add(mRadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
+                if (!mTunedFrequencies.Contains(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
+                {
+                    mTunedFrequencies.Add(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
+                }
+            }
+            if (mRadioStackState.Com2TransmitEnabled)
+            {
+                mTunedFrequencies.Add(mRadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
+                if (!mTunedFrequencies.Contains(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
+                {
+                    mTunedFrequencies.Add(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
+                }
+            }
         }
 
         private void RequestPluginHash()
@@ -802,5 +800,12 @@ namespace Vatsim.Xpilot.Simulator
         {
             throw new NotImplementedException();
         }
+
+        public void ChangeModel(NetworkAircraft plane)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<int> TunedFrequencies => mTunedFrequencies;
     }
 }

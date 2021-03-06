@@ -25,7 +25,6 @@ namespace Vatsim.Xpilot.Aircrafts
     {
         New,
         Active,
-        OutOfRange,
         Deleted,
         Ignored
     }

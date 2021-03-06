@@ -75,11 +75,11 @@ namespace Vatsim.Xpilot
                 else
                 {
                     WriteMessage(Color.White, $"{ this.tabName }: { initialMessage }");
-                    PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.NewMessage));
+                    PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.NewMessage));
                     ForeColor = Color.Yellow;
                 }
             }
-            RealNameRequested(this, new RealNameRequestedEventArgs(tabName));
+            RealNameRequested?.Invoke(this, new RealNameRequestedEventArgs(tabName));
         }
 
         private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
@@ -104,15 +104,15 @@ namespace Vatsim.Xpilot
                             }
                             break;
                         case ".showname":
-                            RealNameRequested(this, new RealNameRequestedEventArgs(tabName));
+                            RealNameRequested?.Invoke(this, new RealNameRequestedEventArgs(tabName));
                             break;
                         case ".atis":
                             WriteMessage(Color.Yellow, $"Requesting ATIS for { tabName }");
                             if (!string.IsNullOrEmpty(realName))
                             {
-                                mNetworkManager.RequestRealName(tabName);
+                                mNetworkManager.SendRealNameRequest(tabName);
                             }
-                            mNetworkManager.RequestControlerInfo(tabName);
+                            mNetworkManager.SendControlerInfoRequest(tabName);
                             break;
                         default:
                             throw new ApplicationException($"Unknown text command: { e.Command.ToLower() }");
@@ -120,13 +120,13 @@ namespace Vatsim.Xpilot
                 }
                 else
                 {
-                    PrivateMessageSent(this, new PrivateMessageSentEventArgs("", tabName, e.Command));
+                    PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mNetworkManager.OurCallsign, tabName, e.Command));
                 }
             }
             catch (Exception ex)
             {
                 WriteMessage(Color.Red, $"Error processing text command: { ex.Message }");
-                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
             }
         }
 
@@ -145,7 +145,7 @@ namespace Vatsim.Xpilot
             if (e.From == tabName)
             {
                 WriteIncomingMessage(e.Data);
-                PlayNotificationSound(this, new PlayNotifictionSoundEventArgs(SoundEvent.PrivateMessage));
+                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.PrivateMessage));
                 if ((Parent as TabControl).SelectedTab != this)
                 {
                     ForeColor = Color.Yellow;

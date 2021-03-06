@@ -36,7 +36,7 @@ namespace Vatsim.Xpilot.Events.Arguments
         public RadioMessageReceivedEventArgs(string from, uint[] frequencies, string message, bool isDirect) : base(from, message)
         {
             Frequencies = frequencies;
-            IsDirect = IsDirect;
+            IsDirect = isDirect;
         }
     }
 }

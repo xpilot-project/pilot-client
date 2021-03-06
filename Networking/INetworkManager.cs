@@ -16,32 +16,34 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System.Collections.Generic;
+using Vatsim.Fsd.Connector;
 using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot.Networking
 {
     public interface INetworkManager
     {
-        void RequestRealName(string callsign);
-        void RequestIsValidATC(string callsign);
-        void RequestControlerInfo(string callsign);
-        void RequestClientCapabilities(string callsign);
-        void RequestMetar(string station);
+        void SendRealNameRequest(string callsign);
+        void SendIsValidATCRequest(string callsign);
+        void SendControlerInfoRequest(string callsign);
+        void SendCapabilitiesRequest(string callsign);
+        void SendMetarRequest(string station);
         void SendPrivateMessage(string to, string message);
-        void SendRadioMessage(List<uint> frequencies, string message);
+        void SendRadioMessage(List<int> frequencies, string message);
         void SendWallop(string message);
         void SendInfoRequest(string callsign);
-        void RequestClientVersion(string callsign);
-        void RequestAircraftInfo(string callsign);
-        void SendClientCapabilities(string to);
+        void SendClientVersionRequest(string callsign);
+        void SendAircraftInfoRequest(string callsign);
+        void SendCapabilities(string to);
         void SendAircraftConfigurationUpdate(string to, AircraftConfiguration config);
         void SendAircraftConfigurationUpdate(AircraftConfiguration config);
-        void RequestAircraftConfiguration(string callsign);
+        void SendAircraftConfigurationRequest(string callsign);
         void SendCom1Frequency(string to, string frequency);
         void Connect(ConnectInfo connectInfo, string server);
         void Disconnect();
         void SetPluginHash(string hash);
         bool IsConnected { get; }
         string OurCallsign { get; }
+        List<NetworkServerInfo> ServerList { get; }
     }
 }

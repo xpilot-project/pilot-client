@@ -38,8 +38,8 @@ namespace Vatsim.Xpilot
         [STAThread]
         static void Main()
         {
-            if (!SingleInstance.Exists())
-            {
+            //if (!SingleInstance.Exists())
+            //{
                 Application.CurrentCulture = new CultureInfo("en-US");
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -57,11 +57,11 @@ namespace Vatsim.Xpilot
                 (kernel.Get<IXplaneAdapter>() as IEventBus).Register();
                 (kernel.Get<IVersionCheck>() as IEventBus).Register();
                 (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
-                (kernel.Get<INetworkAircraftManager>() as IEventBus).Register();
+                (kernel.Get<IAircraftManager>() as IEventBus).Register();
                 (kernel.Get<IControllerManager>() as IEventBus).Register();
                 (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
                 Application.Run(mainForm);
-            }
+            //}
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

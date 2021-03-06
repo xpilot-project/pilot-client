@@ -17,22 +17,22 @@
 */
 namespace Vatsim.Xpilot.Aircrafts
 {
-    public class UserAircraftData
+    public struct UserAircraftData
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double AltitudeTrue { get; set; }
-        public double AltitudePressure { get; set; }
-        public double AltitudeAgl { get; set; }
-        public double SpeedGround { get; set; }
-        public double Pitch { get; set; }
-        public double Heading { get; set; }
-        public double Bank { get; set; }
-        public double LatitudeVelocity { get; set; }
-        public double AltitudeVelocity { get; set; }
-        public double LongitudeVelocity { get; set; }
-        public double PitchVelocity { get; set; }
-        public double HeadingVelocity { get; set; }
-        public double BankVelocity { get; set; }
+        public double Latitude;
+        public double Longitude;
+        public double AltitudeTrue;
+        public double AltitudePressure;
+        public double AltitudeAgl;
+        public double SpeedGround;
+        public double Pitch;
+        public double Heading;
+        public double Bank;
+        public double LatitudeVelocity;
+        public double AltitudeVelocity;
+        public double LongitudeVelocity;
+        public double PitchVelocity;
+        public double HeadingVelocity;
+        public double BankVelocity;
     }
 }

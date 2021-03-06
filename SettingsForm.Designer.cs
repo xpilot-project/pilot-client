@@ -44,7 +44,7 @@ namespace Vatsim.Xpilot
             this.chkKeepVisible = new System.Windows.Forms.CheckBox();
             this.chkAutoSquawkModeC = new System.Windows.Forms.CheckBox();
             this.chkEnableNotificationSounds = new System.Windows.Forms.CheckBox();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.BtnOK = new System.Windows.Forms.Button();
             this.btnGuidedSetup = new System.Windows.Forms.Button();
             this.lstAudioDriver = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,6 +66,7 @@ namespace Vatsim.Xpilot
             this.volCom2 = new System.Windows.Forms.Label();
             this.chkFlashRadioMessage = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.BtnCancel = new System.Windows.Forms.Button();
             this.vuMeter = new Vatsim.Xpilot.LevelMeter();
             ((System.ComponentModel.ISupportInitialize)(this.trackCom2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackCom1)).BeginInit();
@@ -195,16 +196,16 @@ namespace Vatsim.Xpilot
             this.chkEnableNotificationSounds.Text = "Enable notification sounds";
             this.chkEnableNotificationSounds.UseVisualStyleBackColor = true;
             // 
-            // btnCancel
+            // BtnOK
             // 
-            this.btnCancel.Location = new System.Drawing.Point(513, 485);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(88, 23);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.TabStop = false;
-            this.btnCancel.Text = "Close";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.BtnClose_Click);
+            this.BtnOK.Location = new System.Drawing.Point(465, 485);
+            this.BtnOK.Name = "BtnOK";
+            this.BtnOK.Size = new System.Drawing.Size(64, 23);
+            this.BtnOK.TabIndex = 3;
+            this.BtnOK.TabStop = false;
+            this.BtnOK.Text = "OK";
+            this.BtnOK.UseVisualStyleBackColor = true;
+            this.BtnOK.Click += new System.EventHandler(this.BtnOK_Click);
             // 
             // btnGuidedSetup
             // 
@@ -424,6 +425,7 @@ namespace Vatsim.Xpilot
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.BtnCancel);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.chkFlashRadioMessage);
             this.panel1.Controls.Add(this.lstServerName);
@@ -445,7 +447,7 @@ namespace Vatsim.Xpilot
             this.panel1.Controls.Add(this.txtNetworkPassword);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.lstInputDevice);
-            this.panel1.Controls.Add(this.btnCancel);
+            this.panel1.Controls.Add(this.BtnOK);
             this.panel1.Controls.Add(this.txtFullName);
             this.panel1.Controls.Add(this.trackCom2);
             this.panel1.Controls.Add(this.label10);
@@ -464,6 +466,17 @@ namespace Vatsim.Xpilot
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(604, 511);
             this.panel1.TabIndex = 33;
+            // 
+            // BtnCancel
+            // 
+            this.BtnCancel.Location = new System.Drawing.Point(531, 485);
+            this.BtnCancel.Name = "BtnCancel";
+            this.BtnCancel.Size = new System.Drawing.Size(70, 23);
+            this.BtnCancel.TabIndex = 33;
+            this.BtnCancel.TabStop = false;
+            this.BtnCancel.Text = "Cancel";
+            this.BtnCancel.UseVisualStyleBackColor = true;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // vuMeter
             // 
@@ -504,7 +517,7 @@ namespace Vatsim.Xpilot
         }
 
         #endregion
-        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button BtnOK;
         private System.Windows.Forms.TextBox txtNetworkPassword;
         private System.Windows.Forms.TextBox txtNetworkLogin;
         private System.Windows.Forms.TextBox txtHomeAirport;
@@ -540,5 +553,6 @@ namespace Vatsim.Xpilot
         private Label volCom2;
         private CheckBox chkFlashRadioMessage;
         private Panel panel1;
+        private Button BtnCancel;
     }
 }
