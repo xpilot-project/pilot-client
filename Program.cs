@@ -20,6 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Diagnostics;
 using Ninject;
 using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Networking;
@@ -27,6 +28,7 @@ using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Aircrafts;
+using Vatsim.Xpilot.Common;
 
 namespace Vatsim.Xpilot
 {
@@ -37,8 +39,8 @@ namespace Vatsim.Xpilot
         [STAThread]
         static void Main()
         {
-            //if (!SingleInstance.Exists())
-            //{
+            if (!SingleInstance.Exists() || Debugger.IsAttached)
+            {
                 Application.CurrentCulture = new CultureInfo("en-US");
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
@@ -46,6 +48,11 @@ namespace Vatsim.Xpilot
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
                 AppPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                if (!Directory.Exists(Path.Combine(AppPath, "NetworkLogs")))
+                {
+                    Directory.CreateDirectory(Path.Combine(AppPath, "NetworkLogs"));
+                }
 
                 IKernel kernel = new StandardKernel(new InjectionModules());
 
@@ -60,7 +67,7 @@ namespace Vatsim.Xpilot
                 (kernel.Get<IControllerManager>() as IEventBus).Register();
                 (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
                 Application.Run(mainForm);
-            //}
+            }
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

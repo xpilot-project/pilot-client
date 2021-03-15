@@ -20,16 +20,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Vatsim.Xpilot.Aircrafts;
 
-namespace Vatsim.Xpilot.Events.Arguments
+namespace Vatsim.Xpilot.Aircrafts
 {
-    public class AircraftUpdatedEventArgs : NetworkDataReceivedEventArgs
+    public class VelocityVector
     {
-        public NetworkAircraft Aircraft { get; set; }
-        public AircraftUpdatedEventArgs(NetworkAircraft aircraft) : base(null, null)
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+        public VelocityVector(double x, double y, double z)
         {
-            Aircraft = aircraft;
+            X = x;
+            Y = y;
+            Z = z;
         }
     }
 }

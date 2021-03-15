@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vatsim.Xpilot", "Vatsim.Xpilot.csproj", "{CE803EDF-B7D4-4822-B7D2-D59FF58FFB42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vatsim.Fsd.Connector", "..\FsdWrapper-Legacy\Vatsim.Fsd.Connector.csproj", "{0375FCFE-1E78-43DA-9865-BDE0F1412598}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vatsim.FsdClient", "..\Vatsim.FsdClient\Vatsim.FsdClient.csproj", "{0375FCFE-1E78-43DA-9865-BDE0F1412598}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

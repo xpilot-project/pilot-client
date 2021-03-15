@@ -27,6 +27,7 @@ using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
+using Vatsim.Xpilot.Networking;
 
 namespace Vatsim.Xpilot.AudioForVatsim
 {
@@ -42,20 +43,27 @@ namespace Vatsim.Xpilot.AudioForVatsim
         public event EventHandler<ComRadioTxRxChangedEventArgs> ComRadioReceivingChanged;
 
         private readonly IAppConfig mConfig;
+        private readonly INetworkManager mNetworkManager;
         private bool mPttActive = false;
         private Timer mUpdateTransceiversTimer;
+        private Timer mSetClientPositionTimer;
         private RadioStackState mRadioStackState;
+        private UserAircraftData mUserAircraftData;
         private AFVBindings.EventCallback mEventCalllback;
         private AFVBindings.AfvStationCallback mStationCallback;
         private List<Station> mAliasStations = new List<Station>();
         private Dictionary<string, Controller> mControllers = new Dictionary<string, Controller>();
 
-        public AFVManaged(IEventBroker eventBroker, IAppConfig config) : base(eventBroker)
+        public AFVManaged(IEventBroker eventBroker, IAppConfig config, INetworkManager networkManager) : base(eventBroker)
         {
             mConfig = config;
+            mNetworkManager = networkManager;
 
             mUpdateTransceiversTimer = new Timer { Interval = 20000 };
             mUpdateTransceiversTimer.Elapsed += UpdateTransceiversTimer_Elapsed;
+
+            mSetClientPositionTimer = new Timer { Interval = 5000 };
+            mSetClientPositionTimer.Elapsed += SetClientPositionTimer_Elapsed;
 
             AFVBindings.Initialize(mConfig.AfvResourcePath, 2, "xPilot");
             SetupAudioDevices();
@@ -77,6 +85,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
                 AFVBindings.AfvConnect();
 
                 mUpdateTransceiversTimer.Start();
+                mSetClientPositionTimer.Start();
             }
         }
 
@@ -88,6 +97,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
 
             mAliasStations.Clear();
             mUpdateTransceiversTimer.Stop();
+            mSetClientPositionTimer.Stop();
 
             ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(0, false));
             ComRadioReceivingChanged?.Invoke(this, new ComRadioTxRxChangedEventArgs(1, false));
@@ -96,33 +106,41 @@ namespace Vatsim.Xpilot.AudioForVatsim
         [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnUserInterfaceAsync))]
         public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
         {
-            if (AFVBindings.IsAPIConnected())
+            if (!mUserAircraftData.Equals(e.UserAircraftData))
             {
-                AFVBindings.SetClientPosition(e.UserAircraftData.Latitude, e.UserAircraftData.Longitude, e.UserAircraftData.AltitudeTrue, e.UserAircraftData.AltitudeAgl);
+                mUserAircraftData = e.UserAircraftData;
             }
         }
 
         [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnPublisher))]
         public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
         {
-            mRadioStackState = e.RadioStackState;
-            if (AFVBindings.IsAPIConnected())
+            if (!mRadioStackState.Equals(e.RadioStackState))
             {
-                if (mRadioStackState.Com1TransmitEnabled)
+                mRadioStackState = e.RadioStackState;
+                if (AFVBindings.IsAPIConnected())
                 {
-                    AFVBindings.SetTxRadio(0);
+                    if (mRadioStackState.Com1TransmitEnabled)
+                    {
+                        AFVBindings.SetTxRadio(0);
+                    }
+                    else if (mRadioStackState.Com2TransmitEnabled)
+                    {
+                        AFVBindings.SetTxRadio(1);
+                    }
+                    UpdateTransceivers();
                 }
-                else if (mRadioStackState.Com2TransmitEnabled)
-                {
-                    AFVBindings.SetTxRadio(1);
-                }
-                UpdateTransceivers();
             }
         }
 
         [EventSubscription(EventTopics.PushToTalkStateChanged, typeof(OnPublisher))]
         public void OnPushToTalkStateChanged(object sender, PushToTalkStateChangedEventArgs e)
         {
+            if (!mNetworkManager.IsConnected)
+            {
+                return;
+            }
+
             mPttActive = e.Pressed;
             if (AFVBindings.IsAPIConnected())
             {
@@ -164,6 +182,14 @@ namespace Vatsim.Xpilot.AudioForVatsim
             }
         }
 
+        private void SetClientPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (AFVBindings.IsAPIConnected())
+            {
+                AFVBindings.SetClientPosition(mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeTrue, mUserAircraftData.AltitudeAgl);
+            }
+        }
+
         private void SetupAudioDevices()
         {
             if (!AFVBindings.IsClientInitialized())
@@ -185,7 +211,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
 
         public void SetAudioDriver(string driver)
         {
-            AFVBindings.GetAudioApi(driver);
+            AFVBindings.SetAudioApi(driver);
 
             mConfig.OutputDevices.Clear();
             mConfig.InputDevices.Clear();
@@ -206,7 +232,10 @@ namespace Vatsim.Xpilot.AudioForVatsim
             {
                 AFVBindings.SetAudioOutputDevice(mConfig.InputDeviceName);
             }
+            AFVBindings.SetEnableHfSquelch(mConfig.EnableHfSquelch);
+            AFVBindings.SetEnableOutputEffects(!mConfig.DisableAudioEffects);
             AFVBindings.StartAudio();
+            UpdateRadioGains();
         }
 
         public void UpdateRadioGains()
@@ -312,6 +341,16 @@ namespace Vatsim.Xpilot.AudioForVatsim
             }
 
             AFVBindings.SetRadioState(id, (int)frequencyHertz);
+        }
+
+        public void DisbleRadioEffects(bool disabled)
+        {
+            AFVBindings.SetEnableOutputEffects(!disabled);
+        }
+
+        public void EnableHFSquelch(bool enable)
+        {
+            AFVBindings.SetEnableHfSquelch(enable);
         }
     }
 }

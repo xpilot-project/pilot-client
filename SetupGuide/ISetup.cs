@@ -30,8 +30,6 @@ namespace Vatsim.Xpilot
         void EndSetup();
         void ManualSetup();
         void SetupFinished();
-        bool XSquawkBox { get; set; }
-        bool XSwiftBus { get; set; }
         string XplanePath { get; set; }
         SetupScreen CurrentScreen { get; }
     }

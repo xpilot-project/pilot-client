@@ -122,6 +122,6 @@
 
 This typically happens if you have two versions of X-Plane installed (for example, a stable version and a beta version).
 
-Select the X-Plane installation that you want to use. This must be the same version that you installed the xPilot plugin.</value>
+Select the X-Plane installation that you want to use. This must be the same X-Plane instance that you installed the xPilot plugin to.</value>
   </data>
 </root>

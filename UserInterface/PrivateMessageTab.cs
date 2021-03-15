@@ -112,7 +112,7 @@ namespace Vatsim.Xpilot
                             {
                                 mNetworkManager.SendRealNameRequest(tabName);
                             }
-                            mNetworkManager.SendControlerInfoRequest(tabName);
+                            mNetworkManager.SendControllerInfoRequest(tabName);
                             break;
                         default:
                             throw new ApplicationException($"Unknown text command: { e.Command.ToLower() }");

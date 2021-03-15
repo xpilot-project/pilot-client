@@ -16,7 +16,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System.Collections.Generic;
-using Vatsim.Fsd.Connector;
+using Vatsim.FsdClient;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Networking;
 

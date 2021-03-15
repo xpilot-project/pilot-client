@@ -17,15 +17,14 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Reflection;
+using Newtonsoft.Json;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Networking;
-using Newtonsoft.Json;
-using Vatsim.Fsd.Connector;
-using System.Reflection;
+using Vatsim.FsdClient;
 
 namespace Vatsim.Xpilot.Config
 {

@@ -35,6 +35,7 @@ namespace Vatsim.Xpilot.Simulator
         private int mTokensRemaining = ACCONFIG_MAX_TOKENS;
         private AircraftConfiguration mLastSentConfig;
         private UserAircraftConfigData mUserAircraftConfigData;
+        private bool mHasPendingConfigChanges;
         private readonly INetworkManager mFsdManager;
 
         public UserAircraftManager(IEventBroker broker, INetworkManager fsdManager) : base(broker)
@@ -82,27 +83,30 @@ namespace Vatsim.Xpilot.Simulator
         [EventSubscription(EventTopics.UserAircraftConfigDataUpdated, typeof(OnUserInterfaceAsync))]
         public void OnUserAircraftConfigDataUpdated(object sender, UserAircraftConfigDataUpdatedEventArgs e)
         {
-            mUserAircraftConfigData = e.UserAircraftConfigData;
             if (mFsdManager.IsConnected)
             {
                 if (mTokensRemaining > 0)
                 {
-                    AircraftConfiguration aircraftConfiguration = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
-                    if (!aircraftConfiguration.Equals(mLastSentConfig))
+                    AircraftConfiguration config = AircraftConfiguration.FromUserAircraftData(e.UserAircraftConfigData);
+                    if (!config.Equals(mLastSentConfig))
                     {
-                        AircraftConfiguration incrementalConfig = mLastSentConfig.CreateIncremental(aircraftConfiguration);
-                        mFsdManager.SendAircraftConfigurationUpdate(incrementalConfig);
-                        mLastSentConfig = aircraftConfiguration;
+                        AircraftConfiguration incremental = mLastSentConfig.CreateIncremental(config);
+                        mFsdManager.SendAircraftConfigurationUpdate(incremental);
+                        mLastSentConfig = config;
                         mTokensRemaining--;
                     }
+                }
+                else
+                {
+                    mHasPendingConfigChanges = true;
                 }
             }
             else
             {
-                mLastSentConfig = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
+                mLastSentConfig = AircraftConfiguration.FromUserAircraftData(e.UserAircraftConfigData);
             }
 
-            // auto squawk mode c
+            mUserAircraftConfigData = e.UserAircraftConfigData;
         }
 
         private void AcconfigTokenRefreshTimer_Tick(object sender, EventArgs e)
@@ -110,6 +114,15 @@ namespace Vatsim.Xpilot.Simulator
             if (mTokensRemaining < ACCONFIG_MAX_TOKENS)
             {
                 mTokensRemaining++;
+            }
+
+            if (mHasPendingConfigChanges)
+            {
+                AircraftConfiguration config = AircraftConfiguration.FromUserAircraftData(mUserAircraftConfigData);
+                AircraftConfiguration incremental = mLastSentConfig.CreateIncremental(config);
+                mFsdManager.SendAircraftConfigurationUpdate(incremental);
+                mHasPendingConfigChanges = false;
+                mLastSentConfig = config;
             }
         }
     }

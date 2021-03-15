@@ -28,8 +28,6 @@ namespace Vatsim.Xpilot.Core
         public const string SettingsModified = "SettingsModified";
 
         // X-Plane
-        public const string TransponderModeChanged = "TransponderModeChanged";
-        public const string TransponderIdentStateChanged = "TransponderIdentStateChanged";
         public const string SimulatorConnected = "SimulatorConnected";
         public const string SimulatorDisconnected = "SimulatorDisconnected";
         public const string ConnectButtonEnabled = "ConnectButtonEnabled";
@@ -82,17 +80,9 @@ namespace Vatsim.Xpilot.Core
         public const string ControllerLocationChanged = "ControllerLocationChanged";
         public const string RequestedAtisReceived = "RequestedAtisReceived";
         public const string WallopSent = "WallopSent";
-
-        public const string AircraftDiscovered = "AircraftDiscovered";
-        public const string AircraftUpdated = "AircraftUpdated";
+        public const string AircraftAddedToSimulator = "AircraftAddedToSimulator";
         public const string AircraftDeleted = "AircraftDeleted";
-
-        // Multiplayer
-        public const string PlaneInfoReceived = "AircraftInfoReceived";
-        public const string PilotPositionReceived = "PilotPositionReceived";
         public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
         public const string UserAircraftConfigDataUpdated = "UserAircraftConfigDataUpdated";
-        public const string AircraftAddedToSimulator = "AircraftAddedToSimulator";
-        public const string ValidateCslPaths = "ValidateCslPaths";
     }
 }

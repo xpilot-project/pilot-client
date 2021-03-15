@@ -39,5 +39,15 @@ namespace Vatsim.Xpilot.Aircrafts
         public double FlapsRatio;
         public double SpoilersRatio;
         public bool OnGround;
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

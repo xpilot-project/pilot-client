@@ -43,21 +43,6 @@ namespace Vatsim.Xpilot.Common
 			return new WorldPoint(Lon + lonOffset, Lat + latOffset);
 		}
 
-		public double DistanceTo(WorldPoint point)
-		{
-			return GeoCalc.CartesianDistance(this, point);
-		}
-
-		public double DistanceTo(WorldPoint point, double scaleFactor)
-		{
-			return GeoCalc.CartesianDistance(this, point, scaleFactor);
-		}
-
-		public double GreatCircleDistanceTo(WorldPoint point)
-		{
-			return GeoCalc.GreatCircleDistance(this, point);
-		}
-
 		public override string ToString()
 		{
 			return string.Format("{0}, {1}", Lon, Lat);

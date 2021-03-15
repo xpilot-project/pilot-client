@@ -15,19 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Abacus.DoublePrecision;
 using System;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
+    public enum AircraftStatus
+    {
+        New,
+        Active,
+        Ignored
+    }
+
     public class Aircraft
     {
         public string Callsign { get; set; }
-        public AircraftStatus Status { get; set; }
         public string Airline { get; set; }
         public string TypeCode { get; set; }
         public AircraftConfiguration Configuration { get; set; }
+        public AircraftVisualState RemoteVisualState { get; set; }
         public DateTime LastSlowPositionUpdate { get; set; }
+        public AircraftStatus Status { get; set; }
+        public bool HaveVelocities { get; set; }
         public Aircraft(string callsign)
         {
             Callsign = callsign;

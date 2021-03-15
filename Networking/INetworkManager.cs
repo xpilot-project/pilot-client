@@ -16,7 +16,7 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System.Collections.Generic;
-using Vatsim.Fsd.Connector;
+using Vatsim.FsdClient;
 using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot.Networking
@@ -25,7 +25,7 @@ namespace Vatsim.Xpilot.Networking
     {
         void SendRealNameRequest(string callsign);
         void SendIsValidATCRequest(string callsign);
-        void SendControlerInfoRequest(string callsign);
+        void SendControllerInfoRequest(string callsign);
         void SendCapabilitiesRequest(string callsign);
         void SendMetarRequest(string station);
         void SendPrivateMessage(string to, string message);

@@ -22,9 +22,7 @@ using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Config;
-using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.Core;
-using Vatsim.Xpilot.Events.Arguments;
 
 namespace Vatsim.Xpilot
 {
@@ -33,23 +31,18 @@ namespace Vatsim.Xpilot
         [EventPublication(EventTopics.SettingsModified)]
         public event EventHandler<EventArgs> SettingsModified;
 
-        [EventPublication(EventTopics.RadioVolumeChanged)]
-        public event EventHandler<RadioVolumeChangedEventArgs> RadioVolumeChanged;
-
         private readonly IAFVManaged mAudio;
         private readonly IAppConfig mConfig;
         private readonly IEventBroker mEventBroker;
-        private readonly INetworkManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
         private Timer mVuTimer;
 
-        public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, INetworkManager networkManager, IUserInterface userInterface)
+        public SettingsForm(IAppConfig appConfig, IAFVManaged audio, IEventBroker eventBroker, IUserInterface userInterface)
         {
             InitializeComponent();
 
             mConfig = appConfig;
             mAudio = audio;
-            mNetworkManager = networkManager;
             mUserInterface = userInterface;
             mEventBroker = eventBroker;
             mEventBroker.Register(this);
@@ -99,8 +92,8 @@ namespace Vatsim.Xpilot
             lstListenDevice.SelectedIndex = lstListenDevice.FindStringExact(mConfig.ListenDeviceName);
             trackCom1.Value = mConfig.Com1Volume;
             trackCom2.Value = mConfig.Com2Volume;
-            volCom1.Text = mConfig.Com1Volume.ToString("0%");
-            volCom2.Text = mConfig.Com2Volume.ToString("0%");
+            volCom1.Text = (mConfig.Com1Volume / 100.0).ToString("0%");
+            volCom2.Text = (mConfig.Com2Volume / 100.0).ToString("0%");
             chkDisableRadioEffects.Checked = mConfig.DisableAudioEffects;
             chkHfSquelch.Checked = mConfig.EnableHfSquelch;
             chkAutoSquawkModeC.Checked = mConfig.AutoSquawkModeC;
@@ -119,9 +112,11 @@ namespace Vatsim.Xpilot
             {
                 foreach (var x in mConfig.CachedServers)
                 {
-                    ComboboxItem item = new ComboboxItem();
-                    item.Text = x.Name;
-                    item.Value = x.Address;
+                    ComboboxItem item = new ComboboxItem
+                    {
+                        Text = x.Name,
+                        Value = x.Address
+                    };
                     lstServerName.Items.Add(item);
                 }
             }
@@ -186,13 +181,6 @@ namespace Vatsim.Xpilot
             {
                 e.SuppressKeyPress = true;
             }
-        }
-
-        private void chkDisableRadioEffects_CheckedChanged(object sender, EventArgs e)
-        {
-            //mAudio.SetAudioEffectsDisabled(chkDisableRadioEffects.Checked);
-            //mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
-            //mConfig.SaveConfig();
         }
 
         private void btnGuidedSetup_Click(object sender, EventArgs e)
@@ -287,6 +275,34 @@ namespace Vatsim.Xpilot
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void trackCom1_Scroll(object sender, EventArgs e)
+        {
+            mConfig.Com1Volume = trackCom1.Value;
+            volCom1.Text = (mConfig.Com1Volume / 100.0).ToString("0%");
+            mConfig.SaveConfig();
+            mAudio.UpdateRadioGains();
+        }
+
+        private void trackCom2_Scroll(object sender, EventArgs e)
+        {
+            mConfig.Com2Volume = trackCom2.Value;
+            volCom2.Text = (mConfig.Com2Volume / 100.0).ToString("0%");
+            mConfig.SaveConfig();
+            mAudio.UpdateRadioGains();
+        }
+
+        private void chkHfSquelch_CheckedChanged(object sender, EventArgs e)
+        {
+            mConfig.EnableHfSquelch = chkHfSquelch.Checked;
+            mAudio.EnableHFSquelch(chkHfSquelch.Checked);
+        }
+
+        private void chkDisableRadioEffects_CheckedChanged_1(object sender, EventArgs e)
+        {
+            mConfig.DisableAudioEffects = chkDisableRadioEffects.Checked;
+            mAudio.DisbleRadioEffects(chkDisableRadioEffects.Checked);
         }
     }
 

@@ -23,18 +23,16 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Threading;
 using System.Reflection;
+using System.Linq;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
-using Vatsim.Fsd.Connector;
-using Vatsim.Fsd.Connector.PDU;
 using Vatsim.Xpilot.Events.Arguments;
 using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Core;
-using Vatsim.Xpilot.Simulator;
-using System.Linq;
-using Abacus.DoublePrecision;
+using Vatsim.FsdClient;
+using Vatsim.FsdClient.PDU;
 
 namespace Vatsim.Xpilot.Networking
 {
@@ -121,12 +119,15 @@ namespace Vatsim.Xpilot.Networking
         [EventPublication(EventTopics.SelcalAlertReceived)]
         public event EventHandler<SelcalAlertReceivedEventArgs> SelcalAlertReceived;
 
+        [EventPublication(EventTopics.WallopSent)]
+        public event EventHandler<WallopSentEventArgs> WallopSent;
+
         private const string STATUS_FILE_URL = "http://status.vatsim.net";
         private readonly IAppConfig mConfig;
-        private readonly IXplaneAdapter mXplaneAdapter;
         private readonly FSDSession mFsd;
         private readonly Version mFsdClientVersion;
-        private readonly System.Timers.Timer mPositionUpdateTimer;
+        private readonly System.Timers.Timer mSlowPositionTimer;
+        private readonly System.Timers.Timer mFastPositionTimer;
         private ConnectInfo mConnectInfo;
         private readonly ClientProperties mClientProperties;
         private UserAircraftData mUserAircraftData;
@@ -176,10 +177,21 @@ namespace Vatsim.Xpilot.Networking
             mFsd.RawDataSent += Fsd_RawDataSent;
             mFsd.RawDataReceived += Fsd_RawDataReceived;
 
+            var directory = new DirectoryInfo(Path.Combine(mConfig.AppPath, "NetworkLogs"));
+            var query = directory.GetFiles("*", SearchOption.AllDirectories);
+            foreach (var file in query.OrderByDescending(file => file.CreationTime).Skip(10))
+            {
+                file.Delete();
+            }
+
             mRawDataStream = new StreamWriter(Path.Combine(mConfig.AppPath, $"NetworkLogs/NetworkLog-{DateTime.UtcNow:yyyyMMddHHmmss}.log"), false);
 
-            mPositionUpdateTimer = new System.Timers.Timer();
-            mPositionUpdateTimer.Elapsed += PositionUpdateTimer_Elapsed;
+            mSlowPositionTimer = new System.Timers.Timer();
+            mSlowPositionTimer.Elapsed += SlowPositionTimer_Elapsed;
+
+            mFastPositionTimer = new System.Timers.Timer();
+            mFastPositionTimer.Interval = 200;
+            mFastPositionTimer.Elapsed += FastPositionTimer_Elapsed;
 
             DownloadNetworkServersAsync();
         }
@@ -193,10 +205,9 @@ namespace Vatsim.Xpilot.Networking
         [EventSubscription(EventTopics.UserAircraftDataUpdated, typeof(OnUserInterfaceAsync))]
         public void OnUserAircraftDataUpdated(object sender, UserAircraftDataUpdatedEventArgs e)
         {
-            mUserAircraftData = e.UserAircraftData;
-            if (mFsd.Connected && !mConnectInfo.ObserverMode)
+            if (!mUserAircraftData.Equals(e.UserAircraftData))
             {
-                SendFastPositionPacket();
+                mUserAircraftData = e.UserAircraftData;
             }
         }
 
@@ -218,7 +229,10 @@ namespace Vatsim.Xpilot.Networking
         [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
         public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
         {
-            mRadioStackState = e.RadioStackState;
+            if (!mRadioStackState.Equals(e.RadioStackState))
+            {
+                mRadioStackState = e.RadioStackState;
+            }
         }
 
         [EventSubscription(EventTopics.PrivateMessageSent, typeof(OnUserInterfaceAsync))]
@@ -237,7 +251,8 @@ namespace Vatsim.Xpilot.Networking
 
         private void Fsd_NetworkDisconnected(object sender, NetworkEventArgs e)
         {
-            mPositionUpdateTimer.Stop();
+            mFastPositionTimer.Stop();
+            mSlowPositionTimer.Stop();
             DisconnectInfo disconnectInfo = new DisconnectInfo
             {
                 Type = mForcedDiconnect ? DisconnectType.Forcible : (!mUserInitiatedDisconnect ? DisconnectType.Other : DisconnectType.Intentional),
@@ -299,8 +314,9 @@ namespace Vatsim.Xpilot.Networking
             }
             RequestPublicIP();
             SendPositionPacket();
-            mPositionUpdateTimer.Interval = mConnectInfo.ObserverMode ? 15000 : 5000;
-            mPositionUpdateTimer.Start();
+            mSlowPositionTimer.Interval = mConnectInfo.ObserverMode ? 15000 : 5000;
+            mSlowPositionTimer.Start();
+            mFastPositionTimer.Start();
         }
 
         private void RequestPublicIP()
@@ -406,8 +422,8 @@ namespace Vatsim.Xpilot.Networking
         private void Fsd_FastPilotPositionReceived(object sender, DataReceivedEventArgs<PDUFastPilotPosition> e)
         {
             AircraftVisualState visualState = new AircraftVisualState(new WorldPoint(e.PDU.Lon, e.PDU.Lat), e.PDU.Altitude, e.PDU.Pitch, e.PDU.Heading, e.PDU.Bank);
-            Vector3 positionalVelocityVector = new Vector3(e.PDU.VelocityX, e.PDU.VelocityZ, e.PDU.VelocityY);
-            Vector3 rotationalVeloctyVector = new Vector3(e.PDU.VelocityPitch, e.PDU.VelocityHeading, e.PDU.VelocityBank);
+            VelocityVector positionalVelocityVector = new VelocityVector(e.PDU.VelocityX, e.PDU.VelocityY, e.PDU.VelocityZ);
+            VelocityVector rotationalVeloctyVector = new VelocityVector(e.PDU.VelocityPitch, e.PDU.VelocityHeading, e.PDU.VelocityBank);
             FastPositionUpdateReceived(this, new FastPositionUpdateEventArgs(e.PDU.From, visualState, positionalVelocityVector, rotationalVeloctyVector));
         }
 
@@ -564,7 +580,15 @@ namespace Vatsim.Xpilot.Networking
             });
         }
 
-        private void PositionUpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void FastPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (!mConnectInfo.ObserverMode && !PositionalVelocityIsZero(mUserAircraftData))
+            {
+                SendFastPositionPacket();
+            }
+        }
+
+        private void SlowPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             SendPositionPacket();
         }
@@ -577,13 +601,13 @@ namespace Vatsim.Xpilot.Networking
             }
             else
             {
-                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, false, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeTrue), Convert.ToInt32(mUserAircraftData.AltitudePressure), Convert.ToInt32(mUserAircraftData.SpeedGround), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Bank), Convert.ToInt32(mUserAircraftData.Heading)));
+                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, mRadioStackState.SquawkingModeC, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeTrue), Convert.ToInt32(mUserAircraftData.AltitudePressure), Convert.ToInt32(mUserAircraftData.SpeedGround), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Bank), Convert.ToInt32(mUserAircraftData.Heading)));
             }
         }
 
         private void SendFastPositionPacket()
         {
-            mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeTrue, mUserAircraftData.Pitch, mUserAircraftData.Bank, mUserAircraftData.Heading, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.BankVelocity, mUserAircraftData.HeadingVelocity));
+            mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeTrue, mUserAircraftData.Pitch, mUserAircraftData.Bank, mUserAircraftData.Heading, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.HeadingVelocity, mUserAircraftData.BankVelocity));
         }
 
         public void SendRealNameRequest(string callsign)
@@ -624,6 +648,7 @@ namespace Vatsim.Xpilot.Networking
         public void SendWallop(string message)
         {
             mFsd.SendPDU(new PDUWallop(mConnectInfo.Callsign, message));
+            WallopSent?.Invoke(this, new WallopSentEventArgs(mConnectInfo.Callsign, message));
         }
 
         public void SendInfoRequest(string callsign)
@@ -659,7 +684,7 @@ namespace Vatsim.Xpilot.Networking
             {
                 Config = config
             };
-            mFsd.SendPDU(new PDUClientQueryResponse(mConnectInfo.Callsign, to, ClientQueryType.AircraftConfiguration, new List<string>
+            mFsd.SendPDU(new PDUClientQuery(mConnectInfo.Callsign, to, ClientQueryType.AircraftConfiguration, new List<string>
             {
                 acconfig.ToJson()
             }));
@@ -778,15 +803,18 @@ namespace Vatsim.Xpilot.Networking
             mClientProperties.PluginHash = hash;
         }
 
-        public void SendControlerInfoRequest(string callsign)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool IsConnected => mFsd.Connected;
 
         public string OurCallsign => mConnectInfo.Callsign;
 
         public List<NetworkServerInfo> ServerList => mServerList;
+
+        private const double POSITIONAL_VELOCITY_ZERO_TOLERANCE = 0.0009;
+        private bool PositionalVelocityIsZero(UserAircraftData data)
+        {
+            return (Math.Abs(data.LongitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
+                && (Math.Abs(data.AltitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
+                && (Math.Abs(data.LatitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE);
+        }
     }
 }

@@ -21,6 +21,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
 using Vatsim.Xpilot.Config;
@@ -29,10 +31,9 @@ using Vatsim.Xpilot.Controllers;
 using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
-using System.Text.RegularExpressions;
 using Vatsim.Xpilot.Common;
-using Vatsim.Fsd.Connector;
-using System.Linq;
+using Vatsim.Xpilot.Aircrafts;
+using Vatsim.FsdClient;
 
 namespace Vatsim.Xpilot
 {
@@ -53,13 +54,13 @@ namespace Vatsim.Xpilot
         [EventPublication(EventTopics.RadioMessageSent)]
         public event EventHandler<RadioMessageSentEventArgs> RadioMessagSent;
 
-
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
         private readonly INetworkManager mNetworkManager;
         private readonly IUserInterface mUserInterface;
         private readonly ITabPages mTabPages;
         private readonly IControllerAtisManager mAtisManager;
+        private readonly IControllerManager mControllerManager;
         private readonly IXplaneAdapter mXplaneAdapter;
 
         private readonly Color COLOR_INFO = Color.Yellow;
@@ -77,13 +78,13 @@ namespace Vatsim.Xpilot
         public static extern bool ReleaseCapture();
 
         private bool mInitializing = true;
-        private bool mReceivingOnBothFrequencies;
         private ConnectInfo mConnectInfo;
         private NotesTab mTabNotes;
+        private RadioStackState mRadioStackState;
 
         private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
 
-        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, INetworkManager networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IXplaneAdapter xplane)
+        public MainForm(IEventBroker eventBroker, IAppConfig appConfig, INetworkManager networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IControllerManager controllerManager, IXplaneAdapter xplane)
         {
             InitializeComponent();
 
@@ -95,6 +96,7 @@ namespace Vatsim.Xpilot
             mUserInterface = userInterface;
             mTabPages = tabPages;
             mAtisManager = atisManager;
+            mControllerManager = controllerManager;
             mXplaneAdapter = xplane;
 
             RtfMessages.TextCommandLine.TextCommandReceived += TextCommandLine_TextCommandReceived;
@@ -131,6 +133,49 @@ namespace Vatsim.Xpilot
         public void OnSettingsModified(object sender, EventArgs e)
         {
             TopMost = mConfig.KeepWindowVisible;
+        }
+
+        [EventSubscription(EventTopics.ConnectButtonDisabled, typeof(OnUserInterfaceAsync))]
+        public void OnConnectButtonDisabled(object sender, EventArgs e)
+        {
+            BtnConnect.Enabled = false;
+        }
+
+        [EventSubscription(EventTopics.ConnectButtonEnabled, typeof(OnUserInterfaceAsync))]
+        public void OnConnectButtonEnabled(object sender, EventArgs e)
+        {
+            BtnConnect.Enabled = true;
+        }
+
+        [EventSubscription(EventTopics.SimulatorConnected, typeof(OnUserInterfaceAsync))]
+        public void OnSimulatorConnected(object sender, EventArgs e)
+        {
+            ChkModeC.Enabled = true;
+            ChkIdent.Enabled = true;
+            SyncRadioStackState();
+        }
+
+        [EventSubscription(EventTopics.SimulatorDisconnected, typeof(OnUserInterfaceAsync))]
+        public void OnSimulatorDisconnected(object sender, EventArgs e)
+        {
+            ChkModeC.Enabled = false;
+            ChkModeC.Clicked = false;
+
+            ChkIdent.Enabled = false;
+            ChkIdent.Clicked = false;
+
+            Com1Freq.Text = "---.---";
+            Com2Freq.Text = "---.---";
+
+            if (mNetworkManager.IsConnected)
+            {
+                mNetworkManager.Disconnect();
+                WriteErrorMessage("X-Plane connection lost. Disconnected from network.");
+                if (mConfig.FlashTaskbarDisconnect)
+                {
+                    FlashTaskbar.Flash(this);
+                }
+            }
         }
 
         [EventSubscription(EventTopics.NetworkConnectionInitiated, typeof(OnUserInterfaceAsync))]
@@ -289,14 +334,30 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.RadioStackStateChanged, typeof(OnUserInterfaceAsync))]
         public void OnRadioStackStateChanged(object sender, RadioStackStateChangedEventArgs e)
         {
-            mReceivingOnBothFrequencies = e.RadioStackState.ReceivingOnBothComRadios;
-            if (e.RadioStackState.AvionicsPowerOn)
+            if (!mRadioStackState.Equals(e.RadioStackState))
             {
-                if (e.RadioStackState.Com1ActiveFrequency > 0)
+                mRadioStackState = e.RadioStackState;
+                SyncRadioStackState();
+            }
+        }
+
+        private void SyncRadioStackState()
+        {
+            if (!mXplaneAdapter.ValidSimConnection)
+            {
+                return;
+            }
+
+            ChkModeC.Clicked = mRadioStackState.SquawkingModeC;
+            ChkIdent.Clicked = mRadioStackState.SquawkingIdent;
+
+            if (mRadioStackState.AvionicsPowerOn)
+            {
+                if (mRadioStackState.Com1ActiveFrequency > 0)
                 {
-                    Com1Freq.Text = (e.RadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                    Com1TX.ForeColor = e.RadioStackState.Com1TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
-                    Com1RX.ForeColor = e.RadioStackState.Com1ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com1Freq.Text = (mRadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
+                    Com1TX.ForeColor = mRadioStackState.Com1TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com1RX.ForeColor = mRadioStackState.Com1ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
                 }
                 else
                 {
@@ -305,11 +366,11 @@ namespace Vatsim.Xpilot
                     Com1RX.ForeColor = INACTIVE_TXRX_COLOR;
                 }
 
-                if (e.RadioStackState.Com2ActiveFrequency > 0)
+                if (mRadioStackState.Com2ActiveFrequency > 0)
                 {
-                    Com2Freq.Text = (e.RadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                    Com2TX.ForeColor = e.RadioStackState.Com2TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
-                    Com2RX.ForeColor = e.RadioStackState.Com2ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com2Freq.Text = (mRadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
+                    Com2TX.ForeColor = mRadioStackState.Com2TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com2RX.ForeColor = mRadioStackState.Com2ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
                 }
                 else
                 {
@@ -336,10 +397,10 @@ namespace Vatsim.Xpilot
             switch (e.Radio)
             {
                 case 0:
-                    Com1TX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com1TX.BackColor = e.TxRx && mRadioStackState.Com1ReceiveEnabled ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
                     break;
                 case 1:
-                    Com2TX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com2TX.BackColor = e.TxRx && mRadioStackState.Com2ReceiveEnabled ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
                     break;
             }
         }
@@ -382,7 +443,7 @@ namespace Vatsim.Xpilot
         public void OnRadioMessageReceived(object sender, RadioMessageReceivedEventArgs e)
         {
             string message;
-            if (mReceivingOnBothFrequencies)
+            if (mRadioStackState.ReceivingOnBothComRadios)
             {
                 string arg;
                 if (e.Frequencies.Length > 1)
@@ -567,54 +628,71 @@ namespace Vatsim.Xpilot
                         case ".xpndr":
                         case ".xpdr":
                         case ".squawk":
-                            CheckMinLength(cmd);
-                            if (!Regex.IsMatch(cmd[1], "^[0-7]{4}$"))
+                            if (mXplaneAdapter.ValidSimConnection)
                             {
-                                throw new ArgumentException("Invalid transponder code.");
+                                CheckMinLength(cmd);
+                                if (!Regex.IsMatch(cmd[1], "^[0-7]{4}$"))
+                                {
+                                    throw new ArgumentException("Invalid transponder code.");
+                                }
+                                int code = int.Parse(cmd[1]);
+                                mXplaneAdapter.SetTransponderCode(code);
+                                WriteInfoMessage($"Transponder code set to {code:0000}");
                             }
-                            int code = int.Parse(cmd[1]);
-                            mXplaneAdapter.SetTransponderCode(code);
-                            WriteInfoMessage($"Transponder code set to {code:0000}");
+                            else
+                            {
+                                throw new ArgumentException("X-Plane connection not found");
+                            }
                             break;
                         case ".com1":
                         case ".com2":
                             {
-                                CheckMinLength(cmd);
-                                if (!Regex.IsMatch(cmd[1], "^1\\d\\d[\\.\\,]\\d{1,3}$"))
+                                if (mXplaneAdapter.ValidSimConnection)
                                 {
-                                    throw new ArgumentException("Invalid frequency format.");
+                                    CheckMinLength(cmd);
+                                    if (!Regex.IsMatch(cmd[1], "^1\\d\\d[\\.\\,]\\d{1,3}$"))
+                                    {
+                                        throw new ArgumentException("Invalid frequency format.");
+                                    }
+                                    cmd[1] = cmd[1].PadRight(7, '0');
+                                    uint freq = uint.Parse(cmd[1].Replace(".", "").Replace(",", "")).Normalize25KhzFrequency();
+                                    int radio = cmd[0].ToLower() == ".com1" ? 1 : 2;
+                                    mXplaneAdapter.SetRadioFrequency(radio, freq);
                                 }
-                                cmd[1] = cmd[1].PadRight(7, '0');
-                                uint freq = uint.Parse(cmd[1].Substring(1).Replace(".", "").Replace(",", "")).Normalize25KhzFsdFrequency();
-                                int radio = cmd[1].ToLower() == ".com1" ? 1 : 2;
-                                mXplaneAdapter.SetRadioFrequency(radio, freq);
                             }
                             break;
                         case ".tx":
                             {
-                                CheckMinLength(cmd);
-                                if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
+                                if (mXplaneAdapter.ValidSimConnection)
                                 {
-                                    throw new ArgumentException("Command syntax error. Expected format: .tx com1 or .tx com2");
+                                    CheckMinLength(cmd);
+                                    if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
+                                    {
+                                        throw new ArgumentException("Command syntax error. Expected format: .tx com1 or .tx com2");
+                                    }
+                                    int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
+                                    mXplaneAdapter.SetRadioTransmit(radio);
+                                    WriteInfoMessage($"COM{radio} transmit enabled.");
                                 }
-                                int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
-                                mXplaneAdapter.SetAudioComSelection(radio);
-                                WriteInfoMessage($"COM{radio} transmit enabled.");
                             }
                             break;
                         case ".rx":
                             {
-                                CheckMinLength(cmd, 2);
-                                if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
+                                if (mXplaneAdapter.ValidSimConnection)
                                 {
-                                    throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
+                                    CheckMinLength(cmd, 2);
+                                    if (cmd[1].ToLower() != "com1" && cmd[1].ToLower() != "com2")
+                                    {
+                                        throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
+                                    }
+                                    if (cmd[2].ToLower() != "on" && cmd[2].ToLower() != "off")
+                                    {
+                                        throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
+                                    }
+                                    int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
+                                    bool enabled = cmd[2].ToLower() == "on";
+                                    mXplaneAdapter.SetRadioReceive(radio, enabled);
                                 }
-                                if (cmd[2].ToLower() != "com1" && cmd[2].ToLower() != "com2")
-                                {
-                                    throw new ArgumentException("Command syntax error. Expected format: .rx com1 on|off");
-                                }
-                                bool isOn = cmd[2].ToLower() == "on";
-                                int radio = cmd[1].ToLower() == "com1" ? 1 : 2;
                             }
                             break;
                         case ".msg":
@@ -640,11 +718,19 @@ namespace Vatsim.Xpilot
                             break;
                         case ".wallop":
                             CheckMinLength(cmd);
+                            if (!mNetworkManager.IsConnected)
+                            {
+                                throw new ArgumentException("Not connected to network.");
+                            }
                             mNetworkManager.SendWallop(cmd[1]);
                             break;
                         case ".wx":
                         case ".metar":
                             CheckMinLength(cmd);
+                            if (!mNetworkManager.IsConnected)
+                            {
+                                throw new ArgumentException("Not connected to network.");
+                            }
                             mNetworkManager.SendMetarRequest(cmd[1]);
                             break;
                         case ".towerview":
@@ -796,6 +882,17 @@ namespace Vatsim.Xpilot
             base.OnLoad(e);
             ScreenUtils.ApplyWindowProperties(mConfig.ClientWindowProperties, this);
             mInitializing = false;
+
+            if (mConfig.ConfigurationRequired)
+            {
+                using (var dlg = mUserInterface.CreateSetupGuideForm())
+                {
+                    if (dlg.ShowDialog(this) == DialogResult.No)
+                    {
+                        WriteErrorMessage(CONFIGURATION_REQUIRED);
+                    }
+                }
+            }
         }
 
         protected override void OnResizeEnd(EventArgs e)
@@ -901,12 +998,21 @@ namespace Vatsim.Xpilot
 
         private void ChkModeC_Click(object sender, EventArgs e)
         {
-            FocusTextCommandLine();
+            if (mXplaneAdapter.ValidSimConnection)
+            {
+                ChkModeC.Clicked = !ChkModeC.Clicked;
+                mXplaneAdapter.EnableTransponderModeC(ChkModeC.Clicked);
+                FocusTextCommandLine();
+            }
         }
 
         private void ChkIdent_Click(object sender, EventArgs e)
         {
-            FocusTextCommandLine();
+            if (mXplaneAdapter.ValidSimConnection)
+            {
+                mXplaneAdapter.TriggerTransponderIdent();
+                FocusTextCommandLine();
+            }
         }
 
         private void BtnFlightPlan_Click(object sender, EventArgs e)
@@ -921,6 +1027,11 @@ namespace Vatsim.Xpilot
             BtnConnect.Enabled = true;
             BtnConnect.Text = "Connect";
             BtnConnect.Pushed = false;
+
+            Com1TX.BackColor = Color.Transparent;
+            Com1RX.BackColor = Color.Transparent;
+            Com2TX.BackColor = Color.Transparent;
+            Com2RX.BackColor = Color.Transparent;
         }
 
         private void ClearControllerListNodes()
@@ -985,6 +1096,56 @@ namespace Vatsim.Xpilot
                 }
             }
             TabsMain.Refresh();
+        }
+
+        private void TreeControllers_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                TreeControllers.SelectedNode = TreeControllers.GetNodeAt(e.X, e.Y);
+                if (TreeControllers.SelectedNode != null && TreeControllers.SelectedNode.Nodes.Count > 0)
+                {
+                    ControllerTreeContextMenu.Show(TreeControllers, e.Location);
+                }
+            }
+        }
+
+        private void TreeControllers_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if(e.Node.Level != 0 && e.Button == MouseButtons.Right)
+            {
+                ShowControllerContextMenu(e.Node.Name, e.Location);
+            }
+        }
+
+        private void ShowControllerContextMenu(string name, Point point)
+        {
+            startPrivateChat.Tag = name;
+            requestControllerInfo.Tag = name;
+            tuneCom1Frequency.Tag = name;
+            ControllerTreeContextMenu.Show(TreeControllers, point);
+        }
+
+        private void requestControllerInfo_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (sender as ToolStripMenuItem);
+            mAtisManager.RequestControllerAtis(item.Tag.ToString());
+        }
+
+        private void startPrivateChat_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (sender as ToolStripMenuItem);
+            HandleChatSessionStarted(item.Tag.ToString());
+        }
+
+        private void tuneCom1Frequency_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (sender as ToolStripMenuItem);
+            if (!string.IsNullOrEmpty(item.Tag.ToString()))
+            {
+                uint freq = mControllerManager.GetFrequencyByCallsign(item.Tag.ToString()).FsdFrequencyToHertz() / 1000;
+                mXplaneAdapter.SetRadioFrequency(1, freq);
+            }
         }
     }
 

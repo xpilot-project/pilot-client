@@ -14,6 +14,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -61,9 +62,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="abacus, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Abacus.1.1.0\lib\abacus.dll</HintPath>
-    </Reference>
     <Reference Include="Appccelerate.EventBroker, Version=4.0.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
       <HintPath>packages\Appccelerate.EventBroker.4.0.0\lib\netstandard2.0\Appccelerate.EventBroker.dll</HintPath>
     </Reference>
@@ -148,6 +146,7 @@
     <Compile Include="Aircrafts\AircraftVisualState.cs" />
     <Compile Include="Aircrafts\RadioStackState.cs" />
     <Compile Include="Aircrafts\UserAircraftConfigData.cs" />
+    <Compile Include="Aircrafts\VelocityVector.cs" />
     <Compile Include="AudioForVatsim\AFVBindings.cs" />
     <Compile Include="AudioForVatsim\AFVEvents.cs" />
     <Compile Include="AudioForVatsim\AFVManaged.cs" />
@@ -157,10 +156,7 @@
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
-    <Compile Include="Common\GeoCalc.cs" />
-    <Compile Include="Common\QuaternionExtensions.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
-    <Compile Include="Common\StringUtils.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
     <Compile Include="ConnectForm.cs">
@@ -173,17 +169,13 @@
     <Compile Include="Core\IUserInterface.cs" />
     <Compile Include="Aircrafts\AircraftConfigurationInfo.cs" />
     <Compile Include="Aircrafts\IAircraftManager.cs" />
-    <Compile Include="Aircrafts\NetworkAircraft.cs" />
-    <Compile Include="Aircrafts\NetworkAircraftConfig.cs" />
     <Compile Include="Aircrafts\AircraftManager.cs" />
-    <Compile Include="Aircrafts\NetworkAircraftState.cs" />
     <Compile Include="Controllers\ControllerAtisManager.cs" />
     <Compile Include="Controllers\ControllerManager.cs" />
     <Compile Include="Controllers\IControllerAtisManager.cs" />
     <Compile Include="Controllers\IControllerManager.cs" />
     <Compile Include="Events.Arguments\AircraftEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftInfoReceivedEventArgs.cs" />
-    <Compile Include="Events.Arguments\AircraftUpdatedEventArgs.cs" />
     <Compile Include="Events.Arguments\AircraftUpdateReceivedEventArgs.cs" />
     <Compile Include="Events.Arguments\ChatSessionStartedEventArgs.cs" />
     <Compile Include="Events.Arguments\ComRadioTxRxChangedEventArgs.cs" />
@@ -220,22 +212,24 @@
     </Compile>
     <Compile Include="Protobuf\AddPlane.cs" />
     <Compile Include="Protobuf\AirplaneConfig.cs" />
-    <Compile Include="Protobuf\ChangeModel.cs" />
-    <Compile Include="Protobuf\ClearNearbyControllers.cs" />
-    <Compile Include="Protobuf\CSLValidate.cs" />
+    <Compile Include="Protobuf\ChangePlaneModel.cs" />
+    <Compile Include="Protobuf\CslValidation.cs" />
+    <Compile Include="Protobuf\DeletePlane.cs" />
     <Compile Include="Protobuf\FastPositionUpdate.cs" />
     <Compile Include="Protobuf\NearbyControllers.cs" />
     <Compile Include="Protobuf\NetworkConnected.cs" />
     <Compile Include="Protobuf\NetworkDisconnected.cs" />
     <Compile Include="Protobuf\PlaneAddedToSim.cs" />
     <Compile Include="Protobuf\PluginHash.cs" />
-    <Compile Include="Protobuf\PluginVersion.cs" />
+    <Compile Include="Protobuf\PluginInformation.cs" />
     <Compile Include="Protobuf\PositionUpdate.cs" />
     <Compile Include="Protobuf\PrivateMessageReceived.cs" />
     <Compile Include="Protobuf\PrivateMessageSent.cs" />
-    <Compile Include="Protobuf\RemoveAllPlanes.cs" />
-    <Compile Include="Protobuf\RemovePlane.cs" />
-    <Compile Include="Protobuf\SetTransponderCode.cs" />
+    <Compile Include="Protobuf\RadioStack.cs" />
+    <Compile Include="Protobuf\SetRadioStack.cs" />
+    <Compile Include="Protobuf\SetTransponder.cs" />
+    <Compile Include="Protobuf\UserAircraftConfigData.cs" />
+    <Compile Include="Protobuf\UserAircraftData.cs" />
     <Compile Include="Protobuf\Wrapper.cs" />
     <Compile Include="Protobuf\XplaneDatarefs.cs" />
     <Compile Include="SetupGuide.cs">
@@ -249,12 +243,6 @@
     </Compile>
     <Compile Include="SetupGuide\AudioConfiguration.Designer.cs">
       <DependentUpon>AudioConfiguration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SetupGuide\ConflictingPlugins.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SetupGuide\ConflictingPlugins.Designer.cs">
-      <DependentUpon>ConflictingPlugins.cs</DependentUpon>
     </Compile>
     <Compile Include="SetupGuide\CslConfiguration.cs">
       <SubType>UserControl</SubType>
@@ -382,9 +370,6 @@
     <EmbeddedResource Include="SetupGuide\AudioConfiguration.resx">
       <DependentUpon>AudioConfiguration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SetupGuide\ConflictingPlugins.resx">
-      <DependentUpon>ConflictingPlugins.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="SetupGuide\CslConfiguration.resx">
       <DependentUpon>CslConfiguration.cs</DependentUpon>
     </EmbeddedResource>
@@ -416,16 +401,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FsdWrapper-Legacy\Vatsim.Fsd.Connector.csproj">
-      <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
-      <Name>Vatsim.Fsd.Connector</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="icon.ico" />
     <None Include="Resources\xPilot_Logo.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Vatsim.FsdClient\Vatsim.FsdClient.csproj">
+      <Project>{0375fcfe-1e78-43da-9865-bde0f1412598}</Project>
+      <Name>Vatsim.FsdClient</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>CertUtil -hashfile "$(TargetDir)$(TargetName)$(TargetExt)" sha512</PostBuildEvent>

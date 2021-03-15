@@ -19,15 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Vatsim.Xpilot.Config;
+using Appccelerate.EventBroker;
+using Appccelerate.EventBroker.Handlers;
 using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
-using Appccelerate.EventBroker;
-using Appccelerate.EventBroker.Handlers;
 using Vatsim.Xpilot.Networking;
-using Abacus.DoublePrecision;
-using Vatsim.Xpilot.Common;
 
 namespace Vatsim.Xpilot.Aircrafts
 {
@@ -35,20 +32,9 @@ namespace Vatsim.Xpilot.Aircrafts
     {
         private const int STALE_AIRCRAFT_TIMEOUT = 10000;
         private const int SIMULATOR_AIRCRAFT_SYNC_INTERVAL = 5000;
-        private const long FAST_POSITION_INTERVAL_TOLERANCE = 300;
-        private const double ERROR_CORRECTION_INTERVAL = 2.0;
 
         [EventPublication(EventTopics.NotificationPosted)]
         public event EventHandler<NotificationPostedEventArgs> NotificationPosted;
-
-        [EventPublication(EventTopics.AircraftDiscovered)]
-        public event EventHandler<AircraftEventArgs> AircraftDiscovered;
-
-        [EventPublication(EventTopics.AircraftUpdated)]
-        public event EventHandler<AircraftEventArgs> AircraftUpdated;
-
-        [EventPublication(EventTopics.AircraftDeleted)]
-        public event EventHandler<AircraftEventArgs> AircraftDeleted;
 
         private Timer mStaleAircraftCheckTimer;
         private Timer mSimulatorAircraftSyncTimer;
@@ -112,7 +98,17 @@ namespace Vatsim.Xpilot.Aircrafts
         [EventSubscription(EventTopics.FastPositionUpdateReceived, typeof(OnUserInterfaceAsync))]
         public void OnFastPositionUpdateReceived(object sender, FastPositionUpdateEventArgs e)
         {
-            HandleFastPositionUpdate(e.From, e.VisualState, e.PositionalVelocityVector, e.RotationalVelocityVector);
+            ProcessFastPositionUpdate(e.From, e.VisualState, e.PositionalVelocityVector, e.RotationalVelocityVector);
+        }
+
+        [EventSubscription(EventTopics.AircraftAddedToSimulator, typeof(OnUserInterfaceAsync))]
+        public void OnAircraftAddedToSimulator(object sender, GenericEventArgs<string> e)
+        {
+            var aircraft = GetAircraft(e.Value);
+            if (aircraft != null)
+            {
+                aircraft.Status = AircraftStatus.Active;
+            }
         }
 
         [EventSubscription(EventTopics.AircraftInfoReceived, typeof(OnUserInterfaceAsync))]
@@ -124,15 +120,22 @@ namespace Vatsim.Xpilot.Aircrafts
                 return;
             }
 
-            if (!string.IsNullOrEmpty(aircraft.TypeCode) && aircraft.TypeCode != e.TypeCode)
+            if (!string.IsNullOrEmpty(aircraft.TypeCode))
             {
-                mXplaneAdapter.ChangeModel(aircraft);
-                return;
+                if (aircraft.TypeCode != e.TypeCode)
+                {
+                    aircraft.TypeCode = e.TypeCode;
+                    mXplaneAdapter.ChangeModel(aircraft);
+                }
             }
-            aircraft.TypeCode = e.TypeCode;
-            if (IsEligibleToAddToSimulator(aircraft))
+            else
             {
-                SyncSimulatorAircraft();
+                aircraft.TypeCode = e.TypeCode;
+                aircraft.Airline = e.Airline;
+                if (IsEligibleToAddToSimulator(aircraft))
+                {
+                    SyncSimulatorAircraft();
+                }
             }
         }
 
@@ -140,7 +143,6 @@ namespace Vatsim.Xpilot.Aircrafts
         public void OnAircraftConfigurationInfoReceived(object sender, NetworkDataReceivedEventArgs e)
         {
             AircraftConfigurationInfo info;
-            Console.WriteLine(e.Data);
             try
             {
                 info = AircraftConfigurationInfo.FromJson(e.Data);
@@ -152,7 +154,6 @@ namespace Vatsim.Xpilot.Aircrafts
             Aircraft aircraft = GetAircraft(e.From);
             if (info.HasConfig && aircraft != null)
             {
-                Console.WriteLine(info.Config.IsFullData);
                 HandleAircraftConfiguration(aircraft, info.Config);
             }
         }
@@ -168,16 +169,6 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             DeleteAllAircraft();
             mStaleAircraftCheckTimer.Stop();
-        }
-
-        [EventSubscription(EventTopics.AircraftAddedToSimulator, typeof(OnUserInterfaceAsync))]
-        public void OnAircraftAddedToSimulator(object sender, GenericEventArgs<string> e)
-        {
-            var aircraft = GetAircraft(e.Value);
-            if (aircraft != null)
-            {
-                aircraft.Status = AircraftStatus.Active;
-            }
         }
 
         private void InitializeTimers()
@@ -238,7 +229,7 @@ namespace Vatsim.Xpilot.Aircrafts
         private void DeleteAircraft(Aircraft aircraft)
         {
             Aircraft.Remove(aircraft);
-            AircraftDeleted(this, new AircraftEventArgs(aircraft));
+            mXplaneAdapter.DeleteAircraft(aircraft);
         }
 
         private void DeleteAllAircraft()
@@ -250,14 +241,14 @@ namespace Vatsim.Xpilot.Aircrafts
             }
         }
 
-        private void HandleFastPositionUpdate(string callsign, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVector)
+        private void ProcessFastPositionUpdate(string callsign, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVector)
         {
             var aircraft = GetAircraft(callsign);
-            if (aircraft == null)
+            if(aircraft != null)
             {
-                return;
+                aircraft.HaveVelocities = true;
+                mXplaneAdapter.SendFastPositionUpdate(aircraft, visualState, positionalVelocityVector, rotationalVelocityVector);
             }
-            mXplaneAdapter.SendFastPositionUpdate(aircraft, visualState, positionalVelocityVector, rotationalVelocityVector);
         }
 
         private void HandleAircraftUpdate(string callsign, AircraftVisualState visualState, double speed)
@@ -266,7 +257,7 @@ namespace Vatsim.Xpilot.Aircrafts
 
             if (aircraft == null)
             {
-                SetUpNewAircraft(callsign);
+                SetUpNewAircraft(callsign, visualState);
             }
             else
             {
@@ -276,20 +267,21 @@ namespace Vatsim.Xpilot.Aircrafts
 
         private void UpdateAircraft(Aircraft aircraft, AircraftVisualState visualState, double speed)
         {
+            aircraft.LastSlowPositionUpdate = DateTime.UtcNow;
             mXplaneAdapter.SendSlowPositionUpdate(aircraft, visualState, speed);
         }
 
-        private void SetUpNewAircraft(string callsign)
+        private void SetUpNewAircraft(string callsign, AircraftVisualState visualState)
         {
             var aircraft = new Aircraft(callsign)
             {
-                Status = mIgnoredAircraft.Contains(callsign) ? AircraftStatus.Ignored : AircraftStatus.New
+                Status = mIgnoredAircraft.Contains(callsign) ? AircraftStatus.Ignored : AircraftStatus.New,
+                RemoteVisualState = visualState
             };
             Aircraft.Add(aircraft);
             mNetworkManager.SendCapabilitiesRequest(aircraft.Callsign);
             mNetworkManager.SendCapabilities(aircraft.Callsign);
             mNetworkManager.SendAircraftInfoRequest(aircraft.Callsign);
-            AircraftDiscovered(this, new AircraftEventArgs(aircraft));
         }
 
         private void HandleAircraftConfiguration(Aircraft aircraft, AircraftConfiguration cfg)
@@ -318,7 +310,7 @@ namespace Vatsim.Xpilot.Aircrafts
             }
             else if (aircraft.Status == AircraftStatus.Active)
             {
-                mXplaneAdapter.PlaneConfigChanged(aircraft.Callsign, aircraft.Configuration);
+                mXplaneAdapter.PlaneConfigChanged(aircraft);
             }
         }
 
@@ -326,19 +318,9 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             foreach (Aircraft aircraft in Aircraft)
             {
-                if (aircraft.Status == AircraftStatus.Ignored)
+                if (aircraft.Status == AircraftStatus.New && IsEligibleToAddToSimulator(aircraft))
                 {
-                    continue;
-                }
-
-                if (aircraft.Status == AircraftStatus.New)
-                {
-                    if (!IsEligibleToAddToSimulator(aircraft))
-                    {
-                        break;
-                    }
                     mXplaneAdapter.AddPlane(aircraft);
-                    Console.WriteLine(aircraft.Callsign);
                 }
             }
         }
@@ -347,13 +329,12 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             if (aircraft.Configuration == null)
             {
-                Console.WriteLine("False, acconfig: " + aircraft.Callsign);
+                mNetworkManager.SendAircraftConfigurationRequest(aircraft.Callsign);
                 return false;
             }
 
             if (string.IsNullOrEmpty(aircraft.TypeCode))
             {
-                Console.WriteLine("False, typecode: " + aircraft.Callsign);
                 return false;
             }
 
@@ -375,9 +356,9 @@ namespace Vatsim.Xpilot.Aircrafts
             if (aircraft != null)
             {
                 bool sync = false;
-                if ((aircraft.Status == AircraftStatus.Active) || (aircraft.Status == AircraftStatus.Pending))
+                if (aircraft.Status == AircraftStatus.Active)
                 {
-                    mXplaneAdapter.RemovePlane(aircraft);
+                    mXplaneAdapter.DeleteAircraft(aircraft);
                     sync = true;
                 }
                 aircraft.Status = AircraftStatus.Ignored;

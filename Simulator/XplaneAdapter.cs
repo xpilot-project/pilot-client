@@ -17,7 +17,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
@@ -33,7 +32,6 @@ using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
 using Vatsim.Xpilot.Protobuf;
-using Abacus.DoublePrecision;
 
 namespace Vatsim.Xpilot.Simulator
 {
@@ -84,17 +82,22 @@ namespace Vatsim.Xpilot.Simulator
         private List<DealerSocket> mVisualDealerSockets;
 
         private Timer mConnectionTimer;
-        private List<DateTime> mConnectionHeartbeats;
+        private Stack<DateTime> mConnectionHeartbeats;
         private List<int> mTunedFrequencies;
 
-        private UserAircraftData mUserAircraftData;
-        private UserAircraftConfigData mUserAircraftConfigData;
+        private Aircrafts.UserAircraftData mUserAircraftData;
+        private Aircrafts.UserAircraftConfigData mUserAircraftConfigData;
         private RadioStackState mRadioStackState;
 
         private string mSimulatorIP = "127.0.0.1";
-        private bool mInvalidPluginVersionShown = false;
-        private bool mReceivedInitialHandshake = false;
         private bool mValidCsl = false;
+        private bool mValidPluginVersion = false;
+        private bool mInvalidPluginMessageShown = false;
+        private bool mCslConfigurationErrorShown = false;
+
+        public bool ValidSimConnection => mValidCsl && mValidPluginVersion;
+
+        public List<int> TunedFrequencies => mTunedFrequencies;
 
         public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager fsdManager) : base(broker)
         {
@@ -102,7 +105,7 @@ namespace Vatsim.Xpilot.Simulator
             mFsdManager = fsdManager;
 
             mVisualDealerSockets = null;
-            mConnectionHeartbeats = new List<DateTime>();
+            mConnectionHeartbeats = new Stack<DateTime>();
             mTunedFrequencies = new List<int>();
 
             if (mConfig.VisualClientIPs.Count > 0)
@@ -154,8 +157,8 @@ namespace Vatsim.Xpilot.Simulator
                 }
             };
 
-            mUserAircraftData = new UserAircraftData();
-            mUserAircraftConfigData = new UserAircraftConfigData();
+            mUserAircraftData = new Aircrafts.UserAircraftData();
+            mUserAircraftConfigData = new Aircrafts.UserAircraftConfigData();
             mRadioStackState = new RadioStackState();
 
             mConnectionTimer = new Timer
@@ -186,25 +189,10 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
-        [EventSubscription(EventTopics.PushToTalkStateChanged, typeof(OnUserInterfaceAsync))]
-        public void OnPushToTalkStateChanged(object sender, PushToTalkStateChangedEventArgs e)
-        {
-            //if (mFsdManager.IsConnected)
-            //{
-            //    var ptt = new DataRefElement
-            //    {
-            //        DataRef = "xpilot/ptt"
-            //    };
-            //    mXplaneConnector.SetDataRefValue(ptt, e.Down ? 1.0f : 0.0f);
-            //}
-        }
-
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
-            ClearNearbyControllersMessage();
             NetworkDisconnected();
-            RemoveAllPlanes();
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -237,8 +225,7 @@ namespace Vatsim.Xpilot.Simulator
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
         public void OnSessionStarted(object sender, EventArgs e)
         {
-            RequestPluginVersion();
-            RequestPluginHash();
+            RequestPluginInformation();
         }
 
         [EventSubscription(EventTopics.SessionEnded, typeof(OnUserInterfaceAsync))]
@@ -258,12 +245,6 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
-        [EventSubscription(EventTopics.ValidateCslPaths, typeof(OnUserInterfaceAsync))]
-        public void OnValidateCslPaths(object sender, EventArgs e)
-        {
-            RequestCslValidation();
-        }
-
         private void DealerSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             byte[] bytes = e.Socket.ReceiveFrameBytes();
@@ -271,329 +252,271 @@ namespace Vatsim.Xpilot.Simulator
             {
                 var wrapper = Wrapper.Parser.ParseFrom(bytes);
 
+                if (wrapper.Timestamp != null)
+                {
+                    mConnectionHeartbeats.Push(wrapper.Timestamp.ToDateTime());
+                }
+
                 switch (wrapper.MsgCase)
                 {
-                    case Wrapper.MsgOneofCase.PluginHash:
+                    case Wrapper.MsgOneofCase.PluginInformation:
                         {
-                            if (wrapper.PluginHash.HasHash)
+                            if (wrapper.PluginInformation.HasVersion)
                             {
-                                mFsdManager.SetPluginHash(wrapper.PluginHash.Hash);
-                            }
-                        }
-                        break;
-                    case Wrapper.MsgOneofCase.PluginVersion:
-                        {
-                            if (wrapper.PluginVersion.HasVersion)
-                            {
-                                mReceivedInitialHandshake = true;
                                 Version v = Assembly.GetExecutingAssembly().GetName().Version;
                                 string compactedVersion = string.Format($"{v.Major}{v.Minor}{v.Build}");
                                 int versionInt = int.Parse(compactedVersion);
-                                if (wrapper.PluginVersion.Version != versionInt)
+                                if (v.Build < 10) versionInt *= 10;
+                                if (wrapper.PluginInformation.Version == versionInt)
+                                {
+                                    mValidPluginVersion = true;
+                                    mInvalidPluginMessageShown = false;
+                                }
+                                else
                                 {
                                     ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
-                                    if (!mInvalidPluginVersionShown)
+                                    if (!mInvalidPluginMessageShown)
                                     {
                                         NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
                                         PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
-                                        mInvalidPluginVersionShown = true;
+                                        mInvalidPluginMessageShown = true;
                                     }
                                 }
                             }
+                            if (wrapper.PluginInformation.HasHash)
+                            {
+                                mFsdManager.SetPluginHash(wrapper.PluginInformation.Hash);
+                            }
                         }
                         break;
-                    case Wrapper.MsgOneofCase.CslValidate:
+                    case Wrapper.MsgOneofCase.CslValidation:
                         {
-                            if (wrapper.CslValidate.HasValid)
+                            if (wrapper.CslValidation.HasValid)
                             {
-                                mValidCsl = wrapper.CslValidate.Valid;
-                                if (!wrapper.CslValidate.Valid)
+                                mValidCsl = wrapper.CslValidation.Valid;
+                                if (!wrapper.CslValidation.Valid)
                                 {
                                     ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
-                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Settings). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
-                                    PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                                    if (!mCslConfigurationErrorShown)
+                                    {
+                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Settings). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
+                                        PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                                        mCslConfigurationErrorShown = true;
+                                    }
+                                }
+                                else
+                                {
+                                    mCslConfigurationErrorShown = false;
                                 }
                             }
                         }
                         break;
                     case Wrapper.MsgOneofCase.PlaneAddedToSim:
                         {
-                            if (wrapper.PlaneAddedToSim.HasCallsign)
-                            {
-                                AircraftAddedToSimulator(this, new GenericEventArgs<string>(wrapper.PlaneAddedToSim.Callsign));
-                            }
+                            AircraftAddedToSimulator?.Invoke(this, new GenericEventArgs<string>(wrapper.PlaneAddedToSim.Callsign));
                         }
                         break;
-                    case Wrapper.MsgOneofCase.XplaneDatarefs:
+                    case Wrapper.MsgOneofCase.RadioStack:
                         {
-                            if (wrapper.XplaneDatarefs.HasAudioComSelection)
+                            if (wrapper.RadioStack.HasPttPressed)
                             {
-                                mRadioStackState.Com1TransmitEnabled = (uint)wrapper.XplaneDatarefs.AudioComSelection == 6;
-                                mRadioStackState.Com2TransmitEnabled = (uint)wrapper.XplaneDatarefs.AudioComSelection == 7;
+                                PushToTalkStateChanged?.Invoke(this, new PushToTalkStateChangedEventArgs(wrapper.RadioStack.PttPressed));
+                            }
+
+                            if (wrapper.RadioStack.HasAudioComSelection)
+                            {
+                                mRadioStackState.Com1TransmitEnabled = (uint)wrapper.RadioStack.AudioComSelection == 6;
+                                mRadioStackState.Com2TransmitEnabled = (uint)wrapper.RadioStack.AudioComSelection == 7;
                             }
 
                             // com1
-                            if (wrapper.XplaneDatarefs.HasCom1Freq)
+                            if (wrapper.RadioStack.HasCom1Freq)
                             {
-                                mRadioStackState.Com1ActiveFrequency = ((uint)wrapper.XplaneDatarefs.Com1Freq * 1000).Normalize25KhzFrequency();
+                                mRadioStackState.Com1ActiveFrequency = ((uint)wrapper.RadioStack.Com1Freq * 1000).Normalize25KhzFrequency();
                             }
-                            if (wrapper.XplaneDatarefs.HasCom1AudioSelection)
+                            if (wrapper.RadioStack.HasCom1AudioSelection)
                             {
-                                mRadioStackState.Com1ReceiveEnabled = wrapper.XplaneDatarefs.Com1AudioSelection;
+                                mRadioStackState.Com1ReceiveEnabled = wrapper.RadioStack.Com1AudioSelection;
                             }
-                            if (wrapper.XplaneDatarefs.HasCom1Volume)
+                            if (wrapper.RadioStack.HasCom1Volume)
                             {
-                                float val = wrapper.XplaneDatarefs.Com1Volume;
+                                float val = wrapper.RadioStack.Com1Volume;
                                 if (val > 1.0f) val = 1.0f;
                                 if (val < 0.0f) val = 0.0f;
                                 RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, val));
                             }
 
                             // com2
-                            if (wrapper.XplaneDatarefs.HasCom2Freq)
+                            if (wrapper.RadioStack.HasCom2Freq)
                             {
-                                mRadioStackState.Com2ActiveFrequency = ((uint)wrapper.XplaneDatarefs.Com2Freq * 1000).Normalize25KhzFrequency();
+                                mRadioStackState.Com2ActiveFrequency = ((uint)wrapper.RadioStack.Com2Freq * 1000).Normalize25KhzFrequency();
                             }
-                            if (wrapper.XplaneDatarefs.HasCom2AudioSelection)
+                            if (wrapper.RadioStack.HasCom2AudioSelection)
                             {
-                                mRadioStackState.Com2ReceiveEnabled = wrapper.XplaneDatarefs.Com2AudioSelection;
+                                mRadioStackState.Com2ReceiveEnabled = wrapper.RadioStack.Com2AudioSelection;
                             }
-                            if (wrapper.XplaneDatarefs.HasCom2Volume)
+                            if (wrapper.RadioStack.HasCom2Volume)
                             {
-                                float val = wrapper.XplaneDatarefs.Com2Volume;
+                                float val = wrapper.RadioStack.Com2Volume;
                                 if (val > 1.0f) val = 1.0f;
                                 if (val < 0.0f) val = 0.0f;
                                 RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, val));
                             }
 
-                            if (wrapper.XplaneDatarefs.HasAvionicsPowerOn)
+                            if (wrapper.RadioStack.HasAvionicsPowerOn)
                             {
-                                mRadioStackState.AvionicsPowerOn = wrapper.XplaneDatarefs.AvionicsPowerOn;
+                                mRadioStackState.AvionicsPowerOn = wrapper.RadioStack.AvionicsPowerOn;
                             }
 
-                            if(wrapper.XplaneDatarefs.HasVelocityLatitude)
+                            if (wrapper.RadioStack.HasTransponderCode)
                             {
-                                mUserAircraftData.LatitudeVelocity = wrapper.XplaneDatarefs.VelocityLatitude;
+                                mRadioStackState.TransponderCode = (ushort)wrapper.RadioStack.TransponderCode;
                             }
-                            if (wrapper.XplaneDatarefs.HasVelocityAltitude)
+                            if (wrapper.RadioStack.HasTransponderMode)
                             {
-                                mUserAircraftData.AltitudeVelocity = wrapper.XplaneDatarefs.VelocityAltitude;
+                                mRadioStackState.SquawkingModeC = wrapper.RadioStack.TransponderMode >= 2;
                             }
-                            if (wrapper.XplaneDatarefs.HasVelocityLongitude)
+                            if (wrapper.RadioStack.HasTransponderIdent)
                             {
-                                mUserAircraftData.LongitudeVelocity = wrapper.XplaneDatarefs.VelocityLongitude;
-                            }
-
-                            if (wrapper.XplaneDatarefs.HasVelocityPitch)
-                            {
-                                mUserAircraftData.PitchVelocity = wrapper.XplaneDatarefs.VelocityPitch;
-                            }
-                            if (wrapper.XplaneDatarefs.HasVelocityHeading)
-                            {
-                                mUserAircraftData.HeadingVelocity = wrapper.XplaneDatarefs.VelocityHeading;
-                            }
-                            if (wrapper.XplaneDatarefs.HasVelocityBank)
-                            {
-                                mUserAircraftData.BankVelocity = wrapper.XplaneDatarefs.VelocityBank;
+                                mRadioStackState.SquawkingIdent = wrapper.RadioStack.TransponderIdent;
                             }
 
-                            if (wrapper.XplaneDatarefs.HasLatitude)
+                            RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
+                            UpdateTunedFrequencies();
+                        }
+                        break;
+                    case Wrapper.MsgOneofCase.UserAircraftData:
+                        {
+                            if (wrapper.UserAircraftData.HasVelocityLatitude)
                             {
-                                mUserAircraftData.Latitude = wrapper.XplaneDatarefs.Latitude;
+                                mUserAircraftData.LatitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityLatitude, 4);
                             }
-                            if (wrapper.XplaneDatarefs.HasLongitude)
+                            if (wrapper.UserAircraftData.HasVelocityAltitude)
                             {
-                                mUserAircraftData.Longitude = wrapper.XplaneDatarefs.Longitude;
+                                mUserAircraftData.AltitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityAltitude, 4);
                             }
-                            if (wrapper.XplaneDatarefs.HasAltitude)
+                            if (wrapper.UserAircraftData.HasVelocityLongitude)
                             {
-                                mUserAircraftData.AltitudeTrue = wrapper.XplaneDatarefs.Altitude;
-                            }
-                            if (wrapper.XplaneDatarefs.HasPressureAltitude)
-                            {
-                                mUserAircraftData.AltitudePressure = wrapper.XplaneDatarefs.PressureAltitude;
-                            }
-                            if (wrapper.XplaneDatarefs.HasYaw)
-                            {
-                                mUserAircraftData.Heading = wrapper.XplaneDatarefs.Yaw;
-                            }
-                            if (wrapper.XplaneDatarefs.HasPitch)
-                            {
-                                mUserAircraftData.Pitch = wrapper.XplaneDatarefs.Pitch;
-                            }
-                            if (wrapper.XplaneDatarefs.HasRoll)
-                            {
-                                mUserAircraftData.Bank = wrapper.XplaneDatarefs.Roll;
-                            }
-                            if (wrapper.XplaneDatarefs.HasGroundSpeed)
-                            {
-                                mUserAircraftData.SpeedGround = wrapper.XplaneDatarefs.GroundSpeed;
-                            }
-                            if (wrapper.XplaneDatarefs.HasTransponderCode)
-                            {
-                                mRadioStackState.TransponderCode = (ushort)wrapper.XplaneDatarefs.TransponderCode;
-                            }
-                            if (wrapper.XplaneDatarefs.HasTransponderMode)
-                            {
-                                mRadioStackState.SquawkingModeC = wrapper.XplaneDatarefs.TransponderMode >= 2;
-                            }
-                            if (wrapper.XplaneDatarefs.HasTransponderIdent)
-                            {
-                                mRadioStackState.SquawkingIdent = wrapper.XplaneDatarefs.TransponderIdent;
-                                //SquawkingIdentChanged?.Invoke(this, new TransponderIdentStateChanged(wrapper.XplaneDatarefs.TransponderIdent));
+                                mUserAircraftData.LongitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityLongitude, 4);
                             }
 
+                            if (wrapper.UserAircraftData.HasVelocityPitch)
+                            {
+                                mUserAircraftData.PitchVelocity = wrapper.UserAircraftData.VelocityPitch;
+                            }
+                            if (wrapper.UserAircraftData.HasVelocityHeading)
+                            {
+                                mUserAircraftData.HeadingVelocity = wrapper.UserAircraftData.VelocityHeading;
+                            }
+                            if (wrapper.UserAircraftData.HasVelocityBank)
+                            {
+                                mUserAircraftData.BankVelocity = wrapper.UserAircraftData.VelocityBank;
+                            }
+
+                            if (wrapper.UserAircraftData.HasLatitude)
+                            {
+                                mUserAircraftData.Latitude = wrapper.UserAircraftData.Latitude;
+                            }
+                            if (wrapper.UserAircraftData.HasLongitude)
+                            {
+                                mUserAircraftData.Longitude = wrapper.UserAircraftData.Longitude;
+                            }
+                            if (wrapper.UserAircraftData.HasAltitude)
+                            {
+                                mUserAircraftData.AltitudeTrue = wrapper.UserAircraftData.Altitude * 3.28084;
+                            }
+                            if (wrapper.UserAircraftData.HasPressureAltitude)
+                            {
+                                mUserAircraftData.AltitudePressure = wrapper.UserAircraftData.PressureAltitude * 3.28084;
+                            }
+                            if (wrapper.UserAircraftData.HasYaw)
+                            {
+                                mUserAircraftData.Heading = wrapper.UserAircraftData.Yaw;
+                            }
+                            if (wrapper.UserAircraftData.HasPitch)
+                            {
+                                mUserAircraftData.Pitch = wrapper.UserAircraftData.Pitch;
+                            }
+                            if (wrapper.UserAircraftData.HasRoll)
+                            {
+                                mUserAircraftData.Bank = wrapper.UserAircraftData.Roll;
+                            }
+                            if (wrapper.UserAircraftData.HasGroundSpeed)
+                            {
+                                mUserAircraftData.SpeedGround = wrapper.UserAircraftData.GroundSpeed;
+                            }
+
+                            UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
+                        }
+                        break;
+                    case Wrapper.MsgOneofCase.UserAircraftConfig:
+                        {
                             // lights
-                            if (wrapper.XplaneDatarefs.HasBeaconLightsOn)
+                            if (wrapper.UserAircraftConfig.HasBeaconLightsOn)
                             {
-                                mUserAircraftConfigData.BeaconOn = wrapper.XplaneDatarefs.BeaconLightsOn;
+                                mUserAircraftConfigData.BeaconOn = wrapper.UserAircraftConfig.BeaconLightsOn;
                             }
-                            if (wrapper.XplaneDatarefs.HasLandingLightsOn)
+                            if (wrapper.UserAircraftConfig.HasLandingLightsOn)
                             {
-                                mUserAircraftConfigData.LandingLightsOn = wrapper.XplaneDatarefs.LandingLightsOn;
+                                mUserAircraftConfigData.LandingLightsOn = wrapper.UserAircraftConfig.LandingLightsOn;
                             }
-                            if (wrapper.XplaneDatarefs.HasNavLightsOn)
+                            if (wrapper.UserAircraftConfig.HasNavLightsOn)
                             {
-                                mUserAircraftConfigData.NavLightOn = wrapper.XplaneDatarefs.NavLightsOn;
+                                mUserAircraftConfigData.NavLightOn = wrapper.UserAircraftConfig.NavLightsOn;
                             }
-                            if (wrapper.XplaneDatarefs.HasStrobeLightsOn)
+                            if (wrapper.UserAircraftConfig.HasStrobeLightsOn)
                             {
-                                mUserAircraftConfigData.StrobesOn = wrapper.XplaneDatarefs.StrobeLightsOn;
+                                mUserAircraftConfigData.StrobesOn = wrapper.UserAircraftConfig.StrobeLightsOn;
                             }
-                            if (wrapper.XplaneDatarefs.HasTaxiLightsOn)
+                            if (wrapper.UserAircraftConfig.HasTaxiLightsOn)
                             {
-                                mUserAircraftConfigData.TaxiLightsOn = wrapper.XplaneDatarefs.TaxiLightsOn;
+                                mUserAircraftConfigData.TaxiLightsOn = wrapper.UserAircraftConfig.TaxiLightsOn;
                             }
 
                             // controls
-                            if (wrapper.XplaneDatarefs.HasFlaps)
+                            if (wrapper.UserAircraftConfig.HasFlaps)
                             {
-                                mUserAircraftConfigData.FlapsRatio = wrapper.XplaneDatarefs.Flaps;
+                                mUserAircraftConfigData.FlapsRatio = wrapper.UserAircraftConfig.Flaps;
                             }
-                            if (wrapper.XplaneDatarefs.HasSpeedBrakes)
+                            if (wrapper.UserAircraftConfig.HasSpeedBrakes)
                             {
-                                mUserAircraftConfigData.SpoilersRatio = wrapper.XplaneDatarefs.SpeedBrakes;
+                                mUserAircraftConfigData.SpoilersRatio = wrapper.UserAircraftConfig.SpeedBrakes;
                             }
-                            if (wrapper.XplaneDatarefs.HasGearDown)
+                            if (wrapper.UserAircraftConfig.HasGearDown)
                             {
-                                mUserAircraftConfigData.GearDown = wrapper.XplaneDatarefs.GearDown;
+                                mUserAircraftConfigData.GearDown = wrapper.UserAircraftConfig.GearDown;
                             }
-                            if (wrapper.XplaneDatarefs.HasOnGround)
+                            if (wrapper.UserAircraftConfig.HasOnGround)
                             {
-                                mUserAircraftConfigData.OnGround = wrapper.XplaneDatarefs.OnGround;
-                            }
-
-                            if (wrapper.XplaneDatarefs.HasEngineCount)
-                            {
-                                mUserAircraftConfigData.EngineCount = wrapper.XplaneDatarefs.EngineCount;
-                            }
-                            if (wrapper.XplaneDatarefs.HasEngine1Running)
-                            {
-                                mUserAircraftConfigData.Engine1Running = wrapper.XplaneDatarefs.Engine1Running;
-                            }
-                            if (wrapper.XplaneDatarefs.HasEngine2Running)
-                            {
-                                mUserAircraftConfigData.Engine2Running = wrapper.XplaneDatarefs.Engine2Running;
-                            }
-                            if (wrapper.XplaneDatarefs.HasEngine3Running)
-                            {
-                                mUserAircraftConfigData.Engine3Running = wrapper.XplaneDatarefs.Engine3Running;
-                            }
-                            if (wrapper.XplaneDatarefs.HasEngine4Running)
-                            {
-                                mUserAircraftConfigData.Engine4Running = wrapper.XplaneDatarefs.Engine4Running;
+                                mUserAircraftConfigData.OnGround = wrapper.UserAircraftConfig.OnGround;
                             }
 
-                            mConnectionHeartbeats.Add(wrapper.Timestamp.ToDateTime());
-                            UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
-                            RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
+                            if (wrapper.UserAircraftConfig.HasEngineCount)
+                            {
+                                mUserAircraftConfigData.EngineCount = wrapper.UserAircraftConfig.EngineCount;
+                            }
+                            if (wrapper.UserAircraftConfig.HasEngine1Running)
+                            {
+                                mUserAircraftConfigData.Engine1Running = wrapper.UserAircraftConfig.Engine1Running;
+                            }
+                            if (wrapper.UserAircraftConfig.HasEngine2Running)
+                            {
+                                mUserAircraftConfigData.Engine2Running = wrapper.UserAircraftConfig.Engine2Running;
+                            }
+                            if (wrapper.UserAircraftConfig.HasEngine3Running)
+                            {
+                                mUserAircraftConfigData.Engine3Running = wrapper.UserAircraftConfig.Engine3Running;
+                            }
+                            if (wrapper.UserAircraftConfig.HasEngine4Running)
+                            {
+                                mUserAircraftConfigData.Engine4Running = wrapper.UserAircraftConfig.Engine4Running;
+                            }
+
                             UserAircraftConfigDataUpdated?.Invoke(this, new UserAircraftConfigDataUpdatedEventArgs(mUserAircraftConfigData));
-                            UpdateTunedFrequencies();
                         }
                         break;
                 }
             }
-
-            //if (!string.IsNullOrEmpty(command))
-            //{
-            //    try
-            //    {
-            //        var json = JsonConvert.DeserializeObject<XplaneConnect>(command);
-            //        dynamic data = json.Data;
-            //        switch (json.Type)
-            //        {
-            //            case XplaneConnect.MessageType.PluginHash:
-            //                string hash = data.Hash;
-            //                if (!string.IsNullOrEmpty(hash))
-            //                {
-            //                    mFsdManager.ClientProperties.PluginHash = hash;
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.RequestAtis:
-            //                string callsign = data.Callsign;
-            //                if (!string.IsNullOrEmpty(callsign))
-            //                {
-            //                    RequestControllerAtisSent?.Invoke(this, new RequestControllerAtisEventArgs(callsign));
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.PluginVersion:
-            //                mReceivedInitialHandshake = true;
-            //                int pluginVersion = (int)data.Version;
-            //                if (pluginVersion != MIN_PLUGIN_VERSION)
-            //                {
-            //                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
-            //                    if (!mInvalidPluginVersionShown)
-            //                    {
-            //                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
-            //                        PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-            //                        mInvalidPluginVersionShown = true;
-            //                    }
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.SocketMessage:
-            //                {
-            //                    string msg = data.Message;
-            //                    if (!string.IsNullOrEmpty(msg))
-            //                    {
-            //                        RaiseSocketMessageReceived?.Invoke(this, new ClientEventArgs<string>(msg));
-            //                    }
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.PrivateMessageSent:
-            //                {
-            //                    string msg = data.Message;
-            //                    string to = data.To;
-            //                    if (mFsdManager.IsConnected)
-            //                    {
-            //                        PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mFsdManager.OurCallsign, to, msg));
-            //                    }
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.ValidateCslPaths:
-            //                mValidCsl = (bool)data.Result;
-            //                if (data.Result == false)
-            //                {
-            //                    EnableConnectButton?.Invoke(this, new ClientEventArgs<bool>(false));
-            //                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Preferences). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
-            //                    PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-            //                }
-            //                break;
-            //            case XplaneConnect.MessageType.ForceDisconnect:
-            //                string reason = data.Reason;
-            //                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, reason));
-            //                PlaySoundRequested?.Invoke(this, new PlaySoundEventArgs(SoundEvent.Error));
-            //                mFsdManager.Disconnect(new DisconnectInfo
-            //                {
-            //                    Type = DisconnectType.Intentional
-            //                });
-            //                break;
-            //        }
-            //    }
-            //    catch (JsonException ex)
-            //    {
-            //        //NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error deserializing JSON object: " + ex.Message));
-            //    }
-            //}
         }
 
         private void UpdateTunedFrequencies()
@@ -617,20 +540,11 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
-        private void RequestPluginHash()
+        private void RequestPluginInformation()
         {
             var msg = new Wrapper
             {
-                PluginHash = new PluginHash()
-            };
-            SendProtobufArray(msg.ToByteArray());
-        }
-
-        private void RequestPluginVersion()
-        {
-            var msg = new Wrapper
-            {
-                PluginVersion = new PluginVersion()
+                PluginInformation = new PluginInformation()
             };
             SendProtobufArray(msg.ToByteArray());
         }
@@ -639,7 +553,7 @@ namespace Vatsim.Xpilot.Simulator
         {
             var msg = new Wrapper
             {
-                CslValidate = new CslValidate()
+                CslValidation = new CslValidation()
             };
             SendProtobufArray(msg.ToByteArray());
         }
@@ -675,41 +589,41 @@ namespace Vatsim.Xpilot.Simulator
 
         private void ConnectionTimer_Tick(object sender, EventArgs e)
         {
-            if (mConnectionHeartbeats.Count > 0)
+            if(mConnectionHeartbeats.Count > 0)
             {
-                TimeSpan span = DateTime.UtcNow - mConnectionHeartbeats.Last();
-                if (span.TotalSeconds < 15)
+                TimeSpan span = DateTime.UtcNow - mConnectionHeartbeats.Pop();
+                if(span.TotalMilliseconds < 15000)
                 {
-                    if (!mReceivedInitialHandshake)
+                    if(ValidSimConnection)
+                    {
+                        SimulatorConnected?.Invoke(this, EventArgs.Empty);
+                        ConnectButtonEnabled?.Invoke(this, EventArgs.Empty);
+                    }
+                    else
                     {
                         SimulatorDisconnected?.Invoke(this, EventArgs.Empty);
                         ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
 
-                        RequestPluginVersion();
-                        RequestPluginHash();
+                        RequestCslValidation();
+                        RequestPluginInformation();
                     }
-                    else
-                    {
-                        SimulatorConnected?.Invoke(this, EventArgs.Empty);
-                        if (mValidCsl && !mInvalidPluginVersionShown)
-                        {
-                            ConnectButtonEnabled?.Invoke(this, EventArgs.Empty);
-                        }
-                    }
-                    mConnectionHeartbeats.RemoveAt(0);
                 }
                 else
                 {
-                    mReceivedInitialHandshake = false;
                     SimulatorDisconnected?.Invoke(this, EventArgs.Empty);
                     ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
+
+                    RequestCslValidation();
+                    RequestPluginInformation();
                 }
             }
             else
             {
-                mReceivedInitialHandshake = false;
                 SimulatorDisconnected?.Invoke(this, EventArgs.Empty);
                 ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
+
+                RequestCslValidation();
+                RequestPluginInformation();
             }
         }
 
@@ -717,30 +631,63 @@ namespace Vatsim.Xpilot.Simulator
         {
             var msg = new Wrapper
             {
-                SetTransponderCode = new SetTransponderCode()
+                SetTransponder = new SetTransponder()
             };
-            msg.SetTransponderCode.Code = code;
+            msg.SetTransponder.Code = code;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void EnableTransponderModeC(bool enabled)
+        {
+            var msg = new Wrapper
+            {
+                SetTransponder = new SetTransponder()
+            };
+            msg.SetTransponder.ModeC = enabled;
+            SendProtobufArray(msg.ToByteArray());
+        }
+
+        public void TriggerTransponderIdent()
+        {
+            var msg = new Wrapper
+            {
+                SetTransponder = new SetTransponder()
+            };
+            msg.SetTransponder.Ident = true;
             SendProtobufArray(msg.ToByteArray());
         }
 
         public void SetRadioFrequency(int radio, uint freq)
         {
-
+            var msg = new Wrapper
+            {
+                SetRadiostack = new SetRadioStack()
+            };
+            msg.SetRadiostack.Radio = radio;
+            msg.SetRadiostack.Frequency = (int)freq;
+            SendProtobufArray(msg.ToByteArray());
         }
 
-        public void SetAudioComSelection(int radio)
+        public void SetRadioTransmit(int radio)
         {
-
+            var msg = new Wrapper
+            {
+                SetRadiostack = new SetRadioStack()
+            };
+            msg.SetRadiostack.Radio = radio;
+            msg.SetRadiostack.TransmitEnabled = true;
+            SendProtobufArray(msg.ToByteArray());
         }
 
-        public void SetAudioSelectionCom1(bool enabled)
+        public void SetRadioReceive(int radio, bool enabled)
         {
-
-        }
-
-        public void SetAudioSelectionCom2(bool enabled)
-        {
-
+            var msg = new Wrapper
+            {
+                SetRadiostack = new SetRadioStack()
+            };
+            msg.SetRadiostack.Radio = radio;
+            msg.SetRadiostack.ReceiveEnabled = enabled;
+            SendProtobufArray(msg.ToByteArray());
         }
 
         public void SetLoginStatus(bool connected)
@@ -753,25 +700,6 @@ namespace Vatsim.Xpilot.Simulator
             var msg = new Wrapper
             {
                 AirplaneConfig = config
-            };
-            SendProtobufArray(msg.ToByteArray());
-        }
-
-        public void RemovePlane(NetworkAircraft aircraft)
-        {
-            var msg = new Wrapper
-            {
-                RemovePlane = new RemovePlane()
-            };
-            msg.RemovePlane.Callsign = aircraft.Callsign;
-            SendProtobufArray(msg.ToByteArray());
-        }
-
-        public void RemoveAllPlanes()
-        {
-            var msg = new Wrapper
-            {
-                RemoveAllPlanes = new RemoveAllPlanes()
             };
             SendProtobufArray(msg.ToByteArray());
         }
@@ -795,23 +723,56 @@ namespace Vatsim.Xpilot.Simulator
             SendProtobufArray(msg.ToByteArray());
         }
 
-        private void ClearNearbyControllersMessage()
+        public void PlaneConfigChanged(Aircraft aircraft)
         {
+            var cfg = new AirplaneConfig
+            {
+                Callsign = aircraft.Callsign,
+                IsFullConfig = aircraft.Configuration.IsFullData.Value,
+                EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning
+            };
+            if (aircraft.Configuration.FlapsPercent.HasValue)
+            {
+                cfg.Flaps = (float)(aircraft.Configuration.FlapsPercent.Value / 100.0f);
+            }
+            if (aircraft.Configuration.OnGround.HasValue)
+            {
+                cfg.OnGround = aircraft.Configuration.OnGround.Value;
+            }
+            if (aircraft.Configuration.GearDown.HasValue)
+            {
+                cfg.GearDown = aircraft.Configuration.GearDown.Value;
+            }
+            if (aircraft.Configuration.Lights != null)
+            {
+                cfg.Lights = new AirplaneConfig.Types.AirplaneConfigLights();
+                if (aircraft.Configuration.Lights.BeaconOn.HasValue)
+                {
+                    cfg.Lights.BeaconLightsOn = aircraft.Configuration.Lights.BeaconOn.Value;
+                }
+                if (aircraft.Configuration.Lights.NavOn.HasValue)
+                {
+                    cfg.Lights.NavLightsOn = aircraft.Configuration.Lights.NavOn.Value;
+                }
+                if (aircraft.Configuration.Lights.LandingOn.HasValue)
+                {
+                    cfg.Lights.LandingLightsOn = aircraft.Configuration.Lights.LandingOn.Value;
+                }
+                if (aircraft.Configuration.Lights.TaxiOn.HasValue)
+                {
+                    cfg.Lights.TaxiLightsOn = aircraft.Configuration.Lights.TaxiOn.Value;
+                }
+                if (aircraft.Configuration.Lights.StrobesOn.HasValue)
+                {
+                    cfg.Lights.StrobeLightsOn = aircraft.Configuration.Lights.StrobesOn.Value;
+                }
+            }
+
             var msg = new Wrapper
             {
-                ClearNearbyControllers = new Protobuf.ClearNearbyControllers()
+                AirplaneConfig = cfg
             };
             SendProtobufArray(msg.ToByteArray());
-        }
-
-        public void PlaneConfigChanged(string callsign, AircraftConfiguration config)
-        {
-            //var msg = new Wrapper
-            //{
-            //    AirplaneConfig = new AirplaneConfig()
-            //};
-            //msg.AirplaneConfig.Callsign = callsign;
-            //SendProtobufArray(msg.ToByteArray());
         }
 
         public void AddPlane(Aircraft aircraft)
@@ -823,25 +784,41 @@ namespace Vatsim.Xpilot.Simulator
             msg.AddPlane.Callsign = aircraft.Callsign;
             msg.AddPlane.Equipment = aircraft.TypeCode ?? "";
             msg.AddPlane.Airline = aircraft.Airline ?? "";
+            msg.AddPlane.VisualState = new AddPlane.Types.AircraftVisualState
+            {
+                Latitude = aircraft.RemoteVisualState.Location.Lat,
+                Longitude = aircraft.RemoteVisualState.Location.Lon,
+                Altitude = aircraft.RemoteVisualState.Altitude,
+                Pitch = aircraft.RemoteVisualState.Pitch,
+                Heading = aircraft.RemoteVisualState.Heading,
+                Bank = aircraft.RemoteVisualState.Bank
+            };
             SendProtobufArray(msg.ToByteArray());
         }
 
-        public void RemovePlane(Aircraft aircraft)
+        public void DeleteAircraft(Aircraft aircraft)
         {
             var msg = new Wrapper
             {
-                RemovePlane = new RemovePlane()
+                DeletePlane = new DeletePlane()
             };
-            msg.RemovePlane.Callsign = aircraft.Callsign;
+            msg.DeletePlane.Callsign = aircraft.Callsign;
             SendProtobufArray(msg.ToByteArray());
         }
 
         public void ChangeModel(Aircraft aircraft)
         {
-
+            var msg = new Wrapper
+            {
+                ChangePlaneModel = new ChangePlaneModel()
+            };
+            msg.ChangePlaneModel.Callsign = aircraft.Callsign;
+            msg.ChangePlaneModel.Equipment = aircraft.TypeCode;
+            msg.ChangePlaneModel.Airline = aircraft.Airline;
+            SendProtobufArray(msg.ToByteArray());
         }
 
-        public void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVector)
+        public void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVector)
         {
             var msg = new Wrapper
             {
@@ -851,9 +828,12 @@ namespace Vatsim.Xpilot.Simulator
             msg.FastPositionUpdate.Latitude = visualState.Location.Lat;
             msg.FastPositionUpdate.Longitude = visualState.Location.Lon;
             msg.FastPositionUpdate.Altitude = visualState.Altitude;
-            msg.FastPositionUpdate.VelocityLatitude = positionalVelocityVector.X;
+            msg.FastPositionUpdate.Heading = visualState.Heading;
+            msg.FastPositionUpdate.Pitch = visualState.Pitch;
+            msg.FastPositionUpdate.Bank = visualState.Bank;
+            msg.FastPositionUpdate.VelocityLongitude = positionalVelocityVector.X;
             msg.FastPositionUpdate.VelocityAltitude = positionalVelocityVector.Y;
-            msg.FastPositionUpdate.VelocityLongitude = positionalVelocityVector.Z;
+            msg.FastPositionUpdate.VelocityLatitude = positionalVelocityVector.Z;
             msg.FastPositionUpdate.VelocityPitch = rotationalVelocityVector.X;
             msg.FastPositionUpdate.VelocityHeading = rotationalVelocityVector.Y;
             msg.FastPositionUpdate.VelocityBank = rotationalVelocityVector.Z;
@@ -875,7 +855,5 @@ namespace Vatsim.Xpilot.Simulator
             msg.PositionUpdate.Bank = visualState.Bank;
             SendProtobufArray(msg.ToByteArray());
         }
-
-        public List<int> TunedFrequencies => mTunedFrequencies;
     }
 }

@@ -31,7 +31,6 @@ namespace Vatsim.Xpilot.Core
         None,
         Alert,
         Broadcast,
-        Buzzer,
         DirectRadioMessage,
         Error,
         NewMessage,

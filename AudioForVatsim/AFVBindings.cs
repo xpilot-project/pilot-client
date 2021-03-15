@@ -64,6 +64,9 @@ namespace Vatsim.Xpilot.AudioForVatsim
         public static extern void SetRadioGain(uint radioNum, float gain);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
+        public static extern float GetRadioGain(uint radioNum);
+
+        [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetTxRadio(uint radioNum);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
@@ -85,7 +88,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
         public static extern void GetAudioApis(DictionaryAdd callback);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetAudioApi(string api);
+        public static extern void SetAudioApi(string api);
 
         [DllImport("afv_native", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetAudioDevice();

@@ -42,27 +42,28 @@ namespace Vatsim.Xpilot.Protobuf {
     static AirplaneConfigReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChRBaXJwbGFuZUNvbmZpZy5wcm90bxIGeHBpbG90Io4FCg5BaXJwbGFuZUNv",
-            "bmZpZxIVCghjYWxsc2lnbhgBIAEoCUgAiAEBEkAKBmxpZ2h0cxgCIAEoCzIr",
-            "LnhwaWxvdC5BaXJwbGFuZUNvbmZpZy5BaXJwbGFuZUNvbmZpZ0xpZ2h0c0gB",
-            "iAEBEhYKCWdlYXJfZG93bhgDIAEoCEgCiAEBEhIKBWZsYXBzGAQgASgCSAOI",
-            "AQESFwoKZW5naW5lc19vbhgFIAEoCEgEiAEBEh4KEXNwb2lsZXJzX2RlcGxv",
-            "eWVkGAYgASgISAWIAQESGwoOcmV2ZXJzZV90aHJ1c3QYByABKAhIBogBARIW",
-            "Cglvbl9ncm91bmQYCCABKAhIB4gBARqSAgoUQWlycGxhbmVDb25maWdMaWdo",
-            "dHMSHQoQc3Ryb2JlX2xpZ2h0c19vbhgBIAEoCEgAiAEBEh4KEWxhbmRpbmdf",
-            "bGlnaHRzX29uGAIgASgISAGIAQESGwoOdGF4aV9saWdodHNfb24YAyABKAhI",
-            "AogBARIdChBiZWFjb25fbGlnaHRzX29uGAQgASgISAOIAQESGgoNbmF2X2xp",
-            "Z2h0c19vbhgFIAEoCEgEiAEBQhMKEV9zdHJvYmVfbGlnaHRzX29uQhQKEl9s",
-            "YW5kaW5nX2xpZ2h0c19vbkIRCg9fdGF4aV9saWdodHNfb25CEwoRX2JlYWNv",
-            "bl9saWdodHNfb25CEAoOX25hdl9saWdodHNfb25CCwoJX2NhbGxzaWduQgkK",
-            "B19saWdodHNCDAoKX2dlYXJfZG93bkIICgZfZmxhcHNCDQoLX2VuZ2luZXNf",
-            "b25CFAoSX3Nwb2lsZXJzX2RlcGxveWVkQhEKD19yZXZlcnNlX3RocnVzdEIM",
-            "Cgpfb25fZ3JvdW5kQhmqAhZWYXRzaW0uWHBpbG90LlByb3RvYnVmYgZwcm90",
-            "bzM="));
+            "ChRBaXJwbGFuZUNvbmZpZy5wcm90bxIGeHBpbG90Ir4FCg5BaXJwbGFuZUNv",
+            "bmZpZxIVCghjYWxsc2lnbhgBIAEoCUgAiAEBEhsKDmlzX2Z1bGxfY29uZmln",
+            "GAIgASgISAGIAQESQAoGbGlnaHRzGAMgASgLMisueHBpbG90LkFpcnBsYW5l",
+            "Q29uZmlnLkFpcnBsYW5lQ29uZmlnTGlnaHRzSAKIAQESFgoJZ2Vhcl9kb3du",
+            "GAQgASgISAOIAQESEgoFZmxhcHMYBSABKAJIBIgBARIXCgplbmdpbmVzX29u",
+            "GAYgASgISAWIAQESHgoRc3BvaWxlcnNfZGVwbG95ZWQYByABKAhIBogBARIb",
+            "Cg5yZXZlcnNlX3RocnVzdBgIIAEoCEgHiAEBEhYKCW9uX2dyb3VuZBgJIAEo",
+            "CEgIiAEBGpICChRBaXJwbGFuZUNvbmZpZ0xpZ2h0cxIdChBzdHJvYmVfbGln",
+            "aHRzX29uGAEgASgISACIAQESHgoRbGFuZGluZ19saWdodHNfb24YAiABKAhI",
+            "AYgBARIbCg50YXhpX2xpZ2h0c19vbhgDIAEoCEgCiAEBEh0KEGJlYWNvbl9s",
+            "aWdodHNfb24YBCABKAhIA4gBARIaCg1uYXZfbGlnaHRzX29uGAUgASgISASI",
+            "AQFCEwoRX3N0cm9iZV9saWdodHNfb25CFAoSX2xhbmRpbmdfbGlnaHRzX29u",
+            "QhEKD190YXhpX2xpZ2h0c19vbkITChFfYmVhY29uX2xpZ2h0c19vbkIQCg5f",
+            "bmF2X2xpZ2h0c19vbkILCglfY2FsbHNpZ25CEQoPX2lzX2Z1bGxfY29uZmln",
+            "QgkKB19saWdodHNCDAoKX2dlYXJfZG93bkIICgZfZmxhcHNCDQoLX2VuZ2lu",
+            "ZXNfb25CFAoSX3Nwb2lsZXJzX2RlcGxveWVkQhEKD19yZXZlcnNlX3RocnVz",
+            "dEIMCgpfb25fZ3JvdW5kQhmqAhZWYXRzaW0uWHBpbG90LlByb3RvYnVmYgZw",
+            "cm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.AirplaneConfig), global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Parser, new[]{ "Callsign", "Lights", "GearDown", "Flaps", "EnginesOn", "SpoilersDeployed", "ReverseThrust", "OnGround" }, new[]{ "Callsign", "Lights", "GearDown", "Flaps", "EnginesOn", "SpoilersDeployed", "ReverseThrust", "OnGround" }, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights), global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights.Parser, new[]{ "StrobeLightsOn", "LandingLightsOn", "TaxiLightsOn", "BeaconLightsOn", "NavLightsOn" }, new[]{ "StrobeLightsOn", "LandingLightsOn", "TaxiLightsOn", "BeaconLightsOn", "NavLightsOn" }, null, null, null)})
+            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.AirplaneConfig), global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Parser, new[]{ "Callsign", "IsFullConfig", "Lights", "GearDown", "Flaps", "EnginesOn", "SpoilersDeployed", "ReverseThrust", "OnGround" }, new[]{ "Callsign", "IsFullConfig", "Lights", "GearDown", "Flaps", "EnginesOn", "SpoilersDeployed", "ReverseThrust", "OnGround" }, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights), global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights.Parser, new[]{ "StrobeLightsOn", "LandingLightsOn", "TaxiLightsOn", "BeaconLightsOn", "NavLightsOn" }, new[]{ "StrobeLightsOn", "LandingLightsOn", "TaxiLightsOn", "BeaconLightsOn", "NavLightsOn" }, null, null, null)})
           }));
     }
     #endregion
@@ -101,6 +102,7 @@ namespace Vatsim.Xpilot.Protobuf {
     public AirplaneConfig(AirplaneConfig other) : this() {
       _hasBits0 = other._hasBits0;
       callsign_ = other.callsign_;
+      isFullConfig_ = other.isFullConfig_;
       lights_ = other.lights_ != null ? other.lights_.Clone() : null;
       gearDown_ = other.gearDown_;
       flaps_ = other.flaps_;
@@ -137,8 +139,30 @@ namespace Vatsim.Xpilot.Protobuf {
       callsign_ = null;
     }
 
+    /// <summary>Field number for the "is_full_config" field.</summary>
+    public const int IsFullConfigFieldNumber = 2;
+    private bool isFullConfig_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool IsFullConfig {
+      get { if ((_hasBits0 & 1) != 0) { return isFullConfig_; } else { return false; } }
+      set {
+        _hasBits0 |= 1;
+        isFullConfig_ = value;
+      }
+    }
+    /// <summary>Gets whether the "is_full_config" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasIsFullConfig {
+      get { return (_hasBits0 & 1) != 0; }
+    }
+    /// <summary>Clears the value of the "is_full_config" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearIsFullConfig() {
+      _hasBits0 &= ~1;
+    }
+
     /// <summary>Field number for the "lights" field.</summary>
-    public const int LightsFieldNumber = 2;
+    public const int LightsFieldNumber = 3;
     private global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights lights_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights Lights {
@@ -149,135 +173,135 @@ namespace Vatsim.Xpilot.Protobuf {
     }
 
     /// <summary>Field number for the "gear_down" field.</summary>
-    public const int GearDownFieldNumber = 3;
+    public const int GearDownFieldNumber = 4;
     private bool gearDown_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool GearDown {
-      get { if ((_hasBits0 & 1) != 0) { return gearDown_; } else { return false; } }
+      get { if ((_hasBits0 & 2) != 0) { return gearDown_; } else { return false; } }
       set {
-        _hasBits0 |= 1;
+        _hasBits0 |= 2;
         gearDown_ = value;
       }
     }
     /// <summary>Gets whether the "gear_down" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasGearDown {
-      get { return (_hasBits0 & 1) != 0; }
+      get { return (_hasBits0 & 2) != 0; }
     }
     /// <summary>Clears the value of the "gear_down" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearGearDown() {
-      _hasBits0 &= ~1;
+      _hasBits0 &= ~2;
     }
 
     /// <summary>Field number for the "flaps" field.</summary>
-    public const int FlapsFieldNumber = 4;
+    public const int FlapsFieldNumber = 5;
     private float flaps_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public float Flaps {
-      get { if ((_hasBits0 & 2) != 0) { return flaps_; } else { return 0F; } }
+      get { if ((_hasBits0 & 4) != 0) { return flaps_; } else { return 0F; } }
       set {
-        _hasBits0 |= 2;
+        _hasBits0 |= 4;
         flaps_ = value;
       }
     }
     /// <summary>Gets whether the "flaps" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasFlaps {
-      get { return (_hasBits0 & 2) != 0; }
+      get { return (_hasBits0 & 4) != 0; }
     }
     /// <summary>Clears the value of the "flaps" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearFlaps() {
-      _hasBits0 &= ~2;
+      _hasBits0 &= ~4;
     }
 
     /// <summary>Field number for the "engines_on" field.</summary>
-    public const int EnginesOnFieldNumber = 5;
+    public const int EnginesOnFieldNumber = 6;
     private bool enginesOn_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool EnginesOn {
-      get { if ((_hasBits0 & 4) != 0) { return enginesOn_; } else { return false; } }
+      get { if ((_hasBits0 & 8) != 0) { return enginesOn_; } else { return false; } }
       set {
-        _hasBits0 |= 4;
+        _hasBits0 |= 8;
         enginesOn_ = value;
       }
     }
     /// <summary>Gets whether the "engines_on" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasEnginesOn {
-      get { return (_hasBits0 & 4) != 0; }
+      get { return (_hasBits0 & 8) != 0; }
     }
     /// <summary>Clears the value of the "engines_on" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearEnginesOn() {
-      _hasBits0 &= ~4;
+      _hasBits0 &= ~8;
     }
 
     /// <summary>Field number for the "spoilers_deployed" field.</summary>
-    public const int SpoilersDeployedFieldNumber = 6;
+    public const int SpoilersDeployedFieldNumber = 7;
     private bool spoilersDeployed_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool SpoilersDeployed {
-      get { if ((_hasBits0 & 8) != 0) { return spoilersDeployed_; } else { return false; } }
+      get { if ((_hasBits0 & 16) != 0) { return spoilersDeployed_; } else { return false; } }
       set {
-        _hasBits0 |= 8;
+        _hasBits0 |= 16;
         spoilersDeployed_ = value;
       }
     }
     /// <summary>Gets whether the "spoilers_deployed" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasSpoilersDeployed {
-      get { return (_hasBits0 & 8) != 0; }
+      get { return (_hasBits0 & 16) != 0; }
     }
     /// <summary>Clears the value of the "spoilers_deployed" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearSpoilersDeployed() {
-      _hasBits0 &= ~8;
+      _hasBits0 &= ~16;
     }
 
     /// <summary>Field number for the "reverse_thrust" field.</summary>
-    public const int ReverseThrustFieldNumber = 7;
+    public const int ReverseThrustFieldNumber = 8;
     private bool reverseThrust_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool ReverseThrust {
-      get { if ((_hasBits0 & 16) != 0) { return reverseThrust_; } else { return false; } }
+      get { if ((_hasBits0 & 32) != 0) { return reverseThrust_; } else { return false; } }
       set {
-        _hasBits0 |= 16;
+        _hasBits0 |= 32;
         reverseThrust_ = value;
       }
     }
     /// <summary>Gets whether the "reverse_thrust" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasReverseThrust {
-      get { return (_hasBits0 & 16) != 0; }
+      get { return (_hasBits0 & 32) != 0; }
     }
     /// <summary>Clears the value of the "reverse_thrust" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearReverseThrust() {
-      _hasBits0 &= ~16;
+      _hasBits0 &= ~32;
     }
 
     /// <summary>Field number for the "on_ground" field.</summary>
-    public const int OnGroundFieldNumber = 8;
+    public const int OnGroundFieldNumber = 9;
     private bool onGround_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool OnGround {
-      get { if ((_hasBits0 & 32) != 0) { return onGround_; } else { return false; } }
+      get { if ((_hasBits0 & 64) != 0) { return onGround_; } else { return false; } }
       set {
-        _hasBits0 |= 32;
+        _hasBits0 |= 64;
         onGround_ = value;
       }
     }
     /// <summary>Gets whether the "on_ground" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasOnGround {
-      get { return (_hasBits0 & 32) != 0; }
+      get { return (_hasBits0 & 64) != 0; }
     }
     /// <summary>Clears the value of the "on_ground" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearOnGround() {
-      _hasBits0 &= ~32;
+      _hasBits0 &= ~64;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -294,6 +318,7 @@ namespace Vatsim.Xpilot.Protobuf {
         return true;
       }
       if (Callsign != other.Callsign) return false;
+      if (IsFullConfig != other.IsFullConfig) return false;
       if (!object.Equals(Lights, other.Lights)) return false;
       if (GearDown != other.GearDown) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Flaps, other.Flaps)) return false;
@@ -308,6 +333,7 @@ namespace Vatsim.Xpilot.Protobuf {
     public override int GetHashCode() {
       int hash = 1;
       if (HasCallsign) hash ^= Callsign.GetHashCode();
+      if (HasIsFullConfig) hash ^= IsFullConfig.GetHashCode();
       if (lights_ != null) hash ^= Lights.GetHashCode();
       if (HasGearDown) hash ^= GearDown.GetHashCode();
       if (HasFlaps) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Flaps);
@@ -335,32 +361,36 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(10);
         output.WriteString(Callsign);
       }
+      if (HasIsFullConfig) {
+        output.WriteRawTag(16);
+        output.WriteBool(IsFullConfig);
+      }
       if (lights_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(Lights);
       }
       if (HasGearDown) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteBool(GearDown);
       }
       if (HasFlaps) {
-        output.WriteRawTag(37);
+        output.WriteRawTag(45);
         output.WriteFloat(Flaps);
       }
       if (HasEnginesOn) {
-        output.WriteRawTag(40);
+        output.WriteRawTag(48);
         output.WriteBool(EnginesOn);
       }
       if (HasSpoilersDeployed) {
-        output.WriteRawTag(48);
+        output.WriteRawTag(56);
         output.WriteBool(SpoilersDeployed);
       }
       if (HasReverseThrust) {
-        output.WriteRawTag(56);
+        output.WriteRawTag(64);
         output.WriteBool(ReverseThrust);
       }
       if (HasOnGround) {
-        output.WriteRawTag(64);
+        output.WriteRawTag(72);
         output.WriteBool(OnGround);
       }
       if (_unknownFields != null) {
@@ -376,32 +406,36 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(10);
         output.WriteString(Callsign);
       }
+      if (HasIsFullConfig) {
+        output.WriteRawTag(16);
+        output.WriteBool(IsFullConfig);
+      }
       if (lights_ != null) {
-        output.WriteRawTag(18);
+        output.WriteRawTag(26);
         output.WriteMessage(Lights);
       }
       if (HasGearDown) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteBool(GearDown);
       }
       if (HasFlaps) {
-        output.WriteRawTag(37);
+        output.WriteRawTag(45);
         output.WriteFloat(Flaps);
       }
       if (HasEnginesOn) {
-        output.WriteRawTag(40);
+        output.WriteRawTag(48);
         output.WriteBool(EnginesOn);
       }
       if (HasSpoilersDeployed) {
-        output.WriteRawTag(48);
+        output.WriteRawTag(56);
         output.WriteBool(SpoilersDeployed);
       }
       if (HasReverseThrust) {
-        output.WriteRawTag(56);
+        output.WriteRawTag(64);
         output.WriteBool(ReverseThrust);
       }
       if (HasOnGround) {
-        output.WriteRawTag(64);
+        output.WriteRawTag(72);
         output.WriteBool(OnGround);
       }
       if (_unknownFields != null) {
@@ -415,6 +449,9 @@ namespace Vatsim.Xpilot.Protobuf {
       int size = 0;
       if (HasCallsign) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Callsign);
+      }
+      if (HasIsFullConfig) {
+        size += 1 + 1;
       }
       if (lights_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Lights);
@@ -450,6 +487,9 @@ namespace Vatsim.Xpilot.Protobuf {
       }
       if (other.HasCallsign) {
         Callsign = other.Callsign;
+      }
+      if (other.HasIsFullConfig) {
+        IsFullConfig = other.IsFullConfig;
       }
       if (other.lights_ != null) {
         if (lights_ == null) {
@@ -493,34 +533,38 @@ namespace Vatsim.Xpilot.Protobuf {
             Callsign = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            IsFullConfig = input.ReadBool();
+            break;
+          }
+          case 26: {
             if (lights_ == null) {
               Lights = new global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights();
             }
             input.ReadMessage(Lights);
             break;
           }
-          case 24: {
+          case 32: {
             GearDown = input.ReadBool();
             break;
           }
-          case 37: {
+          case 45: {
             Flaps = input.ReadFloat();
             break;
           }
-          case 40: {
+          case 48: {
             EnginesOn = input.ReadBool();
             break;
           }
-          case 48: {
+          case 56: {
             SpoilersDeployed = input.ReadBool();
             break;
           }
-          case 56: {
+          case 64: {
             ReverseThrust = input.ReadBool();
             break;
           }
-          case 64: {
+          case 72: {
             OnGround = input.ReadBool();
             break;
           }
@@ -542,34 +586,38 @@ namespace Vatsim.Xpilot.Protobuf {
             Callsign = input.ReadString();
             break;
           }
-          case 18: {
+          case 16: {
+            IsFullConfig = input.ReadBool();
+            break;
+          }
+          case 26: {
             if (lights_ == null) {
               Lights = new global::Vatsim.Xpilot.Protobuf.AirplaneConfig.Types.AirplaneConfigLights();
             }
             input.ReadMessage(Lights);
             break;
           }
-          case 24: {
+          case 32: {
             GearDown = input.ReadBool();
             break;
           }
-          case 37: {
+          case 45: {
             Flaps = input.ReadFloat();
             break;
           }
-          case 40: {
+          case 48: {
             EnginesOn = input.ReadBool();
             break;
           }
-          case 48: {
+          case 56: {
             SpoilersDeployed = input.ReadBool();
             break;
           }
-          case 56: {
+          case 64: {
             ReverseThrust = input.ReadBool();
             break;
           }
-          case 64: {
+          case 72: {
             OnGround = input.ReadBool();
             break;
           }

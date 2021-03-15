@@ -17,11 +17,11 @@
 */
 using System;
 using System.Windows.Forms;
+using Appccelerate.EventBroker;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Tutorial;
 using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.AudioForVatsim;
-using Appccelerate.EventBroker;
 
 namespace Vatsim.Xpilot
 {
@@ -32,8 +32,8 @@ namespace Vatsim.Xpilot
         private IAFVManaged mAudio;
         private IAppConfig mConfig;
         public SetupScreen CurrentScreen { get; private set; }
-        public bool XSquawkBox { get; set; }
-        public bool XSwiftBus { get; set; }
+        public bool XSquawkBoxFound { get; set; }
+        public bool XSwiftBusFound { get; set; }
         public string XplanePath { get; set; }
 
         public SetupGuide(IEventBroker eventBroker, IAppConfig config, INetworkManager network, IAFVManaged audio)
@@ -64,8 +64,6 @@ namespace Vatsim.Xpilot
                     return new WelcomeView(this, mConfig);
                 case "XplanePath":
                     return new SetXplanePath(this, mConfig);
-                case "ConflictingPlugins":
-                    return new ConflictingPlugins(this, mConfig);
                 case "CslConfiguration":
                     return new CslConfiguration(this, mConfig);
                 case "NetworkCredentials":

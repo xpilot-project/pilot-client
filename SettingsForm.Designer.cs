@@ -308,6 +308,7 @@ namespace Vatsim.Xpilot
             this.trackCom2.TabIndex = 23;
             this.trackCom2.TickFrequency = 10;
             this.trackCom2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.trackCom2.Scroll += new System.EventHandler(this.trackCom2_Scroll);
             // 
             // label13
             // 
@@ -330,6 +331,7 @@ namespace Vatsim.Xpilot
             this.trackCom1.TabIndex = 21;
             this.trackCom1.TickFrequency = 10;
             this.trackCom1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.trackCom1.Scroll += new System.EventHandler(this.trackCom1_Scroll);
             // 
             // chkHfSquelch
             // 
@@ -342,6 +344,7 @@ namespace Vatsim.Xpilot
             this.chkHfSquelch.Tag = "KeepClientWindowVisible";
             this.chkHfSquelch.Text = "Enable HF Squelch";
             this.chkHfSquelch.UseVisualStyleBackColor = true;
+            this.chkHfSquelch.CheckedChanged += new System.EventHandler(this.chkHfSquelch_CheckedChanged);
             // 
             // chkDisableRadioEffects
             // 
@@ -354,6 +357,7 @@ namespace Vatsim.Xpilot
             this.chkDisableRadioEffects.Tag = "KeepClientWindowVisible";
             this.chkDisableRadioEffects.Text = "Disable Radio Effects";
             this.chkDisableRadioEffects.UseVisualStyleBackColor = true;
+            this.chkDisableRadioEffects.CheckedChanged += new System.EventHandler(this.chkDisableRadioEffects_CheckedChanged_1);
             // 
             // chkFlashPrivateMessage
             // 

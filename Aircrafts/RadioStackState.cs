@@ -30,5 +30,15 @@ namespace Vatsim.Xpilot.Aircrafts
         public ushort TransponderCode;
         public bool SquawkingIdent;
         public bool ReceivingOnBothComRadios => Com1ReceiveEnabled && Com2ReceiveEnabled;
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

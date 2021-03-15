@@ -31,15 +31,15 @@ namespace Vatsim.Xpilot
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Center   ");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Approach/Departure     ");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Tower   ");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Ground   ");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("ATIS   ");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Observers  ");
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Center   ");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Approach/Departure     ");
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Tower   ");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Ground   ");
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("ATIS   ");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Observers  ");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.controllerTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ControllerTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.requestControllerInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.startPrivateChat = new System.Windows.Forms.ToolStripMenuItem();
             this.tuneCom1Frequency = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +71,7 @@ namespace Vatsim.Xpilot
             this.Com1TX = new Vatsim.Xpilot.TransparentClickLabel();
             this.Com1Freq = new Vatsim.Xpilot.TransparentClickLabel();
             this.lblCom1 = new Vatsim.Xpilot.TransparentClickLabel();
-            this.controllerTreeContextMenu.SuspendLayout();
+            this.ControllerTreeContextMenu.SuspendLayout();
             this.pnlTabs.SuspendLayout();
             this.TabsMain.SuspendLayout();
             this.TabPageMessages.SuspendLayout();
@@ -81,32 +81,35 @@ namespace Vatsim.Xpilot
             this.pnlComRadios.SuspendLayout();
             this.SuspendLayout();
             // 
-            // controllerTreeContextMenu
+            // ControllerTreeContextMenu
             // 
-            this.controllerTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ControllerTreeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.requestControllerInfo,
             this.startPrivateChat,
             this.tuneCom1Frequency});
-            this.controllerTreeContextMenu.Name = "contextMenuStrip1";
-            this.controllerTreeContextMenu.Size = new System.Drawing.Size(197, 70);
+            this.ControllerTreeContextMenu.Name = "contextMenuStrip1";
+            this.ControllerTreeContextMenu.Size = new System.Drawing.Size(197, 92);
             // 
             // requestControllerInfo
             // 
             this.requestControllerInfo.Name = "requestControllerInfo";
             this.requestControllerInfo.Size = new System.Drawing.Size(196, 22);
             this.requestControllerInfo.Text = "Request Controller Info";
+            this.requestControllerInfo.Click += new System.EventHandler(this.requestControllerInfo_Click);
             // 
             // startPrivateChat
             // 
             this.startPrivateChat.Name = "startPrivateChat";
             this.startPrivateChat.Size = new System.Drawing.Size(196, 22);
             this.startPrivateChat.Text = "Start Private Chat";
+            this.startPrivateChat.Click += new System.EventHandler(this.startPrivateChat_Click);
             // 
             // tuneCom1Frequency
             // 
             this.tuneCom1Frequency.Name = "tuneCom1Frequency";
             this.tuneCom1Frequency.Size = new System.Drawing.Size(196, 22);
             this.tuneCom1Frequency.Text = "Tune COM1 Frequency";
+            this.tuneCom1Frequency.Click += new System.EventHandler(this.tuneCom1Frequency_Click);
             // 
             // pnlTabs
             // 
@@ -310,6 +313,7 @@ namespace Vatsim.Xpilot
             this.BtnConnect.ClickedColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(120)))), ((int)(((byte)(206)))));
             this.BtnConnect.Cursor = System.Windows.Forms.Cursors.Hand;
             this.BtnConnect.DisabledTextColor = System.Drawing.Color.DarkGray;
+            this.BtnConnect.Enabled = false;
             this.BtnConnect.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BtnConnect.ForeColor = System.Drawing.Color.White;
             this.BtnConnect.Location = new System.Drawing.Point(14, 19);
@@ -358,35 +362,35 @@ namespace Vatsim.Xpilot
             this.TreeControllers.Location = new System.Drawing.Point(5, 5);
             this.TreeControllers.MinimumSize = new System.Drawing.Size(1, 1);
             this.TreeControllers.Name = "TreeControllers";
-            treeNode1.Name = "Center";
-            treeNode1.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode1.Text = "Center   ";
-            treeNode2.Name = "Approach";
-            treeNode2.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode2.Text = "Approach/Departure     ";
-            treeNode3.Name = "Tower";
-            treeNode3.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode3.Text = "Tower   ";
-            treeNode4.Name = "Ground";
-            treeNode4.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode4.Text = "Ground   ";
-            treeNode5.Name = "Delivery";
-            treeNode5.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode5.Text = "Clearance Delivery   ";
-            treeNode6.Name = "ATIS";
-            treeNode6.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode6.Text = "ATIS   ";
-            treeNode7.Name = "Observers";
-            treeNode7.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode7.Text = "Observers  ";
+            treeNode15.Name = "Center";
+            treeNode15.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode15.Text = "Center   ";
+            treeNode16.Name = "Approach";
+            treeNode16.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode16.Text = "Approach/Departure     ";
+            treeNode17.Name = "Tower";
+            treeNode17.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode17.Text = "Tower   ";
+            treeNode18.Name = "Ground";
+            treeNode18.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode18.Text = "Ground   ";
+            treeNode19.Name = "Delivery";
+            treeNode19.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode19.Text = "Clearance Delivery   ";
+            treeNode20.Name = "ATIS";
+            treeNode20.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode20.Text = "ATIS   ";
+            treeNode21.Name = "Observers";
+            treeNode21.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode21.Text = "Observers  ";
             this.TreeControllers.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4,
-            treeNode5,
-            treeNode6,
-            treeNode7});
+            treeNode15,
+            treeNode16,
+            treeNode17,
+            treeNode18,
+            treeNode19,
+            treeNode20,
+            treeNode21});
             this.TreeControllers.ShowNodeToolTips = true;
             this.TreeControllers.ShowPlusMinus = false;
             this.TreeControllers.ShowRootLines = false;
@@ -395,6 +399,8 @@ namespace Vatsim.Xpilot
             this.TreeControllers.TabStop = false;
             this.TreeControllers.BeforeCollapse += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeControllers_BeforeCollapse);
             this.TreeControllers.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.TreeControllers_BeforeSelect);
+            this.TreeControllers.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeControllers_NodeMouseClick);
+            this.TreeControllers.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TreeControllers_MouseClick);
             this.TreeControllers.MouseUp += new System.Windows.Forms.MouseEventHandler(this.TreeControllers_MouseUp);
             // 
             // lblControllers
@@ -554,7 +560,7 @@ namespace Vatsim.Xpilot
             this.Padding = new System.Windows.Forms.Padding(1);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xPilot";
-            this.controllerTreeContextMenu.ResumeLayout(false);
+            this.ControllerTreeContextMenu.ResumeLayout(false);
             this.pnlTabs.ResumeLayout(false);
             this.TabsMain.ResumeLayout(false);
             this.TabPageMessages.ResumeLayout(false);
@@ -583,7 +589,7 @@ namespace Vatsim.Xpilot
         private FlatButton BtnExit;
         private FlatButton BtnMinimize;
         private TransparentClickPanel pnlTabs;
-        private System.Windows.Forms.ContextMenuStrip controllerTreeContextMenu;
+        private System.Windows.Forms.ContextMenuStrip ControllerTreeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem requestControllerInfo;
         private System.Windows.Forms.ToolStripMenuItem startPrivateChat;
         private System.ComponentModel.BackgroundWorker bwVersionCheck;

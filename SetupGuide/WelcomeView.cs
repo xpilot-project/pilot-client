@@ -52,43 +52,16 @@ namespace Vatsim.Xpilot
                         string p = Path.Combine(xpPath, "Resources");
                         if (Directory.Exists(p))
                         {
-                            DirectoryInfo di = new DirectoryInfo(p);
-                            if (di.EnumerateDirectories().AsParallel().SelectMany(a => a.EnumerateFiles("*.*", SearchOption.AllDirectories)).Count() > 0)
-                            {
-                                usablePath = xpPath;
-                                ++instancesFound;
-                            }
+                            usablePath = xpPath;
+                            ++instancesFound;
                         }
                     }
                 }
             }
             if (instancesFound == 1)
             {
-                // check for conflicting plugins (XSwiftBus, XSB)
-                string pluginPath = Path.Combine(usablePath, @"Resources\plugins");
-                string[] dirs = Directory.GetDirectories(pluginPath);
-                foreach (var dir in dirs)
-                {
-                    if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
-                    {
-                        Host.XSquawkBox = true;
-                    }
-                    if (Path.GetFileName(dir).ToLower() == "xswiftbus")
-                    {
-                        Host.XSwiftBus = true;
-                    }
-                }
-
                 Host.XplanePath = usablePath;
-
-                if (Host.XSquawkBox || Host.XSwiftBus)
-                {
-                    Host.SwitchScreen("ConflictingPlugins");
-                }
-                else
-                {
-                    Host.SwitchScreen("CslConfiguration");
-                }
+                Host.SwitchScreen("CslConfiguration");
             }
             else
             {

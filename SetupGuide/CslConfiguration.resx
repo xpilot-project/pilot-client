@@ -120,7 +120,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>Before you can use xPilot on the VATSIM Network, you must install CSL models. Without CSL models, you won’t be able to see any aircraft. The recommended CSL package is “Bluebell”. 
 
-Click the “Download and Install Bluebell CSL Models” button below to automatically download and install the models.
+Click the “Download and Install Bluebell CSL Models” button below to automatically download and install the models. This may take several minutes depending on your internet speed.
 </value>
   </data>
 </root>

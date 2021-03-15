@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Abacus.DoublePrecision;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vatsim.Xpilot.Aircrafts;
 
 namespace Vatsim.Xpilot.Events.Arguments
@@ -28,9 +22,9 @@ namespace Vatsim.Xpilot.Events.Arguments
     public class FastPositionUpdateEventArgs : NetworkDataReceivedEventArgs
     {
         public AircraftVisualState VisualState { get; set; }
-        public Vector3 PositionalVelocityVector { get; set; }
-        public Vector3 RotationalVelocityVector { get; set; }
-        public FastPositionUpdateEventArgs(string from, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVecotr) : base(from, null)
+        public VelocityVector PositionalVelocityVector { get; set; }
+        public VelocityVector RotationalVelocityVector { get; set; }
+        public FastPositionUpdateEventArgs(string from, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVecotr) : base(from, null)
         {
             VisualState = visualState;
             PositionalVelocityVector = positionalVelocityVector;

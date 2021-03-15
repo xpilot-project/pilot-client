@@ -64,12 +64,11 @@ namespace Vatsim.Xpilot.Common
 
         public static uint Normalize25KhzFrequency(this uint freq)
         {
-            uint freqint = freq / 1000;
-            if (((freqint % 100) == 20) || ((freqint % 100) == 70))
+            if (((freq % 1000) == 200) || ((freq % 1000) == 700))
             {
-                freqint += 5;
+                freq += 50;
             }
-            return freqint * 1000;
+            return freq;
         }
 
         public static uint UnNormalize25KhzFrequency(this uint freq)

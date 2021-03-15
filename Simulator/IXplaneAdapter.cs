@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Abacus.DoublePrecision;
 using System.Collections.Generic;
 using Vatsim.Xpilot.Aircrafts;
 
@@ -24,20 +23,21 @@ namespace Vatsim.Xpilot.Simulator
     public interface IXplaneAdapter
     {
         void SetTransponderCode(int code);
+        void EnableTransponderModeC(bool enabled);
+        void TriggerTransponderIdent();
         void SetRadioFrequency(int radio, uint freq);
-        void SetAudioComSelection(int radio);
-        void SetAudioSelectionCom1(bool enabled);
-        void SetAudioSelectionCom2(bool enabled);
+        void SetRadioTransmit(int radio);
+        void SetRadioReceive(int radio, bool enabled);
         void SetLoginStatus(bool connected);
         void AddPlane(Aircraft aircraft);
         void SendSlowPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, double groundSpeed);
-        void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, Vector3 positionalVelocityVector, Vector3 rotationalVelocityVector);
-        void PlaneConfigChanged(string callsign, AircraftConfiguration config);
-        void RemovePlane(Aircraft aircraft);
+        void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVector);
+        void PlaneConfigChanged(Aircraft aircraft);
+        void DeleteAircraft(Aircraft aircraft);
         void ChangeModel(Aircraft aircraft);
-        void RemoveAllPlanes();
         void NetworkConnected(string callsign);
         void NetworkDisconnected();
         List<int> TunedFrequencies { get; }
+        bool ValidSimConnection { get; }
     }
 }

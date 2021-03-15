@@ -48,7 +48,8 @@ namespace Vatsim.Xpilot
                                 Tag = xpPath,
                                 Text = xpPath,
                                 TextAlign = ContentAlignment.MiddleLeft,
-                                AutoSize = true,
+                                AutoSize = false,
+                                Width = base.Width,
                                 Font = new Font(this.Font.FontFamily, 12f, FontStyle.Bold)
                             };
                             btn.CheckedChanged += (s, e) =>
@@ -85,29 +86,7 @@ namespace Vatsim.Xpilot
             if (checkedPath != null)
             {
                 Host.XplanePath = checkedPath.Tag.ToString();
-
-                string pluginPath = Path.Combine(checkedPath.Tag.ToString(), "Resources/plugins");
-                string[] dirs = Directory.GetDirectories(pluginPath);
-                foreach (var dir in dirs)
-                {
-                    if (Path.GetFileName(dir).ToLower() == "xsquawkbox")
-                    {
-                        Host.XSquawkBox = true;
-                    }
-                    if (Path.GetFileName(dir).ToLower() == "xswiftbus")
-                    {
-                        Host.XSwiftBus = true;
-                    }
-                }
-
-                if (Host.XSquawkBox || Host.XSwiftBus)
-                {
-                    Host.SwitchScreen("ConflictingPlugins");
-                }
-                else
-                {
-                    Host.SwitchScreen("CslConfiguration");
-                }
+                Host.SwitchScreen("CslConfiguration");
             }
         }
     }

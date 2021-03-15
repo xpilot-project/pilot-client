@@ -22,5 +22,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
         void SetAudioDriver(string driver);
         void ConfigureAudioDevices();
         void UpdateRadioGains();
+        void DisbleRadioEffects(bool disabled);
+        void EnableHFSquelch(bool enable);
     }
 }

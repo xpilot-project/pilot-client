@@ -20,13 +20,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Vatsim.Xpilot.Config;
-using Newtonsoft.Json;
 using SevenZip;
+using Newtonsoft.Json;
+using Vatsim.Xpilot.Config;
 
 namespace Vatsim.Xpilot.Tutorial
 {
@@ -146,7 +145,10 @@ namespace Vatsim.Xpilot.Tutorial
                     {
                         file.ExtractArchive(Path.GetDirectoryName(Path.Combine(Host.XplanePath, @"Resources\plugins\xPilot\Resources\CSL\")));
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error Extracting Models", "An error occured while trying to extract the CSL model package: " + ex.Message);
+                    }
                 }
                 else
                 {

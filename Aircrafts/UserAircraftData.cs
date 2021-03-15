@@ -34,5 +34,15 @@ namespace Vatsim.Xpilot.Aircrafts
         public double PitchVelocity;
         public double HeadingVelocity;
         public double BankVelocity;
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
