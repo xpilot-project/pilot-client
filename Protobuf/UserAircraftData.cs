@@ -42,26 +42,26 @@ namespace Vatsim.Xpilot.Protobuf {
     static UserAircraftDataReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChZVc2VyQWlyY3JhZnREYXRhLnByb3RvEgZ4cGlsb3Qi7AQKEFVzZXJBaXJj",
+            "ChZVc2VyQWlyY3JhZnREYXRhLnByb3RvEgZ4cGlsb3Qi6gQKEFVzZXJBaXJj",
             "cmFmdERhdGESFgoJbG9uZ2l0dWRlGAEgASgBSACIAQESFQoIbGF0aXR1ZGUY",
-            "AiABKAFIAYgBARIVCghhbHRpdHVkZRgDIAEoAUgCiAEBEh4KEXByZXNzdXJl",
-            "X2FsdGl0dWRlGAQgASgBSAOIAQESGQoMZ3JvdW5kX3NwZWVkGAUgASgBSASI",
-            "AQESEgoFcGl0Y2gYBiABKAFIBYgBARIRCgRyb2xsGAcgASgBSAaIAQESEAoD",
-            "eWF3GAggASgBSAeIAQESHgoRdmVsb2NpdHlfbGF0aXR1ZGUYCSABKAFICIgB",
-            "ARIeChF2ZWxvY2l0eV9hbHRpdHVkZRgKIAEoAUgJiAEBEh8KEnZlbG9jaXR5",
-            "X2xvbmdpdHVkZRgLIAEoAUgKiAEBEhsKDnZlbG9jaXR5X3BpdGNoGAwgASgB",
-            "SAuIAQESHQoQdmVsb2NpdHlfaGVhZGluZxgNIAEoAUgMiAEBEhoKDXZlbG9j",
-            "aXR5X2JhbmsYDiABKAFIDYgBAUIMCgpfbG9uZ2l0dWRlQgsKCV9sYXRpdHVk",
-            "ZUILCglfYWx0aXR1ZGVCFAoSX3ByZXNzdXJlX2FsdGl0dWRlQg8KDV9ncm91",
-            "bmRfc3BlZWRCCAoGX3BpdGNoQgcKBV9yb2xsQgYKBF95YXdCFAoSX3ZlbG9j",
-            "aXR5X2xhdGl0dWRlQhQKEl92ZWxvY2l0eV9hbHRpdHVkZUIVChNfdmVsb2Np",
-            "dHlfbG9uZ2l0dWRlQhEKD192ZWxvY2l0eV9waXRjaEITChFfdmVsb2NpdHlf",
-            "aGVhZGluZ0IQCg5fdmVsb2NpdHlfYmFua0IZqgIWVmF0c2ltLlhwaWxvdC5Q",
-            "cm90b2J1ZmIGcHJvdG8z"));
+            "AiABKAFIAYgBARIZCgxhbHRpdHVkZV9tc2wYAyABKAFIAogBARIZCgxhbHRp",
+            "dHVkZV9hZ2wYBCABKAFIA4gBARIZCgxncm91bmRfc3BlZWQYBSABKAFIBIgB",
+            "ARISCgVwaXRjaBgGIAEoAUgFiAEBEhEKBHJvbGwYByABKAFIBogBARIQCgN5",
+            "YXcYCCABKAFIB4gBARIeChF2ZWxvY2l0eV9sYXRpdHVkZRgJIAEoAUgIiAEB",
+            "Eh4KEXZlbG9jaXR5X2FsdGl0dWRlGAogASgBSAmIAQESHwoSdmVsb2NpdHlf",
+            "bG9uZ2l0dWRlGAsgASgBSAqIAQESGwoOdmVsb2NpdHlfcGl0Y2gYDCABKAFI",
+            "C4gBARIdChB2ZWxvY2l0eV9oZWFkaW5nGA0gASgBSAyIAQESGgoNdmVsb2Np",
+            "dHlfYmFuaxgOIAEoAUgNiAEBQgwKCl9sb25naXR1ZGVCCwoJX2xhdGl0dWRl",
+            "Qg8KDV9hbHRpdHVkZV9tc2xCDwoNX2FsdGl0dWRlX2FnbEIPCg1fZ3JvdW5k",
+            "X3NwZWVkQggKBl9waXRjaEIHCgVfcm9sbEIGCgRfeWF3QhQKEl92ZWxvY2l0",
+            "eV9sYXRpdHVkZUIUChJfdmVsb2NpdHlfYWx0aXR1ZGVCFQoTX3ZlbG9jaXR5",
+            "X2xvbmdpdHVkZUIRCg9fdmVsb2NpdHlfcGl0Y2hCEwoRX3ZlbG9jaXR5X2hl",
+            "YWRpbmdCEAoOX3ZlbG9jaXR5X2JhbmtCGaoCFlZhdHNpbS5YcGlsb3QuUHJv",
+            "dG9idWZiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.UserAircraftData), global::Vatsim.Xpilot.Protobuf.UserAircraftData.Parser, new[]{ "Longitude", "Latitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank" }, new[]{ "Longitude", "Latitude", "Altitude", "PressureAltitude", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.UserAircraftData), global::Vatsim.Xpilot.Protobuf.UserAircraftData.Parser, new[]{ "Longitude", "Latitude", "AltitudeMsl", "AltitudeAgl", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank" }, new[]{ "Longitude", "Latitude", "AltitudeMsl", "AltitudeAgl", "GroundSpeed", "Pitch", "Roll", "Yaw", "VelocityLatitude", "VelocityAltitude", "VelocityLongitude", "VelocityPitch", "VelocityHeading", "VelocityBank" }, null, null, null)
           }));
     }
     #endregion
@@ -101,8 +101,8 @@ namespace Vatsim.Xpilot.Protobuf {
       _hasBits0 = other._hasBits0;
       longitude_ = other.longitude_;
       latitude_ = other.latitude_;
-      altitude_ = other.altitude_;
-      pressureAltitude_ = other.pressureAltitude_;
+      altitudeMsl_ = other.altitudeMsl_;
+      altitudeAgl_ = other.altitudeAgl_;
       groundSpeed_ = other.groundSpeed_;
       pitch_ = other.pitch_;
       roll_ = other.roll_;
@@ -165,47 +165,47 @@ namespace Vatsim.Xpilot.Protobuf {
       _hasBits0 &= ~2;
     }
 
-    /// <summary>Field number for the "altitude" field.</summary>
-    public const int AltitudeFieldNumber = 3;
-    private double altitude_;
+    /// <summary>Field number for the "altitude_msl" field.</summary>
+    public const int AltitudeMslFieldNumber = 3;
+    private double altitudeMsl_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double Altitude {
-      get { if ((_hasBits0 & 4) != 0) { return altitude_; } else { return 0D; } }
+    public double AltitudeMsl {
+      get { if ((_hasBits0 & 4) != 0) { return altitudeMsl_; } else { return 0D; } }
       set {
         _hasBits0 |= 4;
-        altitude_ = value;
+        altitudeMsl_ = value;
       }
     }
-    /// <summary>Gets whether the "altitude" field is set</summary>
+    /// <summary>Gets whether the "altitude_msl" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasAltitude {
+    public bool HasAltitudeMsl {
       get { return (_hasBits0 & 4) != 0; }
     }
-    /// <summary>Clears the value of the "altitude" field</summary>
+    /// <summary>Clears the value of the "altitude_msl" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearAltitude() {
+    public void ClearAltitudeMsl() {
       _hasBits0 &= ~4;
     }
 
-    /// <summary>Field number for the "pressure_altitude" field.</summary>
-    public const int PressureAltitudeFieldNumber = 4;
-    private double pressureAltitude_;
+    /// <summary>Field number for the "altitude_agl" field.</summary>
+    public const int AltitudeAglFieldNumber = 4;
+    private double altitudeAgl_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public double PressureAltitude {
-      get { if ((_hasBits0 & 8) != 0) { return pressureAltitude_; } else { return 0D; } }
+    public double AltitudeAgl {
+      get { if ((_hasBits0 & 8) != 0) { return altitudeAgl_; } else { return 0D; } }
       set {
         _hasBits0 |= 8;
-        pressureAltitude_ = value;
+        altitudeAgl_ = value;
       }
     }
-    /// <summary>Gets whether the "pressure_altitude" field is set</summary>
+    /// <summary>Gets whether the "altitude_agl" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasPressureAltitude {
+    public bool HasAltitudeAgl {
       get { return (_hasBits0 & 8) != 0; }
     }
-    /// <summary>Clears the value of the "pressure_altitude" field</summary>
+    /// <summary>Clears the value of the "altitude_agl" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearPressureAltitude() {
+    public void ClearAltitudeAgl() {
       _hasBits0 &= ~8;
     }
 
@@ -444,8 +444,8 @@ namespace Vatsim.Xpilot.Protobuf {
       }
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Longitude, other.Longitude)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Latitude, other.Latitude)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Altitude, other.Altitude)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(PressureAltitude, other.PressureAltitude)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(AltitudeMsl, other.AltitudeMsl)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(AltitudeAgl, other.AltitudeAgl)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(GroundSpeed, other.GroundSpeed)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Pitch, other.Pitch)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.Equals(Roll, other.Roll)) return false;
@@ -464,8 +464,8 @@ namespace Vatsim.Xpilot.Protobuf {
       int hash = 1;
       if (HasLongitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Longitude);
       if (HasLatitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Latitude);
-      if (HasAltitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Altitude);
-      if (HasPressureAltitude) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(PressureAltitude);
+      if (HasAltitudeMsl) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(AltitudeMsl);
+      if (HasAltitudeAgl) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(AltitudeAgl);
       if (HasGroundSpeed) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(GroundSpeed);
       if (HasPitch) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Pitch);
       if (HasRoll) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(Roll);
@@ -500,13 +500,13 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(17);
         output.WriteDouble(Latitude);
       }
-      if (HasAltitude) {
+      if (HasAltitudeMsl) {
         output.WriteRawTag(25);
-        output.WriteDouble(Altitude);
+        output.WriteDouble(AltitudeMsl);
       }
-      if (HasPressureAltitude) {
+      if (HasAltitudeAgl) {
         output.WriteRawTag(33);
-        output.WriteDouble(PressureAltitude);
+        output.WriteDouble(AltitudeAgl);
       }
       if (HasGroundSpeed) {
         output.WriteRawTag(41);
@@ -565,13 +565,13 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(17);
         output.WriteDouble(Latitude);
       }
-      if (HasAltitude) {
+      if (HasAltitudeMsl) {
         output.WriteRawTag(25);
-        output.WriteDouble(Altitude);
+        output.WriteDouble(AltitudeMsl);
       }
-      if (HasPressureAltitude) {
+      if (HasAltitudeAgl) {
         output.WriteRawTag(33);
-        output.WriteDouble(PressureAltitude);
+        output.WriteDouble(AltitudeAgl);
       }
       if (HasGroundSpeed) {
         output.WriteRawTag(41);
@@ -628,10 +628,10 @@ namespace Vatsim.Xpilot.Protobuf {
       if (HasLatitude) {
         size += 1 + 8;
       }
-      if (HasAltitude) {
+      if (HasAltitudeMsl) {
         size += 1 + 8;
       }
-      if (HasPressureAltitude) {
+      if (HasAltitudeAgl) {
         size += 1 + 8;
       }
       if (HasGroundSpeed) {
@@ -681,11 +681,11 @@ namespace Vatsim.Xpilot.Protobuf {
       if (other.HasLatitude) {
         Latitude = other.Latitude;
       }
-      if (other.HasAltitude) {
-        Altitude = other.Altitude;
+      if (other.HasAltitudeMsl) {
+        AltitudeMsl = other.AltitudeMsl;
       }
-      if (other.HasPressureAltitude) {
-        PressureAltitude = other.PressureAltitude;
+      if (other.HasAltitudeAgl) {
+        AltitudeAgl = other.AltitudeAgl;
       }
       if (other.HasGroundSpeed) {
         GroundSpeed = other.GroundSpeed;
@@ -740,11 +740,11 @@ namespace Vatsim.Xpilot.Protobuf {
             break;
           }
           case 25: {
-            Altitude = input.ReadDouble();
+            AltitudeMsl = input.ReadDouble();
             break;
           }
           case 33: {
-            PressureAltitude = input.ReadDouble();
+            AltitudeAgl = input.ReadDouble();
             break;
           }
           case 41: {
@@ -810,11 +810,11 @@ namespace Vatsim.Xpilot.Protobuf {
             break;
           }
           case 25: {
-            Altitude = input.ReadDouble();
+            AltitudeMsl = input.ReadDouble();
             break;
           }
           case 33: {
-            PressureAltitude = input.ReadDouble();
+            AltitudeAgl = input.ReadDouble();
             break;
           }
           case 41: {

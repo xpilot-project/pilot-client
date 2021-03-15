@@ -81,7 +81,6 @@ namespace Vatsim.Xpilot.Core
         public const string RequestedAtisReceived = "RequestedAtisReceived";
         public const string WallopSent = "WallopSent";
         public const string AircraftAddedToSimulator = "AircraftAddedToSimulator";
-        public const string AircraftDeleted = "AircraftDeleted";
         public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
         public const string UserAircraftConfigDataUpdated = "UserAircraftConfigDataUpdated";
     }

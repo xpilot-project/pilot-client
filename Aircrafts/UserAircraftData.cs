@@ -21,9 +21,8 @@ namespace Vatsim.Xpilot.Aircrafts
     {
         public double Latitude;
         public double Longitude;
-        public double AltitudeTrue;
-        public double AltitudePressure;
-        public double AltitudeAgl;
+        public double AltitudeMslM;
+        public double AltitudeAglM;
         public double SpeedGround;
         public double Pitch;
         public double Heading;

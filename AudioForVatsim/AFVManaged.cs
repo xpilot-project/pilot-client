@@ -186,7 +186,7 @@ namespace Vatsim.Xpilot.AudioForVatsim
         {
             if (AFVBindings.IsAPIConnected())
             {
-                AFVBindings.SetClientPosition(mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeTrue, mUserAircraftData.AltitudeAgl);
+                AFVBindings.SetClientPosition(mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM, mUserAircraftData.AltitudeAglM);
             }
         }
 

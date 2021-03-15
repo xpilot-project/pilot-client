@@ -421,13 +421,13 @@ namespace Vatsim.Xpilot.Simulator
                             {
                                 mUserAircraftData.Longitude = wrapper.UserAircraftData.Longitude;
                             }
-                            if (wrapper.UserAircraftData.HasAltitude)
+                            if (wrapper.UserAircraftData.HasAltitudeMsl)
                             {
-                                mUserAircraftData.AltitudeTrue = wrapper.UserAircraftData.Altitude * 3.28084;
+                                mUserAircraftData.AltitudeMslM = wrapper.UserAircraftData.AltitudeMsl;
                             }
-                            if (wrapper.UserAircraftData.HasPressureAltitude)
+                            if (wrapper.UserAircraftData.HasAltitudeAgl)
                             {
-                                mUserAircraftData.AltitudePressure = wrapper.UserAircraftData.PressureAltitude * 3.28084;
+                                mUserAircraftData.AltitudeAglM = wrapper.UserAircraftData.AltitudeAgl;
                             }
                             if (wrapper.UserAircraftData.HasYaw)
                             {
