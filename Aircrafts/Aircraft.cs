@@ -23,7 +23,8 @@ namespace Vatsim.Xpilot.Aircrafts
     {
         New,
         Active,
-        Ignored
+        Ignored,
+        Pending
     }
 
     public class Aircraft

@@ -193,7 +193,7 @@ namespace Vatsim.Xpilot.Aircrafts
             List<Aircraft> deleteThese = new List<Aircraft>();
             foreach (Aircraft aircraft in Aircraft)
             {
-                if ((currentTimeStamp - aircraft.LastSlowPositionUpdate).TotalMilliseconds > (sender as Timer).Interval)
+                if ((currentTimeStamp - aircraft.LastSlowPositionUpdate).TotalMilliseconds > 10000)
                 {
                     deleteThese.Add(aircraft);
                 }
@@ -276,7 +276,8 @@ namespace Vatsim.Xpilot.Aircrafts
             var aircraft = new Aircraft(callsign)
             {
                 Status = mIgnoredAircraft.Contains(callsign) ? AircraftStatus.Ignored : AircraftStatus.New,
-                RemoteVisualState = visualState
+                RemoteVisualState = visualState,
+                LastSlowPositionUpdate = DateTime.UtcNow 
             };
             Aircraft.Add(aircraft);
             mNetworkManager.SendCapabilitiesRequest(aircraft.Callsign);
@@ -318,9 +319,10 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             foreach (Aircraft aircraft in Aircraft)
             {
-                if (aircraft.Status == AircraftStatus.New && IsEligibleToAddToSimulator(aircraft))
+                if ((aircraft.Status == AircraftStatus.New) && IsEligibleToAddToSimulator(aircraft))
                 {
                     mXplaneAdapter.AddPlane(aircraft);
+                    aircraft.Status = AircraftStatus.Pending;
                 }
             }
         }

@@ -206,7 +206,7 @@ namespace Vatsim.Xpilot.Simulator
                 };
                 msg.PrivateMessageReceived.From = e.From.ToUpper();
                 msg.PrivateMessageReceived.Message = e.Data;
-                SendProtobufArray(msg.ToByteArray());
+                SendProtobufArray(msg);
             }
         }
 
@@ -219,7 +219,7 @@ namespace Vatsim.Xpilot.Simulator
             };
             msg.PrivateMessageSent.To = e.To.ToUpper();
             msg.PrivateMessageSent.Message = e.Message;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
@@ -251,6 +251,8 @@ namespace Vatsim.Xpilot.Simulator
             if (bytes.Length > 0)
             {
                 var wrapper = Wrapper.Parser.ParseFrom(bytes);
+
+                //Console.WriteLine("<< " + wrapper.ToString());
 
                 if (wrapper.Timestamp != null)
                 {
@@ -546,7 +548,7 @@ namespace Vatsim.Xpilot.Simulator
             {
                 PluginInformation = new PluginInformation()
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         private void RequestCslValidation()
@@ -555,14 +557,15 @@ namespace Vatsim.Xpilot.Simulator
             {
                 CslValidation = new CslValidation()
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
-        private void SendProtobufArray(byte[] data)
+        private void SendProtobufArray(Wrapper msg)
         {
-            if (data.Length > 0)
+            if (msg.ToByteArray().Length > 0)
             {
-                mMessageQueue.Enqueue(data);
+                Console.WriteLine(">> " + msg.ToString());
+                mMessageQueue.Enqueue(msg.ToByteArray());
             }
         }
 
@@ -584,7 +587,7 @@ namespace Vatsim.Xpilot.Simulator
         //        NearbyControllers = new Xpilot.NearbyControllers()
         //    };
         //    msg.NearbyControllers.List.AddRange(temp.OrderBy(a => a.Callsign));
-        //    SendProtobufArray(msg.ToByteArray());
+        //    SendProtobufArray(msg);
         //}
 
         private void ConnectionTimer_Tick(object sender, EventArgs e)
@@ -634,7 +637,7 @@ namespace Vatsim.Xpilot.Simulator
                 SetTransponder = new SetTransponder()
             };
             msg.SetTransponder.Code = code;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void EnableTransponderModeC(bool enabled)
@@ -644,7 +647,7 @@ namespace Vatsim.Xpilot.Simulator
                 SetTransponder = new SetTransponder()
             };
             msg.SetTransponder.ModeC = enabled;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void TriggerTransponderIdent()
@@ -654,7 +657,7 @@ namespace Vatsim.Xpilot.Simulator
                 SetTransponder = new SetTransponder()
             };
             msg.SetTransponder.Ident = true;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SetRadioFrequency(int radio, uint freq)
@@ -665,7 +668,7 @@ namespace Vatsim.Xpilot.Simulator
             };
             msg.SetRadiostack.Radio = radio;
             msg.SetRadiostack.Frequency = (int)freq;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SetRadioTransmit(int radio)
@@ -676,7 +679,7 @@ namespace Vatsim.Xpilot.Simulator
             };
             msg.SetRadiostack.Radio = radio;
             msg.SetRadiostack.TransmitEnabled = true;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SetRadioReceive(int radio, bool enabled)
@@ -687,7 +690,7 @@ namespace Vatsim.Xpilot.Simulator
             };
             msg.SetRadiostack.Radio = radio;
             msg.SetRadiostack.ReceiveEnabled = enabled;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SetLoginStatus(bool connected)
@@ -701,7 +704,7 @@ namespace Vatsim.Xpilot.Simulator
             {
                 AirplaneConfig = config
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void NetworkConnected(string callsign)
@@ -711,7 +714,7 @@ namespace Vatsim.Xpilot.Simulator
                 NetworkConnected = new Protobuf.NetworkConnected()
             };
             msg.NetworkConnected.Callsign = callsign;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void NetworkDisconnected()
@@ -720,7 +723,7 @@ namespace Vatsim.Xpilot.Simulator
             {
                 NetworkDisconnected = new Protobuf.NetworkDisconnected()
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void PlaneConfigChanged(Aircraft aircraft)
@@ -772,7 +775,7 @@ namespace Vatsim.Xpilot.Simulator
             {
                 AirplaneConfig = cfg
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void AddPlane(Aircraft aircraft)
@@ -793,7 +796,7 @@ namespace Vatsim.Xpilot.Simulator
                 Heading = aircraft.RemoteVisualState.Heading,
                 Bank = aircraft.RemoteVisualState.Bank
             };
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void DeleteAircraft(Aircraft aircraft)
@@ -803,7 +806,7 @@ namespace Vatsim.Xpilot.Simulator
                 DeletePlane = new DeletePlane()
             };
             msg.DeletePlane.Callsign = aircraft.Callsign;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void ChangeModel(Aircraft aircraft)
@@ -815,7 +818,7 @@ namespace Vatsim.Xpilot.Simulator
             msg.ChangePlaneModel.Callsign = aircraft.Callsign;
             msg.ChangePlaneModel.Equipment = aircraft.TypeCode;
             msg.ChangePlaneModel.Airline = aircraft.Airline;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVector)
@@ -837,7 +840,7 @@ namespace Vatsim.Xpilot.Simulator
             msg.FastPositionUpdate.VelocityPitch = rotationalVelocityVector.X;
             msg.FastPositionUpdate.VelocityHeading = rotationalVelocityVector.Y;
             msg.FastPositionUpdate.VelocityBank = rotationalVelocityVector.Z;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
 
         public void SendSlowPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, double groundSpeed)
@@ -853,7 +856,7 @@ namespace Vatsim.Xpilot.Simulator
             msg.PositionUpdate.Pitch = visualState.Pitch;
             msg.PositionUpdate.Heading = visualState.Heading;
             msg.PositionUpdate.Bank = visualState.Bank;
-            SendProtobufArray(msg.ToByteArray());
+            SendProtobufArray(msg);
         }
     }
 }
