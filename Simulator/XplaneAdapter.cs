@@ -73,7 +73,10 @@ namespace Vatsim.Xpilot.Simulator
         [EventPublication(EventTopics.AircraftAddedToSimulator)]
         public event EventHandler<GenericEventArgs<string>> AircraftAddedToSimulator;
 
-        private readonly INetworkManager mFsdManager;
+        [EventPublication(EventTopics.ReplayModeEnabled)]
+        public event EventHandler<EventArgs> ReplayModeDetected;
+
+        private readonly INetworkManager mNetworkManager;
         private readonly IAppConfig mConfig;
 
         private NetMQQueue<byte[]> mMessageQueue;
@@ -99,10 +102,10 @@ namespace Vatsim.Xpilot.Simulator
 
         public List<int> TunedFrequencies => mTunedFrequencies;
 
-        public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager fsdManager) : base(broker)
+        public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager networkManager) : base(broker)
         {
             mConfig = config;
-            mFsdManager = fsdManager;
+            mNetworkManager = networkManager;
 
             mVisualDealerSockets = null;
             mConnectionHeartbeats = new Stack<DateTime>();
@@ -285,7 +288,7 @@ namespace Vatsim.Xpilot.Simulator
                             }
                             if (wrapper.PluginInformation.HasHash)
                             {
-                                mFsdManager.SetPluginHash(wrapper.PluginInformation.Hash);
+                                mNetworkManager.SetPluginHash(wrapper.PluginInformation.Hash);
                             }
                         }
                         break;
@@ -502,6 +505,11 @@ namespace Vatsim.Xpilot.Simulator
                                     mUserAircraftConfigData.Engine4Running = wrapper.XplaneData.UserAircraftConfig.Engine4Running;
                                 }
                                 UserAircraftConfigDataUpdated?.Invoke(this, new UserAircraftConfigDataUpdatedEventArgs(mUserAircraftConfigData));
+                            }
+
+                            if (wrapper.XplaneData.HasReplayMode && wrapper.XplaneData.ReplayMode)
+                            {
+                                ReplayModeDetected?.Invoke(this, EventArgs.Empty);
                             }
                         }
                         break;

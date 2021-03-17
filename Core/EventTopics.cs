@@ -83,5 +83,6 @@ namespace Vatsim.Xpilot.Core
         public const string AircraftAddedToSimulator = "AircraftAddedToSimulator";
         public const string UserAircraftDataUpdated = "UserAircraftDataChanged";
         public const string UserAircraftConfigDataUpdated = "UserAircraftConfigDataUpdated";
+        public const string ReplayModeEnabled = "ReplayModeEnabled";
     }
 }

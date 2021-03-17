@@ -341,6 +341,16 @@ namespace Vatsim.Xpilot
             }
         }
 
+        [EventSubscription(EventTopics.ReplayModeEnabled, typeof(OnUserInterfaceAsync))]
+        public void OnReplayModeEnabled(object sender, EventArgs e)
+        {
+            if (mNetworkManager.IsConnected)
+            {
+                WriteErrorMessage("Disconnected from network because Replay Mode is enabled");
+                mNetworkManager.Disconnect();
+            }
+        }
+
         private void SyncRadioStackState()
         {
             if (!mXplaneAdapter.ValidSimConnection)
@@ -498,6 +508,7 @@ namespace Vatsim.Xpilot
         private void WriteErrorMessage(string message)
         {
             WriteMessage(COLOR_RED, message, true);
+            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
         }
 
         private void WriteWarningMessage(string message)
@@ -767,7 +778,6 @@ namespace Vatsim.Xpilot
             catch (Exception ex)
             {
                 WriteErrorMessage(ex.Message);
-                PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
             }
         }
 
@@ -962,7 +972,6 @@ namespace Vatsim.Xpilot
                         if (mConfig.ConfigurationRequired)
                         {
                             WriteErrorMessage(CONFIGURATION_REQUIRED);
-                            PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
                         }
                         else
                         {
