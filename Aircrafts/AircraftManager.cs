@@ -127,15 +127,14 @@ namespace Vatsim.Xpilot.Aircrafts
                     aircraft.TypeCode = e.TypeCode;
                     mXplaneAdapter.ChangeModel(aircraft);
                 }
+                return;
             }
-            else
+
+            aircraft.TypeCode = e.TypeCode;
+            aircraft.Airline = e.Airline;
+            if (IsEligibleToAddToSimulator(aircraft))
             {
-                aircraft.TypeCode = e.TypeCode;
-                aircraft.Airline = e.Airline;
-                if (IsEligibleToAddToSimulator(aircraft))
-                {
-                    SyncSimulatorAircraft();
-                }
+                SyncSimulatorAircraft();
             }
         }
 
@@ -269,6 +268,11 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             aircraft.LastSlowPositionUpdate = DateTime.UtcNow;
             mXplaneAdapter.SendSlowPositionUpdate(aircraft, visualState, speed);
+
+            if ((aircraft.Status == AircraftStatus.New) && IsEligibleToAddToSimulator(aircraft))
+            {
+                SyncSimulatorAircraft();
+            }
         }
 
         private void SetUpNewAircraft(string callsign, AircraftVisualState visualState)
@@ -319,9 +323,10 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             foreach (Aircraft aircraft in Aircraft)
             {
-                if ((aircraft.Status == AircraftStatus.New) && IsEligibleToAddToSimulator(aircraft))
+                if (aircraft.Status == AircraftStatus.New && IsEligibleToAddToSimulator(aircraft))
                 {
                     mXplaneAdapter.AddPlane(aircraft);
+                    mXplaneAdapter.PlaneConfigChanged(aircraft);
                     aircraft.Status = AircraftStatus.Pending;
                 }
             }
@@ -331,7 +336,6 @@ namespace Vatsim.Xpilot.Aircrafts
         {
             if (aircraft.Configuration == null)
             {
-                mNetworkManager.SendAircraftConfigurationRequest(aircraft.Callsign);
                 return false;
             }
 

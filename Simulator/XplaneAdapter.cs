@@ -252,7 +252,7 @@ namespace Vatsim.Xpilot.Simulator
             {
                 var wrapper = Wrapper.Parser.ParseFrom(bytes);
 
-                //Console.WriteLine("<< " + wrapper.ToString());
+                Console.WriteLine("<< " + wrapper.ToString());
 
                 if (wrapper.Timestamp != null)
                 {
@@ -318,203 +318,193 @@ namespace Vatsim.Xpilot.Simulator
                             AircraftAddedToSimulator?.Invoke(this, new GenericEventArgs<string>(wrapper.PlaneAddedToSim.Callsign));
                         }
                         break;
-                    case Wrapper.MsgOneofCase.RadioStack:
+                    case Wrapper.MsgOneofCase.XplaneData:
                         {
-                            if (wrapper.RadioStack.HasPttPressed)
+                            // radio stack
+                            if (wrapper.XplaneData.RadioStack != null)
                             {
-                                PushToTalkStateChanged?.Invoke(this, new PushToTalkStateChangedEventArgs(wrapper.RadioStack.PttPressed));
+                                if (wrapper.XplaneData.RadioStack.HasPttPressed)
+                                {
+                                    PushToTalkStateChanged?.Invoke(this, new PushToTalkStateChangedEventArgs(wrapper.XplaneData.RadioStack.PttPressed));
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasAudioComSelection)
+                                {
+                                    mRadioStackState.Com1TransmitEnabled = (uint)wrapper.XplaneData.RadioStack.AudioComSelection == 6;
+                                    mRadioStackState.Com2TransmitEnabled = (uint)wrapper.XplaneData.RadioStack.AudioComSelection == 7;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom1Freq)
+                                {
+                                    mRadioStackState.Com1ActiveFrequency = ((uint)wrapper.XplaneData.RadioStack.Com1Freq * 1000).Normalize25KhzFrequency();
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom1AudioSelection)
+                                {
+                                    mRadioStackState.Com1ReceiveEnabled = wrapper.XplaneData.RadioStack.Com1AudioSelection;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom1Volume)
+                                {
+                                    float val = wrapper.XplaneData.RadioStack.Com1Volume;
+                                    if (val > 1.0f) val = 1.0f;
+                                    if (val < 0.0f) val = 0.0f;
+                                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, val));
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom2Freq)
+                                {
+                                    mRadioStackState.Com2ActiveFrequency = ((uint)wrapper.XplaneData.RadioStack.Com2Freq * 1000).Normalize25KhzFrequency();
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom2AudioSelection)
+                                {
+                                    mRadioStackState.Com2ReceiveEnabled = wrapper.XplaneData.RadioStack.Com2AudioSelection;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasCom2Volume)
+                                {
+                                    float val = wrapper.XplaneData.RadioStack.Com2Volume;
+                                    if (val > 1.0f) val = 1.0f;
+                                    if (val < 0.0f) val = 0.0f;
+                                    RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, val));
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasAvionicsPowerOn)
+                                {
+                                    mRadioStackState.AvionicsPowerOn = wrapper.XplaneData.RadioStack.AvionicsPowerOn;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasTransponderCode)
+                                {
+                                    mRadioStackState.TransponderCode = (ushort)wrapper.XplaneData.RadioStack.TransponderCode;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasTransponderMode)
+                                {
+                                    mRadioStackState.SquawkingModeC = wrapper.XplaneData.RadioStack.TransponderMode >= 2;
+                                }
+                                if (wrapper.XplaneData.RadioStack.HasTransponderIdent)
+                                {
+                                    mRadioStackState.SquawkingIdent = wrapper.XplaneData.RadioStack.TransponderIdent;
+                                }
+                                RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
+                                UpdateTunedFrequencies();
                             }
 
-                            if (wrapper.RadioStack.HasAudioComSelection)
+                            // user aircraft data
+                            if (wrapper.XplaneData.UserAircraftData != null)
                             {
-                                mRadioStackState.Com1TransmitEnabled = (uint)wrapper.RadioStack.AudioComSelection == 6;
-                                mRadioStackState.Com2TransmitEnabled = (uint)wrapper.RadioStack.AudioComSelection == 7;
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityLatitude)
+                                {
+                                    mUserAircraftData.LatitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityLatitude, 4);
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityAltitude)
+                                {
+                                    mUserAircraftData.AltitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityAltitude, 4);
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityLongitude)
+                                {
+                                    mUserAircraftData.LongitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityLongitude, 4);
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityPitch)
+                                {
+                                    mUserAircraftData.PitchVelocity = wrapper.XplaneData.UserAircraftData.VelocityPitch;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityHeading)
+                                {
+                                    mUserAircraftData.HeadingVelocity = wrapper.XplaneData.UserAircraftData.VelocityHeading;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasVelocityBank)
+                                {
+                                    mUserAircraftData.BankVelocity = wrapper.XplaneData.UserAircraftData.VelocityBank;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasLatitude)
+                                {
+                                    mUserAircraftData.Latitude = wrapper.XplaneData.UserAircraftData.Latitude;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasLongitude)
+                                {
+                                    mUserAircraftData.Longitude = wrapper.XplaneData.UserAircraftData.Longitude;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasAltitudeMsl)
+                                {
+                                    mUserAircraftData.AltitudeMslM = wrapper.XplaneData.UserAircraftData.AltitudeMsl;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasAltitudeAgl)
+                                {
+                                    mUserAircraftData.AltitudeAglM = wrapper.XplaneData.UserAircraftData.AltitudeAgl;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasYaw)
+                                {
+                                    mUserAircraftData.Heading = wrapper.XplaneData.UserAircraftData.Yaw;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasPitch)
+                                {
+                                    mUserAircraftData.Pitch = wrapper.XplaneData.UserAircraftData.Pitch;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasRoll)
+                                {
+                                    mUserAircraftData.Bank = wrapper.XplaneData.UserAircraftData.Roll;
+                                }
+                                if (wrapper.XplaneData.UserAircraftData.HasGroundSpeed)
+                                {
+                                    mUserAircraftData.SpeedGround = wrapper.XplaneData.UserAircraftData.GroundSpeed;
+                                }
+                                UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
                             }
 
-                            // com1
-                            if (wrapper.RadioStack.HasCom1Freq)
+                            // user aircraft config
+                            if (wrapper.XplaneData.UserAircraftConfig != null)
                             {
-                                mRadioStackState.Com1ActiveFrequency = ((uint)wrapper.RadioStack.Com1Freq * 1000).Normalize25KhzFrequency();
+                                if (wrapper.XplaneData.UserAircraftConfig.HasBeaconLightsOn)
+                                {
+                                    mUserAircraftConfigData.BeaconOn = wrapper.XplaneData.UserAircraftConfig.BeaconLightsOn;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasLandingLightsOn)
+                                {
+                                    mUserAircraftConfigData.LandingLightsOn = wrapper.XplaneData.UserAircraftConfig.LandingLightsOn;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasNavLightsOn)
+                                {
+                                    mUserAircraftConfigData.NavLightOn = wrapper.XplaneData.UserAircraftConfig.NavLightsOn;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasStrobeLightsOn)
+                                {
+                                    mUserAircraftConfigData.StrobesOn = wrapper.XplaneData.UserAircraftConfig.StrobeLightsOn;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasTaxiLightsOn)
+                                {
+                                    mUserAircraftConfigData.TaxiLightsOn = wrapper.XplaneData.UserAircraftConfig.TaxiLightsOn;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasFlaps)
+                                {
+                                    mUserAircraftConfigData.FlapsRatio = wrapper.XplaneData.UserAircraftConfig.Flaps;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasSpeedBrakes)
+                                {
+                                    mUserAircraftConfigData.SpoilersRatio = wrapper.XplaneData.UserAircraftConfig.SpeedBrakes;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasGearDown)
+                                {
+                                    mUserAircraftConfigData.GearDown = wrapper.XplaneData.UserAircraftConfig.GearDown;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasOnGround)
+                                {
+                                    mUserAircraftConfigData.OnGround = wrapper.XplaneData.UserAircraftConfig.OnGround;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasEngineCount)
+                                {
+                                    mUserAircraftConfigData.EngineCount = wrapper.XplaneData.UserAircraftConfig.EngineCount;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasEngine1Running)
+                                {
+                                    mUserAircraftConfigData.Engine1Running = wrapper.XplaneData.UserAircraftConfig.Engine1Running;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasEngine2Running)
+                                {
+                                    mUserAircraftConfigData.Engine2Running = wrapper.XplaneData.UserAircraftConfig.Engine2Running;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasEngine3Running)
+                                {
+                                    mUserAircraftConfigData.Engine3Running = wrapper.XplaneData.UserAircraftConfig.Engine3Running;
+                                }
+                                if (wrapper.XplaneData.UserAircraftConfig.HasEngine4Running)
+                                {
+                                    mUserAircraftConfigData.Engine4Running = wrapper.XplaneData.UserAircraftConfig.Engine4Running;
+                                }
+                                UserAircraftConfigDataUpdated?.Invoke(this, new UserAircraftConfigDataUpdatedEventArgs(mUserAircraftConfigData));
                             }
-                            if (wrapper.RadioStack.HasCom1AudioSelection)
-                            {
-                                mRadioStackState.Com1ReceiveEnabled = wrapper.RadioStack.Com1AudioSelection;
-                            }
-                            if (wrapper.RadioStack.HasCom1Volume)
-                            {
-                                float val = wrapper.RadioStack.Com1Volume;
-                                if (val > 1.0f) val = 1.0f;
-                                if (val < 0.0f) val = 0.0f;
-                                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(1, val));
-                            }
-
-                            // com2
-                            if (wrapper.RadioStack.HasCom2Freq)
-                            {
-                                mRadioStackState.Com2ActiveFrequency = ((uint)wrapper.RadioStack.Com2Freq * 1000).Normalize25KhzFrequency();
-                            }
-                            if (wrapper.RadioStack.HasCom2AudioSelection)
-                            {
-                                mRadioStackState.Com2ReceiveEnabled = wrapper.RadioStack.Com2AudioSelection;
-                            }
-                            if (wrapper.RadioStack.HasCom2Volume)
-                            {
-                                float val = wrapper.RadioStack.Com2Volume;
-                                if (val > 1.0f) val = 1.0f;
-                                if (val < 0.0f) val = 0.0f;
-                                RadioVolumeChanged?.Invoke(this, new RadioVolumeChangedEventArgs(2, val));
-                            }
-
-                            if (wrapper.RadioStack.HasAvionicsPowerOn)
-                            {
-                                mRadioStackState.AvionicsPowerOn = wrapper.RadioStack.AvionicsPowerOn;
-                            }
-
-                            if (wrapper.RadioStack.HasTransponderCode)
-                            {
-                                mRadioStackState.TransponderCode = (ushort)wrapper.RadioStack.TransponderCode;
-                            }
-                            if (wrapper.RadioStack.HasTransponderMode)
-                            {
-                                mRadioStackState.SquawkingModeC = wrapper.RadioStack.TransponderMode >= 2;
-                            }
-                            if (wrapper.RadioStack.HasTransponderIdent)
-                            {
-                                mRadioStackState.SquawkingIdent = wrapper.RadioStack.TransponderIdent;
-                            }
-
-                            RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
-                            UpdateTunedFrequencies();
-                        }
-                        break;
-                    case Wrapper.MsgOneofCase.UserAircraftData:
-                        {
-                            if (wrapper.UserAircraftData.HasVelocityLatitude)
-                            {
-                                mUserAircraftData.LatitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityLatitude, 4);
-                            }
-                            if (wrapper.UserAircraftData.HasVelocityAltitude)
-                            {
-                                mUserAircraftData.AltitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityAltitude, 4);
-                            }
-                            if (wrapper.UserAircraftData.HasVelocityLongitude)
-                            {
-                                mUserAircraftData.LongitudeVelocity = Math.Round(wrapper.UserAircraftData.VelocityLongitude, 4);
-                            }
-
-                            if (wrapper.UserAircraftData.HasVelocityPitch)
-                            {
-                                mUserAircraftData.PitchVelocity = wrapper.UserAircraftData.VelocityPitch;
-                            }
-                            if (wrapper.UserAircraftData.HasVelocityHeading)
-                            {
-                                mUserAircraftData.HeadingVelocity = wrapper.UserAircraftData.VelocityHeading;
-                            }
-                            if (wrapper.UserAircraftData.HasVelocityBank)
-                            {
-                                mUserAircraftData.BankVelocity = wrapper.UserAircraftData.VelocityBank;
-                            }
-
-                            if (wrapper.UserAircraftData.HasLatitude)
-                            {
-                                mUserAircraftData.Latitude = wrapper.UserAircraftData.Latitude;
-                            }
-                            if (wrapper.UserAircraftData.HasLongitude)
-                            {
-                                mUserAircraftData.Longitude = wrapper.UserAircraftData.Longitude;
-                            }
-                            if (wrapper.UserAircraftData.HasAltitudeMsl)
-                            {
-                                mUserAircraftData.AltitudeMslM = wrapper.UserAircraftData.AltitudeMsl;
-                            }
-                            if (wrapper.UserAircraftData.HasAltitudeAgl)
-                            {
-                                mUserAircraftData.AltitudeAglM = wrapper.UserAircraftData.AltitudeAgl;
-                            }
-                            if (wrapper.UserAircraftData.HasYaw)
-                            {
-                                mUserAircraftData.Heading = wrapper.UserAircraftData.Yaw;
-                            }
-                            if (wrapper.UserAircraftData.HasPitch)
-                            {
-                                mUserAircraftData.Pitch = wrapper.UserAircraftData.Pitch;
-                            }
-                            if (wrapper.UserAircraftData.HasRoll)
-                            {
-                                mUserAircraftData.Bank = wrapper.UserAircraftData.Roll;
-                            }
-                            if (wrapper.UserAircraftData.HasGroundSpeed)
-                            {
-                                mUserAircraftData.SpeedGround = wrapper.UserAircraftData.GroundSpeed;
-                            }
-
-                            UserAircraftDataUpdated?.Invoke(this, new UserAircraftDataUpdatedEventArgs(mUserAircraftData));
-                        }
-                        break;
-                    case Wrapper.MsgOneofCase.UserAircraftConfig:
-                        {
-                            // lights
-                            if (wrapper.UserAircraftConfig.HasBeaconLightsOn)
-                            {
-                                mUserAircraftConfigData.BeaconOn = wrapper.UserAircraftConfig.BeaconLightsOn;
-                            }
-                            if (wrapper.UserAircraftConfig.HasLandingLightsOn)
-                            {
-                                mUserAircraftConfigData.LandingLightsOn = wrapper.UserAircraftConfig.LandingLightsOn;
-                            }
-                            if (wrapper.UserAircraftConfig.HasNavLightsOn)
-                            {
-                                mUserAircraftConfigData.NavLightOn = wrapper.UserAircraftConfig.NavLightsOn;
-                            }
-                            if (wrapper.UserAircraftConfig.HasStrobeLightsOn)
-                            {
-                                mUserAircraftConfigData.StrobesOn = wrapper.UserAircraftConfig.StrobeLightsOn;
-                            }
-                            if (wrapper.UserAircraftConfig.HasTaxiLightsOn)
-                            {
-                                mUserAircraftConfigData.TaxiLightsOn = wrapper.UserAircraftConfig.TaxiLightsOn;
-                            }
-
-                            // controls
-                            if (wrapper.UserAircraftConfig.HasFlaps)
-                            {
-                                mUserAircraftConfigData.FlapsRatio = wrapper.UserAircraftConfig.Flaps;
-                            }
-                            if (wrapper.UserAircraftConfig.HasSpeedBrakes)
-                            {
-                                mUserAircraftConfigData.SpoilersRatio = wrapper.UserAircraftConfig.SpeedBrakes;
-                            }
-                            if (wrapper.UserAircraftConfig.HasGearDown)
-                            {
-                                mUserAircraftConfigData.GearDown = wrapper.UserAircraftConfig.GearDown;
-                            }
-                            if (wrapper.UserAircraftConfig.HasOnGround)
-                            {
-                                mUserAircraftConfigData.OnGround = wrapper.UserAircraftConfig.OnGround;
-                            }
-
-                            if (wrapper.UserAircraftConfig.HasEngineCount)
-                            {
-                                mUserAircraftConfigData.EngineCount = wrapper.UserAircraftConfig.EngineCount;
-                            }
-                            if (wrapper.UserAircraftConfig.HasEngine1Running)
-                            {
-                                mUserAircraftConfigData.Engine1Running = wrapper.UserAircraftConfig.Engine1Running;
-                            }
-                            if (wrapper.UserAircraftConfig.HasEngine2Running)
-                            {
-                                mUserAircraftConfigData.Engine2Running = wrapper.UserAircraftConfig.Engine2Running;
-                            }
-                            if (wrapper.UserAircraftConfig.HasEngine3Running)
-                            {
-                                mUserAircraftConfigData.Engine3Running = wrapper.UserAircraftConfig.Engine3Running;
-                            }
-                            if (wrapper.UserAircraftConfig.HasEngine4Running)
-                            {
-                                mUserAircraftConfigData.Engine4Running = wrapper.UserAircraftConfig.Engine4Running;
-                            }
-
-                            UserAircraftConfigDataUpdated?.Invoke(this, new UserAircraftConfigDataUpdatedEventArgs(mUserAircraftConfigData));
                         }
                         break;
                 }

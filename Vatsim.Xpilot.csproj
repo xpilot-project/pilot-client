@@ -39,6 +39,7 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
     <PathMap>$(AppOutputBase)=C:\xpilot-project\pilot-client\</PathMap>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -225,13 +226,10 @@
     <Compile Include="Protobuf\PositionUpdate.cs" />
     <Compile Include="Protobuf\PrivateMessageReceived.cs" />
     <Compile Include="Protobuf\PrivateMessageSent.cs" />
-    <Compile Include="Protobuf\RadioStack.cs" />
     <Compile Include="Protobuf\SetRadioStack.cs" />
     <Compile Include="Protobuf\SetTransponder.cs" />
-    <Compile Include="Protobuf\UserAircraftConfigData.cs" />
-    <Compile Include="Protobuf\UserAircraftData.cs" />
     <Compile Include="Protobuf\Wrapper.cs" />
-    <Compile Include="Protobuf\XplaneDatarefs.cs" />
+    <Compile Include="Protobuf\XplaneData.cs" />
     <Compile Include="SetupGuide.cs">
       <SubType>Form</SubType>
     </Compile>
