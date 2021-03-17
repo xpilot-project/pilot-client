@@ -252,8 +252,6 @@ namespace Vatsim.Xpilot.Simulator
             {
                 var wrapper = Wrapper.Parser.ParseFrom(bytes);
 
-                Console.WriteLine("<< " + wrapper.ToString());
-
                 if (wrapper.Timestamp != null)
                 {
                     mConnectionHeartbeats.Push(wrapper.Timestamp.ToDateTime());
@@ -554,7 +552,6 @@ namespace Vatsim.Xpilot.Simulator
         {
             if (msg.ToByteArray().Length > 0)
             {
-                Console.WriteLine(">> " + msg.ToString());
                 mMessageQueue.Enqueue(msg.ToByteArray());
             }
         }
