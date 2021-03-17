@@ -719,6 +719,10 @@ namespace Vatsim.Xpilot.Networking
         {
             mConnectInfo = connectInfo;
             mServerAddress = server;
+            if (!string.IsNullOrEmpty(Program.ServerAddress))
+            {
+                mServerAddress = Program.ServerAddress;
+            }
             NetworkConnectionInitiated?.Invoke(this, EventArgs.Empty);
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Connecting to network..."));
             mFsd.Connect(mServerAddress, 6809, !mConnectInfo.TowerViewMode);

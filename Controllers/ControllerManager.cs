@@ -25,6 +25,8 @@ using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
 using Vatsim.Xpilot.Networking;
+using Vatsim.Xpilot.Protobuf;
+using Vatsim.Xpilot.Simulator;
 
 namespace Vatsim.Xpilot.Controllers
 {
@@ -47,26 +49,56 @@ namespace Vatsim.Xpilot.Controllers
 
         private readonly Dictionary<string, Controller> mControllers = new Dictionary<string, Controller>();
         private readonly Timer mControllerUpdate;
+        private readonly Timer mControllerListRefreshTimer;
         private readonly INetworkManager mFsdManager;
+        private readonly IXplaneAdapter mXplaneAdapter;
 
-        public ControllerManager(IEventBroker broker, INetworkManager fsdManager) : base(broker)
+        public ControllerManager(IEventBroker broker, INetworkManager fsdManager, IXplaneAdapter xplaneAdapter) : base(broker)
         {
             mFsdManager = fsdManager;
+            mXplaneAdapter = xplaneAdapter;
 
             mControllerUpdate = new Timer() { Interval = 45000 };
             mControllerUpdate.Elapsed += ControllerUpdate_Elapsed;
+
+            mControllerListRefreshTimer = new Timer() { Interval = 15000 };
+            mControllerListRefreshTimer.Elapsed += ControllerListRefreshTimer_Elapsed;
+        }
+
+        private void ControllerListRefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            List<NearbyControllers.Types.Controller> list = new List<NearbyControllers.Types.Controller>();
+            foreach (var controller in mControllers)
+            {
+                Controller c = mControllers[controller.Key];
+                list.Add(new NearbyControllers.Types.Controller
+                {
+                    Callsign = c.Callsign,
+                    Frequency = (c.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000"),
+                    XplaneFrequency = (int)c.NormalizedFrequency + 100000,
+                    RealName = c.RealName
+                });
+            }
+            var msg = new Wrapper
+            {
+                NearbyControllers = new NearbyControllers()
+            };
+            msg.NearbyControllers.List.AddRange(list);
+            mXplaneAdapter.SendProtobufArray(msg);
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {
             mControllerUpdate.Start();
+            mControllerListRefreshTimer.Start();
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
             mControllerUpdate.Stop();
+            mControllerListRefreshTimer.Stop();
             DeleteAllControllers();
         }
 
@@ -192,6 +224,13 @@ namespace Vatsim.Xpilot.Controllers
                 }
             }
             mControllers.Clear();
+
+            var msg = new Wrapper
+            {
+                NearbyControllers = new NearbyControllers()
+            };
+            msg.NearbyControllers.List.AddRange(new List<NearbyControllers.Types.Controller>());
+            mXplaneAdapter.SendProtobufArray(msg);
         }
 
         private void ValidateController(Controller controller)

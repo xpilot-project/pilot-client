@@ -17,11 +17,13 @@
 */
 using System.Collections.Generic;
 using Vatsim.Xpilot.Aircrafts;
+using Vatsim.Xpilot.Protobuf;
 
 namespace Vatsim.Xpilot.Simulator
 {
     public interface IXplaneAdapter
     {
+        void SendProtobufArray(Wrapper msg);
         void SetTransponderCode(int code);
         void EnableTransponderModeC(bool enabled);
         void TriggerTransponderIdent();

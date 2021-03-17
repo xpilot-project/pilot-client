@@ -556,34 +556,13 @@ namespace Vatsim.Xpilot.Simulator
             SendProtobufArray(msg);
         }
 
-        private void SendProtobufArray(Wrapper msg)
+        public void SendProtobufArray(Wrapper msg)
         {
             if (msg.ToByteArray().Length > 0)
             {
                 mMessageQueue.Enqueue(msg.ToByteArray());
             }
         }
-
-        //private void NearbyControllersRefresh_Tick(object sender, EventArgs e)
-        //{
-        //    List<NearbyControllers.Types.Controller> temp = new List<NearbyControllers.Types.Controller>();
-        //    foreach (var controller in mControllers)
-        //    {
-        //        temp.Add(new NearbyControllers.Types.Controller
-        //        {
-        //            Callsign = controller.Callsign,
-        //            Frequency = (controller.NormalizedFrequency.FsdFrequencyToHertz() / 1000000.0).ToString("0.000"),
-        //            XplaneFrequency = (int)controller.NormalizedFrequency + 100000,
-        //            RealName = controller.RealName
-        //        });
-        //    }
-        //    var msg = new Wrapper
-        //    {
-        //        NearbyControllers = new Xpilot.NearbyControllers()
-        //    };
-        //    msg.NearbyControllers.List.AddRange(temp.OrderBy(a => a.Callsign));
-        //    SendProtobufArray(msg);
-        //}
 
         private void ConnectionTimer_Tick(object sender, EventArgs e)
         {

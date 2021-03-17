@@ -34,10 +34,11 @@ namespace Vatsim.Xpilot
 {
     static class Program
     {
-        static string AppPath;
+        public static string ServerAddress;
+        private static string AppPath;
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             if (!SingleInstance.Exists() || Debugger.IsAttached)
             {
@@ -52,6 +53,11 @@ namespace Vatsim.Xpilot
                 if (!Directory.Exists(Path.Combine(AppPath, "NetworkLogs")))
                 {
                     Directory.CreateDirectory(Path.Combine(AppPath, "NetworkLogs"));
+                }
+
+                if (args.Length > 0)
+                {
+                    ServerAddress = args[0];
                 }
 
                 IKernel kernel = new StandardKernel(new InjectionModules());
