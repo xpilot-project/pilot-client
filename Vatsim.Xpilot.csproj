@@ -226,8 +226,10 @@
     <Compile Include="Protobuf\PositionUpdate.cs" />
     <Compile Include="Protobuf\PrivateMessageReceived.cs" />
     <Compile Include="Protobuf\PrivateMessageSent.cs" />
+    <Compile Include="Protobuf\RequestStationInfo.cs" />
     <Compile Include="Protobuf\SetRadioStack.cs" />
     <Compile Include="Protobuf\SetTransponder.cs" />
+    <Compile Include="Protobuf\TriggerDisconnect.cs" />
     <Compile Include="Protobuf\Wrapper.cs" />
     <Compile Include="Protobuf\XplaneData.cs" />
     <Compile Include="SetupGuide.cs">

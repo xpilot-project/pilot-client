@@ -61,7 +61,7 @@ namespace Vatsim.Xpilot.Controllers
             mControllerUpdate = new Timer() { Interval = 45000 };
             mControllerUpdate.Elapsed += ControllerUpdate_Elapsed;
 
-            mControllerListRefreshTimer = new Timer() { Interval = 15000 };
+            mControllerListRefreshTimer = new Timer() { Interval = 5000 };
             mControllerListRefreshTimer.Elapsed += ControllerListRefreshTimer_Elapsed;
         }
 

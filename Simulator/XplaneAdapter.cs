@@ -32,6 +32,7 @@ using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Events.Arguments;
 using Vatsim.Xpilot.Protobuf;
+using Vatsim.Xpilot.Controllers;
 
 namespace Vatsim.Xpilot.Simulator
 {
@@ -77,6 +78,7 @@ namespace Vatsim.Xpilot.Simulator
         public event EventHandler<EventArgs> ReplayModeDetected;
 
         private readonly INetworkManager mNetworkManager;
+        private readonly IControllerAtisManager mControllerAtisManager;
         private readonly IAppConfig mConfig;
 
         private NetMQQueue<byte[]> mMessageQueue;
@@ -102,10 +104,11 @@ namespace Vatsim.Xpilot.Simulator
 
         public List<int> TunedFrequencies => mTunedFrequencies;
 
-        public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager networkManager) : base(broker)
+        public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager networkManager, IControllerAtisManager controllerAtisManager) : base(broker)
         {
             mConfig = config;
             mNetworkManager = networkManager;
+            mControllerAtisManager = controllerAtisManager;
 
             mVisualDealerSockets = null;
             mConnectionHeartbeats = new Stack<DateTime>();
@@ -317,6 +320,19 @@ namespace Vatsim.Xpilot.Simulator
                     case Wrapper.MsgOneofCase.PlaneAddedToSim:
                         {
                             AircraftAddedToSimulator?.Invoke(this, new GenericEventArgs<string>(wrapper.PlaneAddedToSim.Callsign));
+                        }
+                        break;
+                    case Wrapper.MsgOneofCase.TriggerDisconnect:
+                        if (wrapper.TriggerDisconnect.HasReason)
+                        {
+                            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, wrapper.TriggerDisconnect.Reason));
+                        }
+                        mNetworkManager.Disconnect();
+                        break;
+                    case Wrapper.MsgOneofCase.RequestStationInfo:
+                        if (wrapper.RequestStationInfo.HasCallsign)
+                        {
+                            mControllerAtisManager.RequestControllerAtis(wrapper.RequestStationInfo.Callsign);
                         }
                         break;
                     case Wrapper.MsgOneofCase.XplaneData:

@@ -51,34 +51,38 @@ namespace Vatsim.Xpilot.Protobuf {
             "cm90bxoXTmVhcmJ5Q29udHJvbGxlcnMucHJvdG8aHFByaXZhdGVNZXNzYWdl",
             "UmVjZWl2ZWQucHJvdG8aGFByaXZhdGVNZXNzYWdlU2VudC5wcm90bxoUU2V0",
             "VHJhbnNwb25kZXIucHJvdG8aGEZhc3RQb3NpdGlvblVwZGF0ZS5wcm90bxoV",
-            "UGxhbmVBZGRlZFRvU2ltLnByb3RvGhNTZXRSYWRpb1N0YWNrLnByb3RvIsoH",
-            "CgdXcmFwcGVyEi0KCXRpbWVzdGFtcBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1",
-            "Zi5UaW1lc3RhbXASKQoLeHBsYW5lX2RhdGEYAiABKAsyEi54cGlsb3QuWHBs",
-            "YW5lRGF0YUgAEjEKD3Bvc2l0aW9uX3VwZGF0ZRgDIAEoCzIWLnhwaWxvdC5Q",
-            "b3NpdGlvblVwZGF0ZUgAEjoKFGZhc3RfcG9zaXRpb25fdXBkYXRlGAQgASgL",
-            "MhoueHBpbG90LkZhc3RQb3NpdGlvblVwZGF0ZUgAEjEKD2FpcnBsYW5lX2Nv",
-            "bmZpZxgFIAEoCzIWLnhwaWxvdC5BaXJwbGFuZUNvbmZpZ0gAEiUKCWFkZF9w",
-            "bGFuZRgGIAEoCzIQLnhwaWxvdC5BZGRQbGFuZUgAEjUKEnBsYW5lX2FkZGVk",
-            "X3RvX3NpbRgHIAEoCzIXLnhwaWxvdC5QbGFuZUFkZGVkVG9TaW1IABI2ChJj",
-            "aGFuZ2VfcGxhbmVfbW9kZWwYCCABKAsyGC54cGlsb3QuQ2hhbmdlUGxhbmVN",
-            "b2RlbEgAEisKDGRlbGV0ZV9wbGFuZRgJIAEoCzITLnhwaWxvdC5EZWxldGVQ",
-            "bGFuZUgAEkIKGHByaXZhdGVfbWVzc2FnZV9yZWNlaXZlZBgKIAEoCzIeLnhw",
-            "aWxvdC5Qcml2YXRlTWVzc2FnZVJlY2VpdmVkSAASOgoUcHJpdmF0ZV9tZXNz",
-            "YWdlX3NlbnQYCyABKAsyGi54cGlsb3QuUHJpdmF0ZU1lc3NhZ2VTZW50SAAS",
-            "NQoRbmV0d29ya19jb25uZWN0ZWQYDCABKAsyGC54cGlsb3QuTmV0d29ya0Nv",
-            "bm5lY3RlZEgAEjsKFG5ldHdvcmtfZGlzY29ubmVjdGVkGA0gASgLMhsueHBp",
-            "bG90Lk5ldHdvcmtEaXNjb25uZWN0ZWRIABI3ChJuZWFyYnlfY29udHJvbGxl",
-            "cnMYDiABKAsyGS54cGlsb3QuTmVhcmJ5Q29udHJvbGxlcnNIABIxCg9zZXRf",
-            "dHJhbnNwb25kZXIYDyABKAsyFi54cGlsb3QuU2V0VHJhbnNwb25kZXJIABIv",
-            "Cg5zZXRfcmFkaW9zdGFjaxgQIAEoCzIVLnhwaWxvdC5TZXRSYWRpb1N0YWNr",
-            "SAASNwoScGx1Z2luX2luZm9ybWF0aW9uGBEgASgLMhkueHBpbG90LlBsdWdp",
-            "bkluZm9ybWF0aW9uSAASLwoOY3NsX3ZhbGlkYXRpb24YEiABKAsyFS54cGls",
-            "b3QuQ3NsVmFsaWRhdGlvbkgAQgUKA21zZ0IZqgIWVmF0c2ltLlhwaWxvdC5Q",
-            "cm90b2J1ZmIGcHJvdG8z"));
+            "UGxhbmVBZGRlZFRvU2ltLnByb3RvGhNTZXRSYWRpb1N0YWNrLnByb3RvGhhS",
+            "ZXF1ZXN0U3RhdGlvbkluZm8ucHJvdG8aF1RyaWdnZXJEaXNjb25uZWN0LnBy",
+            "b3RvIr8ICgdXcmFwcGVyEi0KCXRpbWVzdGFtcBgBIAEoCzIaLmdvb2dsZS5w",
+            "cm90b2J1Zi5UaW1lc3RhbXASKQoLeHBsYW5lX2RhdGEYAiABKAsyEi54cGls",
+            "b3QuWHBsYW5lRGF0YUgAEjEKD3Bvc2l0aW9uX3VwZGF0ZRgDIAEoCzIWLnhw",
+            "aWxvdC5Qb3NpdGlvblVwZGF0ZUgAEjoKFGZhc3RfcG9zaXRpb25fdXBkYXRl",
+            "GAQgASgLMhoueHBpbG90LkZhc3RQb3NpdGlvblVwZGF0ZUgAEjEKD2FpcnBs",
+            "YW5lX2NvbmZpZxgFIAEoCzIWLnhwaWxvdC5BaXJwbGFuZUNvbmZpZ0gAEiUK",
+            "CWFkZF9wbGFuZRgGIAEoCzIQLnhwaWxvdC5BZGRQbGFuZUgAEjUKEnBsYW5l",
+            "X2FkZGVkX3RvX3NpbRgHIAEoCzIXLnhwaWxvdC5QbGFuZUFkZGVkVG9TaW1I",
+            "ABI2ChJjaGFuZ2VfcGxhbmVfbW9kZWwYCCABKAsyGC54cGlsb3QuQ2hhbmdl",
+            "UGxhbmVNb2RlbEgAEisKDGRlbGV0ZV9wbGFuZRgJIAEoCzITLnhwaWxvdC5E",
+            "ZWxldGVQbGFuZUgAEkIKGHByaXZhdGVfbWVzc2FnZV9yZWNlaXZlZBgKIAEo",
+            "CzIeLnhwaWxvdC5Qcml2YXRlTWVzc2FnZVJlY2VpdmVkSAASOgoUcHJpdmF0",
+            "ZV9tZXNzYWdlX3NlbnQYCyABKAsyGi54cGlsb3QuUHJpdmF0ZU1lc3NhZ2VT",
+            "ZW50SAASNQoRbmV0d29ya19jb25uZWN0ZWQYDCABKAsyGC54cGlsb3QuTmV0",
+            "d29ya0Nvbm5lY3RlZEgAEjsKFG5ldHdvcmtfZGlzY29ubmVjdGVkGA0gASgL",
+            "MhsueHBpbG90Lk5ldHdvcmtEaXNjb25uZWN0ZWRIABI3ChJuZWFyYnlfY29u",
+            "dHJvbGxlcnMYDiABKAsyGS54cGlsb3QuTmVhcmJ5Q29udHJvbGxlcnNIABIx",
+            "Cg9zZXRfdHJhbnNwb25kZXIYDyABKAsyFi54cGlsb3QuU2V0VHJhbnNwb25k",
+            "ZXJIABIvCg5zZXRfcmFkaW9zdGFjaxgQIAEoCzIVLnhwaWxvdC5TZXRSYWRp",
+            "b1N0YWNrSAASNwoScGx1Z2luX2luZm9ybWF0aW9uGBEgASgLMhkueHBpbG90",
+            "LlBsdWdpbkluZm9ybWF0aW9uSAASLwoOY3NsX3ZhbGlkYXRpb24YEiABKAsy",
+            "FS54cGlsb3QuQ3NsVmFsaWRhdGlvbkgAEjoKFHJlcXVlc3Rfc3RhdGlvbl9p",
+            "bmZvGBMgASgLMhoueHBpbG90LlJlcXVlc3RTdGF0aW9uSW5mb0gAEjcKEnRy",
+            "aWdnZXJfZGlzY29ubmVjdBgUIAEoCzIZLnhwaWxvdC5UcmlnZ2VyRGlzY29u",
+            "bmVjdEgAQgUKA21zZ0IZqgIWVmF0c2ltLlhwaWxvdC5Qcm90b2J1ZmIGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.XplaneDataReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PluginInformationReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.CslValidationReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.AddPlaneReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.ChangePlaneModelReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PositionUpdateReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.DeletePlaneReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NetworkConnectedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NetworkDisconnectedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.AirplaneConfigReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NearbyControllersReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PrivateMessageReceivedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PrivateMessageSentReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.SetTransponderReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.FastPositionUpdateReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PlaneAddedToSimReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.SetRadioStackReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.XplaneDataReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PluginInformationReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.CslValidationReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.AddPlaneReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.ChangePlaneModelReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PositionUpdateReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.DeletePlaneReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NetworkConnectedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NetworkDisconnectedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.AirplaneConfigReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.NearbyControllersReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PrivateMessageReceivedReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PrivateMessageSentReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.SetTransponderReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.FastPositionUpdateReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.PlaneAddedToSimReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.SetRadioStackReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.RequestStationInfoReflection.Descriptor, global::Vatsim.Xpilot.Protobuf.TriggerDisconnectReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.Wrapper), global::Vatsim.Xpilot.Protobuf.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PositionUpdate", "FastPositionUpdate", "AirplaneConfig", "AddPlane", "PlaneAddedToSim", "ChangePlaneModel", "DeletePlane", "PrivateMessageReceived", "PrivateMessageSent", "NetworkConnected", "NetworkDisconnected", "NearbyControllers", "SetTransponder", "SetRadiostack", "PluginInformation", "CslValidation" }, new[]{ "Msg" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Vatsim.Xpilot.Protobuf.Wrapper), global::Vatsim.Xpilot.Protobuf.Wrapper.Parser, new[]{ "Timestamp", "XplaneData", "PositionUpdate", "FastPositionUpdate", "AirplaneConfig", "AddPlane", "PlaneAddedToSim", "ChangePlaneModel", "DeletePlane", "PrivateMessageReceived", "PrivateMessageSent", "NetworkConnected", "NetworkDisconnected", "NearbyControllers", "SetTransponder", "SetRadiostack", "PluginInformation", "CslValidation", "RequestStationInfo", "TriggerDisconnect" }, new[]{ "Msg" }, null, null, null)
           }));
     }
     #endregion
@@ -166,6 +170,12 @@ namespace Vatsim.Xpilot.Protobuf {
           break;
         case MsgOneofCase.CslValidation:
           CslValidation = other.CslValidation.Clone();
+          break;
+        case MsgOneofCase.RequestStationInfo:
+          RequestStationInfo = other.RequestStationInfo.Clone();
+          break;
+        case MsgOneofCase.TriggerDisconnect:
+          TriggerDisconnect = other.TriggerDisconnect.Clone();
           break;
       }
 
@@ -375,6 +385,28 @@ namespace Vatsim.Xpilot.Protobuf {
       }
     }
 
+    /// <summary>Field number for the "request_station_info" field.</summary>
+    public const int RequestStationInfoFieldNumber = 19;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Vatsim.Xpilot.Protobuf.RequestStationInfo RequestStationInfo {
+      get { return msgCase_ == MsgOneofCase.RequestStationInfo ? (global::Vatsim.Xpilot.Protobuf.RequestStationInfo) msg_ : null; }
+      set {
+        msg_ = value;
+        msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.RequestStationInfo;
+      }
+    }
+
+    /// <summary>Field number for the "trigger_disconnect" field.</summary>
+    public const int TriggerDisconnectFieldNumber = 20;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Vatsim.Xpilot.Protobuf.TriggerDisconnect TriggerDisconnect {
+      get { return msgCase_ == MsgOneofCase.TriggerDisconnect ? (global::Vatsim.Xpilot.Protobuf.TriggerDisconnect) msg_ : null; }
+      set {
+        msg_ = value;
+        msgCase_ = value == null ? MsgOneofCase.None : MsgOneofCase.TriggerDisconnect;
+      }
+    }
+
     private object msg_;
     /// <summary>Enum of possible cases for the "msg" oneof.</summary>
     public enum MsgOneofCase {
@@ -396,6 +428,8 @@ namespace Vatsim.Xpilot.Protobuf {
       SetRadiostack = 16,
       PluginInformation = 17,
       CslValidation = 18,
+      RequestStationInfo = 19,
+      TriggerDisconnect = 20,
     }
     private MsgOneofCase msgCase_ = MsgOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -440,6 +474,8 @@ namespace Vatsim.Xpilot.Protobuf {
       if (!object.Equals(SetRadiostack, other.SetRadiostack)) return false;
       if (!object.Equals(PluginInformation, other.PluginInformation)) return false;
       if (!object.Equals(CslValidation, other.CslValidation)) return false;
+      if (!object.Equals(RequestStationInfo, other.RequestStationInfo)) return false;
+      if (!object.Equals(TriggerDisconnect, other.TriggerDisconnect)) return false;
       if (MsgCase != other.MsgCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -465,6 +501,8 @@ namespace Vatsim.Xpilot.Protobuf {
       if (msgCase_ == MsgOneofCase.SetRadiostack) hash ^= SetRadiostack.GetHashCode();
       if (msgCase_ == MsgOneofCase.PluginInformation) hash ^= PluginInformation.GetHashCode();
       if (msgCase_ == MsgOneofCase.CslValidation) hash ^= CslValidation.GetHashCode();
+      if (msgCase_ == MsgOneofCase.RequestStationInfo) hash ^= RequestStationInfo.GetHashCode();
+      if (msgCase_ == MsgOneofCase.TriggerDisconnect) hash ^= TriggerDisconnect.GetHashCode();
       hash ^= (int) msgCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -554,6 +592,14 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(146, 1);
         output.WriteMessage(CslValidation);
       }
+      if (msgCase_ == MsgOneofCase.RequestStationInfo) {
+        output.WriteRawTag(154, 1);
+        output.WriteMessage(RequestStationInfo);
+      }
+      if (msgCase_ == MsgOneofCase.TriggerDisconnect) {
+        output.WriteRawTag(162, 1);
+        output.WriteMessage(TriggerDisconnect);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -635,6 +681,14 @@ namespace Vatsim.Xpilot.Protobuf {
         output.WriteRawTag(146, 1);
         output.WriteMessage(CslValidation);
       }
+      if (msgCase_ == MsgOneofCase.RequestStationInfo) {
+        output.WriteRawTag(154, 1);
+        output.WriteMessage(RequestStationInfo);
+      }
+      if (msgCase_ == MsgOneofCase.TriggerDisconnect) {
+        output.WriteRawTag(162, 1);
+        output.WriteMessage(TriggerDisconnect);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -697,6 +751,12 @@ namespace Vatsim.Xpilot.Protobuf {
       }
       if (msgCase_ == MsgOneofCase.CslValidation) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(CslValidation);
+      }
+      if (msgCase_ == MsgOneofCase.RequestStationInfo) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(RequestStationInfo);
+      }
+      if (msgCase_ == MsgOneofCase.TriggerDisconnect) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(TriggerDisconnect);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -817,6 +877,18 @@ namespace Vatsim.Xpilot.Protobuf {
             CslValidation = new global::Vatsim.Xpilot.Protobuf.CslValidation();
           }
           CslValidation.MergeFrom(other.CslValidation);
+          break;
+        case MsgOneofCase.RequestStationInfo:
+          if (RequestStationInfo == null) {
+            RequestStationInfo = new global::Vatsim.Xpilot.Protobuf.RequestStationInfo();
+          }
+          RequestStationInfo.MergeFrom(other.RequestStationInfo);
+          break;
+        case MsgOneofCase.TriggerDisconnect:
+          if (TriggerDisconnect == null) {
+            TriggerDisconnect = new global::Vatsim.Xpilot.Protobuf.TriggerDisconnect();
+          }
+          TriggerDisconnect.MergeFrom(other.TriggerDisconnect);
           break;
       }
 
@@ -994,6 +1066,24 @@ namespace Vatsim.Xpilot.Protobuf {
             CslValidation = subBuilder;
             break;
           }
+          case 154: {
+            global::Vatsim.Xpilot.Protobuf.RequestStationInfo subBuilder = new global::Vatsim.Xpilot.Protobuf.RequestStationInfo();
+            if (msgCase_ == MsgOneofCase.RequestStationInfo) {
+              subBuilder.MergeFrom(RequestStationInfo);
+            }
+            input.ReadMessage(subBuilder);
+            RequestStationInfo = subBuilder;
+            break;
+          }
+          case 162: {
+            global::Vatsim.Xpilot.Protobuf.TriggerDisconnect subBuilder = new global::Vatsim.Xpilot.Protobuf.TriggerDisconnect();
+            if (msgCase_ == MsgOneofCase.TriggerDisconnect) {
+              subBuilder.MergeFrom(TriggerDisconnect);
+            }
+            input.ReadMessage(subBuilder);
+            TriggerDisconnect = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -1166,6 +1256,24 @@ namespace Vatsim.Xpilot.Protobuf {
             }
             input.ReadMessage(subBuilder);
             CslValidation = subBuilder;
+            break;
+          }
+          case 154: {
+            global::Vatsim.Xpilot.Protobuf.RequestStationInfo subBuilder = new global::Vatsim.Xpilot.Protobuf.RequestStationInfo();
+            if (msgCase_ == MsgOneofCase.RequestStationInfo) {
+              subBuilder.MergeFrom(RequestStationInfo);
+            }
+            input.ReadMessage(subBuilder);
+            RequestStationInfo = subBuilder;
+            break;
+          }
+          case 162: {
+            global::Vatsim.Xpilot.Protobuf.TriggerDisconnect subBuilder = new global::Vatsim.Xpilot.Protobuf.TriggerDisconnect();
+            if (msgCase_ == MsgOneofCase.TriggerDisconnect) {
+              subBuilder.MergeFrom(TriggerDisconnect);
+            }
+            input.ReadMessage(subBuilder);
+            TriggerDisconnect = subBuilder;
             break;
           }
         }
