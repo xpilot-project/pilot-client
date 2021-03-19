@@ -313,7 +313,8 @@ namespace Vatsim.Xpilot.Networking
                 SendAddPilot();
             }
             RequestPublicIP();
-            SendPositionPacket();
+            SendSlowPositionPacket();
+            SendInitialFastPositionPacket();
             mSlowPositionTimer.Interval = mConnectInfo.ObserverMode ? 15000 : 5000;
             mSlowPositionTimer.Start();
             mFastPositionTimer.Start();
@@ -422,7 +423,7 @@ namespace Vatsim.Xpilot.Networking
         private void Fsd_FastPilotPositionReceived(object sender, DataReceivedEventArgs<PDUFastPilotPosition> e)
         {
             AircraftVisualState visualState = new AircraftVisualState(new WorldPoint(e.PDU.Lon, e.PDU.Lat), e.PDU.Altitude, e.PDU.Pitch, e.PDU.Heading, e.PDU.Bank);
-            VelocityVector positionalVelocityVector = new VelocityVector(e.PDU.VelocityX, e.PDU.VelocityY, e.PDU.VelocityZ);
+            VelocityVector positionalVelocityVector = new VelocityVector(e.PDU.VelocityLongitude, e.PDU.VelocityAltitude, e.PDU.VelocityLatitude);
             VelocityVector rotationalVeloctyVector = new VelocityVector(e.PDU.VelocityPitch, e.PDU.VelocityHeading, e.PDU.VelocityBank);
             FastPositionUpdateReceived(this, new FastPositionUpdateEventArgs(e.PDU.From, visualState, positionalVelocityVector, rotationalVeloctyVector));
         }
@@ -590,10 +591,10 @@ namespace Vatsim.Xpilot.Networking
 
         private void SlowPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            SendPositionPacket();
+            SendSlowPositionPacket();
         }
 
-        private void SendPositionPacket()
+        private void SendSlowPositionPacket()
         {
             if (mConnectInfo.ObserverMode)
             {
@@ -601,13 +602,18 @@ namespace Vatsim.Xpilot.Networking
             }
             else
             {
-                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, mRadioStackState.SquawkingModeC, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMslM * 3.28084), Convert.ToInt32(mUserAircraftData.AltitudeAglM), Convert.ToInt32(mUserAircraftData.SpeedGround), Convert.ToInt32(mUserAircraftData.Pitch), Convert.ToInt32(mUserAircraftData.Bank), Convert.ToInt32(mUserAircraftData.Heading)));
+                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, mRadioStackState.SquawkingModeC, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMslM * 3.28084), Convert.ToInt32(mUserAircraftData.AltitudeAglM), Convert.ToInt32(mUserAircraftData.SpeedGround), mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank));
             }
         }
 
         private void SendFastPositionPacket()
         {
-            mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM * 3.28084, mUserAircraftData.Pitch, mUserAircraftData.Bank, mUserAircraftData.Heading, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.HeadingVelocity, mUserAircraftData.BankVelocity));
+            mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM * 3.28084, mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.HeadingVelocity, mUserAircraftData.BankVelocity));
+        }
+
+        private void SendInitialFastPositionPacket()
+        {
+            mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM * 3.28084, mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
         }
 
         public void SendRealNameRequest(string callsign)

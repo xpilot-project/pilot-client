@@ -722,45 +722,19 @@ namespace Vatsim.Xpilot.Simulator
             {
                 Callsign = aircraft.Callsign,
                 IsFullConfig = aircraft.Configuration.IsFullData.Value,
-                EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning
+                EnginesOn = aircraft.Configuration.Engines.IsAnyEngineRunning,
+                OnGround = aircraft.Configuration.OnGround.Value,
+                Flaps = (float)(aircraft.Configuration.FlapsPercent.Value / 100.0f),
+                GearDown = aircraft.Configuration.GearDown.Value,
+                Lights = new AirplaneConfig.Types.AirplaneConfigLights
+                {
+                    BeaconLightsOn = aircraft.Configuration.Lights.BeaconOn.Value,
+                    LandingLightsOn = aircraft.Configuration.Lights.LandingOn.Value,
+                    NavLightsOn = aircraft.Configuration.Lights.NavOn.Value,
+                    StrobeLightsOn = aircraft.Configuration.Lights.StrobesOn.Value,
+                    TaxiLightsOn = aircraft.Configuration.Lights.TaxiOn.Value
+                }
             };
-            if (aircraft.Configuration.FlapsPercent.HasValue)
-            {
-                cfg.Flaps = (float)(aircraft.Configuration.FlapsPercent.Value / 100.0f);
-            }
-            if (aircraft.Configuration.OnGround.HasValue)
-            {
-                cfg.OnGround = aircraft.Configuration.OnGround.Value;
-            }
-            if (aircraft.Configuration.GearDown.HasValue)
-            {
-                cfg.GearDown = aircraft.Configuration.GearDown.Value;
-            }
-            if (aircraft.Configuration.Lights != null)
-            {
-                cfg.Lights = new AirplaneConfig.Types.AirplaneConfigLights();
-                if (aircraft.Configuration.Lights.BeaconOn.HasValue)
-                {
-                    cfg.Lights.BeaconLightsOn = aircraft.Configuration.Lights.BeaconOn.Value;
-                }
-                if (aircraft.Configuration.Lights.NavOn.HasValue)
-                {
-                    cfg.Lights.NavLightsOn = aircraft.Configuration.Lights.NavOn.Value;
-                }
-                if (aircraft.Configuration.Lights.LandingOn.HasValue)
-                {
-                    cfg.Lights.LandingLightsOn = aircraft.Configuration.Lights.LandingOn.Value;
-                }
-                if (aircraft.Configuration.Lights.TaxiOn.HasValue)
-                {
-                    cfg.Lights.TaxiLightsOn = aircraft.Configuration.Lights.TaxiOn.Value;
-                }
-                if (aircraft.Configuration.Lights.StrobesOn.HasValue)
-                {
-                    cfg.Lights.StrobeLightsOn = aircraft.Configuration.Lights.StrobesOn.Value;
-                }
-            }
-
             var msg = new Wrapper
             {
                 AirplaneConfig = cfg
