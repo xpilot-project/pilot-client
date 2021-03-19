@@ -314,7 +314,7 @@ namespace Vatsim.Xpilot.Networking
             }
             RequestPublicIP();
             SendSlowPositionPacket();
-            SendInitialFastPositionPacket();
+            SendEmptyFastPositionPacket();
             mSlowPositionTimer.Interval = mConnectInfo.ObserverMode ? 15000 : 5000;
             mSlowPositionTimer.Start();
             mFastPositionTimer.Start();
@@ -602,7 +602,7 @@ namespace Vatsim.Xpilot.Networking
             }
             else
             {
-                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, mRadioStackState.SquawkingModeC, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMslM * 3.28084), Convert.ToInt32(mUserAircraftData.AltitudeAglM), Convert.ToInt32(mUserAircraftData.SpeedGround), mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank));
+                mFsd.SendPDU(new PDUPilotPosition(mConnectInfo.Callsign, mRadioStackState.TransponderCode, mRadioStackState.SquawkingModeC, mRadioStackState.SquawkingIdent, NetworkRating.OBS, mUserAircraftData.Latitude, mUserAircraftData.Longitude, Convert.ToInt32(mUserAircraftData.AltitudeMslM * 3.28084), Convert.ToInt32(mUserAircraftData.AltitudeAglM * 3.28084), Convert.ToInt32(mUserAircraftData.SpeedGround), mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank));
             }
         }
 
@@ -611,7 +611,7 @@ namespace Vatsim.Xpilot.Networking
             mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM * 3.28084, mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank, mUserAircraftData.LongitudeVelocity, mUserAircraftData.AltitudeVelocity, mUserAircraftData.LatitudeVelocity, mUserAircraftData.PitchVelocity, mUserAircraftData.HeadingVelocity, mUserAircraftData.BankVelocity));
         }
 
-        private void SendInitialFastPositionPacket()
+        public void SendEmptyFastPositionPacket()
         {
             mFsd.SendPDU(new PDUFastPilotPosition(mConnectInfo.Callsign, mUserAircraftData.Latitude, mUserAircraftData.Longitude, mUserAircraftData.AltitudeMslM * 3.28084, mUserAircraftData.Pitch, mUserAircraftData.Heading, mUserAircraftData.Bank, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
         }
@@ -819,12 +819,15 @@ namespace Vatsim.Xpilot.Networking
 
         public List<NetworkServerInfo> ServerList => mServerList;
 
-        private const double POSITIONAL_VELOCITY_ZERO_TOLERANCE = 0.0009;
+        private const double POSITIONAL_VELOCITY_ZERO_TOLERANCE = 0.0005;
         private bool PositionalVelocityIsZero(UserAircraftData data)
         {
             return (Math.Abs(data.LongitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
                 && (Math.Abs(data.AltitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.LatitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE);
+                && (Math.Abs(data.LatitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
+                && (Math.Abs(data.PitchVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
+                && (Math.Abs(data.HeadingVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
+                && (Math.Abs(data.BankVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE);
         }
     }
 }

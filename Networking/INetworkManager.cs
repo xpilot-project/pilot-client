@@ -42,6 +42,7 @@ namespace Vatsim.Xpilot.Networking
         void Connect(ConnectInfo connectInfo, string server);
         void Disconnect();
         void SetPluginHash(string hash);
+        void SendEmptyFastPositionPacket();
         bool IsConnected { get; }
         string OurCallsign { get; }
         List<NetworkServerInfo> ServerList { get; }

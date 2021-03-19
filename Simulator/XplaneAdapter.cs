@@ -99,6 +99,7 @@ namespace Vatsim.Xpilot.Simulator
         private bool mValidPluginVersion = false;
         private bool mInvalidPluginMessageShown = false;
         private bool mCslConfigurationErrorShown = false;
+        private bool mIsPaused = false;
 
         public bool ValidSimConnection => mValidCsl && mValidPluginVersion;
 
@@ -404,27 +405,27 @@ namespace Vatsim.Xpilot.Simulator
                             {
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityLatitude)
                                 {
-                                    mUserAircraftData.LatitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityLatitude, 4);
+                                    mUserAircraftData.LatitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLatitude.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityAltitude)
                                 {
-                                    mUserAircraftData.AltitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityAltitude, 4);
+                                    mUserAircraftData.AltitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityAltitude.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityLongitude)
                                 {
-                                    mUserAircraftData.LongitudeVelocity = Math.Round(wrapper.XplaneData.UserAircraftData.VelocityLongitude, 4);
+                                    mUserAircraftData.LongitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLongitude.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityPitch)
                                 {
-                                    mUserAircraftData.PitchVelocity = wrapper.XplaneData.UserAircraftData.VelocityPitch;
+                                    mUserAircraftData.PitchVelocity = wrapper.XplaneData.UserAircraftData.VelocityPitch.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityHeading)
                                 {
-                                    mUserAircraftData.HeadingVelocity = wrapper.XplaneData.UserAircraftData.VelocityHeading;
+                                    mUserAircraftData.HeadingVelocity = wrapper.XplaneData.UserAircraftData.VelocityHeading.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityBank)
                                 {
-                                    mUserAircraftData.BankVelocity = wrapper.XplaneData.UserAircraftData.VelocityBank;
+                                    mUserAircraftData.BankVelocity = wrapper.XplaneData.UserAircraftData.VelocityBank.RoundVelocity();
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasLatitude)
                                 {
@@ -526,6 +527,15 @@ namespace Vatsim.Xpilot.Simulator
                             if (wrapper.XplaneData.HasReplayMode && wrapper.XplaneData.ReplayMode)
                             {
                                 ReplayModeDetected?.Invoke(this, EventArgs.Empty);
+                            }
+
+                            if (wrapper.XplaneData.HasSimPaused)
+                            {
+                                if (wrapper.XplaneData.SimPaused && wrapper.XplaneData.SimPaused != mIsPaused)
+                                {
+                                    mNetworkManager.SendEmptyFastPositionPacket();
+                                }
+                                mIsPaused = wrapper.XplaneData.SimPaused;
                             }
                         }
                         break;
