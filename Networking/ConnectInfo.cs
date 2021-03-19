@@ -24,6 +24,13 @@ namespace Vatsim.Xpilot.Networking
         public string SelCalCode { get; set; }
         public bool ObserverMode { get; set; }
         public bool TowerViewMode { get; set; }
+        public bool IsObserver
+        {
+            get
+            {
+                return ObserverMode || TowerViewMode;
+            }
+        }
 
         public ConnectInfo()
         {

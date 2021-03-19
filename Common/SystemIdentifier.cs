@@ -1,6 +1,6 @@
 ﻿/*
  * xPilot: X-Plane pilot client for VATSIM
- * Copyright (C) 2019-2020 Justin Shannon
+ * Copyright (C) 2019-2021 Justin Shannon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,29 +16,25 @@
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
 using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+using System.Globalization;
+using System.Management;
 
 namespace Vatsim.Xpilot.Common
 {
-    public static class FileChecksum
+    public static class SystemIdentifier
     {
-        public static string CheckSum(this string filePath)
+        public static string GetSystemDriveVolumeId()
         {
-            using (SHA512 crypto = SHA512.Create())
+            try
             {
-                using (FileStream fileStream = File.OpenRead(filePath))
-                    return crypto.ComputeHash(fileStream).ToHex();
+                string environmentVariable = Environment.GetEnvironmentVariable("SystemDrive");
+                ManagementObject managementObject = new ManagementObject(string.Format("win32_logicaldisk.deviceid=\"{0}\"", environmentVariable.ToUpper()));
+                return int.Parse(managementObject.Properties["VolumeSerialNumber"].Value.ToString(), NumberStyles.HexNumber).ToString();
             }
-        }
-
-        public static string ToHex(this byte[] bytes)
-        {
-            StringBuilder result = new StringBuilder(bytes.Length * 2);
-            for (int i = 0; i < bytes.Length; i++)
-                result.Append(bytes[i].ToString("x2"));
-            return result.ToString();
+            catch
+            {
+                return "Unknown";
+            }
         }
     }
 }

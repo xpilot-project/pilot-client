@@ -106,7 +106,7 @@ namespace Vatsim.Xpilot.Core
                 {
                     if (File.Exists(Path.Combine(mConfig.AppPath, "TypeCodes.json")))
                     {
-                        var hash = FileChecksum.CalculateCheckSum(Path.Combine(mConfig.AppPath, "TypeCodes.json"));
+                        var hash = Path.Combine(mConfig.AppPath, "TypeCodes.json").CheckSum();
                         if (hash != data.ChecksumHash)
                         {
                             using (WebClient wc = new WebClient())

@@ -159,6 +159,7 @@
     <Compile Include="Common\FrequencyUtils.cs" />
     <Compile Include="Common\NumberUtilities.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
+    <Compile Include="Common\SystemIdentifier.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
     <Compile Include="ConnectForm.cs">
