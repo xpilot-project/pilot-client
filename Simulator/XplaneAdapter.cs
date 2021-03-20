@@ -196,6 +196,12 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
+        [EventSubscription(EventTopics.NetworkConnected, typeof(OnUserInterfaceAsync))]
+        public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
+        {
+            NetworkConnected(e.ConnectInfo.Callsign);
+        }
+
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
@@ -405,27 +411,27 @@ namespace Vatsim.Xpilot.Simulator
                             {
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityLatitude)
                                 {
-                                    mUserAircraftData.LatitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLatitude.RoundVelocity();
+                                    mUserAircraftData.LatitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLatitude;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityAltitude)
                                 {
-                                    mUserAircraftData.AltitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityAltitude.RoundVelocity();
+                                    mUserAircraftData.AltitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityAltitude;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityLongitude)
                                 {
-                                    mUserAircraftData.LongitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLongitude.RoundVelocity();
+                                    mUserAircraftData.LongitudeVelocity = wrapper.XplaneData.UserAircraftData.VelocityLongitude;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityPitch)
                                 {
-                                    mUserAircraftData.PitchVelocity = wrapper.XplaneData.UserAircraftData.VelocityPitch.RoundVelocity();
+                                    mUserAircraftData.PitchVelocity = wrapper.XplaneData.UserAircraftData.VelocityPitch;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityHeading)
                                 {
-                                    mUserAircraftData.HeadingVelocity = wrapper.XplaneData.UserAircraftData.VelocityHeading.RoundVelocity();
+                                    mUserAircraftData.HeadingVelocity = wrapper.XplaneData.UserAircraftData.VelocityHeading;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasVelocityBank)
                                 {
-                                    mUserAircraftData.BankVelocity = wrapper.XplaneData.UserAircraftData.VelocityBank.RoundVelocity();
+                                    mUserAircraftData.BankVelocity = wrapper.XplaneData.UserAircraftData.VelocityBank;
                                 }
                                 if (wrapper.XplaneData.UserAircraftData.HasLatitude)
                                 {

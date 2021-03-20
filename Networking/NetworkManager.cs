@@ -147,7 +147,7 @@ namespace Vatsim.Xpilot.Networking
             mConnectInfo = new ConnectInfo();
             mFsdClientVersion = new Version("1.2");
 
-            mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, Assembly.GetEntryAssembly().Location.CheckSum(), "");
+            mClientProperties = new ClientProperties("xPilot", mFsdClientVersion, Assembly.GetEntryAssembly().Location.CalculateHash(), "");
 
             mFsd = new FSDSession(mClientProperties);
             mFsd.IgnoreUnknownPackets = true;

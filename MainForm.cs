@@ -82,7 +82,7 @@ namespace Vatsim.Xpilot
         private NotesTab mTabNotes;
         private RadioStackState mRadioStackState;
 
-        private const string CONFIGURATION_REQUIRED = "xPilot hasn't been fully configured yet. You will not be able to connect to the network until it is configured. Open the settings and verify that your network login credentials are provided.";
+        private const string CONFIGURATION_REQUIRED = "xPilot has not been fully configured yet. You will not be able to connect to the network until it is configured. Open Settings and verify your network login credentials are saved.";
 
         public MainForm(IEventBroker eventBroker, IAppConfig appConfig, INetworkManager networkManager, IUserInterface userInterface, ITabPages tabPages, IControllerAtisManager atisManager, IControllerManager controllerManager, IXplaneAdapter xplane)
         {
@@ -745,6 +745,10 @@ namespace Vatsim.Xpilot
                             mNetworkManager.SendMetarRequest(cmd[1]);
                             break;
                         case ".towerview":
+                            if(mConfig.ConfigurationRequired)
+                            {
+                                throw new ArgumentException("xPilot configuration required.");
+                            }
                             string tvServer = "127.0.0.1";
                             string tvCallsign = "TOWER";
                             if (cmd.Length >= 2)

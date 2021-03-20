@@ -29,6 +29,7 @@ namespace Vatsim.Xpilot
     {
         public string NewVersion { get; set; }
         public string DownloadUrl { get; set; }
+        public string ReleaseNotes { get; set; }
 
         private string mTempFile;
         private WebClient mWebClient;
@@ -43,11 +44,7 @@ namespace Vatsim.Xpilot
             base.OnShown(e);
             lblCurrentVersion.Text = Application.ProductVersion.ToString();
             lblNewVersion.Text = NewVersion;
-
-            using (WebClient client = new WebClient())
-            {
-                txtChangeLog.Text = client.DownloadString("http://xpilot-project.org/ChangeLog.txt");
-            }
+            txtChangeLog.Text = ReleaseNotes;
         }
 
         private void BtnYes_Click(object sender, EventArgs e)

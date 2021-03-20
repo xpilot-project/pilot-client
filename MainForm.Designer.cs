@@ -31,13 +31,13 @@ namespace Vatsim.Xpilot
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Center   ");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Approach/Departure     ");
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Tower   ");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Ground   ");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("ATIS   ");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Observers  ");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Center   ");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Approach/Departure     ");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Tower   ");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Ground   ");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Clearance Delivery   ");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("ATIS   ");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Observers  ");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ControllerTreeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.requestControllerInfo = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,7 +88,7 @@ namespace Vatsim.Xpilot
             this.startPrivateChat,
             this.tuneCom1Frequency});
             this.ControllerTreeContextMenu.Name = "contextMenuStrip1";
-            this.ControllerTreeContextMenu.Size = new System.Drawing.Size(197, 92);
+            this.ControllerTreeContextMenu.Size = new System.Drawing.Size(197, 70);
             // 
             // requestControllerInfo
             // 
@@ -362,35 +362,35 @@ namespace Vatsim.Xpilot
             this.TreeControllers.Location = new System.Drawing.Point(5, 5);
             this.TreeControllers.MinimumSize = new System.Drawing.Size(1, 1);
             this.TreeControllers.Name = "TreeControllers";
-            treeNode15.Name = "Center";
-            treeNode15.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode15.Text = "Center   ";
-            treeNode16.Name = "Approach";
-            treeNode16.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode16.Text = "Approach/Departure     ";
-            treeNode17.Name = "Tower";
-            treeNode17.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode17.Text = "Tower   ";
-            treeNode18.Name = "Ground";
-            treeNode18.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode18.Text = "Ground   ";
-            treeNode19.Name = "Delivery";
-            treeNode19.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode19.Text = "Clearance Delivery   ";
-            treeNode20.Name = "ATIS";
-            treeNode20.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            treeNode20.Text = "ATIS   ";
-            treeNode21.Name = "Observers";
-            treeNode21.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            treeNode21.Text = "Observers  ";
+            treeNode1.Name = "Center";
+            treeNode1.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode1.Text = "Center   ";
+            treeNode2.Name = "Approach";
+            treeNode2.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode2.Text = "Approach/Departure     ";
+            treeNode3.Name = "Tower";
+            treeNode3.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode3.Text = "Tower   ";
+            treeNode4.Name = "Ground";
+            treeNode4.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode4.Text = "Ground   ";
+            treeNode5.Name = "Delivery";
+            treeNode5.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode5.Text = "Clearance Delivery   ";
+            treeNode6.Name = "ATIS";
+            treeNode6.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            treeNode6.Text = "ATIS   ";
+            treeNode7.Name = "Observers";
+            treeNode7.NodeFont = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            treeNode7.Text = "Observers  ";
             this.TreeControllers.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20,
-            treeNode21});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6,
+            treeNode7});
             this.TreeControllers.ShowNodeToolTips = true;
             this.TreeControllers.ShowPlusMinus = false;
             this.TreeControllers.ShowRootLines = false;

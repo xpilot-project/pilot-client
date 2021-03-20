@@ -37,8 +37,6 @@ namespace Vatsim.Xpilot.Simulator
         void PlaneConfigChanged(Aircraft aircraft);
         void DeleteAircraft(Aircraft aircraft);
         void ChangeModel(Aircraft aircraft);
-        void NetworkConnected(string callsign);
-        void NetworkDisconnected();
         List<int> TunedFrequencies { get; }
         bool ValidSimConnection { get; }
     }

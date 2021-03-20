@@ -24,9 +24,9 @@ namespace Vatsim.Xpilot.Common
 {
     public static class FileChecksum
     {
-        public static string CheckSum(this string filePath)
+        public static string CalculateHash(this string filePath)
         {
-            using (SHA512 crypto = SHA512.Create())
+            using (SHA256 crypto = SHA256.Create())
             {
                 using (FileStream fileStream = File.OpenRead(filePath))
                     return crypto.ComputeHash(fileStream).ToHex();

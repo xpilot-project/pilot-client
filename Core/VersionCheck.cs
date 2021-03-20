@@ -15,19 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Appccelerate.EventBroker;
-using Appccelerate.EventBroker.Handlers;
-using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.IO;
 using System.Net;
+using System.Reflection;
+using Appccelerate.EventBroker;
+using Appccelerate.EventBroker.Handlers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using RestSharp;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
 using Vatsim.Xpilot.Events.Arguments;
 
 namespace Vatsim.Xpilot.Core
 {
+    public enum VersionChannel
+    {
+        Stable,
+        Beta,
+        VelocityAlpha,
+        VelocityBeta
+    }
+
     public class VersionCheck : EventBus, IVersionCheck
     {
         [EventPublication(EventTopics.NotificationPosted)]
@@ -35,63 +45,88 @@ namespace Vatsim.Xpilot.Core
 
         private readonly IAppConfig mConfig;
         private const string ROOT_URL = "http://xpilot-project.org";
-        private const string VERSION_CHECK_ENDPOINT = "api/v2/VersionCheck";
-        private const string AIRCRAFT_DB_ENDPOINT = "api/v2/TypeCodes";
+        private const string VERSION_CHECK_ENDPOINT = "api/v3/VersionCheck";
+        private const string AIRCRAFT_DB_ENDPOINT = "api/v3/TypeCodes";
 
         public VersionCheck(IEventBroker broker, IAppConfig config) : base(broker)
         {
             mConfig = config;
         }
 
-        //private void XPilotVersionCheck()
-        //{
-        //    NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Performing version check..."));
 
-        //    try
-        //    {
-        //        var dto = new VersionCheckDto
-        //        {
-        //            UserVersion = Application.ProductVersion.ToString(),
-        //            Channel = mConfig.UpdateChannel.GetDescription()
-        //        }.ToJSON();
+        [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
+        public void OnInitiateVersionCheck(object sender, EventArgs e)
+        {
+            PerformVersionCheck();
+            AircraftTypeCodeUpdate();
+        }
 
-        //        var client = new RestClient(ROOT_URL);
-        //        var request = new RestRequest(VERSION_CHECK_ENDPOINT, DataFormat.Json);
-        //        request.Method = Method.POST;
-        //        request.AddParameter("application/json", dto, ParameterType.RequestBody);
-        //        var response = client.Execute(request).Content;
+        private void PerformVersionCheck()
+        {
+            NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Performing version check..."));
 
-        //        var data = JsonConvert.DeserializeObject<VersionCheckResponse>(response);
+            string userVersion = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
-        //        if (data != null)
-        //        {
-        //            Version version = new Version(data.Version);
-        //            if (version > Assembly.GetExecutingAssembly().GetName().Version)
-        //            {
-        //                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "A new version is available for download."));
+            try
+            {
+                var dto = new VersionCheckRequest
+                {
+                    Channel = VersionChannel.VelocityAlpha.ToString(),
+                    UserVersion = userVersion,
+                    VolumeId = SystemIdentifier.GetSystemDriveVolumeId(),
+                    Cid = mConfig.VatsimId,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-        //                using (var dlg = new UpdateForm())
-        //                {
-        //                    dlg.NewVersion = version.ToString();
-        //                    dlg.DownloadUrl = data.VersionUrl;
-        //                    dlg.ShowDialog();
-        //                }
-        //            }
-        //            else
-        //            {
-        //                NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Version check complete. You are running the latest version."));
-        //            }
-        //        }
-        //        else
-        //        {
-        //            NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Info, "Version check complete. You are running the latest version."));
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        NotificationPosted?.Invoke(this, new NotificationPosted(NotificationType.Error, $"Error performing version check: {ex.Message}"));
-        //    }
-        //}
+                DefaultContractResolver contractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                };
+                string json = JsonConvert.SerializeObject(dto, new JsonSerializerSettings
+                {
+                    ContractResolver = contractResolver
+                });
+
+                var client = new RestClient(ROOT_URL);
+                var request = new RestRequest(VERSION_CHECK_ENDPOINT, DataFormat.Json)
+                {
+                    Method = Method.POST
+                };
+                request.AddParameter("application/json", json, ParameterType.RequestBody);
+                var response = client.Execute(request);
+
+                var data = JsonConvert.DeserializeObject<VersionCheckResponse>(response.Content);
+
+                if (response.StatusCode == HttpStatusCode.OK && data != null)
+                {
+                    Version version = new Version(data.Version);
+                    if (version > Assembly.GetExecutingAssembly().GetName().Version)
+                    {
+                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "A new version is available for download."));
+
+                        using (var dlg = new UpdateForm())
+                        {
+                            dlg.NewVersion = data.InformationalVersion;
+                            dlg.DownloadUrl = data.DownloadUrl;
+                            dlg.ReleaseNotes = data.Notes;
+                            dlg.ShowDialog();
+                        }
+                    }
+                    else
+                    {
+                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Version check complete. You are running the latest version."));
+                    }
+                }
+                else
+                {
+                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Version check complete. You are running the latest version."));
+                }
+            }
+            catch (Exception ex)
+            {
+                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error performing version check: {0}", ex.Message));
+            }
+        }
 
         private void AircraftTypeCodeUpdate()
         {
@@ -106,7 +141,7 @@ namespace Vatsim.Xpilot.Core
                 {
                     if (File.Exists(Path.Combine(mConfig.AppPath, "TypeCodes.json")))
                     {
-                        var hash = Path.Combine(mConfig.AppPath, "TypeCodes.json").CheckSum();
+                        var hash = Path.Combine(mConfig.AppPath, "TypeCodes.json").CalculateHash();
                         if (hash != data.ChecksumHash)
                         {
                             using (WebClient wc = new WebClient())
@@ -115,7 +150,7 @@ namespace Vatsim.Xpilot.Core
                                 if (json != null)
                                 {
                                     File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
+                                    NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type designator database updated."));
                                 }
                             }
                         }
@@ -128,7 +163,7 @@ namespace Vatsim.Xpilot.Core
                             if (json != null)
                             {
                                 File.WriteAllText(Path.Combine(mConfig.AppPath, "TypeCodes.json"), json);
-                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type code database updated."));
+                                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Aircraft type designator database updated."));
                             }
 
                         }
@@ -137,33 +172,38 @@ namespace Vatsim.Xpilot.Core
             }
             catch (Exception ex)
             {
-                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error downloading aircraft type code database: {ex.Message}"));
+                NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, $"Error downloading aircraft type designator database: {ex.Message}"));
             }
         }
+    }
 
-
-        [EventSubscription(EventTopics.SessionStarted, typeof(OnUserInterfaceAsync))]
-        public void OnInitiateVersionCheck(object sender, EventArgs e)
-        {
-            AircraftTypeCodeUpdate();
-        }
+    [Serializable]
+    public class VersionCheckRequest
+    {
+        public string Channel { get; set; }
+        public string UserVersion { get; set; }
+        public string VolumeId { get; set; }
+        public string Cid { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     [Serializable]
     public class VersionCheckResponse
     {
-        public string Version { get; set; }
-        public string VersionUrl { get; set; }
-        public long Timestamp { get; set; }
-        public string Hash { get; set; }
+        [JsonProperty("channel")]
         public string Channel { get; set; }
-    }
 
-    [Serializable]
-    public class VersionCheckDto
-    {
-        public string Channel { get; set; }
-        public string UserVersion { get; set; }
+        [JsonProperty("version")]
+        public string Version { get; set; }
+
+        [JsonProperty("informational_version")]
+        public string InformationalVersion { get; set; }
+
+        [JsonProperty("download_url")]
+        public string DownloadUrl { get; set; }
+        
+        [JsonProperty("notes")]
+        public string Notes { get; set; }
     }
 
     [Serializable]
@@ -173,35 +213,6 @@ namespace Vatsim.Xpilot.Core
         public string TypeCodesUrl { get; set; }
 
         [JsonProperty("Hash")]
-        public string ChecksumHash { get; set; }
-    }
-
-    [Serializable]
-    public class ClientFile
-    {
-        [JsonProperty("version")]
-        public string Version { get; set; }
-
-        [JsonProperty("filename")]
-        public string Filename { get; set; }
-
-        [JsonProperty("timestamp")]
-        public long Timestamp { get; set; }
-
-        [JsonProperty("hash")]
-        public string ChecksumHash { get; set; }
-
-        [JsonProperty("channel")]
-        public string UpdateChannel { get; set; }
-    }
-
-    [Serializable]
-    public class AircraftFile
-    {
-        [JsonProperty("filename")]
-        public string Filename { get; set; }
-
-        [JsonProperty("hash")]
         public string ChecksumHash { get; set; }
     }
 }

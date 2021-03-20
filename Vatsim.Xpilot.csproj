@@ -157,7 +157,6 @@
     <Compile Include="Common\FileChecksum.cs" />
     <Compile Include="Common\FlashTaskbar.cs" />
     <Compile Include="Common\FrequencyUtils.cs" />
-    <Compile Include="Common\NumberUtilities.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
     <Compile Include="Common\SystemIdentifier.cs" />
     <Compile Include="Common\VoiceType.cs" />
