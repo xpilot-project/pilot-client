@@ -349,7 +349,7 @@ namespace Vatsim.Xpilot
             // chkDisableRadioEffects
             // 
             this.chkDisableRadioEffects.AutoSize = true;
-            this.chkDisableRadioEffects.Location = new System.Drawing.Point(7, 457);
+            this.chkDisableRadioEffects.Location = new System.Drawing.Point(7, 454);
             this.chkDisableRadioEffects.Name = "chkDisableRadioEffects";
             this.chkDisableRadioEffects.Size = new System.Drawing.Size(128, 17);
             this.chkDisableRadioEffects.TabIndex = 26;
@@ -486,7 +486,7 @@ namespace Vatsim.Xpilot
             // 
             this.vuMeter.Location = new System.Drawing.Point(7, 371);
             this.vuMeter.Name = "vuMeter";
-            this.vuMeter.Size = new System.Drawing.Size(283, 10);
+            this.vuMeter.Size = new System.Drawing.Size(284, 10);
             this.vuMeter.TabIndex = 20;
             this.vuMeter.Text = "levelMeter1";
             this.vuMeter.Value = 0F;

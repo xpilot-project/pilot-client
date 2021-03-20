@@ -56,6 +56,7 @@ namespace Vatsim.Xpilot.Config
         bool FlashTaskbarSelcal { get; set; }
         bool FlashTaskbarDisconnect { get; set; }
         bool KeepWindowVisible { get; set; }
+        bool IsAudioConfigured { get; }
         WindowProperties ClientWindowProperties { get; set; }
         void LoadConfig(string path);
         void SaveConfig();

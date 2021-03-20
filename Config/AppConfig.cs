@@ -60,6 +60,15 @@ namespace Vatsim.Xpilot.Config
             }
         }
 
+        [JsonIgnore]
+        public bool IsAudioConfigured
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(InputDeviceName) && !string.IsNullOrEmpty(ListenDeviceName);
+            }
+        }
+
         public List<NetworkServerInfo> CachedServers { get; set; }
         public string VatsimId { get; set; }
         public string VatsimPassword { get; set; }

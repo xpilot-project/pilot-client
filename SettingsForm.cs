@@ -54,17 +54,22 @@ namespace Vatsim.Xpilot
 
             foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
             {
-                ComboboxItem item = new ComboboxItem();
-                item.Text = driver.Value;
-                item.Value = driver.Value;
+                ComboboxItem item = new ComboboxItem
+                {
+                    Text = driver.Value,
+                    Value = driver.Value
+                };
                 lstAudioDriver.Items.Add(item);
             }
         }
 
         private void VuTimer_Tick(object sender, EventArgs e)
         {
-            float v = (float)ScaleVu(AFVBindings.GetInputPeak());
-            vuMeter.Value = v;
+            if (mConfig.IsAudioConfigured)
+            {
+                float v = (float)ScaleVu(AFVBindings.GetInputPeak());
+                vuMeter.Value = v;
+            }
         }
 
         [EventSubscription(EventTopics.NetworkServerListUpdated, typeof(OnUserInterfaceAsync))]
