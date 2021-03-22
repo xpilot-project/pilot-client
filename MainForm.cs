@@ -72,11 +72,6 @@ namespace Vatsim.Xpilot
         private readonly Color ACTIVE_TXRX_BACKGROUND = Color.FromArgb(39, 174, 96);
         private readonly Color INACTIVE_TXRX_COLOR = Color.FromArgb(39, 44, 46);
 
-        [System.Runtime.InteropServices.DllImport("usser32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-
         private bool mInitializing = true;
         private ConnectInfo mConnectInfo;
         private NotesTab mTabNotes;
