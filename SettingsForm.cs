@@ -52,20 +52,23 @@ namespace Vatsim.Xpilot
 
             LoadNetworkServers();
 
-            foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
+            if (!mConfig.IsVoiceDisabled)
             {
-                ComboboxItem item = new ComboboxItem
+                foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
                 {
-                    Text = driver.Value,
-                    Value = driver.Value
-                };
-                lstAudioDriver.Items.Add(item);
+                    ComboboxItem item = new ComboboxItem
+                    {
+                        Text = driver.Value,
+                        Value = driver.Value
+                    };
+                    lstAudioDriver.Items.Add(item);
+                }
             }
         }
 
         private void VuTimer_Tick(object sender, EventArgs e)
         {
-            if (mConfig.IsAudioConfigured)
+            if (!mConfig.IsVoiceDisabled && mConfig.IsAudioConfigured)
             {
                 float v = (float)ScaleVu(AFVBindings.GetInputPeak());
                 vuMeter.Value = v;

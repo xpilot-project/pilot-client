@@ -29,13 +29,14 @@ using Vatsim.Xpilot.Simulator;
 using Vatsim.Xpilot.Core;
 using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Common;
+using Vatsim.Xpilot.Config;
 
 namespace Vatsim.Xpilot
 {
     static class Program
     {
-        public static string ServerAddress;
         private static string AppPath;
+        private static bool IsVoiceDisabled = true;
 
         [STAThread]
         static void Main(string[] args)
@@ -55,17 +56,18 @@ namespace Vatsim.Xpilot
                     Directory.CreateDirectory(Path.Combine(AppPath, "NetworkLogs"));
                 }
 
-                if (args.Length > 0)
-                {
-                    ServerAddress = args[0];
-                }
-
                 IKernel kernel = new StandardKernel(new InjectionModules());
+                IAppConfig config = kernel.Get<IAppConfig>();
+
+                IsVoiceDisabled = config.IsVoiceDisabled;
 
                 var mainForm = kernel.Get<MainForm>();
                 (kernel.Get<INetworkManager>() as IEventBus).Register();
                 (kernel.Get<ISoundManager>() as IEventBus).Register();
-                (kernel.Get<IAFVManaged>() as IEventBus).Register();
+                if (!config.IsVoiceDisabled)
+                {
+                    (kernel.Get<IAFVManaged>() as IEventBus).Register();
+                }
                 (kernel.Get<IXplaneAdapter>() as IEventBus).Register();
                 (kernel.Get<IVersionCheck>() as IEventBus).Register();
                 (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
@@ -114,7 +116,7 @@ namespace Vatsim.Xpilot
 
         private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            if (AFVBindings.IsClientInitialized())
+            if (!IsVoiceDisabled && AFVBindings.IsClientInitialized())
             {
                 AFVBindings.Destroy();
             }

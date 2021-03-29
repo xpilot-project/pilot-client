@@ -182,16 +182,8 @@ namespace Vatsim.Xpilot.Simulator
             switch (e.Radio)
             {
                 case 1:
-                    //mXplaneConnector.SetDataRefValue(new DataRefElement
-                    //{
-                    //    DataRef = "sim/cockpit2/radios/actuators/audio_volume_com1"
-                    //}, e.Volume);
                     break;
                 case 2:
-                    //mXplaneConnector.SetDataRefValue(new DataRefElement
-                    //{
-                    //    DataRef = "sim/cockpit2/radios/actuators/audio_volume_com2"
-                    //}, e.Volume);
                     break;
             }
         }

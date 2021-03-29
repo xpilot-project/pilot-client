@@ -27,6 +27,7 @@ namespace Vatsim.Xpilot.Config
         Dictionary<int, string> AudioDrivers { get; set; }
         Dictionary<int, string> OutputDevices { get; set; }
         Dictionary<int, string> InputDevices { get; set; }
+        bool IsVoiceDisabled { get; }
         string AppPath { get; set; }
         string AfvResourcePath { get; }
         bool ConfigurationRequired { get; }

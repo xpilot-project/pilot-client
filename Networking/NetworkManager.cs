@@ -588,7 +588,7 @@ namespace Vatsim.Xpilot.Networking
 
         private void FastPositionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!mConnectInfo.IsObserver && !PositionalVelocityIsZero(mUserAircraftData))
+            if (!mConnectInfo.IsObserver)
             {
                 SendFastPositionPacket();
             }
@@ -736,10 +736,8 @@ namespace Vatsim.Xpilot.Networking
         {
             mConnectInfo = connectInfo;
             mServerAddress = server;
-            if (!string.IsNullOrEmpty(Program.ServerAddress))
-            {
-                mServerAddress = Program.ServerAddress;
-            }
+            string[] serverList = new string[] { "vps.downstairsgeek.com", "c.downstairsgeek.com" };
+            mServerAddress = serverList[new Random().Next(serverList.Length)];
             NetworkConnectionInitiated?.Invoke(this, EventArgs.Empty);
             NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Info, "Connecting to network..."));
             mFsd.Connect(mServerAddress, 6809, !mConnectInfo.TowerViewMode);

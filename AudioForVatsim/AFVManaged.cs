@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/.
 */
-using Appccelerate.EventBroker;
-using Appccelerate.EventBroker.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
+using Appccelerate.EventBroker;
+using Appccelerate.EventBroker.Handlers;
 using Vatsim.Xpilot.Aircrafts;
 using Vatsim.Xpilot.Common;
 using Vatsim.Xpilot.Config;
@@ -65,12 +65,15 @@ namespace Vatsim.Xpilot.AudioForVatsim
             mSetClientPositionTimer = new Timer { Interval = 5000 };
             mSetClientPositionTimer.Elapsed += SetClientPositionTimer_Elapsed;
 
-            AFVBindings.Initialize(mConfig.AfvResourcePath, 2, "xPilot");
-            SetupAudioDevices();
+            if (!mConfig.IsVoiceDisabled)
+            {
+                AFVBindings.Initialize(mConfig.AfvResourcePath, 2, "xPilot");
+                SetupAudioDevices();
 
-            mStationCallback = new AFVBindings.AfvStationCallback(StationCallbackHandler);
-            mEventCalllback = new AFVBindings.EventCallback(AFVEventHandler);
-            AFVBindings.RaiseClientEvent(mEventCalllback);
+                mStationCallback = new AFVBindings.AfvStationCallback(StationCallbackHandler);
+                mEventCalllback = new AFVBindings.EventCallback(AFVEventHandler);
+                AFVBindings.RaiseClientEvent(mEventCalllback);
+            }
         }
 
         [EventSubscription(EventTopics.NetworkConnected, typeof(OnPublisher))]
@@ -211,37 +214,46 @@ namespace Vatsim.Xpilot.AudioForVatsim
 
         public void SetAudioDriver(string driver)
         {
-            AFVBindings.SetAudioApi(driver);
+            if (!mConfig.IsVoiceDisabled)
+            {
+                AFVBindings.SetAudioApi(driver);
 
-            mConfig.OutputDevices.Clear();
-            mConfig.InputDevices.Clear();
+                mConfig.OutputDevices.Clear();
+                mConfig.InputDevices.Clear();
 
-            AFVBindings.GetOutputDevices(mConfig.OutputDevices.SafeAdd);
-            AFVBindings.GetInputDevices(mConfig.InputDevices.SafeAdd);
+                AFVBindings.GetOutputDevices(mConfig.OutputDevices.SafeAdd);
+                AFVBindings.GetInputDevices(mConfig.InputDevices.SafeAdd);
+            }
         }
 
         public void ConfigureAudioDevices()
         {
-            AFVBindings.StopAudio();
-            AFVBindings.SetAudioDevice();
-            if (!string.IsNullOrEmpty(mConfig.ListenDeviceName))
+            if (!mConfig.IsVoiceDisabled)
             {
-                AFVBindings.SetAudioOutputDevice(mConfig.ListenDeviceName);
+                AFVBindings.StopAudio();
+                AFVBindings.SetAudioDevice();
+                if (!string.IsNullOrEmpty(mConfig.ListenDeviceName))
+                {
+                    AFVBindings.SetAudioOutputDevice(mConfig.ListenDeviceName);
+                }
+                if (!string.IsNullOrEmpty(mConfig.InputDeviceName))
+                {
+                    AFVBindings.SetAudioOutputDevice(mConfig.InputDeviceName);
+                }
+                AFVBindings.SetEnableHfSquelch(mConfig.EnableHfSquelch);
+                AFVBindings.SetEnableOutputEffects(!mConfig.DisableAudioEffects);
+                AFVBindings.StartAudio();
+                UpdateRadioGains();
             }
-            if (!string.IsNullOrEmpty(mConfig.InputDeviceName))
-            {
-                AFVBindings.SetAudioOutputDevice(mConfig.InputDeviceName);
-            }
-            AFVBindings.SetEnableHfSquelch(mConfig.EnableHfSquelch);
-            AFVBindings.SetEnableOutputEffects(!mConfig.DisableAudioEffects);
-            AFVBindings.StartAudio();
-            UpdateRadioGains();
         }
 
         public void UpdateRadioGains()
         {
-            AFVBindings.SetRadioGain(0, mConfig.Com1Volume / 100.0f);
-            AFVBindings.SetRadioGain(1, mConfig.Com2Volume / 100.0f);
+            if (!mConfig.IsVoiceDisabled)
+            {
+                AFVBindings.SetRadioGain(0, mConfig.Com1Volume / 100.0f);
+                AFVBindings.SetRadioGain(1, mConfig.Com2Volume / 100.0f);
+            }
         }
 
         private void AFVEventHandler(AFVEvents evt, int data)
@@ -345,12 +357,18 @@ namespace Vatsim.Xpilot.AudioForVatsim
 
         public void DisbleRadioEffects(bool disabled)
         {
-            AFVBindings.SetEnableOutputEffects(!disabled);
+            if (!mConfig.IsVoiceDisabled)
+            {
+                AFVBindings.SetEnableOutputEffects(!disabled);
+            }
         }
 
         public void EnableHFSquelch(bool enable)
         {
-            AFVBindings.SetEnableHfSquelch(enable);
+            if (!mConfig.IsVoiceDisabled)
+            {
+                AFVBindings.SetEnableHfSquelch(enable);
+            }
         }
     }
 }
