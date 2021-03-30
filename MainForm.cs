@@ -177,6 +177,10 @@ namespace Vatsim.Xpilot
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
             HandleNetworkDisconnected();
+            if(mConfig.FlashTaskbarDisconnect)
+            {
+                FlashTaskbar.Flash(this);
+            }
         }
 
         [EventSubscription(EventTopics.NetworkConnectionFailed, typeof(OnUserInterfaceAsync))]
