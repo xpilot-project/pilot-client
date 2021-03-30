@@ -39,7 +39,7 @@ namespace Vatsim.Xpilot
                 bool firstMessage = rtfMessages.TextLength > 0;
                 rtfMessages.SelectionStart = rtfMessages.TextLength;
                 rtfMessages.SelectionColor = color;
-                rtfMessages.SelectedText = string.Format("{0}[{1}] {2}", firstMessage ? "\r\n" : "", DateTime.Now.ToString("HH:mm:ss"), message);
+                rtfMessages.SelectedText = string.Format("{0}[{1}] {2}", firstMessage ? "\r\n" : "", DateTime.UtcNow.ToString("HH:mm:ss"), message);
                 rtfMessages.SelectionFont = rtfMessages.Font;
                 rtfMessages.SelectionStart = rtfMessages.TextLength;
                 rtfMessages.ScrollToCaret();

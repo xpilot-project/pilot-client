@@ -36,7 +36,7 @@ namespace Vatsim.Xpilot
     static class Program
     {
         private static string AppPath;
-        private static bool IsVoiceDisabled = true;
+        private static bool IsVoiceDisabled;
 
         [STAThread]
         static void Main(string[] args)

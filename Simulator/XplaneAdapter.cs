@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Reflection;
 using Appccelerate.EventBroker;
 using Appccelerate.EventBroker.Handlers;
@@ -77,6 +78,12 @@ namespace Vatsim.Xpilot.Simulator
         [EventPublication(EventTopics.ReplayModeEnabled)]
         public event EventHandler<EventArgs> ReplayModeDetected;
 
+        [EventPublication(EventTopics.PrivateMessageSent)]
+        public event EventHandler<PrivateMessageSentEventArgs> PrivateMessageSent;
+
+        [EventPublication(EventTopics.RadioMessageSent)]
+        public event EventHandler<RadioMessageSentEventArgs> RadioMessageSent;
+
         private readonly INetworkManager mNetworkManager;
         private readonly IControllerAtisManager mControllerAtisManager;
         private readonly IAppConfig mConfig;
@@ -90,8 +97,8 @@ namespace Vatsim.Xpilot.Simulator
         private Stack<DateTime> mConnectionHeartbeats;
         private List<int> mTunedFrequencies;
 
-        private Aircrafts.UserAircraftData mUserAircraftData;
-        private Aircrafts.UserAircraftConfigData mUserAircraftConfigData;
+        private UserAircraftData mUserAircraftData;
+        private UserAircraftConfigData mUserAircraftConfigData;
         private RadioStackState mRadioStackState;
 
         private string mSimulatorIP = "127.0.0.1";
@@ -102,7 +109,6 @@ namespace Vatsim.Xpilot.Simulator
         private bool mIsPaused = false;
 
         public bool ValidSimConnection => mValidCsl && mValidPluginVersion;
-
         public List<int> TunedFrequencies => mTunedFrequencies;
 
         public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager networkManager, IControllerAtisManager controllerAtisManager) : base(broker)
@@ -192,12 +198,60 @@ namespace Vatsim.Xpilot.Simulator
         public void OnNetworkConnected(object sender, NetworkConnectedEventArgs e)
         {
             NetworkConnected(e.ConnectInfo.Callsign);
+            AddMessageToConsole("Connected to network", Color.Yellow);
         }
 
         [EventSubscription(EventTopics.NetworkDisconnected, typeof(OnUserInterfaceAsync))]
         public void OnNetworkDisconnected(object sender, NetworkDisconnectedEventArgs e)
         {
             NetworkDisconnected();
+            AddMessageToConsole("Disconnected from network", Color.Yellow);
+        }
+
+        [EventSubscription(EventTopics.ServerMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnServerMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            AddMessageToConsole($"[SERVER]: {e.Data}", Color.SeaGreen);
+        }
+
+        [EventSubscription(EventTopics.BroadcastMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnBroadcastMessageReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            AddMessageToConsole($"[BROADCAST]: {e.Data}", Color.Orange);
+        }
+
+        [EventSubscription(EventTopics.WallopSent, typeof(OnUserInterfaceAsync))]
+        public void OnWallopSent(object sender, WallopSentEventArgs e)
+        {
+            AddMessageToConsole($"[WALLOP]: {e.OurCallsign}: {e.Message}", Color.Red);
+        }
+
+        [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
+        public void OnMetarReceived(object sender, NetworkDataReceivedEventArgs e)
+        {
+            AddMessageToConsole(e.Data, Color.Green);
+        }
+
+        [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRequestAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
+        {
+            AddMessageToConsole($"{e.From}: ATIS", Color.Green);
+            foreach (string line in e.Lines)
+            {
+                AddMessageToConsole(line, Color.Green);
+            }
+        }
+
+        [EventSubscription(EventTopics.RadioMessageSent, typeof(OnUserInterfaceAsync))]
+        public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
+        {
+            AddMessageToConsole($"{e.OurCallsign}: {e.Message}", Color.Cyan);
+        }
+
+        [EventSubscription(EventTopics.RadioMessageReceived, typeof(OnUserInterfaceAsync))]
+        public void OnRadioMessageReceived(object sender, RadioMessageReceivedEventArgs e)
+        {
+            AddMessageToConsole($"{e.From}: {e.Data}", e.IsDirect ? Color.White : Color.Gray);
         }
 
         [EventSubscription(EventTopics.PrivateMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -250,6 +304,17 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
+        private void AddMessageToConsole(string message, Color color)
+        {
+            var msg = new Wrapper
+            {
+                RadioMessageReceived = new Protobuf.RadioMessageReceived()
+            };
+            msg.RadioMessageReceived.Message = message;
+            msg.RadioMessageReceived.Color = color.RgbToInt();
+            SendProtobufArray(msg);
+        }
+
         private void DealerSocket_ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             byte[] bytes = e.Socket.ReceiveFrameBytes();
@@ -269,9 +334,8 @@ namespace Vatsim.Xpilot.Simulator
                             if (wrapper.PluginInformation.HasVersion)
                             {
                                 Version v = Assembly.GetExecutingAssembly().GetName().Version;
-                                string compactedVersion = string.Format($"{v.Major}{v.Minor}{v.Build}");
+                                string compactedVersion = string.Format($"{v.Major}{v.Minor}{v.Build}{v.Revision}");
                                 int versionInt = int.Parse(compactedVersion);
-                                if (v.Build < 10) versionInt *= 10;
                                 if (wrapper.PluginInformation.Version == versionInt)
                                 {
                                     mValidPluginVersion = true;
@@ -282,7 +346,9 @@ namespace Vatsim.Xpilot.Simulator
                                     ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
                                     if (!mInvalidPluginMessageShown)
                                     {
-                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot."));
+                                        string msg = "Error: Incorrect xPilot Plugin Version. You are using an out of date xPilot plugin. Please close X-Plane and reinstall xPilot.";
+                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, msg));
+                                        AddMessageToConsole(msg, Color.Red);
                                         PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
                                         mInvalidPluginMessageShown = true;
                                     }
@@ -304,8 +370,10 @@ namespace Vatsim.Xpilot.Simulator
                                     ConnectButtonDisabled?.Invoke(this, EventArgs.Empty);
                                     if (!mCslConfigurationErrorShown)
                                     {
-                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Settings). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models."));
+                                        string msg = "Error: No valid CSL paths are configured or enabled, or you have no CSL models installed. Please verify the CSL configuration in X-Plane (Plugins > xPilot > Settings). If you need assistance configuring your CSL paths, see the \"CSL Model Configuration\" section in the xPilot Documentation (http://docs.xpilot-project.org). Restart X-Plane and xPilot after you have properly configured your CSL models.";
+                                        NotificationPosted?.Invoke(this, new NotificationPostedEventArgs(NotificationType.Error, msg));
                                         PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
+                                        AddMessageToConsole(msg, Color.Red);
                                         mCslConfigurationErrorShown = true;
                                     }
                                 }
@@ -332,6 +400,22 @@ namespace Vatsim.Xpilot.Simulator
                         if (wrapper.RequestStationInfo.HasCallsign)
                         {
                             mControllerAtisManager.RequestControllerAtis(wrapper.RequestStationInfo.Callsign);
+                        }
+                        break;
+                    case Wrapper.MsgOneofCase.PrivateMessageSent:
+                        {
+                            if (wrapper.PrivateMessageSent.HasMessage && wrapper.PrivateMessageSent.HasTo)
+                            {
+                                PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mNetworkManager.OurCallsign, wrapper.PrivateMessageSent.To, wrapper.PrivateMessageSent.Message));
+                            }
+                        }
+                        break;
+                    case Wrapper.MsgOneofCase.RadioMessageSent:
+                        {
+                            if (wrapper.RadioMessageSent.HasMessage)
+                            {
+                                RadioMessageSent?.Invoke(this, new RadioMessageSentEventArgs(mNetworkManager.OurCallsign, wrapper.RadioMessageSent.Message));
+                            }
                         }
                         break;
                     case Wrapper.MsgOneofCase.XplaneData:
@@ -689,11 +773,6 @@ namespace Vatsim.Xpilot.Simulator
             msg.SetRadiostack.Radio = radio;
             msg.SetRadiostack.ReceiveEnabled = enabled;
             SendProtobufArray(msg);
-        }
-
-        public void SetLoginStatus(bool connected)
-        {
-
         }
 
         public void PlaneConfigChanged(AirplaneConfig config)

@@ -52,7 +52,7 @@ namespace Vatsim.Xpilot
         public event EventHandler<PlayNotifictionSoundEventArgs> PlayNotificationSound;
 
         [EventPublication(EventTopics.RadioMessageSent)]
-        public event EventHandler<RadioMessageSentEventArgs> RadioMessagSent;
+        public event EventHandler<RadioMessageSentEventArgs> RadioMessageSent;
 
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
@@ -63,19 +63,11 @@ namespace Vatsim.Xpilot
         private readonly IControllerManager mControllerManager;
         private readonly IXplaneAdapter mXplaneAdapter;
 
-        private readonly Color COLOR_INFO = Color.Yellow;
-        private readonly Color COLOR_ORANGE = Color.Orange;
-        private readonly Color COLOR_RED = Color.Red;
-        private readonly Color COLOR_CYAN = Color.Cyan;
-        private readonly Color COLOR_GREEN = Color.FromArgb(0, 192, 0);
-        private readonly Color COLOR_OLIVE_GREEN = Color.FromArgb(133, 166, 100);
-        private readonly Color ACTIVE_TXRX_BACKGROUND = Color.FromArgb(39, 174, 96);
-        private readonly Color INACTIVE_TXRX_COLOR = Color.FromArgb(39, 44, 46);
-
         private bool mInitializing = true;
         private ConnectInfo mConnectInfo;
         private NotesTab mTabNotes;
         private RadioStackState mRadioStackState;
+        private Color mActiveColor = Color.FromArgb(39, 174, 96);
 
         private const string CONFIGURATION_REQUIRED = "xPilot has not been fully configured yet. You will not be able to connect to the network until it is configured. Open Settings and verify your network login credentials are saved.";
 
@@ -205,10 +197,10 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
         public void OnRequestAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
         {
-            WriteMessage(COLOR_GREEN, $"{e.From} ATIS:", true);
+            WriteMessage(Color.Green, $"{e.From} ATIS:", true);
             foreach (string line in e.Lines)
             {
-                WriteMessage(COLOR_GREEN, line, false);
+                WriteMessage(Color.Green, line, false);
             }
         }
 
@@ -353,6 +345,8 @@ namespace Vatsim.Xpilot
                 return;
             }
 
+            Color inactiveColor = Color.FromArgb(39, 44, 46);
+
             ChkModeC.Clicked = mRadioStackState.SquawkingModeC;
             ChkIdent.Clicked = mRadioStackState.SquawkingIdent;
 
@@ -361,38 +355,38 @@ namespace Vatsim.Xpilot
                 if (mRadioStackState.Com1ActiveFrequency > 0)
                 {
                     Com1Freq.Text = (mRadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                    Com1TX.ForeColor = mRadioStackState.Com1TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
-                    Com1RX.ForeColor = mRadioStackState.Com1ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com1TX.ForeColor = mRadioStackState.Com1TransmitEnabled ? Color.White : inactiveColor;
+                    Com1RX.ForeColor = mRadioStackState.Com1ReceiveEnabled ? Color.White : inactiveColor;
                 }
                 else
                 {
                     Com1Freq.Text = "---.---";
-                    Com1TX.ForeColor = INACTIVE_TXRX_COLOR;
-                    Com1RX.ForeColor = INACTIVE_TXRX_COLOR;
+                    Com1TX.ForeColor = inactiveColor;
+                    Com1RX.ForeColor = inactiveColor;
                 }
 
                 if (mRadioStackState.Com2ActiveFrequency > 0)
                 {
                     Com2Freq.Text = (mRadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency() / 1000000.0f).ToString("0.000");
-                    Com2TX.ForeColor = mRadioStackState.Com2TransmitEnabled ? Color.White : INACTIVE_TXRX_COLOR;
-                    Com2RX.ForeColor = mRadioStackState.Com2ReceiveEnabled ? Color.White : INACTIVE_TXRX_COLOR;
+                    Com2TX.ForeColor = mRadioStackState.Com2TransmitEnabled ? Color.White : inactiveColor;
+                    Com2RX.ForeColor = mRadioStackState.Com2ReceiveEnabled ? Color.White : inactiveColor;
                 }
                 else
                 {
                     Com2Freq.Text = "---.---";
-                    Com2TX.ForeColor = INACTIVE_TXRX_COLOR;
-                    Com2RX.ForeColor = INACTIVE_TXRX_COLOR;
+                    Com2TX.ForeColor = inactiveColor;
+                    Com2RX.ForeColor = inactiveColor;
                 }
             }
             else
             {
                 Com1Freq.Text = "---.---";
-                Com1TX.ForeColor = INACTIVE_TXRX_COLOR;
-                Com1RX.ForeColor = INACTIVE_TXRX_COLOR;
+                Com1TX.ForeColor = inactiveColor;
+                Com1RX.ForeColor = inactiveColor;
 
                 Com2Freq.Text = "---.---";
-                Com2TX.ForeColor = INACTIVE_TXRX_COLOR;
-                Com2RX.ForeColor = INACTIVE_TXRX_COLOR;
+                Com2TX.ForeColor = inactiveColor;
+                Com2RX.ForeColor = inactiveColor;
             }
         }
 
@@ -402,10 +396,10 @@ namespace Vatsim.Xpilot
             switch (e.Radio)
             {
                 case 0:
-                    Com1TX.BackColor = e.TxRx && mRadioStackState.Com1ReceiveEnabled ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com1TX.BackColor = e.TxRx && mRadioStackState.Com1ReceiveEnabled ? mActiveColor : Color.Transparent;
                     break;
                 case 1:
-                    Com2TX.BackColor = e.TxRx && mRadioStackState.Com2ReceiveEnabled ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com2TX.BackColor = e.TxRx && mRadioStackState.Com2ReceiveEnabled ? mActiveColor : Color.Transparent;
                     break;
             }
         }
@@ -416,10 +410,10 @@ namespace Vatsim.Xpilot
             switch (e.Radio)
             {
                 case 0:
-                    Com1RX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com1RX.BackColor = e.TxRx ? mActiveColor : Color.Transparent;
                     break;
                 case 1:
-                    Com2RX.BackColor = e.TxRx ? ACTIVE_TXRX_BACKGROUND : Color.Transparent;
+                    Com2RX.BackColor = e.TxRx ? mActiveColor : Color.Transparent;
                     break;
             }
         }
@@ -428,20 +422,20 @@ namespace Vatsim.Xpilot
         public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
         {
             mNetworkManager.SendRadioMessage(mXplaneAdapter.TunedFrequencies, e.Message);
-            WriteMessage(COLOR_CYAN, $"{e.OurCallsign}: {e.Message}", true);
+            WriteMessage(Color.Cyan, $"{e.OurCallsign}: {e.Message}", true);
         }
 
         [EventSubscription(EventTopics.WallopSent, typeof(OnUserInterfaceAsync))]
         public void OnWallopSent(object sender, WallopSentEventArgs e)
         {
-            WriteMessage(COLOR_RED, $"[WALLOP] {e.OurCallsign}: {e.Message}", true);
+            WriteMessage(Color.Red, $"[WALLOP] {e.OurCallsign}: {e.Message}", true);
             PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
         }
 
         [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
         public void OnMetarReceived(object sender, NetworkDataReceivedEventArgs e)
         {
-            WriteMessage(COLOR_GREEN, e.Data, true);
+            WriteMessage(Color.Green, e.Data, true);
         }
 
         [EventSubscription(EventTopics.RadioMessageReceived, typeof(OnUserInterfaceAsync))]
@@ -483,14 +477,14 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.BroadcastMessageReceived, typeof(OnUserInterfaceAsync))]
         public void OnBroadcastMessageReceived(object sender, NetworkDataReceivedEventArgs e)
         {
-            WriteMessage(COLOR_ORANGE, $"[BROADCAST] {e.From}: {e.Data}", false);
+            WriteMessage(Color.Orange, $"[BROADCAST] {e.From}: {e.Data}", false);
             PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Broadcast));
         }
 
         [EventSubscription(EventTopics.ServerMessageReceived, typeof(OnUserInterfaceAsync))]
         public void OnServerMessageReceived(object sender, NetworkDataReceivedEventArgs e)
         {
-            WriteMessage(COLOR_OLIVE_GREEN, $"[SERVER]: {e.Data}", false);
+            WriteMessage(Color.SeaGreen, $"[SERVER]: {e.Data}", false);
         }
 
         [EventSubscription(EventTopics.SelcalAlertReceived, typeof(OnUserInterfaceAsync))]
@@ -502,18 +496,18 @@ namespace Vatsim.Xpilot
 
         private void WriteErrorMessage(string message)
         {
-            WriteMessage(COLOR_RED, message, true);
+            WriteMessage(Color.Red, message, true);
             PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.Error));
         }
 
         private void WriteWarningMessage(string message)
         {
-            WriteMessage(COLOR_ORANGE, message, true);
+            WriteMessage(Color.Orange, message, true);
         }
 
         private void WriteInfoMessage(string message)
         {
-            WriteMessage(COLOR_INFO, message, false);
+            WriteMessage(Color.Yellow, message, false);
         }
 
         private void WriteMessage(Color color, string message, bool activateMessageTab)
@@ -765,7 +759,7 @@ namespace Vatsim.Xpilot
                     {
                         if (mNetworkManager.IsConnected)
                         {
-                            RadioMessagSent?.Invoke(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
+                            RadioMessageSent?.Invoke(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
                         }
                         else
                         {

@@ -136,6 +136,7 @@
     <Compile Include="Common\FrequencyUtils.cs" />
     <Compile Include="Common\ScreenUtils.cs" />
     <Compile Include="Common\SystemIdentifier.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VoiceType.cs" />
     <Compile Include="Common\VoiceTypeExtensions.cs" />
     <Compile Include="ConnectForm.cs">
@@ -204,6 +205,8 @@
     <Compile Include="Protobuf\PositionUpdate.cs" />
     <Compile Include="Protobuf\PrivateMessageReceived.cs" />
     <Compile Include="Protobuf\PrivateMessageSent.cs" />
+    <Compile Include="Protobuf\RadioMessageReceived.cs" />
+    <Compile Include="Protobuf\RadioMessageSent.cs" />
     <Compile Include="Protobuf\RequestStationInfo.cs" />
     <Compile Include="Protobuf\SetRadioStack.cs" />
     <Compile Include="Protobuf\SetTransponder.cs" />
@@ -381,11 +384,11 @@
   <ItemGroup>
     <Content Include="icon.ico" />
     <Content Include="afv\*">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="sounds\*">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\xPilot_Logo.png" />
   </ItemGroup>
   <ItemGroup>

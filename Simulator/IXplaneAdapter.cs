@@ -30,7 +30,6 @@ namespace Vatsim.Xpilot.Simulator
         void SetRadioFrequency(int radio, uint freq);
         void SetRadioTransmit(int radio);
         void SetRadioReceive(int radio, bool enabled);
-        void SetLoginStatus(bool connected);
         void AddPlane(Aircraft aircraft);
         void SendSlowPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, double groundSpeed);
         void SendFastPositionUpdate(Aircraft aircraft, AircraftVisualState visualState, VelocityVector positionalVelocityVector, VelocityVector rotationalVelocityVector);
