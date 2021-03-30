@@ -95,7 +95,10 @@ namespace Vatsim.Xpilot.Core
         [EventSubscription(EventTopics.PlayNotificationSound, typeof(OnUserInterfaceAsync))]
         public void OnPlaySoundRequested(object sender, PlayNotifictionSoundEventArgs e)
         {
-            Play(e.Sound);
+            if (mConfig.EnableNotificationSounds)
+            {
+                Play(e.Sound);
+            }
         }
     }
 }
