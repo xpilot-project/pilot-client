@@ -102,23 +102,23 @@ namespace Vatsim.Xpilot.Config
         }
         public string HomeAirport { get; set; }
         public string ServerName { get; set; }
-        public bool AutoSquawkModeC { get; set; }
+        public bool AutoSquawkModeC { get; set; } = true;
         public string AudioDriver { get; set; }
         public string InputDeviceName { get; set; }
         public string ListenDeviceName { get; set; }
         public bool DisableAudioEffects { get; set; }
         public bool EnableHfSquelch { get; set; }
-        public bool EnableNotificationSounds { get; set; }
+        public bool EnableNotificationSounds { get; set; } = true;
         public int Com1Volume { get; set; } = 100;
         public int Com2Volume { get; set; } = 100;
         public List<ConnectInfo> RecentConnectionInfo { get; set; }
         public string SimulatorIP { get; set; }
         public List<string> VisualClientIPs { get; set; }
         public string SimulatorPort { get; set; } = "52300";
-        public bool FlashTaskbarPrivateMessage { get; set; }
-        public bool FlashTaskbarRadioMessage { get; set; }
-        public bool FlashTaskbarSelcal { get; set; }
-        public bool FlashTaskbarDisconnect { get; set; }
+        public bool FlashTaskbarPrivateMessage { get; set; } = true;
+        public bool FlashTaskbarRadioMessage { get; set; } = true;
+        public bool FlashTaskbarSelcal { get; set; } = true;
+        public bool FlashTaskbarDisconnect { get; set; } = true;
         public bool KeepWindowVisible { get; set; }
         public WindowProperties ClientWindowProperties { get; set; }
 
