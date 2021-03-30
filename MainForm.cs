@@ -197,10 +197,10 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
         public void OnRequestAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
         {
-            WriteMessage(Color.Green, $"{e.From} ATIS:", true);
+            WriteMessage(Color.LimeGreen, $"{e.From} ATIS:", true);
             foreach (string line in e.Lines)
             {
-                WriteMessage(Color.Green, line, false);
+                WriteMessage(Color.LimeGreen, line, false);
             }
         }
 
@@ -435,7 +435,7 @@ namespace Vatsim.Xpilot
         [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
         public void OnMetarReceived(object sender, NetworkDataReceivedEventArgs e)
         {
-            WriteMessage(Color.Green, e.Data, true);
+            WriteMessage(Color.LimeGreen, e.Data, true);
         }
 
         [EventSubscription(EventTopics.RadioMessageReceived, typeof(OnUserInterfaceAsync))]

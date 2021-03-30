@@ -229,16 +229,16 @@ namespace Vatsim.Xpilot.Simulator
         [EventSubscription(EventTopics.MetarReceived, typeof(OnUserInterfaceAsync))]
         public void OnMetarReceived(object sender, NetworkDataReceivedEventArgs e)
         {
-            AddMessageToConsole(e.Data, Color.Green);
+            AddMessageToConsole(e.Data, Color.LimeGreen);
         }
 
         [EventSubscription(EventTopics.RequestedAtisReceived, typeof(OnUserInterfaceAsync))]
         public void OnRequestAtisReceived(object sender, RequestedAtisReceivedEventArgs e)
         {
-            AddMessageToConsole($"{e.From}: ATIS", Color.Green);
+            AddMessageToConsole($"{e.From}: ATIS", Color.LimeGreen);
             foreach (string line in e.Lines)
             {
-                AddMessageToConsole(line, Color.Green);
+                AddMessageToConsole(line, Color.LimeGreen);
             }
         }
 
