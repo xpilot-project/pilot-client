@@ -88,14 +88,14 @@ namespace Vatsim.Xpilot.Simulator
         private readonly IControllerAtisManager mControllerAtisManager;
         private readonly IAppConfig mConfig;
 
-        private NetMQQueue<byte[]> mMessageQueue;
-        private NetMQPoller mPoller;
-        private DealerSocket mDealerSocket;
-        private List<DealerSocket> mVisualDealerSockets;
+        private readonly NetMQQueue<byte[]> mMessageQueue;
+        private readonly NetMQPoller mPoller;
+        private readonly DealerSocket mDealerSocket;
+        private readonly List<DealerSocket> mVisualDealerSockets;
 
-        private Timer mConnectionTimer;
-        private Stack<DateTime> mConnectionHeartbeats;
-        private List<int> mTunedFrequencies;
+        private readonly Timer mConnectionTimer;
+        private readonly Stack<DateTime> mConnectionHeartbeats;
+        private readonly List<int> mTunedFrequencies;
 
         private UserAircraftData mUserAircraftData;
         private UserAircraftConfigData mUserAircraftConfigData;
