@@ -492,6 +492,10 @@ namespace Vatsim.Xpilot
         {
             WriteInfoMessage($"SELCAL alert received on {e.Frequencies[0].FormatFromNetwork()}");
             PlayNotificationSound?.Invoke(this, new PlayNotifictionSoundEventArgs(SoundEvent.SelCal));
+            if(mConfig.FlashTaskbarSelcal)
+            {
+                FlashTaskbar.Flash(this);
+            }
         }
 
         private void WriteErrorMessage(string message)
