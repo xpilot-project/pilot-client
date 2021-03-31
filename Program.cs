@@ -21,7 +21,9 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Diagnostics;
-using Ninject;
+using Appccelerate.EventBroker;
+using SimpleInjector;
+using SimpleInjector.Diagnostics;
 using Vatsim.Xpilot.AudioForVatsim;
 using Vatsim.Xpilot.Networking;
 using Vatsim.Xpilot.Controllers;
@@ -35,8 +37,9 @@ namespace Vatsim.Xpilot
 {
     static class Program
     {
+        private static Container Container;
         private static string AppPath;
-        private static bool IsVoiceDisabled;
+        private static IAppConfig Config;
 
         [STAThread]
         static void Main(string[] args)
@@ -56,25 +59,42 @@ namespace Vatsim.Xpilot
                     Directory.CreateDirectory(Path.Combine(AppPath, "NetworkLogs"));
                 }
 
-                IKernel kernel = new StandardKernel(new InjectionModules());
-                IAppConfig config = kernel.Get<IAppConfig>();
+                Container = new Container();
 
-                IsVoiceDisabled = config.IsVoiceDisabled;
+                AutoRegisterWindowsForms(Container);
 
-                var mainForm = kernel.Get<MainForm>();
-                (kernel.Get<INetworkManager>() as IEventBus).Register();
-                (kernel.Get<ISoundManager>() as IEventBus).Register();
-                if (!config.IsVoiceDisabled)
+                Container.RegisterSingleton<NotesTab>();
+                Container.RegisterFactory<IUserInterface>();
+                Container.RegisterFactory<ITabPages>();
+                Container.RegisterSingleton<IEventBroker>(() => new EventBroker());
+                Container.RegisterSingleton<IAppConfig, AppConfig>();
+                Container.RegisterSingleton<INetworkManager, NetworkManager>();
+                Container.RegisterSingleton<IAFVManaged, AFVManaged>();
+                Container.RegisterSingleton<ISoundManager, SoundManager>();
+                Container.RegisterSingleton<IXplaneAdapter, XplaneAdapter>();
+                Container.RegisterSingleton<IVersionCheck, VersionCheck>();
+                Container.RegisterSingleton<IUserAircraftManager, UserAircraftManager>();
+                Container.RegisterSingleton<IAircraftManager, AircraftManager>();
+                Container.RegisterSingleton<IControllerManager, ControllerManager>();
+                Container.RegisterSingleton<IControllerAtisManager, ControllerAtisManager>();
+
+                Container.Verify();
+
+                Config = Container.GetInstance<IAppConfig>();
+                (Container.GetInstance<INetworkManager>() as IEventBus).Register();
+                if (!Config.IsVoiceDisabled)
                 {
-                    (kernel.Get<IAFVManaged>() as IEventBus).Register();
+                    (Container.GetInstance<IAFVManaged>() as IEventBus).Register();
                 }
-                (kernel.Get<IXplaneAdapter>() as IEventBus).Register();
-                (kernel.Get<IVersionCheck>() as IEventBus).Register();
-                (kernel.Get<IUserAircraftManager>() as IEventBus).Register();
-                (kernel.Get<IAircraftManager>() as IEventBus).Register();
-                (kernel.Get<IControllerManager>() as IEventBus).Register();
-                (kernel.Get<IControllerAtisManager>() as IEventBus).Register();
-                Application.Run(mainForm);
+                (Container.GetInstance<ISoundManager>() as IEventBus).Register();
+                (Container.GetInstance<IXplaneAdapter>() as IEventBus).Register();
+                (Container.GetInstance<IVersionCheck>() as IEventBus).Register();
+                (Container.GetInstance<IUserAircraftManager>() as IEventBus).Register();
+                (Container.GetInstance<IAircraftManager>() as IEventBus).Register();
+                (Container.GetInstance<IControllerManager>() as IEventBus).Register();
+                (Container.GetInstance<IControllerAtisManager>() as IEventBus).Register();
+
+                Application.Run(Container.GetInstance<MainForm>());
             }
         }
 
@@ -116,9 +136,26 @@ namespace Vatsim.Xpilot
 
         private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            if (!IsVoiceDisabled && AFVBindings.IsClientInitialized())
+            if (!Config.IsVoiceDisabled && AFVBindings.IsClientInitialized())
             {
                 AFVBindings.Destroy();
+            }
+        }
+
+        private static void AutoRegisterWindowsForms(Container container)
+        {
+            var types = container.GetTypesToRegister<Form>(typeof(Program).Assembly);
+
+            foreach (var type in types)
+            {
+                var registration =
+                    Lifestyle.Transient.CreateRegistration(type, container);
+
+                registration.SuppressDiagnosticWarning(
+                    DiagnosticType.DisposableTransientComponent,
+                    "Forms should be disposed by app code; not by the container.");
+
+                container.AddRegistration(type, registration);
             }
         }
     }
