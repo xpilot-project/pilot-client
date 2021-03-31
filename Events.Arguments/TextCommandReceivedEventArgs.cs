@@ -25,10 +25,10 @@ namespace Vatsim.Xpilot.Events.Arguments
 {
     public class TextCommandReceivedEventArgs : EventArgs
     {
-        public string Command { get; set; }
+        public string Message { get; set; }
         public TextCommandReceivedEventArgs(string command)
         {
-            Command = command;
+            Message = command;
         }
     }
 }

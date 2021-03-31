@@ -827,16 +827,5 @@ namespace Vatsim.Xpilot.Networking
         public string OurCallsign => mConnectInfo.Callsign;
 
         public List<NetworkServerInfo> ServerList => mServerList;
-
-        private const double POSITIONAL_VELOCITY_ZERO_TOLERANCE = 0.0005;
-        private bool PositionalVelocityIsZero(UserAircraftData data)
-        {
-            return (Math.Abs(data.LongitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.AltitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.LatitudeVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.PitchVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.HeadingVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE)
-                && (Math.Abs(data.BankVelocity) < POSITIONAL_VELOCITY_ZERO_TOLERANCE);
-        }
     }
 }

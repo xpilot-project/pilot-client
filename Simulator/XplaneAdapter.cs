@@ -95,7 +95,6 @@ namespace Vatsim.Xpilot.Simulator
 
         private readonly Timer mConnectionTimer;
         private readonly Stack<DateTime> mConnectionHeartbeats;
-        private readonly List<int> mTunedFrequencies;
 
         private UserAircraftData mUserAircraftData;
         private UserAircraftConfigData mUserAircraftConfigData;
@@ -109,7 +108,31 @@ namespace Vatsim.Xpilot.Simulator
         private bool mIsPaused = false;
 
         public bool ValidSimConnection => mValidCsl && mValidPluginVersion;
-        public List<int> TunedFrequencies => mTunedFrequencies;
+
+        public List<int> TransmitFrequencies
+        {
+            get
+            {
+                List<int> freqs = new List<int>();
+                if(mRadioStackState.Com1TransmitEnabled)
+                {
+                    freqs.Add(mRadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
+                    if(!freqs.Contains(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
+                    {
+                        freqs.Add(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
+                    }
+                }
+                if (mRadioStackState.Com2TransmitEnabled)
+                {
+                    freqs.Add(mRadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
+                    if (!freqs.Contains(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
+                    {
+                        freqs.Add(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
+                    }
+                }
+                return freqs;
+            }
+        }
 
         public XplaneAdapter(IEventBroker broker, IAppConfig config, INetworkManager networkManager, IControllerAtisManager controllerAtisManager) : base(broker)
         {
@@ -119,7 +142,6 @@ namespace Vatsim.Xpilot.Simulator
 
             mVisualDealerSockets = null;
             mConnectionHeartbeats = new Stack<DateTime>();
-            mTunedFrequencies = new List<int>();
 
             if (mConfig.VisualClientIPs.Count > 0)
             {
@@ -479,7 +501,6 @@ namespace Vatsim.Xpilot.Simulator
                                     mRadioStackState.SquawkingIdent = wrapper.XplaneData.RadioStack.TransponderIdent;
                                 }
                                 RadioStackStateChanged?.Invoke(this, new RadioStackStateChangedEventArgs(mRadioStackState));
-                                UpdateTunedFrequencies();
                             }
 
                             // user aircraft data
@@ -625,27 +646,6 @@ namespace Vatsim.Xpilot.Simulator
             }
         }
 
-        private void UpdateTunedFrequencies()
-        {
-            mTunedFrequencies.Clear();
-            if (mRadioStackState.Com1TransmitEnabled)
-            {
-                mTunedFrequencies.Add(mRadioStackState.Com1ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
-                if (!mTunedFrequencies.Contains(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
-                {
-                    mTunedFrequencies.Add(mRadioStackState.Com1ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
-                }
-            }
-            if (mRadioStackState.Com2TransmitEnabled)
-            {
-                mTunedFrequencies.Add(mRadioStackState.Com2ActiveFrequency.Normalize25KhzFrequency().MatchNetworkFormat());
-                if (!mTunedFrequencies.Contains(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat()))
-                {
-                    mTunedFrequencies.Add(mRadioStackState.Com2ActiveFrequency.UnNormalize25KhzFrequency().MatchNetworkFormat());
-                }
-            }
-        }
-
         private void RequestPluginInformation()
         {
             var msg = new Wrapper
@@ -722,7 +722,7 @@ namespace Vatsim.Xpilot.Simulator
             SendProtobufArray(msg);
         }
 
-        public void EnableTransponderModeC(bool enabled)
+        public void SetModeC(bool enabled)
         {
             var msg = new Wrapper
             {

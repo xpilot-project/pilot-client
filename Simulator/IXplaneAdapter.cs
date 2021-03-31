@@ -25,7 +25,7 @@ namespace Vatsim.Xpilot.Simulator
     {
         void SendProtobufArray(Wrapper msg);
         void SetTransponderCode(int code);
-        void EnableTransponderModeC(bool enabled);
+        void SetModeC(bool enabled);
         void TriggerTransponderIdent();
         void SetRadioFrequency(int radio, uint freq);
         void SetRadioTransmit(int radio);
@@ -36,7 +36,7 @@ namespace Vatsim.Xpilot.Simulator
         void PlaneConfigChanged(Aircraft aircraft);
         void DeleteAircraft(Aircraft aircraft);
         void ChangeModel(Aircraft aircraft);
-        List<int> TunedFrequencies { get; }
+        List<int> TransmitFrequencies { get; }
         bool ValidSimConnection { get; }
     }
 }

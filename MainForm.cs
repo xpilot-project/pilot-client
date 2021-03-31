@@ -51,9 +51,6 @@ namespace Vatsim.Xpilot
         [EventPublication(EventTopics.PlayNotificationSound)]
         public event EventHandler<PlayNotifictionSoundEventArgs> PlayNotificationSound;
 
-        [EventPublication(EventTopics.RadioMessageSent)]
-        public event EventHandler<RadioMessageSentEventArgs> RadioMessageSent;
-
         private readonly IEventBroker mEventBroker;
         private readonly IAppConfig mConfig;
         private readonly INetworkManager mNetworkManager;
@@ -422,13 +419,6 @@ namespace Vatsim.Xpilot
             }
         }
 
-        [EventSubscription(EventTopics.RadioMessageSent, typeof(OnUserInterfaceAsync))]
-        public void OnRadioMessageSent(object sender, RadioMessageSentEventArgs e)
-        {
-            mNetworkManager.SendRadioMessage(mXplaneAdapter.TunedFrequencies, e.Message);
-            WriteMessage(Color.Cyan, $"{e.OurCallsign}: {e.Message}", true);
-        }
-
         [EventSubscription(EventTopics.WallopSent, typeof(OnUserInterfaceAsync))]
         public void OnWallopSent(object sender, WallopSentEventArgs e)
         {
@@ -573,10 +563,10 @@ namespace Vatsim.Xpilot
 
         private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
         {
-            string[] cmd = e.Command.Split(new char[] { ' ' });
+            string[] cmd = e.Message.Split(new char[] { ' ' });
             try
             {
-                if (e.Command.StartsWith("."))
+                if (e.Message.StartsWith("."))
                 {
                     switch (cmd[0].ToLower())
                     {
@@ -763,11 +753,12 @@ namespace Vatsim.Xpilot
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(e.Command))
+                    if (!string.IsNullOrEmpty(e.Message))
                     {
                         if (mNetworkManager.IsConnected)
                         {
-                            RadioMessageSent?.Invoke(this, new RadioMessageSentEventArgs(mConnectInfo.Callsign, e.Command));
+                            mNetworkManager.SendRadioMessage(mXplaneAdapter.TransmitFrequencies, e.Message);
+                            WriteMessage(Color.Cyan, $"{mNetworkManager.OurCallsign}: {e.Message}", true);
                         }
                         else
                         {
@@ -1011,7 +1002,7 @@ namespace Vatsim.Xpilot
             if (mXplaneAdapter.ValidSimConnection)
             {
                 ChkModeC.Clicked = !ChkModeC.Clicked;
-                mXplaneAdapter.EnableTransponderModeC(ChkModeC.Clicked);
+                mXplaneAdapter.SetModeC(ChkModeC.Clicked);
                 FocusTextCommandLine();
             }
         }

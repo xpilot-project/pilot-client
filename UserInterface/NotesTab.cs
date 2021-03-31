@@ -60,11 +60,11 @@ namespace Vatsim.Xpilot
 
         private void TextCommandLine_TextCommandReceived(object sender, TextCommandReceivedEventArgs e)
         {
-            if (e.Command.ToLower().Equals(".clear"))
+            if (e.Message.ToLower().Equals(".clear"))
             {
                 RichTextBox.Clear();
             }
-            else if (e.Command.ToLower().Equals(".copy"))
+            else if (e.Message.ToLower().Equals(".copy"))
             {
                 if (!string.IsNullOrEmpty(RichTextBox.Text))
                 {
@@ -74,7 +74,7 @@ namespace Vatsim.Xpilot
             }
             else
             {
-                WriteMessage(mMessageColor, e.Command);
+                WriteMessage(mMessageColor, e.Message);
             }
         }
 

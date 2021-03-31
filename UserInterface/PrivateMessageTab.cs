@@ -86,9 +86,9 @@ namespace Vatsim.Xpilot
         {
             try
             {
-                if (e.Command.StartsWith("."))
+                if (e.Message.StartsWith("."))
                 {
-                    switch (e.Command.ToLower())
+                    switch (e.Message.ToLower())
                     {
                         case ".close":
                             Dispose();
@@ -115,12 +115,12 @@ namespace Vatsim.Xpilot
                             mNetworkManager.SendControllerInfoRequest(tabName);
                             break;
                         default:
-                            throw new ApplicationException($"Unknown text command: { e.Command.ToLower() }");
+                            throw new ApplicationException($"Unknown text command: { e.Message.ToLower() }");
                     }
                 }
                 else
                 {
-                    PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mNetworkManager.OurCallsign, tabName, e.Command));
+                    PrivateMessageSent?.Invoke(this, new PrivateMessageSentEventArgs(mNetworkManager.OurCallsign, tabName, e.Message));
                 }
             }
             catch (Exception ex)
