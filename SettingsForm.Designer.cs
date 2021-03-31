@@ -217,6 +217,7 @@ namespace Vatsim.Xpilot
             this.btnGuidedSetup.TabStop = false;
             this.btnGuidedSetup.Text = "Guided Setup";
             this.btnGuidedSetup.UseVisualStyleBackColor = true;
+            this.btnGuidedSetup.Visible = false;
             this.btnGuidedSetup.Click += new System.EventHandler(this.btnGuidedSetup_Click);
             // 
             // lstAudioDriver

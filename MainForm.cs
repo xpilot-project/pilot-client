@@ -887,13 +887,7 @@ namespace Vatsim.Xpilot
 
             if (mConfig.ConfigurationRequired)
             {
-                using (var dlg = mUserInterface.CreateSetupGuideForm())
-                {
-                    if (dlg.ShowDialog(this) == DialogResult.No)
-                    {
-                        WriteErrorMessage(CONFIGURATION_REQUIRED);
-                    }
-                }
+                WriteErrorMessage(CONFIGURATION_REQUIRED);
             }
         }
 

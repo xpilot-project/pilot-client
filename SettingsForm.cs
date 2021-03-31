@@ -52,6 +52,14 @@ namespace Vatsim.Xpilot
 
             LoadNetworkServers();
 
+            lstAudioDriver.Enabled = !mConfig.IsVoiceDisabled;
+            lstInputDevice.Enabled = !mConfig.IsVoiceDisabled;
+            lstListenDevice.Enabled = !mConfig.IsVoiceDisabled;
+            chkHfSquelch.Enabled = !mConfig.IsVoiceDisabled;
+            chkDisableRadioEffects.Enabled = !mConfig.IsVoiceDisabled;
+            trackCom1.Enabled = !mConfig.IsVoiceDisabled;
+            trackCom2.Enabled = !mConfig.IsVoiceDisabled;
+
             if (!mConfig.IsVoiceDisabled)
             {
                 foreach (KeyValuePair<int, string> driver in mConfig.AudioDrivers)
