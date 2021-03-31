@@ -33,6 +33,6 @@ This project is licensed under the [GPLv3 License](LICENSE).
 * [AFV-Native](https://github.com/xsquawkbox/AFV-Native) AFV-native client library
 * [Appccelerate](http://www.appccelerate.com/) EventBroker
 * [NetMQ](https://github.com/zeromq/netmq) Messaging Library
-* [Ninject](https://github.com/ninject/Ninject) Dependecy Injector
+* [Simple Injector](https://simpleinjector.org/) Dependecy Injection
 * [Protobuf](https://github.com/protocolbuffers/protobuf) Data serialization
 * Application icon created by [Freepik](https://www.flaticon.com/authors/freepik)
