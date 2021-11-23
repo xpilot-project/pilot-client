@@ -1,3 +1,15 @@
+# Archived
+
+This repository is archived. No further updates will be made available for this version of xPilot. 
+
+Users are encouraged to upgrade to xPilot 2.0, which brings native support to macOS and Linux. 
+
+You can download and follow the progress on the new version here: https://github.com/xpilot-project/xpilot
+
+Happy flying! ✈️
+
+-----
+
 # xPilot - Pilot Client
 
 xPilot is an intuitive and easy to use X-Plane pilot client for the VATSIM network. The pilot client is a Windows c# WinForms application that utilizes NetMQ to transport data to and from the [X-Plane Plugin](https://github.com/xpilot-project/Plugin) through the use of TCP socket communication.
